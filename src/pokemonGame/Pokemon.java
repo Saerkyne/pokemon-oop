@@ -14,7 +14,7 @@ public class Pokemon {
         this.index = index;
         this.type = type;
         this.level = 5;
-        this.moveset = new ArrayList<Move>(3);
+        this.moveset = new ArrayList<Move>(4);
 
     }
 

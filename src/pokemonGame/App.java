@@ -9,8 +9,7 @@ public class App {
         pikachu.addMove(new Thunder());
         pikachu.addMove(new Scratch());
         pikachu.addMove(new LightBall());
-        pikachu.addMove(new Ember());
-        System.out.println(pikachu.name);
+        System.out.println(pikachu.name + " is level " + pikachu.level);
         System.out.println(pikachu.getMoveset().get(0).moveName);
         System.out.println(pikachu.getMoveset().get(1).moveName);
         System.out.println(pikachu.getMoveset().get(2).moveName);

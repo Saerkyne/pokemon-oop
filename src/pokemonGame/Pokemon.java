@@ -6,12 +6,14 @@ public class Pokemon {
     String name;
     int index;
     String type;
+    int level;
     private final ArrayList<Move> moveset;
 
     protected Pokemon(String name, int index, String type) {
         this.name = name;
         this.index = index;
         this.type = type;
+        this.level = 5;
         this.moveset = new ArrayList<Move>(3);
 
     }

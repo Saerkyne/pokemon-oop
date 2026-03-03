@@ -44,5 +44,9 @@ public class Pokemon {
         return moveset;
     }
 
+    public String getType() {
+        return type;
+    }
+
       
 }

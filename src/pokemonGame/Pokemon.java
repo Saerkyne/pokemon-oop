@@ -5,17 +5,27 @@ import java.util.ArrayList;
 public class Pokemon {
     String name;
     int index;
-    String type;
+    String typePrimary;
+    String typeSecondary;
     int level;
     private final ArrayList<Move> moveset;
 
-    protected Pokemon(String name, int index, String type) {
+    protected Pokemon(String name, int index, String typePrimary) {
         this.name = name;
         this.index = index;
-        this.type = type;
+        this.typePrimary = typePrimary;
         this.level = 5;
         this.moveset = new ArrayList<Move>(4);
 
+    }
+
+    protected Pokemon(String name, int index, String typePrimary, String typeSecondary) {
+        this.name = name;
+        this.index = index;
+        this.typePrimary = typePrimary;
+        this.typeSecondary = typeSecondary;
+        this.level = 5;
+        this.moveset = new ArrayList<Move>(4);
     }
 
     public void addMove(Move move) {
@@ -44,8 +54,12 @@ public class Pokemon {
         return moveset;
     }
 
-    public String getType() {
-        return type;
+    public String getTypePrimary() {
+        return typePrimary;
+    }
+
+    public String getTypeSecondary() {
+        return typeSecondary;
     }
 
       

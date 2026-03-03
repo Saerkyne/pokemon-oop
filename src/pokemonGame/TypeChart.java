@@ -4,7 +4,8 @@ import java.util.Hashtable;
 
 public class TypeChart {
     String moveType;
-    String pokemonType;
+    String pokemonTypePrimary;
+    String pokemonTypeSecondary;
     float effectiveness;
     //Row is attack type, column is pokemon type, value is effectiveness multiplier
     float[][] typeChart;
@@ -51,6 +52,9 @@ public class TypeChart {
         typeIndices.put("Dark", 15);
         typeIndices.put("Steel", 16);
         typeIndices.put("Fairy", 17);
+
+        System.out.println("Move Type: " + moveType);
+        System.out.println("Pokemon Type: " + pokemonType);
 
         int moveIndex = typeIndices.get(moveType);
         int pokemonIndex = typeIndices.get(pokemonType);

@@ -4,6 +4,6 @@ import pokemonGame.Move;
 
 public class QuickAttack extends Move {
     public QuickAttack() {
-        super("Quick Attack", 40, "Normal", "Physical");
+        super("Quick Attack", 40, "Normal", "Physical", 100, 30);
     }
 }

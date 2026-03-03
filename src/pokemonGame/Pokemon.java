@@ -62,5 +62,9 @@ public class Pokemon {
         return typeSecondary;
     }
 
+    public String getName() {
+        return name;
+    }
+
       
 }

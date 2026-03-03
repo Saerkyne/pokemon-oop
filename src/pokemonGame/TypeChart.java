@@ -53,9 +53,6 @@ public class TypeChart {
         typeIndices.put("Steel", 16);
         typeIndices.put("Fairy", 17);
 
-        System.out.println("Move Type: " + moveType);
-        System.out.println("Pokemon Type: " + pokemonType);
-
         int moveIndex = typeIndices.get(moveType);
         int pokemonIndex = typeIndices.get(pokemonType);
 

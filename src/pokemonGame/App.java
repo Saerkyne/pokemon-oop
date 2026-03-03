@@ -13,16 +13,30 @@ public class App {
         pikachu.addMove(new PoisonSting());
         pikachu.addMove(new Crunch());
 
+        pikachu.setLevel(100);
+        gengar.setLevel(100);
+        
+
 
         //Iterate through Pikachu's moves and calculate effectiveness against Gengar instead of hardcoded attacks
-        for (Move move : pikachu.getMoveset()) {
-            Attack attack = new Attack() {};
-            float effectiveness = attack.calculateEffectiveness(gengar, move);
+        /*for (Move move : pikachu.getMoveset()) {
             System.out.println(pikachu.getName() + " used " + move.getMoveName() + " against " + gengar.getName() + "!");
+            Attack attack = new Attack() {};
+            float damageDone = attack.calculateDamage(pikachu, gengar, move);
+
+            int roundedDamage = (int) Math.floor(damageDone);
+            
             System.out.println(move.getMoveName() + " is a " + move.getType() + " type move and " + gengar.getName() + " is a " + gengar.getTypePrimary() + "/" + gengar.getTypeSecondary() + " type Pokemon.");
-            System.out.println("It" + (effectiveness == 0.0 ? " had no effect..." : effectiveness < 1 ? "'s not very effective..." : effectiveness > 1 ? "'s super effective!" : "'s effective."));
-            System.out.println("Damage multiplier: " + effectiveness);
+            System.out.println("Damage dealt: " + damageDone);
+            System.out.println("Rounded damage: " + roundedDamage);
             System.out.println();
-        }
+        }*/
+
+        System.out.println(pikachu.getName() + " used Thunder against " + gengar.getName() + "!");
+        Attack attack = new Attack() {};
+        float damageDone = attack.calculateDamage(pikachu, gengar, new Thunder());
+        int roundedDamage = (int) Math.floor(damageDone);
+        System.out.println("Damage dealt: " + roundedDamage);  
+
     }
 }

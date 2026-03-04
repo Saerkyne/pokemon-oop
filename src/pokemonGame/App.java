@@ -12,6 +12,8 @@ public class App {
         // Set base Stats for Garchomp
         garchomp.setLevel(78);
         garchomp.generateRandomIVs();
+        System.out.println(garchomp.getNature().getDisplayName());
+
 
         
 
@@ -26,40 +28,38 @@ public class App {
         
 
         // Test for setting IV and EV values and calculating current HP
-        
         garchomp.setEvHp(74);
-        int currentHp = garchomp.calcCurrentHp(garchomp.getHpBaseStat(), garchomp.getLevel(), garchomp.getIvHp(), garchomp.getEvHp());
-        System.out.println(garchomp.getName() + "'s current HP: " + currentHp + " from base HP: " + garchomp.getHpBaseStat() + ", IV HP: " + garchomp.getIvHp() + ", EV HP: " + garchomp.getEvHp());
-
-        // Test for calculating current Attack stat
-        
         garchomp.setEvAttack(190);
-        double nature = 1.; // Assuming a neutral nature for this example
-        int currentAttack = garchomp.calcCurrentStat(garchomp.getAttackBaseStat(), garchomp.getLevel(), garchomp.getIvAttack(), garchomp.getEvAttack(), 1.1);
-        System.out.println(garchomp.getName() + "'s current Attack: " + currentAttack + " from base Attack: " + garchomp.getAttackBaseStat() + ", IV Attack: " + garchomp.getIvAttack() + ", EV Attack: " + garchomp.getEvAttack() + ", Nature: " + 1.1);
-
-        // Test for calculating other stats
-        
-        garchomp.setEvDefense(91);
-        int currentDefense = garchomp.calcCurrentStat(garchomp.getDefenseBaseStat(), garchomp.getLevel(), garchomp.getIvDefense(), garchomp.getEvDefense(), nature);
-        System.out.println(garchomp.getName() + "'s current Defense: " + currentDefense + " from base Defense: " + garchomp.getDefenseBaseStat() + ", IV Defense: " + garchomp.getIvDefense() + ", EV Defense: " + garchomp.getEvDefense() + ", Nature: " + nature);
-
-        
-        garchomp.setEvSpecialAttack(48);
-        int currentSpecialAttack = garchomp.calcCurrentStat(garchomp.getSpecialAttackBaseStat(), garchomp.getLevel(), garchomp.getIvSpecialAttack(), garchomp.getEvSpecialAttack(), 0.9);
-        System.out.println(garchomp.getName() + "'s current Special Attack: " + currentSpecialAttack + " from base Special Attack: " + garchomp.getSpecialAttackBaseStat() + ", IV Special Attack: " + garchomp.getIvSpecialAttack() + ", EV Special Attack: " + garchomp.getEvSpecialAttack() + ", Nature: " + 0.9);
-
-        
-        garchomp.setEvSpecialDefense(84);
-        int currentSpecialDefense = garchomp.calcCurrentStat(garchomp.getSpecialDefenseBaseStat(), garchomp.getLevel(), garchomp.getIvSpecialDefense(), garchomp.getEvSpecialDefense(), nature);
-        System.out.println(garchomp.getName() + "'s current Special Defense: " + currentSpecialDefense + " from base Special Defense: " + garchomp.getSpecialDefenseBaseStat() + ", IV Special Defense: " + garchomp.getIvSpecialDefense() + ", EV Special Defense: " + garchomp.getEvSpecialDefense() + ", Nature: " + nature);
-
-        
         garchomp.setEvSpeed(23);
-        int currentSpeed = garchomp.calcCurrentStat(garchomp.getSpeedBaseStat(), garchomp.getLevel(), garchomp.getIvSpeed(), garchomp.getEvSpeed(), nature);
-        System.out.println(garchomp.getName() + "'s current Speed: " + currentSpeed + " from base Speed: " + garchomp.getSpeedBaseStat() + ", IV Speed: " + garchomp.getIvSpeed() + ", EV Speed: " + garchomp.getEvSpeed() + ", Nature: " + nature);
+        garchomp.setEvDefense(91);
+        garchomp.setEvSpecialAttack(48);
+        garchomp.setEvSpecialDefense(84);
+        garchomp.setEvSpeed(23);
 
+        
+        garchomp.calculateCurrentStats();
+        
 
+        System.out.println(garchomp.getName() + " has the following IVs:");
+        System.out.println("HP IV: " + garchomp.getIvHp()); 
+        System.out.println("Attack IV: " + garchomp.getIvAttack());
+        System.out.println("Defense IV: " + garchomp.getIvDefense());
+        System.out.println("Special Attack IV: " + garchomp.getIvSpecialAttack());
+        System.out.println("Special Defense IV: " + garchomp.getIvSpecialDefense());
+        System.out.println("Speed IV: " + garchomp.getIvSpeed());
+        System.out.println(garchomp.getName() + " has the following EVs:");
+        System.out.println("HP EV: " + garchomp.getEvHp()); 
+        System.out.println("Attack EV: " + garchomp.getEvAttack());
+        System.out.println("Defense EV: " + garchomp.getEvDefense());
+        System.out.println("Special Attack EV: " + garchomp.getEvSpecialAttack());
+        System.out.println("Special Defense EV: " + garchomp.getEvSpecialDefense());
+        System.out.println("Speed EV: " + garchomp.getEvSpeed());
+        System.out.println(garchomp.getName() + " has a current HP of: " + garchomp.getCurrentHP());
+        System.out.println(garchomp.getName() + " has a current Attack stat of: " + garchomp.getCurrentAttack());
+        System.out.println(garchomp.getName() + " has a current Defense stat of: " + garchomp.getCurrentDefense());
+        System.out.println(garchomp.getName() + " has a current Special Attack stat of: " + garchomp.getCurrentSpecialAttack());
+        System.out.println(garchomp.getName() + " has a current Special Defense stat of: " + garchomp.getCurrentSpecialDefense());
+        System.out.println(garchomp.getName() + " has a current Speed stat of: " + garchomp.getCurrentSpeed());
 
         //Iterate through Pikachu's moves and calculate effectiveness against Gengar instead of hardcoded attacks
         /*for (Move move : pikachu.getMoveset()) {

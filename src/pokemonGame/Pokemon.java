@@ -1,5 +1,6 @@
 package pokemonGame;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class Pokemon {
@@ -34,6 +35,7 @@ public class Pokemon {
     int evSpecialAttack;
     int evSpecialDefense;
     int evSpeed;
+    Natures nature;
     private final ArrayList<Move> moveset;
 
     // Constructors - One is a basic constructor with default stats, the other overloads to allow for custom stats
@@ -50,6 +52,8 @@ public class Pokemon {
         this.hpBase = 50;
         this.speedBase = 50;
         this.moveset = new ArrayList<Move>(4);
+        // assign a random nature immediately
+        Natures.assignRandom(this);
     }
 
     protected Pokemon(String name, int index, String typePrimary, String typeSecondary, int level, int hp, int attack, int defense, int specialAttack, int specialDefense, int speed) {
@@ -65,6 +69,8 @@ public class Pokemon {
         this.specialDefenseBase = specialDefense;
         this.speedBase = speed;
         this.moveset = new ArrayList<Move>(4);
+        // random nature for custom‑stat constructor as well
+        Natures.assignRandom(this);
     }
 
 
@@ -114,6 +120,10 @@ public class Pokemon {
         return level;
     }
 
+    public Natures getNature() {
+        return nature;
+    }
+    
     public int getHpBaseStat() {
         return hpBase;
     }   
@@ -136,6 +146,29 @@ public class Pokemon {
 
     public int getSpeedBaseStat() {
         return speedBase;
+    }
+
+    public int getCurrentHP() {
+        return currentHp;
+    }
+    public int getCurrentAttack() {
+        return currentAttack;
+    }
+
+    public int getCurrentDefense() {
+        return currentDefense;
+    }
+
+    public int getCurrentSpecialAttack() {
+        return currentSpecialAttack;
+    }
+
+    public int getCurrentSpecialDefense() {
+        return currentSpecialDefense;
+    }
+
+    public int getCurrentSpeed() {
+        return currentSpeed;
     }
 
     public int getIvHp() {
@@ -217,6 +250,10 @@ public class Pokemon {
         this.level = level;
     }
 
+    public void setNature(Natures nature) {
+        this.nature = nature;
+    }
+    
     public void setHpBase(int hp) {
         this.hpBase = hp;
     }   
@@ -239,6 +276,30 @@ public class Pokemon {
 
     public void setSpeedBase(int speed) {
         this.speedBase = speed;
+    }
+
+    public void setCurrentHP(int currentHp) {
+        this.currentHp = currentHp;
+    }
+
+    public void setCurrentAttack(int currentAttack) {
+        this.currentAttack = currentAttack;
+    }
+
+    public void setCurrentDefense(int currentDefense) {
+        this.currentDefense = currentDefense;
+    }
+
+    public void setCurrentSpecialAttack(int currentSpecialAttack) {
+        this.currentSpecialAttack = currentSpecialAttack;
+    }
+
+    public void setCurrentSpecialDefense(int currentSpecialDefense) {
+        this.currentSpecialDefense = currentSpecialDefense;
+    }
+
+    public void setCurrentSpeed(int currentSpeed) {
+        this.currentSpeed = currentSpeed;
     }
 
     public void setIvHp(int ivHp) {
@@ -328,13 +389,34 @@ public class Pokemon {
 
     // Method for generating a random IV value between 0 and 31 for each stat
     public void generateRandomIVs() {
-        this.ivHp = (int) (Math.random() * 32);
-        this.ivAttack = (int) (Math.random() * 32);
-        this.ivDefense = (int) (Math.random() * 32);
-        this.ivSpecialAttack = (int) (Math.random() * 32);
-        this.ivSpecialDefense = (int) (Math.random() * 32);
-        this.ivSpeed = (int) (Math.random() * 32);
+
+        Random rand = new Random();
+        this.ivHp = rand.nextInt(32);
+        this.ivAttack = rand.nextInt(32);
+        this.ivDefense = rand.nextInt(32);
+        this.ivSpecialAttack = rand.nextInt(32);
+        this.ivSpecialDefense = rand.nextInt(32);
+        this.ivSpeed = rand.nextInt(32);
     }
 
+
+    // Wrapper method for stat calculation
+    public void calculateCurrentStats() {
+        this.currentHp = calcCurrentHp(getHpBaseStat(), getLevel(), getIvHp(), getEvHp());
+        this.currentAttack = calcCurrentStat(getAttackBaseStat(), getLevel(), getIvAttack(), getEvAttack(), getNature().modifierFor(Stat.ATTACK));
+        this.currentDefense = calcCurrentStat(getDefenseBaseStat(), getLevel(), getIvDefense(), getEvDefense(), getNature().modifierFor(Stat.DEFENSE));
+        this.currentSpecialAttack = calcCurrentStat(getSpecialAttackBaseStat(), getLevel(), getIvSpecialAttack(), getEvSpecialAttack(), getNature().modifierFor(Stat.SPECIAL_ATTACK));
+        this.currentSpecialDefense = calcCurrentStat(getSpecialDefenseBaseStat(), getLevel(), getIvSpecialDefense(), getEvSpecialDefense(), getNature().modifierFor(Stat.SPECIAL_DEFENSE));
+        this.currentSpeed = calcCurrentStat(getSpeedBaseStat(), getLevel(), getIvSpeed(), getEvSpeed(), getNature().modifierFor(Stat.SPEED));
+    }
+
+    /**
+     * Apply a random nature to this Pokémon.  This is just a convenience wrapper
+     * around {@link Natures#assignRandom} so callers can write
+     * <code>p.applyNature()</code> when they don't care which nature is chosen.
+     */
+    public void applyNature() {
+        Natures.assignRandom(this);
+    }
       
 }

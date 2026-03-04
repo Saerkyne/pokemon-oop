@@ -1,18 +1,43 @@
 package pokemonGame;
+import java.util.Scanner;
 import pokemonGame.mons.*;
 //import pokemonGame.moves.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        // Create a Garchomp
+        Trainer trainer = createTrainer();
+
+        selectFromAvailablePokemon();
+  
+
+
+
+        //Display the Team
+        System.out.println("Your team:");
+        for (Pokemon p : trainer.getTeam()) {
+            if (p != null) {
+                System.out.println("- " + p.getName());
+            }
+        }
+
+        //Display team stats
+        System.out.println();
+        System.out.println("Your team's stats:");
+        for (Pokemon p : trainer.getTeam()) {
+            if (p != null) {
+                System.out.println(p.getName() + ": Level " + p.getLevel() + ", HP " + p.getMaxHP() + ", Attack " + p.getCurrentAttack() + ", Defense " + p.getCurrentDefense() + ", Special Attack " + p.getCurrentSpecialAttack() + ", Special Defense " + p.getCurrentSpecialDefense() + ", Speed " + p.getCurrentSpeed());
+            }
+        }
+
         
-        Pokemon garchomp = new Garchomp();
+        // Create a Pokemon instance for testing
+        
+        Pokemon chuchu = new Pikachu();
 
         
         // Set base Stats for Garchomp
-        garchomp.setLevel(78);
-        garchomp.generateRandomIVs();
-        System.out.println(garchomp.getNature().getDisplayName());
+        chuchu.setLevel(78);
+        chuchu.generateRandomIVs();
 
 
         
@@ -28,38 +53,17 @@ public class App {
         
 
         // Test for setting IV and EV values and calculating current HP
-        garchomp.setEvHp(74);
-        garchomp.setEvAttack(190);
-        garchomp.setEvSpeed(23);
-        garchomp.setEvDefense(91);
-        garchomp.setEvSpecialAttack(48);
-        garchomp.setEvSpecialDefense(84);
-        garchomp.setEvSpeed(23);
+        chuchu.setEvHp(74);
+        chuchu.setEvAttack(190);
+        chuchu.setEvSpeed(23);
+        chuchu.setEvDefense(91);
+        chuchu.setEvSpecialAttack(48);
+        chuchu.setEvSpecialDefense(84);
+        chuchu.setEvSpeed(23);
 
         
-        garchomp.calculateCurrentStats();
+        chuchu.calculateCurrentStats();
         
-
-        System.out.println(garchomp.getName() + " has the following IVs:");
-        System.out.println("HP IV: " + garchomp.getIvHp()); 
-        System.out.println("Attack IV: " + garchomp.getIvAttack());
-        System.out.println("Defense IV: " + garchomp.getIvDefense());
-        System.out.println("Special Attack IV: " + garchomp.getIvSpecialAttack());
-        System.out.println("Special Defense IV: " + garchomp.getIvSpecialDefense());
-        System.out.println("Speed IV: " + garchomp.getIvSpeed());
-        System.out.println(garchomp.getName() + " has the following EVs:");
-        System.out.println("HP EV: " + garchomp.getEvHp()); 
-        System.out.println("Attack EV: " + garchomp.getEvAttack());
-        System.out.println("Defense EV: " + garchomp.getEvDefense());
-        System.out.println("Special Attack EV: " + garchomp.getEvSpecialAttack());
-        System.out.println("Special Defense EV: " + garchomp.getEvSpecialDefense());
-        System.out.println("Speed EV: " + garchomp.getEvSpeed());
-        System.out.println(garchomp.getName() + " has a current HP of: " + garchomp.getCurrentHP());
-        System.out.println(garchomp.getName() + " has a current Attack stat of: " + garchomp.getCurrentAttack());
-        System.out.println(garchomp.getName() + " has a current Defense stat of: " + garchomp.getCurrentDefense());
-        System.out.println(garchomp.getName() + " has a current Special Attack stat of: " + garchomp.getCurrentSpecialAttack());
-        System.out.println(garchomp.getName() + " has a current Special Defense stat of: " + garchomp.getCurrentSpecialDefense());
-        System.out.println(garchomp.getName() + " has a current Speed stat of: " + garchomp.getCurrentSpeed());
 
         //Iterate through Pikachu's moves and calculate effectiveness against Gengar instead of hardcoded attacks
         /*for (Move move : pikachu.getMoveset()) {
@@ -81,5 +85,112 @@ public class App {
         int roundedDamage = (int) Math.floor(damageDone);
         System.out.println("Damage dealt: " + roundedDamage);  */
 
+        scanner.close();
+
     }
+
+    public static Trainer createTrainer() {
+        // This method can be used to create a trainer and set up their team
+        // Create a Trainer and ask for their name
+        Trainer trainer = new Trainer("Ash Ketchum");
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter your name, Trainer: ");
+        String trainerName = scanner.nextLine();
+        trainer.setName(trainerName);
+
+        System.out.println(trainer.getName() + ", welcome to the world of Pokémon!");
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
+        System.out.println("You can have up to 6 Pokémon on your team. Let's start by choosing your first Pokémon!");
+
+        return trainer;
+    }
+
+    public static Pokemon selectFromAvailablePokemon(Trainer trainer) {
+        // This method can be used to list available Pokémon species for the player to choose from, and allow them to 
+        // select one by name.  It can return a new instance of the chosen Pokémon.
+        // Allow the player to choose a Pokémon by name from the generated list of available Pokémon.  This can be done using a simple text input prompt.
+        System.out.print("Enter the name of the Pokémon you want to choose: ");
+        String chosenPokemon = scanner.nextLine();
+
+        // Create a Pokémon based on the player's choice
+        Pokemon chosen = null;
+        switch (chosenPokemon.toLowerCase()) {
+            
+            
+            case "pikachu":
+                chosen = new Pikachu();
+                break;
+            // Add more cases for other Pokémon species
+            default:
+                System.out.println("Invalid choice. Defaulting to Pikachu.");
+                chosen = new Pikachu();
+                break;
+        }
+
+        // Generate random IVs and calculate stats for the chosen Pokémon
+        chosen.generateRandomIVs();
+        chosen.calculateCurrentStats();
+
+        
+
+        //Add the chosen Pokémon to the trainer's team
+        trainer.addPokemonToTeam(chosen);
+
+        System.out.println("Do you want to add another Pokémon to your team? (yes/no)");
+        String addMore = scanner.nextLine();
+        
+        while (addMore.equalsIgnoreCase("yes") && trainer.getTeam().size() < 6) {
+            System.out.print("Enter the name of the Pokémon you want to choose: ");
+            chosenPokemon = scanner.nextLine();
+
+            switch (chosenPokemon.toLowerCase()) {
+                case "bulbasaur":
+                    chosen = new Bulbasaur();
+                    break;
+                case "charmander":
+                    chosen = new Charmander();
+                    break;
+                case "pikachu":
+                    chosen = new Pikachu();
+                    break;
+                case "eevee":
+                    chosen = new Eevee();
+                    break;
+                case "gengar":
+                    chosen = new Gengar();
+                    break;
+                case "mewtwo":
+                    chosen = new Mewtwo();
+                    break;
+                case "squirtle":
+                    chosen = new Squirtle();
+                    break;
+                // Add more cases for other Pokémon species
+                default:
+                    System.out.println("Invalid choice. Defaulting to Pikachu.");
+                    chosen = new Pikachu();
+                    break;
+            }
+
+            chosen.generateRandomIVs();
+            chosen.calculateCurrentStats();
+
+            trainer.addPokemonToTeam(chosen);
+
+            if (trainer.getTeam().size() >= 6) {
+                System.out.println("Your team is full!");
+                break;
+            }
+
+            System.out.println("Do you want to add another Pokémon to your team? (yes/no)");
+            addMore = scanner.nextLine();
+        }
+
+        return null; // Placeholder return value
+    }
+
 }

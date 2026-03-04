@@ -17,7 +17,7 @@ public class Pokemon {
     int specialAttackBase; 
     int specialDefenseBase;
     int speedBase;
-    int currentHp;
+    int MaxHP;
     int currentAttack;
     int currentDefense;
     int currentSpecialAttack;
@@ -148,8 +148,8 @@ public class Pokemon {
         return speedBase;
     }
 
-    public int getCurrentHP() {
-        return currentHp;
+    public int getMaxHP() {
+        return MaxHP;
     }
     public int getCurrentAttack() {
         return currentAttack;
@@ -278,8 +278,8 @@ public class Pokemon {
         this.speedBase = speed;
     }
 
-    public void setCurrentHP(int currentHp) {
-        this.currentHp = currentHp;
+    public void setMaxHP(int MaxHP) {
+        this.MaxHP = MaxHP;
     }
 
     public void setCurrentAttack(int currentAttack) {
@@ -358,7 +358,7 @@ public class Pokemon {
 
 
     // Methods for calculations
-    public int calcCurrentHp(int hpBase, int level, int ivHp, int ev) {
+    public int calcMaxHP(int hpBase, int level, int ivHp, int ev) {
 
         // Calculating the actual HP of a Pokemon requires the base HP stat, the Pokemon's level, 
         // and its individual values (IVs) and effort values (EVs).
@@ -402,7 +402,7 @@ public class Pokemon {
 
     // Wrapper method for stat calculation
     public void calculateCurrentStats() {
-        this.currentHp = calcCurrentHp(getHpBaseStat(), getLevel(), getIvHp(), getEvHp());
+        this.MaxHP = calcMaxHP(getHpBaseStat(), getLevel(), getIvHp(), getEvHp());
         this.currentAttack = calcCurrentStat(getAttackBaseStat(), getLevel(), getIvAttack(), getEvAttack(), getNature().modifierFor(Stat.ATTACK));
         this.currentDefense = calcCurrentStat(getDefenseBaseStat(), getLevel(), getIvDefense(), getEvDefense(), getNature().modifierFor(Stat.DEFENSE));
         this.currentSpecialAttack = calcCurrentStat(getSpecialAttackBaseStat(), getLevel(), getIvSpecialAttack(), getEvSpecialAttack(), getNature().modifierFor(Stat.SPECIAL_ATTACK));

@@ -3,26 +3,40 @@ import java.util.ArrayList;
 
 
 public class Pokemon {
+
+    // Initialize attributes for all Pokemon
     String name;
     int index;
     String typePrimary;
     String typeSecondary;
     int level;
-    int hpBase; // also used as stat exp value 
-    int attackBase; // also used as stat exp value
-    int defenseBase; // also used as stat exp value
-    int specialAttackBase; // also used as stat exp value
-    int specialDefenseBase; // also used as stat exp value
-    int speedBase; // also used as stat exp value
-    int statExpHP;
-    int statExpAttack;
-    int statExpDefense;
-    int statExpSpecialAttack;
-    int statExpSpecialDefense;
-    int statExpSpeed;
+    int hpBase;  
+    int attackBase; 
+    int defenseBase; 
+    int specialAttackBase; 
+    int specialDefenseBase;
+    int speedBase;
+    int currentHp;
+    int currentAttack;
+    int currentDefense;
+    int currentSpecialAttack;
+    int currentSpecialDefense;
+    int currentSpeed;
+    int ivHp;
+    int ivAttack;
+    int ivDefense;
+    int ivSpecialAttack;
+    int ivSpecialDefense;
+    int ivSpeed;
+    int evHp;
+    int evAttack;
+    int evDefense;
+    int evSpecialAttack;
+    int evSpecialDefense;
+    int evSpeed;
     private final ArrayList<Move> moveset;
 
-
+    // Constructors - One is a basic constructor with default stats, the other overloads to allow for custom stats
     protected Pokemon(String name, int index, String typePrimary, String typeSecondary) {
         this.name = name;
         this.index = index;
@@ -35,12 +49,6 @@ public class Pokemon {
         this.specialDefenseBase = 50;
         this.hpBase = 50;
         this.speedBase = 50;
-        this.statExpHP = 0;
-        this.statExpAttack = 0;
-        this.statExpDefense = 0;
-        this.statExpSpecialAttack = 0;
-        this.statExpSpecialDefense = 0;
-        this.statExpSpeed = 0;
         this.moveset = new ArrayList<Move>(4);
     }
 
@@ -56,17 +64,11 @@ public class Pokemon {
         this.specialAttackBase = specialAttack;
         this.specialDefenseBase = specialDefense;
         this.speedBase = speed;
-        this.statExpHP = 0;
-        this.statExpAttack = 0;
-        this.statExpDefense = 0;
-        this.statExpSpecialAttack = 0;
-        this.statExpSpecialDefense = 0;
-        this.statExpSpeed = 0;
         this.moveset = new ArrayList<Move>(4);
     }
 
 
-
+    // Method to add a move to the Pokemon's moveset, with logic to handle the 4-move limit
     public void addMove(Move move) {
         if (moveset.size() >= 4) {
             System.out.println("A Pokemon can only have 4 moves in its moveset.");
@@ -86,14 +88,12 @@ public class Pokemon {
             }
         } else {
             moveset.add(move);
+            System.out.println(move.moveName + " has been added to " + name + "'s moveset.");
         }
     }
 
-    public int statExpCalc(int baseStat, int level, int statExp) {
-        int modifiedStat = (int) Math.floor(Math.min(Math.ceil(Math.sqrt(statExp)), 255) * (level / 400));
-        return modifiedStat;
-    }
 
+    // Getters for attributes
     public ArrayList<Move> getMoveset() {
         return moveset;
     }
@@ -138,6 +138,56 @@ public class Pokemon {
         return speedBase;
     }
 
+    public int getIvHp() {
+        return ivHp;
+    }
+
+    public int getIvAttack() {
+        return ivAttack;
+    }
+
+    public int getIvDefense() {
+        return ivDefense;
+    }
+
+    public int getIvSpecialAttack() {
+        return ivSpecialAttack;
+    }
+
+    public int getIvSpecialDefense() {
+        return ivSpecialDefense;
+    }
+
+    public int getIvSpeed() {
+        return ivSpeed;
+    }
+
+    public int getEvHp() {
+        return evHp;
+    }
+
+    public int getEvAttack() {
+        return evAttack;
+    }
+
+    public int getEvDefense() {
+        return evDefense;
+    }
+
+    public int getEvSpecialAttack() {
+        return evSpecialAttack;
+    }
+
+    public int getEvSpecialDefense() {
+        return evSpecialDefense;
+    }
+
+    public int getEvSpeed() {
+        return evSpeed;
+    }
+
+    // Special Methods to get the appropriate attack or defense stat based on the move's category (Physical, Special, or Status)
+    
     public int getAttackStatForMove(Move move) {
         if (move.getMoveCategory() == "Physical") {
             int physAttack = getAttackBaseStat();
@@ -162,57 +212,128 @@ public class Pokemon {
         }
     }
 
+    // Direct Setters for attributes
     public void setLevel(int level) {
         this.level = level;
     }
 
+    public void setHpBase(int hp) {
+        this.hpBase = hp;
+    }   
+
+    public void setAttackBase(int attack) {
+        this.attackBase = attack;
+    }
+
+    public void setDefenseBase(int defense) {
+        this.defenseBase = defense;
+    }
+
+    public void setSpecialAttackBase(int specialAttack) {
+        this.specialAttackBase = specialAttack;
+    }   
+
+    public void setSpecialDefenseBase(int specialDefense) {
+        this.specialDefenseBase = specialDefense;
+    }
+
+    public void setSpeedBase(int speed) {
+        this.speedBase = speed;
+    }
+
+    public void setIvHp(int ivHp) {
+        this.ivHp = ivHp;
+    }
+
+    public void setIvAttack(int ivAttack) {
+        this.ivAttack = ivAttack;
+    }
+
+    public void setIvDefense(int ivDefense) {
+        this.ivDefense = ivDefense;
+    }
+
+    public void setIvSpecialAttack(int ivSpecialAttack) {
+        this.ivSpecialAttack = ivSpecialAttack;
+    }
+
+    public void setIvSpecialDefense(int ivSpecialDefense) {
+        this.ivSpecialDefense = ivSpecialDefense;
+    }
+
+    public void setIvSpeed(int ivSpeed) {
+        this.ivSpeed = ivSpeed;
+    }
+
+    public void setEvHp(int evHp) {
+        this.evHp = evHp;
+    }
+
+    public void setEvAttack(int evAttack) {
+        this.evAttack = evAttack;
+    }
+
+    public void setEvDefense(int evDefense) {
+        this.evDefense = evDefense;
+    }
+
+    public void setEvSpecialAttack(int evSpecialAttack) {
+        this.evSpecialAttack = evSpecialAttack;
+    }
+
+    public void setEvSpecialDefense(int evSpecialDefense) {
+        this.evSpecialDefense = evSpecialDefense;
+    }
+
+    public void setEvSpeed(int evSpeed) {
+        this.evSpeed = evSpeed;
+    }
+
+    // Modifiers for attributes
     public void levelUp() {
         this.level++;
         // Placeholder for actual stat increases on level up
     }
 
-    public void setHp(int hp) {
-        this.hpBase = hp;
-    }   
 
-    public void setAttack(int attack) {
-        this.attackBase = attack;
+    // Methods for calculations
+    public int calcCurrentHp(int hpBase, int level, int ivHp, int ev) {
+
+        // Calculating the actual HP of a Pokemon requires the base HP stat, the Pokemon's level, 
+        // and its individual values (IVs) and effort values (EVs).
+        // The formula is: HP = ((((2 * baseHP) + IV + (EV / 4)) * Level) / 100) + Level + 10
+        // We want an integer, so we are going to do the calculations in steps to ensure we don't lose 
+        // precision until the end when we can round down to an integer.
+        int calcHP = ev / 4;
+        calcHP = (2 * hpBase + ivHp + calcHP);
+        calcHP = calcHP * level;
+        calcHP = calcHP / 100;
+        calcHP = calcHP + level + 10;
+        return calcHP;
     }
 
-    public void setDefense(int defense) {
-        this.defenseBase = defense;
+    public int calcCurrentStat(int baseStat, int level, int iv, int ev, double natureModifier) {
+        // The formula for calculating the current value of a non-HP stat is: 
+        // Stat = (((((2 * baseStat) + IV + (EV/4)) * Level) / 100) + 5) * Nature
+        // For now, we will ignore the Nature modifier and just calculate the stat without it.
+        // A 1 will be used as a placeholder for the Nature modifier in the future when that is implemented.
+        int calcStat = ev / 4;
+        calcStat = (2 * baseStat + iv + calcStat);
+        calcStat = calcStat * level;
+        calcStat = calcStat / 100;
+        calcStat = calcStat + 5;
+        calcStat = (int) Math.floor(calcStat * natureModifier);
+        return calcStat;
     }
 
-    public void setSpecialAttack(int specialAttack) {
-        this.specialAttackBase = specialAttack;
-    }   
-
-    public void setSpecialDefense(int specialDefense) {
-        this.specialDefenseBase = specialDefense;
-    }
-
-    public void setSpeed(int speed) {
-        this.speedBase = speed;
-    }
-
-    public ArrayList<Integer> getStatExpValues(Pokemon pokemon) {
-        ArrayList<Integer> statExpValues = new ArrayList<>();
-        statExpValues.add(pokemon.statExpHP);
-        statExpValues.add(pokemon.statExpAttack);
-        statExpValues.add(pokemon.statExpDefense);
-        statExpValues.add(pokemon.statExpSpecialAttack);
-        statExpValues.add(pokemon.statExpSpecialDefense);
-        statExpValues.add(pokemon.statExpSpeed);
-        return statExpValues;
-    }
-
-    public void gainStatExp(Pokemon pokemon, int hpExp, int attackExp, int defenseExp, int specialAttackExp, int specialDefenseExp, int speedExp) {
-        pokemon.statExpHP += hpExp;
-        pokemon.statExpAttack += attackExp;
-        pokemon.statExpDefense += defenseExp;
-        pokemon.statExpSpecialAttack += specialAttackExp;
-        pokemon.statExpSpecialDefense += specialDefenseExp;
-        pokemon.statExpSpeed += speedExp;
+    // Method for generating a random IV value between 0 and 31 for each stat
+    public void generateRandomIVs() {
+        this.ivHp = (int) (Math.random() * 32);
+        this.ivAttack = (int) (Math.random() * 32);
+        this.ivDefense = (int) (Math.random() * 32);
+        this.ivSpecialAttack = (int) (Math.random() * 32);
+        this.ivSpecialDefense = (int) (Math.random() * 32);
+        this.ivSpeed = (int) (Math.random() * 32);
     }
 
       

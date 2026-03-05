@@ -2,10 +2,12 @@ package pokemonGame.mons;
 import pokemonGame.Pokemon;
 
 public class Bulbasaur extends Pokemon {
-    public Bulbasaur() {
+    public Bulbasaur(String name) {
         super("Bulbasaur", 1, "Grass", "Poison", 
         5, 45, 49, 49, 
         65, 65, 45);
+
+        this.setName(name);
 
         int[] evYield = {0, 0, 0, 0, 1, 0}; // Bulbasaur yields 1 EV point in Special Attack when defeated
         this.setEvYield(evYield);

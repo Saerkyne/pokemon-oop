@@ -6,6 +6,7 @@ import java.util.Random;
 public class Pokemon {
 
     // Initialize attributes for all Pokemon
+    String species;
     String name;
     int index;
     String typePrimary;
@@ -46,8 +47,10 @@ public class Pokemon {
     private final ArrayList<Move> moveset;
 
     // Constructors - One is a basic constructor with default stats, the other overloads to allow for custom stats
-    protected Pokemon(String name, int index, String typePrimary, String typeSecondary) {
-        this.name = name;
+    
+    protected Pokemon(String species, int index, String typePrimary, String typeSecondary) {
+        this.species = species;
+        this.name = species; // Default name is the same as species
         this.index = index;
         this.typePrimary = typePrimary;
         this.typeSecondary = typeSecondary;
@@ -69,8 +72,9 @@ public class Pokemon {
         Natures.assignRandom(this);
     }
 
-    protected Pokemon(String name, int index, String typePrimary, String typeSecondary, int level, int hp, int attack, int defense, int specialAttack, int specialDefense, int speed) {
-        this.name = name;
+    protected Pokemon(String species, int index, String typePrimary, String typeSecondary, int level, int hp, int attack, int defense, int specialAttack, int specialDefense, int speed) {
+        this.species = species;
+        this.name = species; // Default name is the same as species
         this.index = index;
         this.typePrimary = typePrimary;
         this.typeSecondary = typeSecondary;
@@ -133,6 +137,10 @@ public class Pokemon {
 
     public String getName() {
         return name;
+    }
+
+    public String getSpecies() {
+        return species;
     }
 
     public int getLevel() {
@@ -288,6 +296,10 @@ public class Pokemon {
     // Direct Setters for attributes
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setNature(Natures nature) {

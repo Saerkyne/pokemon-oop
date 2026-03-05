@@ -18,6 +18,7 @@ public class Pokemon {
     int specialDefenseBase;
     int speedBase;
     int MaxHP;
+    int currentHP;
     int currentAttack;
     int currentDefense;
     int currentSpecialAttack;
@@ -35,7 +36,13 @@ public class Pokemon {
     int evSpecialAttack;
     int evSpecialDefense;
     int evSpeed;
+    int evTotal; //This must be 252 or lower for each Pokemon.
+    int expYield; // This is the amount of experience points a Pokemon yields when defeated in battle
+    int currentExp;
+    int[] evYield; // This array holds the EV yield for each stat when this Pokemon is defeated in battle, 
+    // in the order of HP, Attack, Defense, Special Attack, Special Defense, Speed
     Natures nature;
+
     private final ArrayList<Move> moveset;
 
     // Constructors - One is a basic constructor with default stats, the other overloads to allow for custom stats
@@ -51,6 +58,12 @@ public class Pokemon {
         this.specialDefenseBase = 50;
         this.hpBase = 50;
         this.speedBase = 50;
+        this.evHp = 0;
+        this.evAttack = 0;
+        this.evDefense = 0;
+        this.evSpecialAttack = 0;
+        this.evSpecialDefense = 0;
+        this.evSpeed = 0;
         this.moveset = new ArrayList<Move>(4);
         // assign a random nature immediately
         Natures.assignRandom(this);
@@ -68,6 +81,12 @@ public class Pokemon {
         this.specialAttackBase = specialAttack;
         this.specialDefenseBase = specialDefense;
         this.speedBase = speed;
+        this.evHp = 0;
+        this.evAttack = 0;
+        this.evDefense = 0;
+        this.evSpecialAttack = 0;
+        this.evSpecialDefense = 0;
+        this.evSpeed = 0;
         this.moveset = new ArrayList<Move>(4);
         // random nature for custom‑stat constructor as well
         Natures.assignRandom(this);
@@ -219,6 +238,27 @@ public class Pokemon {
         return evSpeed;
     }
 
+    public String[] getEvYield() {
+        String[] stringYield = new String[evYield.length];
+        for (int i = 0; i < evYield.length; i++) {
+            if (i == 0) {
+                stringYield[i] = "HP: " + evYield[i];
+            } else if (i == 1) {
+                stringYield[i] = "Attack: " + evYield[i];
+            } else if (i == 2) {
+                stringYield[i] = "Defense: " + evYield[i];
+            } else if (i == 3) {
+                stringYield[i] = "Special Attack: " + evYield[i];
+            } else if (i == 4) {
+                stringYield[i] = "Special Defense: " + evYield[i];
+            } else if (i == 5) {
+                stringYield[i] = "Speed: " + evYield[i];
+            }
+        } 
+        
+        return stringYield;
+    }
+
     // Special Methods to get the appropriate attack or defense stat based on the move's category (Physical, Special, or Status)
     
     public int getAttackStatForMove(Move move) {
@@ -348,6 +388,10 @@ public class Pokemon {
 
     public void setEvSpeed(int evSpeed) {
         this.evSpeed = evSpeed;
+    }
+
+    public void setEvYield(int[] evYield) {
+        this.evYield = evYield;
     }
 
     // Modifiers for attributes

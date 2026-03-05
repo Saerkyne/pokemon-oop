@@ -9,5 +9,7 @@ public class Bulbasaur extends Pokemon {
 
         int[] evYield = {0, 0, 0, 0, 1, 0}; // Bulbasaur yields 1 EV point in Special Attack when defeated
         this.setEvYield(evYield);
+        this.generateRandomIVs();
+        this.calculateCurrentStats();
     }
 }

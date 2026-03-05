@@ -9,8 +9,15 @@ public class App {
         //Trainer trainer = createTrainer();
 
         //selectFromAvailablePokemon();
-  
 
+        Pokemon chuchu = createPokemon("chuchu");
+
+        System.out.println("Attack IV: " + chuchu.getIvAttack());
+        System.out.println("Defense IV: " + chuchu.getIvDefense());
+        System.out.println("Special Attack IV: " + chuchu.getIvSpecialAttack());
+        System.out.println("Special Defense IV: " + chuchu.getIvSpecialDefense());
+        System.out.println("Speed IV: " + chuchu.getIvSpeed());
+        System.out.println("HP IV: " + chuchu.getIvHp());
 
 
         //Display the Team
@@ -31,36 +38,6 @@ public class App {
         }*/
 
         
-        // Create a Pokemon instance for testing
-        
-        Pokemon chuchu = new Bulbasaur();
-        Pokemon charry = new Charmander();
-
-        
-        // Set base Stats for Pokemon
-        chuchu.setLevel(78);
-        charry.setLevel(25);
-        chuchu.generateRandomIVs();
-        charry.generateRandomIVs();
-
-        // Test for setting IV and EV values and calculating current HP
-        chuchu.setEvHp(74);
-        chuchu.setEvAttack(190);
-        chuchu.setEvSpeed(23);
-        chuchu.setEvDefense(91);
-        chuchu.setEvSpecialAttack(48);
-        chuchu.setEvSpecialDefense(84);
-        chuchu.setEvSpeed(23);
-
-        
-        chuchu.calculateCurrentStats();
-        charry.calculateCurrentStats();
-
-        System.out.println(chuchu.getName() + " EV Yield: ");
-        System.out.println(String.join(", ", chuchu.getEvYield()));
-        System.out.println(charry.getName() + " EV Yield: ");
-        System.out.println(String.join(", ", charry.getEvYield()));
-
         
 
         // Teach Pikachu some moves from its learnset
@@ -191,4 +168,19 @@ public class App {
         return null; // Placeholder return value
     }
 
+    public static Pokemon createPokemon(String species) {
+        // This method can be used to create a new Pokémon instance based on user input for species, level, and other attributes.  
+        // It can return the newly created Pokémon instance.
+        // Create a Pokemon instance for testing
+        
+        
+        Pokemon chuchu = new Bulbasaur();
+
+        
+
+        
+        
+
+        return chuchu; // Placeholder return value
+    }
 }

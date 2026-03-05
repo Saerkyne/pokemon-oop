@@ -3,7 +3,7 @@ import pokemonGame.Move;
 
 public class Swift extends Move {
     public Swift() {
-        super("Swift", 60, "Normal", "Special", 20, 100);
+        super("Swift", 60, "Normal", "Special", 100, 20);
     }
 
 }

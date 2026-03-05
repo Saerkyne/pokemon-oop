@@ -2,6 +2,7 @@ package pokemonGame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 
 public class Pokemon {
@@ -107,13 +108,14 @@ public class Pokemon {
         if (moveset.size() >= 4) {
             System.out.println("A Pokemon can only have 4 moves in its moveset.");
             System.out.println("Would you like to replace one of the existing moves with " + move.getMoveName() + "? (yes/no)");
-            String response = System.console().readLine();
+            Scanner scanner = new Scanner(System.in);
+            String response = scanner.nextLine();
             if (response.equals("yes")) {
                 System.out.println("Which move would you like to replace? (1-4)");
                 for (int i = 0; i < moveset.size(); i++) {
                     System.out.println((i + 1) + ": " + moveset.get(i).getMove().getMoveName());
                 }
-                int moveToReplace = Integer.parseInt(System.console().readLine());
+                int moveToReplace = Integer.parseInt(scanner.nextLine());
                 if (moveToReplace >= 1 && moveToReplace <= 4) {
                     moveset.set(moveToReplace - 1, new MoveSlot(move));
                 } else {
@@ -276,10 +278,10 @@ public class Pokemon {
     
     public int getAttackStatForMove(Move move) {
         if ("Physical".equals(move.getMoveCategory())) {
-            int physAttack = getAttackBaseStat();
+            int physAttack = getCurrentAttack();
             return physAttack; 
         } else if ("Special".equals(move.getMoveCategory())) {
-            int specAttack = getSpecialAttackBaseStat();
+            int specAttack = getCurrentSpecialAttack();
             return specAttack; 
         } else {
             return 0; // Status moves don't use attack stats
@@ -288,10 +290,10 @@ public class Pokemon {
 
     public int getDefenseStatForMove(Move move) {
         if ("Physical".equals(move.getMoveCategory())) {
-            int physDefense = getDefenseBaseStat();
+            int physDefense = getCurrentDefense();
             return physDefense; 
         } else if ("Special".equals(move.getMoveCategory())) {
-            int specDefense = getSpecialDefenseBaseStat();
+            int specDefense = getCurrentSpecialDefense();
             return specDefense; 
         } else {
             return 0; // Status moves don't use defense stats

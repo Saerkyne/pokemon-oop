@@ -30,6 +30,7 @@ public class LearnsetEntry {
     public static void teachFromLearnset(Pokemon p) {
         // because learnset is now an instance method, just call it directly
         List<LearnsetEntry> catalog = (p == null) ? null : p.getLearnset();
+        if (p == null) { System.out.println("No Pokemon provided!"); return; }
         System.out.println("Pick a move to learn from the catalog:");
         for (int i = 0; i < catalog.size(); i++) {
             LearnsetEntry e = catalog.get(i);

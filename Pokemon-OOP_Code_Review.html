@@ -1,0 +1,453 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<meta name="ProgId" content="Word.Document">
+<meta name="Generator" content="Microsoft Word 15">
+<meta name="Originator" content="Microsoft Word 15">
+<title>Pokemon-OOP Code Review</title>
+<style>
+    body {
+        font-family: Calibri, sans-serif;
+        font-size: 11pt;
+        line-height: 1.4;
+        margin: 1in;
+        color: #222;
+    }
+    h1 {
+        font-size: 22pt;
+        color: #1a1a2e;
+        border-bottom: 2px solid #1a1a2e;
+        padding-bottom: 6pt;
+        margin-top: 24pt;
+    }
+    h2 {
+        font-size: 16pt;
+        color: #16213e;
+        margin-top: 20pt;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 4pt;
+    }
+    h3 {
+        font-size: 13pt;
+        color: #0f3460;
+        margin-top: 16pt;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 10pt 0;
+        font-size: 10pt;
+    }
+    th, td {
+        border: 1px solid #999;
+        padding: 5pt 8pt;
+        text-align: left;
+        vertical-align: top;
+    }
+    th {
+        background-color: #1a1a2e;
+        color: white;
+        font-weight: bold;
+    }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    code {
+        font-family: Consolas, 'Courier New', monospace;
+        font-size: 10pt;
+        background-color: #f0f0f0;
+        padding: 1pt 3pt;
+        border: 1px solid #ddd;
+        border-radius: 2pt;
+    }
+    pre {
+        font-family: Consolas, 'Courier New', monospace;
+        font-size: 9.5pt;
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        padding: 8pt;
+        margin: 8pt 0;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        line-height: 1.3;
+    }
+    .critical { color: #c0392b; font-weight: bold; }
+    .high { color: #e67e22; font-weight: bold; }
+    .medium { color: #2980b9; font-weight: bold; }
+    .low { color: #27ae60; font-weight: bold; }
+    .file-ref { color: #555; font-style: italic; font-size: 10pt; }
+    p { margin: 6pt 0; }
+    ul, ol { margin: 4pt 0 4pt 20pt; }
+    li { margin: 3pt 0; }
+    hr { border: none; border-top: 1px solid #ccc; margin: 16pt 0; }
+</style>
+</head>
+<body>
+
+<h1>Pokemon-OOP Code Review</h1>
+<p><strong>Date:</strong> March 5, 2026<br>
+<strong>Project:</strong> Pokemon-OOP (Java re-implementation of Pok&eacute;mon Red concepts)<br>
+<strong>Reviewer:</strong> GitHub Copilot</p>
+
+<hr>
+
+<h2>Part 1: Bugs (Things That Are Broken)</h2>
+
+<!-- BUG 1 -->
+<h3>BUG 1 &mdash; Critical Hit Logic Is Inverted</h3>
+<p class="file-ref">File: Attack.java, lines 28&ndash;35</p>
+
+<p>The condition <code>if (chance &gt; threshold)</code> means <strong>slower</strong> Pok&eacute;mon crit <strong>more</strong> often &mdash; the opposite of the intended behavior. With <code>threshold = speed / 2</code>:</p>
+
+<table>
+    <tr><th>Speed</th><th>Threshold</th><th>Crit When</th><th>Crit Rate</th></tr>
+    <tr><td>200</td><td>100</td><td>random &gt; 100</td><td>~60%</td></tr>
+    <tr><td>50</td><td>25</td><td>random &gt; 25</td><td>~90%</td></tr>
+</table>
+
+<p><strong>Fix:</strong> Change <code>&gt;</code> to <code>&lt;</code>:</p>
+<pre>if (chance &lt; threshold) {</pre>
+<p>Now faster Pok&eacute;mon crit more often (higher speed &rarr; higher threshold &rarr; more values qualify).</p>
+
+<hr>
+
+<!-- BUG 2 -->
+<h3>BUG 2 &mdash; Hardcoded Attack/Defense in Damage Formula</h3>
+<p class="file-ref">File: Attack.java, lines 68&ndash;69</p>
+
+<pre>int attackStat = 168; //attacker.getAttackStatForMove(move);
+int defenseStat = 218; //defender.getDefenseStatForMove(move);</pre>
+
+<p>Every attack deals the same damage regardless of actual stats. <strong>Uncomment the real calls</strong> &mdash; but first see Bug 3, because the methods they call also have a problem.</p>
+
+<hr>
+
+<!-- BUG 3 -->
+<h3>BUG 3 &mdash; <code>getAttackStatForMove</code> / <code>getDefenseStatForMove</code> Return Base Stats, Not Calculated Stats</h3>
+<p class="file-ref">File: Pokemon.java, lines 208&ndash;223</p>
+
+<p>These methods call <code>getAttackBaseStat()</code> / <code>getDefenseBaseStat()</code> etc., which are the <strong>raw base stats</strong> (e.g. 49 for Bulbasaur's Attack) &mdash; ignoring level, IVs, EVs, and nature entirely. When you uncomment the calls in Attack.java, they need to use the <strong>calculated</strong> stats instead:</p>
+
+<pre>// Before (wrong):
+int physAttack = getAttackBaseStat();
+
+// After (correct):
+int physAttack = getCurrentAttack();</pre>
+
+<p>Same fix for all four branches (physical attack, special attack, physical defense, special defense).</p>
+
+<hr>
+
+<!-- BUG 4 -->
+<h3>BUG 4 &mdash; <code>System.console()</code> Returns <code>null</code> in IDEs</h3>
+<p class="file-ref">Files: Pokemon.java (line 107) and LearnsetEntry.java (line 40)</p>
+
+<p><code>System.console()</code> returns <code>null</code> when running from VS Code, IntelliJ, or any non-terminal launcher, causing an immediate <code>NullPointerException</code>. Use a <code>Scanner</code> wrapping <code>System.in</code> instead:</p>
+
+<pre>Scanner scanner = new Scanner(System.in);
+String response = scanner.nextLine();</pre>
+
+<hr>
+
+<!-- BUG 5 -->
+<h3>BUG 5 &mdash; Psychic Move Has Accuracy/PP Swapped</h3>
+<p class="file-ref">File: moves/Psychic.java</p>
+
+<pre>super("Psychic", 90, "Psychic", "Special", 10, 100);
+//                               accuracy ^    ^  PP</pre>
+
+<p>Psychic currently has <strong>10 accuracy</strong> and <strong>100 PP</strong>. Should be <code>100, 10</code>.</p>
+
+<hr>
+
+<!-- BUG 6 -->
+<h3>BUG 6 &mdash; Swift Move Has Accuracy/PP Swapped</h3>
+<p class="file-ref">File: moves/Swift.java</p>
+
+<pre>super("Swift", 60, "Normal", "Special", 20, 100);</pre>
+
+<p>Swift currently has <strong>20 accuracy</strong> and <strong>100 PP</strong>. Should be something like <code>100, 20</code> (or a sentinel for "never misses").</p>
+
+<hr>
+
+<!-- BUG 7 -->
+<h3>BUG 7 &mdash; Disable Has 20 Power but Is a Status Move</h3>
+<p class="file-ref">File: moves/Disable.java</p>
+
+<pre>super("Disable", 20, "Normal", "Status", 0, 20);</pre>
+
+<p>Status moves should have 0 power. If Disable goes through the damage formula, it will deal damage despite being categorized as Status. Change power to <code>0</code>.</p>
+
+<hr>
+
+<!-- BUG 8 -->
+<h3>BUG 8 &mdash; <code>teachFromLearnset</code> Will NPE if Pok&eacute;mon is <code>null</code></h3>
+<p class="file-ref">File: LearnsetEntry.java, lines 30&ndash;31</p>
+
+<pre>List&lt;LearnsetEntry&gt; catalog = (p == null) ? null : p.getLearnset();
+// ...
+for (int i = 0; i &lt; catalog.size(); i++) {  // NPE if catalog is null</pre>
+
+<p>The null check on <code>p</code> assigns <code>null</code> to <code>catalog</code>, then immediately calls <code>catalog.size()</code>. Either return early or throw with a meaningful message:</p>
+
+<pre>if (p == null) { System.out.println("No Pok&eacute;mon provided."); return; }</pre>
+
+<hr>
+
+<!-- BUG 9 -->
+<h3>BUG 9 &mdash; Inconsistent <code>null</code> vs <code>"None"</code> for Secondary Type</h3>
+
+<p>Some Pok&eacute;mon use <code>"None"</code> while others use <code>null</code> for no secondary type. <code>calculateEffectiveness</code> handles both, but any future code that does <code>.equals()</code> on the secondary type without a null check will crash.</p>
+
+<table>
+    <tr><th>Convention</th><th>Species Using It</th></tr>
+    <tr><td><code>null</code></td><td>Squirtle, Charmeleon, Wartortle, Blastoise, Mewtwo, Eevee</td></tr>
+    <tr><td><code>"None"</code></td><td>Charmander, Pikachu</td></tr>
+</table>
+
+<p><strong>Fix:</strong> Pick one convention and apply it everywhere. <code>null</code> is cleaner (then guard with null checks), or <code>"None"</code> is more explicit.</p>
+
+<hr>
+
+<!-- BUG 10 -->
+<h3>BUG 10 &mdash; Duplicate Pok&eacute;dex Index Numbers</h3>
+
+<p>Several species share the same <code>index</code> value:</p>
+
+<table>
+    <tr><th>Index</th><th>Species</th></tr>
+    <tr><td>1</td><td>Bulbasaur, Squirtle</td></tr>
+    <tr><td>2</td><td>Ivysaur, Charmeleon, Wartortle</td></tr>
+    <tr><td>3</td><td>Venusaur, Charizard, Blastoise</td></tr>
+</table>
+
+<p>Squirtle should be 7, Wartortle 8, Blastoise 9, Charmeleon 5, Charizard 6, etc.</p>
+
+<hr>
+
+<h2>Part 2: Quick Fixes (Small Things You Can Fix Yourself)</h2>
+
+<ol>
+    <li><strong>Unused instance fields in <code>Attack.java</code></strong> (lines 5&ndash;6): <code>effectivenessPrimaryType</code> and <code>effectivenessSecondaryType</code> are declared but never assigned or read. Delete them.</li>
+
+    <li><strong>Unused instance fields in <code>TypeChart.java</code></strong> (lines 5&ndash;8): <code>moveType</code>, <code>pokemonTypePrimary</code>, <code>pokemonTypeSecondary</code>, and <code>effectiveness</code> are declared but never used. Delete them.</li>
+
+    <li><strong><code>Attack</code> is <code>abstract</code> but has no abstract methods</strong> (line 4): Remove <code>abstract</code> so you can do <code>new Attack()</code> instead of <code>new Attack() {}</code>.</li>
+
+    <li><strong>All fields in <code>Pokemon.java</code> are package-private</strong> (lines 10&ndash;47): Add <code>private</code> to every field. You already have getters/setters for everything.</li>
+
+    <li><strong>All fields in <code>Move.java</code> are package-private</strong> (lines 3&ndash;9): Same fix &mdash; add <code>private</code>.</li>
+
+    <li><strong>All fields in <code>TypeChart.java</code> are package-private</strong>: Same fix.</li>
+
+    <li><strong><code>stab = false</code> assignment is redundant</strong> in Attack.java (line 60): <code>stab</code> is already <code>false</code> from initialization. The <code>else</code> branch does nothing.</li>
+
+    <li><strong><code>levelUp()</code> in Pokemon.java doesn't recalculate stats</strong> (line 300): <code>setLevel()</code> calls <code>calculateCurrentStats()</code> but <code>levelUp()</code> does not. Add <code>calculateCurrentStats();</code> after <code>this.level++;</code>.</li>
+
+    <li><strong>Move power values that look like accidental typos</strong> (you'll know if these are intentional):
+        <table>
+            <tr><th>Move</th><th>Current Power</th><th>Expected</th></tr>
+            <tr><td>Confusion</td><td>10</td><td>50</td></tr>
+            <tr><td>Crunch</td><td>15</td><td>80</td></tr>
+            <tr><td>MegaPunch</td><td>20</td><td>80</td></tr>
+            <tr><td>Strength</td><td>15</td><td>80</td></tr>
+        </table>
+    </li>
+
+    <li><strong>Mewtwo.java uses octal literal <code>01</code> and <code>04</code></strong> (lines 14&ndash;15): <code>01</code> in Java is octal for 1 (happens to be fine), and <code>04</code> is octal for 4 (also fine), but it's misleading. Use <code>1</code> and <code>4</code> without leading zeros.</li>
+</ol>
+
+<hr>
+
+<h2>Part 3: Efficiency Improvements (Detailed)</h2>
+
+<!-- Improvement 1 -->
+<h3>1. TypeChart &mdash; Rebuilding the Lookup Map Every Call</h3>
+<p class="file-ref">File: TypeChart.java, getEffectiveness() method</p>
+
+<p><strong>Current code:</strong></p>
+<pre>public float getEffectiveness(String moveType, String pokemonType) {
+    Dictionary&lt;String, Integer&gt; typeIndices = new Hashtable&lt;&gt;();
+    typeIndices.put("Normal", 0);
+    typeIndices.put("Fire", 1);
+    // ... 18 entries rebuilt every single call
+}</pre>
+
+<p>Every time you check type effectiveness (multiple times per attack), this allocates a new <code>Hashtable</code> and inserts 18 entries. In a battle loop, this runs hundreds of times.</p>
+
+<p><strong>Better approach</strong> &mdash; build the map once as a <code>static final</code> field:</p>
+<pre>private static final Map&lt;String, Integer&gt; TYPE_INDICES = new HashMap&lt;&gt;();
+static {
+    TYPE_INDICES.put("Normal", 0);
+    TYPE_INDICES.put("Fire", 1);
+    // ...all 18 types
+}
+
+public float getEffectiveness(String moveType, String pokemonType) {
+    int moveIndex = TYPE_INDICES.get(moveType);
+    int pokemonIndex = TYPE_INDICES.get(pokemonType);
+    return typeChart[moveIndex][pokemonIndex];
+}</pre>
+
+<p>This also replaces the deprecated <code>Dictionary</code>/<code>Hashtable</code> with <code>Map</code>/<code>HashMap</code>.</p>
+
+<hr>
+
+<!-- Improvement 2 -->
+<h3>2. Attack.java &mdash; Creating a New <code>Random</code> and <code>TypeChart</code> Per Instance</h3>
+<p class="file-ref">File: Attack.java</p>
+
+<p><strong>Current code:</strong></p>
+<pre>TypeChart typeChart = new TypeChart();  // new instance per Attack object
+
+public int randomInt(int min, int max) {
+    Random rand = new Random();  // new Random per call
+    return rand.nextInt((max - min) + 1) + min;
+}</pre>
+
+<p><code>new Random()</code> called rapidly can produce identical seeds (same results). And a new <code>TypeChart</code> (which builds the 18&times;18 matrix) per <code>Attack</code> instance is wasteful.</p>
+
+<p><strong>Better approach:</strong></p>
+<pre>private static final Random RNG = new Random();
+private static final TypeChart TYPE_CHART = new TypeChart();
+
+public int randomInt(int min, int max) {
+    return RNG.nextInt((max - min) + 1) + min;
+}</pre>
+
+<p>One <code>Random</code>, one <code>TypeChart</code>, shared across all Attack usages.</p>
+
+<hr>
+
+<!-- Improvement 3 -->
+<h3>3. App.createPokemon &mdash; Unnecessary TreeMap + Redundant Validation</h3>
+<p class="file-ref">File: App.java, createPokemon() method</p>
+
+<p><strong>Current code:</strong></p>
+<pre>TreeMap&lt;Integer, String&gt; pokemonOptions = new TreeMap&lt;&gt;();
+pokemonOptions.put(1, "Bulbasaur");
+// ... 9 entries
+
+if (species == null || !pokemonOptions.containsValue(species)) {
+    // containsValue is O(n) scan on a TreeMap
+    return null;
+}
+
+switch (species) {
+    case "Bulbasaur": createdMon = new Bulbasaur(name); break;
+    // ... same 9 cases
+}</pre>
+
+<p>The map is rebuilt every call, only used for validation, and then the <code>switch</code> does the real work. The <code>containsValue()</code> call is O(n) &mdash; you gain nothing from the TreeMap.</p>
+
+<p><strong>Better approach</strong> &mdash; the switch's <code>default</code> branch already handles invalid species, so the map is completely unnecessary:</p>
+<pre>public static Pokemon createPokemon(String species, String name) {
+    if (species == null) {
+        System.out.println("Invalid species selected.");
+        return null;
+    }
+    switch (species) {
+        case "Bulbasaur":  return new Bulbasaur(name);
+        case "Ivysaur":    return new Ivysaur(name);
+        case "Venusaur":   return new Venusaur(name);
+        case "Charmander": return new Charmander(name);
+        case "Charmeleon": return new Charmeleon(name);
+        case "Charizard":  return new Charizard(name);
+        case "Squirtle":   return new Squirtle(name);
+        case "Wartortle":  return new Wartortle(name);
+        case "Blastoise":  return new Blastoise(name);
+        default:
+            System.out.println("Invalid species selected.");
+            return null;
+    }
+}</pre>
+
+<p>This eliminates the allocation, population, and scan of the TreeMap entirely.</p>
+
+<hr>
+
+<!-- Improvement 4 -->
+<h3>4. Pokemon.java &mdash; EV Setter Doesn't Enforce the 252 Cap</h3>
+
+<p>You declare <code>evTotal</code> with a comment saying "This must be 252 or lower," but no setter actually enforces it. Every <code>setEvXxx()</code> method silently accepts any value:</p>
+
+<pre>public void setEvAttack(int evAttack) {
+    this.evAttack = evAttack;  // no bounds check
+}</pre>
+
+<p>If you want enforcement, add validation:</p>
+<pre>public void setEvAttack(int evAttack) {
+    if (evAttack &lt; 0 || evAttack &gt; 252) {
+        throw new IllegalArgumentException("EV must be 0-252, got: " + evAttack);
+    }
+    this.evAttack = evAttack;
+}</pre>
+
+<hr>
+
+<!-- Improvement 5 -->
+<h3>5. Pok&eacute;mon Species Constructors &mdash; Redundant <code>setName()</code> Call</h3>
+
+<p>Every species constructor does this:</p>
+<pre>public Bulbasaur(String name) {
+    super("Bulbasaur", 1, "Grass", "Poison", 5, 45, 49, 49, 65, 65, 45);
+    this.setName(name);  // &larr; redundant pattern
+}</pre>
+
+<p>The <code>super()</code> constructor already sets <code>this.name = species</code>. You are immediately overwriting it with the nickname. This works, but you could add <code>name</code> as a parameter to the <code>Pokemon</code> constructor itself to avoid the extra call in every single subclass.</p>
+
+<hr>
+
+<!-- Improvement 6 -->
+<h3>6. <code>getEvYield()</code> &mdash; If/Else Chain That Should Be an Array</h3>
+<p class="file-ref">File: Pokemon.java</p>
+
+<p><strong>Current code:</strong></p>
+<pre>public String[] getEvYield() {
+    String[] stringYield = new String[evYield.length];
+    for (int i = 0; i &lt; evYield.length; i++) {
+        if (i == 0) stringYield[i] = "HP: " + evYield[i];
+        else if (i == 1) stringYield[i] = "Attack: " + evYield[i];
+        // ... 6 branches for fixed indices
+    }
+    return stringYield;
+}</pre>
+
+<p><strong>Better approach</strong> &mdash; a static label array:</p>
+<pre>private static final String[] STAT_NAMES = {
+    "HP", "Attack", "Defense", "Special Attack", "Special Defense", "Speed"
+};
+
+public String[] getEvYield() {
+    String[] stringYield = new String[evYield.length];
+    for (int i = 0; i &lt; evYield.length; i++) {
+        stringYield[i] = STAT_NAMES[i] + ": " + evYield[i];
+    }
+    return stringYield;
+}</pre>
+
+<hr>
+
+<h2>Summary Priority Table</h2>
+
+<table>
+    <tr><th>Priority</th><th>Issue</th><th>File</th></tr>
+    <tr><td class="critical">Critical</td><td>Hardcoded attack/defense stats (168/218)</td><td>Attack.java</td></tr>
+    <tr><td class="critical">Critical</td><td>System.console() NPE in IDEs</td><td>Pokemon.java, LearnsetEntry.java</td></tr>
+    <tr><td class="critical">Critical</td><td>Psychic/Swift accuracy-PP swap</td><td>Psychic.java, Swift.java</td></tr>
+    <tr><td class="high">High</td><td>Crit formula inverted</td><td>Attack.java</td></tr>
+    <tr><td class="high">High</td><td>getAttackStatForMove returns base, not calculated</td><td>Pokemon.java</td></tr>
+    <tr><td class="high">High</td><td>Null secondary type inconsistency</td><td>Multiple mons</td></tr>
+    <tr><td class="medium">Medium</td><td>TypeChart map rebuilt every call</td><td>TypeChart.java</td></tr>
+    <tr><td class="medium">Medium</td><td>new Random() every call</td><td>Attack.java</td></tr>
+    <tr><td class="medium">Medium</td><td>levelUp() doesn't recalculate stats</td><td>Pokemon.java</td></tr>
+    <tr><td class="medium">Medium</td><td>Disable has power despite being Status</td><td>Disable.java</td></tr>
+    <tr><td class="low">Low</td><td>Duplicate Pok&eacute;dex indices</td><td>Multiple mons</td></tr>
+    <tr><td class="low">Low</td><td>Unnecessary TreeMap in createPokemon</td><td>App.java</td></tr>
+    <tr><td class="low">Low</td><td>Package-private fields</td><td>Pokemon.java, Move.java</td></tr>
+</table>
+
+</body>
+</html>

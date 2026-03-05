@@ -1,11 +1,23 @@
 package pokemonGame.mons;
 import pokemonGame.Pokemon;
+import pokemonGame.moves.*;
+import pokemonGame.LearnsetEntry;
+import java.util.List;
 
 public class Blastoise extends Pokemon {
+
+    private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
+    static {
+        LEARNSET.add(new LearnsetEntry(new Tackle(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new Growl(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new Strength(), LearnsetEntry.Source.LEVEL, 8));
+        LEARNSET.add(new LearnsetEntry(new Swift(), LearnsetEntry.Source.LEVEL, 41));
+    }
+
     public Blastoise(String name) {
         super("Blastoise", 3, "Water", null,
-        5, 79, 83, 100,
-        85, 105, 78);
+            5, 79, 83, 100,
+            85, 105, 78);
 
         this.setName(name);
 
@@ -15,4 +27,9 @@ public class Blastoise extends Pokemon {
         this.calculateCurrentStats();
     }
 
+    @Override
+    public List<LearnsetEntry> getLearnset() {
+        return LEARNSET;
+    }
 }
+

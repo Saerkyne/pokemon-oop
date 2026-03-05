@@ -1,9 +1,33 @@
 package pokemonGame.mons;
 import pokemonGame.Pokemon;
+import pokemonGame.moves.*;
+import pokemonGame.LearnsetEntry;
+import java.util.List;
 
 public class Gengar extends Pokemon {
-    public Gengar() {
-        super("Gengar", 94, "Ghost", "Poison", 100, 60, 65, 60, 130, 75, 110);
+
+    private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
+    static {
+        LEARNSET.add(new LearnsetEntry(new Confusion(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new Psychic(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new Disable(), LearnsetEntry.Source.LEVEL, 14));
+        LEARNSET.add(new LearnsetEntry(new Swift(), LearnsetEntry.Source.LEVEL, 40));
     }
 
+    public Gengar(String name) {
+        super("Gengar", 94, "Ghost", "Poison", 100, 60, 65, 60, 130, 75, 110);
+
+        this.setName(name);
+
+        int[] evYield = {0, 0, 0, 2, 0, 0}; // Gengar yields 2 EV points in Special Attack when defeated
+        this.setEvYield(evYield);
+        this.generateRandomIVs();
+        this.calculateCurrentStats();
+    }
+
+    @Override
+    public List<LearnsetEntry> getLearnset() {
+        return LEARNSET;
+    }
 }
+

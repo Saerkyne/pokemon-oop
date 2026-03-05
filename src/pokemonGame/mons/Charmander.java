@@ -1,11 +1,23 @@
 package pokemonGame.mons;
 import pokemonGame.Pokemon;
+import pokemonGame.moves.*;
+import pokemonGame.LearnsetEntry;
+import java.util.List;
 
 public class Charmander extends Pokemon {
+
+    private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
+    static {
+        LEARNSET.add(new LearnsetEntry(new Scratch(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new Growl(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new Ember(), LearnsetEntry.Source.LEVEL, 9));
+        LEARNSET.add(new LearnsetEntry(new Swift(), LearnsetEntry.Source.LEVEL, 17));
+    }
+
     public Charmander(String name) {
         super("Charmander", 4, "Fire", "None",
-        5, 39, 52, 43,
-        60, 50, 65);
+            5, 39, 52, 43,
+            60, 50, 65);
 
         this.setName(name);
 
@@ -15,4 +27,9 @@ public class Charmander extends Pokemon {
         this.calculateCurrentStats();
     }
 
+    @Override
+    public List<LearnsetEntry> getLearnset() {
+        return LEARNSET;
+    }
 }
+

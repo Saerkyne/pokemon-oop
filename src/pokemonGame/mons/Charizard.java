@@ -1,11 +1,24 @@
 package pokemonGame.mons;
 import pokemonGame.Pokemon;
+import pokemonGame.moves.*;
+import pokemonGame.LearnsetEntry;
+import java.util.List;
 
 public class Charizard extends Pokemon {
+
+    private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
+    static {
+        LEARNSET.add(new LearnsetEntry(new Scratch(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new Growl(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new Ember(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new Swift(), LearnsetEntry.Source.LEVEL, 9));
+        LEARNSET.add(new LearnsetEntry(new QuickAttack(), LearnsetEntry.Source.LEVEL, 36));
+    }
+
     public Charizard(String name) {
         super("Charizard", 3, "Fire", "Flying",
-        5, 78, 84, 78,
-        109, 85, 100);
+            5, 78, 84, 78,
+            109, 85, 100);
 
         this.setName(name);
 
@@ -14,4 +27,10 @@ public class Charizard extends Pokemon {
         this.generateRandomIVs();
         this.calculateCurrentStats();
     }
+
+    @Override
+    public List<LearnsetEntry> getLearnset() {
+        return LEARNSET;
+    }
 }
+

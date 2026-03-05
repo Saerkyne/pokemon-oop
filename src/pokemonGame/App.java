@@ -68,8 +68,8 @@ public class App {
         System.out.println("Testing Attack Stat saving for " + bulbyTest.getName() + " after setting base to 180: " + bulbyTest.getCurrentAttack());
         System.out.println("Testing Attack Stat saving for Bulby after setting base to 180 on bulbyTest: " + Bulby.getCurrentAttack()); // Should reflect the change made to bulbyTest's attack base
         LearnsetEntry.teachFromLearnset(bulbyTest); // Teach the first move from the learnset to the first Pokemon in the team
-        bulbyTest.getMoveset().forEach(move -> System.out.println(bulbyTest.getName() + " learned " + move.getMoveName()));
-        Bulby.getMoveset().forEach(move -> System.out.println(Bulby.getName() + " knows " + move.getMoveName())); // Should show the same move learned by bulbyTest
+        bulbyTest.getMoveset().forEach(move -> System.out.println(bulbyTest.getName() + " learned " + move.getMove().getMoveName()));
+        Bulby.getMoveset().forEach(move -> System.out.println(Bulby.getName() + " knows " + move.getMove().getMoveName())); // Should show the same move learned by bulbyTest
         System.out.println(bulbyTest.getName() + " has a " + bulbyTest.getNature().getDisplayName() + " nature!");
         System.out.println(Bulby.getName() + " has a " + Bulby.getNature().getDisplayName() + " nature!"); // Should show the same nature as bulbyTest  
 

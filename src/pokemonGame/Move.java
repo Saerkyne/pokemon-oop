@@ -7,15 +7,15 @@ public abstract class Move {
     //moveCategory can be physical, special, or status
     String moveCategory;
     int accuracy;
-    int pp;
+    int maxPp;
 
-    protected Move(String moveName, int movePower, String moveType, String moveCategory, int accuracy, int pp) {
+    protected Move(String moveName, int movePower, String moveType, String moveCategory, int accuracy, int maxPp) {
         this.moveName = moveName;
         this.movePower = movePower;
         this.moveType = moveType;
         this.moveCategory = moveCategory;
         this.accuracy = accuracy;
-        this.pp = pp;
+        this.maxPp = maxPp;
     }
 
     public String getMoveName() {
@@ -38,7 +38,7 @@ public abstract class Move {
         return accuracy;
     }
 
-    public int getPp() {
-        return pp;
+    public int getMaxPp() {
+        return maxPp;
     }
 }

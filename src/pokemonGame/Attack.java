@@ -51,7 +51,7 @@ public abstract class Attack {
         float combinedEffectiveness = effectivenessPrimary * effectivenessSecondary;
         // System.out.println("Combined effectiveness: " + combinedEffectiveness);
 
-        if (move.getType() == attacker.getTypePrimary() || move.getType() == attacker.getTypeSecondary()) {
+        if (move.getType().equals(attacker.getTypePrimary()) || move.getType().equals(attacker.getTypeSecondary())) {
             stab = true;
             System.out.println("STAB applied!");
         } else {

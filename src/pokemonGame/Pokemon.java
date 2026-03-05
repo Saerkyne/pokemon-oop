@@ -45,7 +45,7 @@ public class Pokemon {
     // in the order of HP, Attack, Defense, Special Attack, Special Defense, Speed
     Natures nature;
 
-    private final ArrayList<Move> moveset;
+    private final ArrayList<MoveSlot> moveset;
     
     // each individual Pokémon object keeps its own learnset reference; most species override
     // the accessor to return a shared static list, but the base class provides an empty list
@@ -72,7 +72,7 @@ public class Pokemon {
         this.evSpecialAttack = 0;
         this.evSpecialDefense = 0;
         this.evSpeed = 0;
-        this.moveset = new ArrayList<Move>(4);
+        this.moveset = new ArrayList<MoveSlot>(4);
         // assign a random nature immediately
         Natures.assignRandom(this);
     }
@@ -96,7 +96,7 @@ public class Pokemon {
         this.evSpecialAttack = 0;
         this.evSpecialDefense = 0;
         this.evSpeed = 0;
-        this.moveset = new ArrayList<Move>(4);
+        this.moveset = new ArrayList<MoveSlot>(4);
         // random nature for custom‑stat constructor as well
         Natures.assignRandom(this);
     }
@@ -106,29 +106,29 @@ public class Pokemon {
     public void addMove(Move move) {
         if (moveset.size() >= 4) {
             System.out.println("A Pokemon can only have 4 moves in its moveset.");
-            System.out.println("Would you like to replace one of the existing moves with " + move.moveName + "? (yes/no)");
+            System.out.println("Would you like to replace one of the existing moves with " + move.getMoveName() + "? (yes/no)");
             String response = System.console().readLine();
             if (response.equals("yes")) {
                 System.out.println("Which move would you like to replace? (1-4)");
                 for (int i = 0; i < moveset.size(); i++) {
-                    System.out.println((i + 1) + ": " + moveset.get(i).moveName);
+                    System.out.println((i + 1) + ": " + moveset.get(i).getMove().getMoveName());
                 }
                 int moveToReplace = Integer.parseInt(System.console().readLine());
                 if (moveToReplace >= 1 && moveToReplace <= 4) {
-                    moveset.set(moveToReplace - 1, move);
+                    moveset.set(moveToReplace - 1, new MoveSlot(move));
                 } else {
                     System.out.println("Invalid move number. Move not added.");
                 }
             }
         } else {
-            moveset.add(move);
-            System.out.println(move.moveName + " has been added to " + name + "'s moveset.");
+            moveset.add(new MoveSlot(move));
+            System.out.println(move.getMoveName() + " has been added to " + name + "'s moveset.");
         }
     }
 
 
     // Getters for attributes
-    public ArrayList<Move> getMoveset() {
+    public ArrayList<MoveSlot> getMoveset() {
         return moveset;
     }
 
@@ -275,10 +275,10 @@ public class Pokemon {
     // Special Methods to get the appropriate attack or defense stat based on the move's category (Physical, Special, or Status)
     
     public int getAttackStatForMove(Move move) {
-        if (move.getMoveCategory() == "Physical") {
+        if ("Physical".equals(move.getMoveCategory())) {
             int physAttack = getAttackBaseStat();
             return physAttack; 
-        } else if (move.getMoveCategory() == "Special") {
+        } else if ("Special".equals(move.getMoveCategory())) {
             int specAttack = getSpecialAttackBaseStat();
             return specAttack; 
         } else {
@@ -287,10 +287,10 @@ public class Pokemon {
     }
 
     public int getDefenseStatForMove(Move move) {
-        if (move.getMoveCategory() == "Physical") {
+        if ("Physical".equals(move.getMoveCategory())) {
             int physDefense = getDefenseBaseStat();
             return physDefense; 
-        } else if (move.getMoveCategory() == "Special") {
+        } else if ("Special".equals(move.getMoveCategory())) {
             int specDefense = getSpecialDefenseBaseStat();
             return specDefense; 
         } else {

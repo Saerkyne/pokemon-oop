@@ -36,7 +36,7 @@ public class LearnsetEntry {
             if (e.getSource() == Source.LEVEL && p.getLevel() < e.getParameter())
                 continue;  // skip moves that are above the Pokemon's current level
             // skip moves that are already known
-            if (p.getMoveset().stream().anyMatch(m -> m.getMoveName().equals(e.getMove().getMoveName())))
+            if (p.getMoveset().stream().anyMatch(m -> m.getMove().getMoveName().equals(e.getMove().getMoveName())))
                 continue;
             System.out.printf("%d: %s : %s %d%n",
                             i + 1,

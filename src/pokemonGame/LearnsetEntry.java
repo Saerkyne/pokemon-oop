@@ -2,8 +2,6 @@ package pokemonGame;
 
 import java.util.List;
 
-import pokemonGame.mons.Mewtwo;
-
 public class LearnsetEntry {
     public enum Source { LEVEL, TM, EGG, TUTOR, HM /* … */ }
 
@@ -30,7 +28,8 @@ public class LearnsetEntry {
     }
 
     public static void teachFromLearnset(Pokemon p) {
-        List<LearnsetEntry> catalog = p instanceof Mewtwo ? Mewtwo.getLearnset() : null /* …other species… */;
+        // because learnset is now an instance method, just call it directly
+        List<LearnsetEntry> catalog = (p == null) ? null : p.getLearnset();
         System.out.println("Pick a move to learn from the catalog:");
         for (int i = 0; i < catalog.size(); i++) {
             LearnsetEntry e = catalog.get(i);

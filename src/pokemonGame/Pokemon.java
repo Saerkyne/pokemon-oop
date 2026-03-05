@@ -1,5 +1,6 @@
 package pokemonGame;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -45,6 +46,10 @@ public class Pokemon {
     Natures nature;
 
     private final ArrayList<Move> moveset;
+    
+    // each individual Pokémon object keeps its own learnset reference; most species override
+    // the accessor to return a shared static list, but the base class provides an empty list
+    protected List<LearnsetEntry> learnset = new ArrayList<>();
 
     // Constructors - One is a basic constructor with default stats, the other overloads to allow for custom stats
     
@@ -296,6 +301,7 @@ public class Pokemon {
     // Direct Setters for attributes
     public void setLevel(int level) {
         this.level = level;
+        calculateCurrentStats();
     }
 
     public void setName(String name) {
@@ -308,26 +314,32 @@ public class Pokemon {
     
     public void setHpBase(int hp) {
         this.hpBase = hp;
+        calculateCurrentStats();
     }   
 
     public void setAttackBase(int attack) {
         this.attackBase = attack;
+        calculateCurrentStats();
     }
 
     public void setDefenseBase(int defense) {
         this.defenseBase = defense;
+        calculateCurrentStats();
     }
 
     public void setSpecialAttackBase(int specialAttack) {
         this.specialAttackBase = specialAttack;
+        calculateCurrentStats();
     }   
 
     public void setSpecialDefenseBase(int specialDefense) {
         this.specialDefenseBase = specialDefense;
+        calculateCurrentStats();
     }
 
     public void setSpeedBase(int speed) {
         this.speedBase = speed;
+        calculateCurrentStats();
     }
 
     public void setMaxHP(int MaxHP) {
@@ -473,6 +485,17 @@ public class Pokemon {
      */
     public void applyNature() {
         Natures.assignRandom(this);
+    }
+
+    /**
+     * Return the learnset associated with this Pokémon instance.  Species classes should
+     * override this method (typically returning a static list) so that calling
+     * <code>somePokemon.getLearnset()</code> yields the correct catalog for that
+     * species.  The default implementation returns an (initially empty) instance
+     * list, which allows subclasses that do not define learnsets to compile.
+     */
+    public List<LearnsetEntry> getLearnset() {
+        return learnset;
     }
       
 }

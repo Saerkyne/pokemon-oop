@@ -1,5 +1,6 @@
 package pokemonGame.mons;
-import pokemonGame.*;
+import pokemonGame.Pokemon;
+import pokemonGame.LearnsetEntry;
 import pokemonGame.moves.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +25,24 @@ public class Mewtwo extends Pokemon {
     
     
     // Constructor
-    public Mewtwo() {
+    public Mewtwo(String name) {
         
         // Call the superclass constructor to initialize Mewtwo's base stats and type
-        super("Mewtwo", 150, "Psychic", null, 70, 106, 110, 90, 154, 90, 130);
+        super("Mewtwo", 150, "Psychic", null,
+        70, 106, 110, 90, 154, 
+        90, 130);
+
+        this.setName(name);
+
+        int[] evYield = {0, 0, 0, 3, 0, 0}; // Mewtwo yields 3 EV points in Special Attack when defeated
+        this.setEvYield(evYield);
+        this.generateRandomIVs();
+        this.calculateCurrentStats();
     }
 
-    // Method to get Mewtwo's learnset
-    public static List<LearnsetEntry> getLearnset() {
+    // instance accessor used in polymorphic contexts
+    @Override
+    public List<LearnsetEntry> getLearnset() {
         return LEARNSET;
     }
 

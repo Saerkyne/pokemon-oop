@@ -9,8 +9,14 @@ public class App {
     public static void main(String[] args) throws Exception {
         Trainer trainer = createTrainer("Joel");
 
-        //selectFromAvailablePokemon();
-
+        /*
+        Personal Notes: when creating a pokemon this way, the Pokemon object created is the same
+        as the one then added to the trainer. In other words, in this example, "Bulby" is created
+        and added to the trainer. When we reference the trainer's Bulby, we can reference the initial 
+        "Bulby" Pokemon object, or we can reference the trainer's team object via 
+        trainer.getTeam()get(0) (assuming Bulby is in the first slot). Stat changes 
+        using one reference also apply to the other reference.
+        */
         Pokemon Bulby = createPokemon("Bulbasaur", "Bulby");
         Pokemon Chard = createPokemon("Charmander", "Chard");
         Pokemon Squirt = createPokemon("Squirtle", "Squirt");
@@ -39,10 +45,39 @@ public class App {
             }
         }
 
+
+        Pokemon bulbyTest = trainer.getTeam().get(0); // Assuming Bulby is the first Pokemon in the team
+        // Is bulbyTest the same as Bulby?
+        System.out.println("Is bulbyTest the same as Bulby? " + (bulbyTest == Bulby)); // Should print true
+
+        
+        System.out.println("Testing Attack Stat saving for " + bulbyTest.getName() + ": " + bulbyTest.getCurrentAttack());
+        System.out.println("Bulby's current attack stat: " + Bulby.getCurrentAttack()); // Should reflect the change made to bulbyTest's attack base
+
+        System.out.println(bulbyTest.getLevel());
+        System.out.println(Bulby.getLevel());
+
+        Bulby.setLevel(100);
+        System.out.println(bulbyTest.getLevel());
+        System.out.println(Bulby.getLevel());
+
+
+        
+
+        bulbyTest.setAttackBase(180); // Change the attack base stat for bulbyTest
+        System.out.println("Testing Attack Stat saving for " + bulbyTest.getName() + " after setting base to 180: " + bulbyTest.getCurrentAttack());
+        System.out.println("Testing Attack Stat saving for Bulby after setting base to 180 on bulbyTest: " + Bulby.getCurrentAttack()); // Should reflect the change made to bulbyTest's attack base
+        LearnsetEntry.teachFromLearnset(bulbyTest); // Teach the first move from the learnset to the first Pokemon in the team
+        bulbyTest.getMoveset().forEach(move -> System.out.println(bulbyTest.getName() + " learned " + move.getMoveName()));
+        Bulby.getMoveset().forEach(move -> System.out.println(Bulby.getName() + " knows " + move.getMoveName())); // Should show the same move learned by bulbyTest
+        System.out.println(bulbyTest.getName() + " has a " + bulbyTest.getNature().getDisplayName() + " nature!");
+        System.out.println(Bulby.getName() + " has a " + Bulby.getNature().getDisplayName() + " nature!"); // Should show the same nature as bulbyTest  
+
+
         
         
 
-        // Teach Pikachu some moves from its learnset
+        // Teach some moves from its learnset
         /*for (int i = 0; i < 4; i++) {
             LearnsetEntry.teachFromLearnset(pikachu);
         }

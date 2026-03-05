@@ -27,8 +27,9 @@ public class Pikachu extends Pokemon {
         super("Pikachu", 25, "Electric", "None", 100, 55, 40, 50, 50, 90, 90);
     }
 
-    // Method to get Pikachu's learnset
-    public static List<LearnsetEntry> getLearnset() {
+    // instance accessor used in polymorphic contexts
+    @Override
+    public List<LearnsetEntry> getLearnset() {
         return LEARNSET;
     }
 

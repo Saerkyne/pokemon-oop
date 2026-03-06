@@ -25,6 +25,10 @@ public class Attack {
     // Non RBY crit formula, using attacker speed and opponent speed to determine crit chance,
     //  with a base 4.17% crit chance at 0 speed difference, 
     // increasing up to a maximum of 15% crit chance at a speed difference of 100 or more.
+    // Another possible formula is critChance = (sqrt(attackerSpeed) / 1.2) + 4), 
+    // which gives diminishing returns on crit chance as speed increases, but 
+    // the linear formula is simpler and easier to understand and doesn't factor in
+    // the defender's speed.
     public boolean calculateCriticalHit(Pokemon attacker, Pokemon defender) {
         int attackerSpeed = attacker.getCurrentSpeed();
         int defenderSpeed = defender.getCurrentSpeed();

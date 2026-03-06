@@ -1,6 +1,6 @@
 package pokemonGame;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.HashMap;
 
 public class TypeChart {
     //Row is attack type, column is pokemon type, value is effectiveness multiplier
@@ -28,29 +28,34 @@ public class TypeChart {
         };
     }
 
-    public float getEffectiveness(String moveType, String pokemonType) {
-        Dictionary<String, Integer> typeIndices = new Hashtable<String, Integer>();
-        typeIndices.put("Normal", 0);
-        typeIndices.put("Fire", 1);
-        typeIndices.put("Water", 2);
-        typeIndices.put("Electric", 3);
-        typeIndices.put("Grass", 4);
-        typeIndices.put("Ice", 5);
-        typeIndices.put("Fighting", 6);
-        typeIndices.put("Poison", 7);
-        typeIndices.put("Ground", 8);
-        typeIndices.put("Flying", 9);
-        typeIndices.put("Psychic", 10);
-        typeIndices.put("Bug", 11);
-        typeIndices.put("Rock", 12);
-        typeIndices.put("Ghost", 13);
-        typeIndices.put("Dragon", 14);
-        typeIndices.put("Dark", 15);
-        typeIndices.put("Steel", 16);
-        typeIndices.put("Fairy", 17);
 
-        int moveIndex = typeIndices.get(moveType);
-        int pokemonIndex = typeIndices.get(pokemonType);
+    private static final Map<String, Integer> TYPE_INDICES = new HashMap<>();
+        static {
+        TYPE_INDICES.put("Normal", 0);
+        TYPE_INDICES.put("Fire", 1);
+        TYPE_INDICES.put("Water", 2);
+        TYPE_INDICES.put("Electric", 3);
+        TYPE_INDICES.put("Grass", 4);
+        TYPE_INDICES.put("Ice", 5);
+        TYPE_INDICES.put("Fighting", 6);
+        TYPE_INDICES.put("Poison", 7);
+        TYPE_INDICES.put("Ground", 8);
+        TYPE_INDICES.put("Flying", 9);
+        TYPE_INDICES.put("Psychic", 10);
+        TYPE_INDICES.put("Bug", 11);
+        TYPE_INDICES.put("Rock", 12);
+        TYPE_INDICES.put("Ghost", 13);
+        TYPE_INDICES.put("Dragon", 14);
+        TYPE_INDICES.put("Dark", 15);
+        TYPE_INDICES.put("Steel", 16);
+        TYPE_INDICES.put("Fairy", 17);
+        }
+
+
+    public float getEffectiveness(String moveType, String pokemonType) {
+
+        int moveIndex = TYPE_INDICES.get(moveType);
+        int pokemonIndex = TYPE_INDICES.get(pokemonType);
 
         return typeChart[moveIndex][pokemonIndex];
     }

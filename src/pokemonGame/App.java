@@ -3,7 +3,6 @@ package pokemonGame;
 import pokemonGame.mons.*;
 //import java.util.ArrayList;
 //import pokemonGame.moves.*;
-import java.util.TreeMap;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -210,55 +209,21 @@ public class App {
         // It can return the newly created Pokémon instance.
         
         Pokemon createdMon = null;
-        TreeMap<Integer, String> pokemonOptions = new TreeMap<>();
-        pokemonOptions.put(1, "Bulbasaur");
-        pokemonOptions.put(2, "Ivysaur");
-        pokemonOptions.put(3, "Venusaur");
-        pokemonOptions.put(4, "Charmander");
-        pokemonOptions.put(5, "Charmeleon");
-        pokemonOptions.put(6, "Charizard");
-        pokemonOptions.put(7, "Squirtle");
-        pokemonOptions.put(8, "Wartortle");
-        pokemonOptions.put(9, "Blastoise");
-
-        if (species == null || !pokemonOptions.containsValue(species)) {
-            System.out.println("Invalid species selected. Please choose a valid Pokémon.");
+        if (species == null) {
+            System.out.println("No species selected. Please choose a valid Pokémon species.");
             return null;
         }
 
-        switch (species) {
-            case "Bulbasaur":
-                createdMon = new Bulbasaur(name);
-                break;
-            case "Ivysaur":
-                createdMon = new Ivysaur(name);
-                break;
-            case "Venusaur":
-                createdMon = new Venusaur(name);
-                break;
-            case "Charmander":
-                createdMon = new Charmander(name);
-                break;
-            case "Charmeleon":
-                createdMon = new Charmeleon(name);
-                break;
-            case "Charizard":
-                createdMon = new Charizard(name);
-                break;
-            case "Squirtle":
-                createdMon = new Squirtle(name);
-                break;
-            case "Wartortle":
-                createdMon = new Wartortle(name);
-                break;
-            case "Blastoise":
-                createdMon = new Blastoise(name);
-                break;
+        switch (species.toLowerCase()) {
+            case "bulbasaur": createdMon = new Bulbasaur(name); break;
+            case "charmander": createdMon = new Charmander(name); break;
+            case "squirtle": createdMon = new Squirtle(name); break;
+                
             default:
-                System.out.println("Invalid species selected. Please choose a valid Pokémon.");
+                System.out.println("Species not recognized. Please choose a valid Pokémon species.");
                 return null;
         }
                
-        return createdMon; // Placeholder return value
+        return createdMon;
     }
 }

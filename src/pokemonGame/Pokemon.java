@@ -40,7 +40,7 @@ public class Pokemon {
     private int evSpeed; // This must be 252 or lower for each Pokemon
     private int evTotal; // This must be 510 or lower for each Pokemon.
     private int expYield; // This is the amount of experience points a Pokemon yields when defeated in battle
-    private int currentExp;
+    private int currentExp = 0; // This is the current amount of experience points a Pokemon has, which increases when it defeats other Pokemon in battle
     private int[] evYield; // This array holds the EV yield for each stat when this Pokemon is defeated in battle, 
     // in the order of HP, Attack, Defense, Special Attack, Special Defense, Speed
     private Natures nature;

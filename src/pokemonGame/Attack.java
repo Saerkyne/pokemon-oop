@@ -3,7 +3,11 @@ import java.util.Random;
 
 public class Attack {
 
-    TypeChart typeChart = new TypeChart();
+    private static final TypeChart TYPE_CHART = new TypeChart();
+    private static final Random RNG = new Random();
+
+    
+    
     public float calculateEffectiveness(String defenderType, Move move) {
         String moveType = move.getType();
         float effectiveness;
@@ -11,15 +15,14 @@ public class Attack {
         if (defenderType == null || defenderType.equals("None")) {
             effectiveness = 1.0f; // Neutral effectiveness if no secondary type
         } else {
-            effectiveness = typeChart.getEffectiveness(moveType, defenderType);
+            effectiveness = TYPE_CHART.getEffectiveness(moveType, defenderType);
         }
 
         return effectiveness;
     }
 
     public int randomInt(int min, int max) {
-        Random rand = new Random();
-        return rand.nextInt((max - min) + 1) + min;
+        return RNG.nextInt((max - min) + 1) + min;
     }
 
     // Non RBY crit formula, using attacker speed and opponent speed to determine crit chance,

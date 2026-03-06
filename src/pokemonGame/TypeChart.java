@@ -3,10 +3,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class TypeChart {
-    String moveType;
-    String pokemonTypePrimary;
-    String pokemonTypeSecondary;
-    float effectiveness;
     //Row is attack type, column is pokemon type, value is effectiveness multiplier
     float[][] typeChart;
     public TypeChart() {

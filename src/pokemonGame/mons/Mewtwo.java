@@ -11,8 +11,8 @@ public class Mewtwo extends Pokemon {
     private static final List<LearnsetEntry> LEARNSET = new ArrayList<>();
     static {
         LEARNSET.add(new LearnsetEntry(new Confusion(), LearnsetEntry.Source.LEVEL, 1));
-        LEARNSET.add(new LearnsetEntry(new MegaPunch(), LearnsetEntry.Source.TM, 01));
-        LEARNSET.add(new LearnsetEntry(new Strength(), LearnsetEntry.Source.HM, 04));
+        LEARNSET.add(new LearnsetEntry(new MegaPunch(), LearnsetEntry.Source.TM, 1));
+        LEARNSET.add(new LearnsetEntry(new Strength(), LearnsetEntry.Source.HM, 4));
         LEARNSET.add(new LearnsetEntry(new Psychic(), LearnsetEntry.Source.LEVEL, 66));
         LEARNSET.add(new LearnsetEntry(new Swift(), LearnsetEntry.Source.LEVEL, 1));
         LEARNSET.add(new LearnsetEntry(new Disable(), LearnsetEntry.Source.LEVEL, 1));

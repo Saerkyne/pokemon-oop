@@ -8,43 +8,43 @@ import java.util.Scanner;
 public class Pokemon {
 
     // Initialize attributes for all Pokemon
-    String species;
-    String name;
-    int index;
-    String typePrimary;
-    String typeSecondary;
-    int level;
-    int hpBase;  
-    int attackBase; 
-    int defenseBase; 
-    int specialAttackBase; 
-    int specialDefenseBase;
-    int speedBase;
-    int MaxHP;
-    int currentHP;
-    int currentAttack;
-    int currentDefense;
-    int currentSpecialAttack;
-    int currentSpecialDefense;
-    int currentSpeed;
-    int ivHp;
-    int ivAttack;
-    int ivDefense;
-    int ivSpecialAttack;
-    int ivSpecialDefense;
-    int ivSpeed;
-    int evHp;
-    int evAttack;
-    int evDefense;
-    int evSpecialAttack;
-    int evSpecialDefense;
-    int evSpeed;
-    int evTotal; //This must be 252 or lower for each Pokemon.
-    int expYield; // This is the amount of experience points a Pokemon yields when defeated in battle
-    int currentExp;
-    int[] evYield; // This array holds the EV yield for each stat when this Pokemon is defeated in battle, 
+    private String species;
+    private String name;
+    private int index;
+    private String typePrimary;
+    private String typeSecondary;
+    private int level;
+    private int hpBase;  
+    private int attackBase; 
+    private int defenseBase; 
+    private int specialAttackBase; 
+    private int specialDefenseBase;
+    private int speedBase;
+    private int MaxHP;
+    private int currentHP;
+    private int currentAttack;
+    private int currentDefense;
+    private int currentSpecialAttack;
+    private int currentSpecialDefense;
+    private int currentSpeed;
+    private int ivHp;
+    private int ivAttack;
+    private int ivDefense;
+    private int ivSpecialAttack;
+    private int ivSpecialDefense;
+    private int ivSpeed;
+    private int evHp;
+    private int evAttack;
+    private int evDefense;
+    private int evSpecialAttack;
+    private int evSpecialDefense;
+    private int evSpeed;
+    private int evTotal; //This must be 252 or lower for each Pokemon.
+    private int expYield; // This is the amount of experience points a Pokemon yields when defeated in battle
+    private int currentExp;
+    private int[] evYield; // This array holds the EV yield for each stat when this Pokemon is defeated in battle, 
     // in the order of HP, Attack, Defense, Special Attack, Special Defense, Speed
-    Natures nature;
+    private Natures nature;
 
     private final ArrayList<MoveSlot> moveset;
     
@@ -423,6 +423,7 @@ public class Pokemon {
     // Modifiers for attributes
     public void levelUp() {
         this.level++;
+        this.calculateCurrentStats();
         // Placeholder for actual stat increases on level up
     }
 

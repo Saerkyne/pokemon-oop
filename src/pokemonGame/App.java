@@ -93,7 +93,7 @@ public class App {
         //Iterate through Pikachu's moves and calculate effectiveness against Gengar instead of hardcoded attacks
         /*for (Move move : pikachu.getMoveset()) {
             System.out.println(pikachu.getName() + " used " + move.getMoveName() + " against " + gengar.getName() + "!");
-            Attack attack = new Attack() {};
+            Attack attack = new Attack();
             float damageDone = attack.calculateDamage(pikachu, gengar, move);
 
             int roundedDamage = (int) Math.floor(damageDone);
@@ -105,7 +105,7 @@ public class App {
         }*/
 
         /*System.out.println(pikachu.getName() + " used Thunder against " + gengar.getName() + "!");
-        Attack attack = new Attack() {};
+        Attack attack = new Attack();
         float damageDone = attack.calculateDamage(pikachu, gengar, new Thunder());
         int roundedDamage = (int) Math.floor(damageDone);
         System.out.println("Damage dealt: " + roundedDamage);  */

@@ -1,9 +1,7 @@
 package pokemonGame;
 import java.util.Random;
 
-public abstract class Attack {
-    float effectivenessPrimaryType;
-    float effectivenessSecondaryType;
+public class Attack {
 
     TypeChart typeChart = new TypeChart();
     public float calculateEffectiveness(String defenderType, Move move) {
@@ -57,7 +55,7 @@ public abstract class Attack {
             stab = true;
             System.out.println("STAB applied!");
         } else {
-            stab = false;
+            System.out.println("No STAB.");
         }
 
         System.out.println("It" + (combinedEffectiveness == 0.0 ? " had no effect..." : combinedEffectiveness < 1 ? "'s not very effective..." : combinedEffectiveness > 1 ? "'s super effective!" : "'s effective."));

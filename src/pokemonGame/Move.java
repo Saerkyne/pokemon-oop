@@ -1,13 +1,13 @@
 package pokemonGame;
 public abstract class Move {
-    String moveName;
-    int movePower;
+    private String moveName;
+    private int movePower;
     //moveTypes are the elemental types of the move, such as fire, water, grass, etc.
-    String moveType;
+    private String moveType;
     //moveCategory can be physical, special, or status
-    String moveCategory;
-    int accuracy;
-    int maxPp;
+    private String moveCategory;
+    private int accuracy;
+    private int maxPp;
 
     protected Move(String moveName, int movePower, String moveType, String moveCategory, int accuracy, int maxPp) {
         this.moveName = moveName;

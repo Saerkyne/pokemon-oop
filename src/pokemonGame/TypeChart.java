@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class TypeChart {
     //Row is attack type, column is pokemon type, value is effectiveness multiplier
-    float[][] typeChart;
+    private float[][] typeChart;
     public TypeChart() {
         typeChart = new float[][]{
             {1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1, .5f,   0,   1,   1, .5f,   1}, //Normal Attack

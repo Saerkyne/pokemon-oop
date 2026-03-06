@@ -1,5 +1,6 @@
 package pokemonGame;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LearnsetEntry {
@@ -27,26 +28,36 @@ public class LearnsetEntry {
         return parameter;
     }
 
-    public static void teachFromLearnset(Pokemon p) {
-        // because learnset is now an instance method, just call it directly
-        List<LearnsetEntry> catalog = (p == null) ? null : p.getLearnset();
-        if (p == null) { System.out.println("No Pokemon provided!"); return; }
-        System.out.println("Pick a move to learn from the catalog:");
-        for (int i = 0; i < catalog.size(); i++) {
-            LearnsetEntry e = catalog.get(i);
-            if (e.getSource() == Source.LEVEL && p.getLevel() < e.getParameter())
-                continue;  // skip moves that are above the Pokemon's current level
-            // skip moves that are already known
-            if (p.getMoveset().stream().anyMatch(m -> m.getMove().getMoveName().equals(e.getMove().getMoveName())))
-                continue;
-            System.out.printf("%d: %s : %s %d%n",
-                            i + 1,
-                            e.getMove().getMoveName(),
-                            e.getSource(), e.getParameter());
+    /**
+     * Return the subset of a Pokémon's learnset that it is currently eligible
+     * to learn — moves at or below its level that it doesn't already know.
+     * This is a pure query: no I/O, no side-effects.  The caller can present
+     * the list however it likes (terminal, Discord embed, GUI) and then call
+     * {@link Pokemon#addMove} or {@link Pokemon#replaceMove} with the choice.
+     *
+     * @param p the Pokémon whose eligible moves to retrieve
+     * @return  a list of LearnsetEntry the Pokémon can learn right now
+     */
+    public static List<LearnsetEntry> getEligibleMoves(Pokemon p) {
+        if (p == null) {
+            return new ArrayList<>();
         }
-        String line = System.console().readLine("Choice (1-%d): ", catalog.size());
-        int choice = Integer.parseInt(line);
-        if (choice >= 1 && choice <= catalog.size())
-            p.addMove(catalog.get(choice - 1).getMove());
+        List<LearnsetEntry> catalog = p.getLearnset();
+        List<LearnsetEntry> eligible = new ArrayList<>();
+
+        for (LearnsetEntry e : catalog) {
+            // Skip moves above the Pokémon's current level
+            if (e.getSource() == Source.LEVEL && p.getLevel() < e.getParameter()) {
+                continue;
+            }
+            // Skip moves the Pokémon already knows
+            boolean alreadyKnown = p.getMoveset().stream()
+                    .anyMatch(m -> m.getMove().getMoveName().equals(e.getMove().getMoveName()));
+            if (alreadyKnown) {
+                continue;
+            }
+            eligible.add(e);
+        }
+        return eligible;
     }
 }

@@ -15,7 +15,7 @@ public class Charmander extends Pokemon {
     }
 
     public Charmander(String name) {
-        super("Charmander", 4, "Fire", "None",
+        super("Charmander", 4, "Fire", null,
             5, 39, 52, 43,
             60, 50, 65);
 

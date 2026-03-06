@@ -15,7 +15,7 @@ public class Wartortle extends Pokemon {
     }
 
     public Wartortle(String name) {
-        super("Wartortle", 2, "Water", null,
+        super("Wartortle", 8, "Water", null,
             5, 59, 63, 80,
             65, 80, 58);
 

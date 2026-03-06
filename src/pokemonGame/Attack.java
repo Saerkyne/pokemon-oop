@@ -24,16 +24,18 @@ public abstract class Attack {
         return rand.nextInt((max - min) + 1) + min;
     }
 
-    public boolean calculateCriticalHit(Pokemon attacker) {
-        int chance = randomInt(0, 255);
-        int threshold = attacker.getSpeedBaseStat() / 2; // Example threshold based on speed stat
-
-        if (chance > threshold) {
-            System.out.println("A critical hit!");
-            return true; // Return 2 for critical hit
-        } else {
-            return false; // Return 1 for normal hit
-        }
+    // Non RBY crit formula, using attacker speed and opponent speed to determine crit chance,
+    //  with a base 4.17% crit chance at 0 speed difference, 
+    // increasing up to a maximum of 15% crit chance at a speed difference of 100 or more.
+    public boolean calculateCriticalHit(Pokemon attacker, Pokemon defender) {
+        int attackerSpeed = attacker.getCurrentSpeed();
+        int defenderSpeed = defender.getCurrentSpeed();
+        int critChance = 417; // Base crit chance of 4.17% (417/10000)
+        critChance = 417 + (attackerSpeed - defenderSpeed) * 83; // Increase crit chance by 0.83% for each point of speed difference
+        critChance = Math.min(1500, Math.max(417, critChance)); // Cap crit chance between 4.17% and 15%
+        int randomValue = randomInt(1, 10000); // Random value between 1 and 10000
+        return randomValue <= critChance; // Crit occurs if random value is less than or equal to crit chance
+        
     }
 
     public int calculateDamage(Pokemon attacker, Pokemon defender, Move move) {
@@ -63,8 +65,8 @@ public abstract class Attack {
 
         int level = attacker.getLevel();
         int power = move.getMovePower();
-        int attackStat = 168; //attacker.getAttackStatForMove(move);
-        int defenseStat = 218; //defender.getDefenseStatForMove(move);
+        int attackStat = attacker.getAttackStatForMove(move);
+        int defenseStat = defender.getDefenseStatForMove(move);
 
         System.out.println("Attacker level: " + level);
         System.out.println("Move power: " + power);
@@ -76,7 +78,7 @@ public abstract class Attack {
 
         // Crit damage modifiers
         // RBY has a bad crit formula, that negates stat stages. This is going to "fix" that issue, preventing a crit from ignoring stat changes but still giving a 2x damage bonus.
-        if (calculateCriticalHit(attacker)) {
+        if (calculateCriticalHit(attacker, defender)) {
             level = level * 2; // Bonus multiplier for critical hits
         } 
 

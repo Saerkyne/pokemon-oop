@@ -15,7 +15,7 @@ public class Blastoise extends Pokemon {
     }
 
     public Blastoise(String name) {
-        super("Blastoise", 3, "Water", null,
+        super("Blastoise", 9, "Water", null,
             5, 79, 83, 100,
             85, 105, 78);
 

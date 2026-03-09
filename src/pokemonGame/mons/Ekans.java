@@ -11,9 +11,19 @@ public class Ekans extends Pokemon {
     }
 
     public Ekans(String name) {
-        super("Ekans", 23, "Poison", null,
-            5, 35, 60, 44,
-            40, 54, 55);
+        super(
+            "Ekans",
+            23,
+            "Poison",
+            null,
+            5,
+            35,
+            60,
+            44,
+            40,
+            54,
+            55
+        );
 
         this.setName(name);
 

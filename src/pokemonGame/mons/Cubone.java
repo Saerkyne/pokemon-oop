@@ -11,9 +11,19 @@ public class Cubone extends Pokemon {
     }
 
     public Cubone(String name) {
-        super("Cubone", 104, "Ground", null,
-            5, 50, 50, 95,
-            40, 50, 35);
+        super(
+            "Cubone",
+            104,
+            "Ground",
+            null,
+            5,
+            50,
+            50,
+            95,
+            40,
+            50,
+            35
+        );
 
         this.setName(name);
 

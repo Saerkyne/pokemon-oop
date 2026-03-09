@@ -11,9 +11,19 @@ public class Dewgong extends Pokemon {
     }
 
     public Dewgong(String name) {
-        super("Dewgong", 87, "Water", "Ice",
-            5, 90, 70, 80,
-            70, 95, 70);
+        super(
+            "Dewgong",
+            87,
+            "Water",
+            "Ice",
+            5,
+            90,
+            70,
+            80,
+            70,
+            95,
+            70
+        );
 
         this.setName(name);
 

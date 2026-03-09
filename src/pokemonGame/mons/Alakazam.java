@@ -11,9 +11,19 @@ public class Alakazam extends Pokemon {
     }
 
     public Alakazam(String name) {
-        super("Alakazam", 65, "Psychic", null,
-            5, 55, 50, 45,
-            135, 95, 120);
+        super(
+            "Alakazam",
+            65,
+            "Psychic",
+            null,
+            5,
+            55,
+            50,
+            45,
+            135,
+            95,
+            120
+        );
 
         this.setName(name);
 

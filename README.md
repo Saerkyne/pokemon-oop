@@ -150,6 +150,7 @@ Move categories must be exactly `"Physical"`, `"Special"`, or `"Status"`.
 ### Work in Progress
 
 - [ ] **Battle loop** — damage is calculated but never applied to `currentHP`; turn ordering is not implemented
+- [ ] **Special moves** — no special move effects are accounted for currently, only damage dealing
 - [ ] **Pokémon selection UI** — `selectFromAvailablePokemon()` is stubbed out
 - [ ] **More moves** — only 25 of ~165 Gen 1 moves are implemented so far
 - [ ] **Input refactoring** — some input handling mixes `Scanner` and `System.console()`
@@ -161,6 +162,7 @@ Move categories must be exactly `"Physical"`, `"Special"`, or `"Status"`.
 - [ ] Wild Pokémon encounters
 - [ ] Trainer battles with AI
 - [ ] Evolution
+- [ ] Gender
 
 ### Out of Scope
 

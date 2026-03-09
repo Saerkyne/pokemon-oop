@@ -11,9 +11,19 @@ public class Diglett extends Pokemon {
     }
 
     public Diglett(String name) {
-        super("Diglett", 50, "Ground", null,
-            5, 10, 55, 25,
-            35, 45, 95);
+        super(
+            "Diglett",
+            50,
+            "Ground",
+            null,
+            5,
+            10,
+            55,
+            25,
+            35,
+            45,
+            95
+        );
 
         this.setName(name);
 

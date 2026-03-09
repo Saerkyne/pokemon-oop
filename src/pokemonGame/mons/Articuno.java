@@ -11,9 +11,19 @@ public class Articuno extends Pokemon {
     }
 
     public Articuno(String name) {
-        super("Articuno", 144, "Ice", "Flying",
-            5, 90, 85, 100,
-            95, 125, 85);
+        super(
+            "Articuno",
+            144,
+            "Ice",
+            "Flying",
+            5,
+            90,
+            85,
+            100,
+            95,
+            125,
+            85
+        );
 
         this.setName(name);
 

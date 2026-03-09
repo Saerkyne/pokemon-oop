@@ -11,9 +11,19 @@ public class Dugtrio extends Pokemon {
     }
 
     public Dugtrio(String name) {
-        super("Dugtrio", 51, "Ground", null,
-            5, 35, 100, 50,
-            50, 70, 120);
+        super(
+            "Dugtrio",
+            51,
+            "Ground",
+            null,
+            5,
+            35,
+            100,
+            50,
+            50,
+            70,
+            120
+        );
 
         this.setName(name);
 

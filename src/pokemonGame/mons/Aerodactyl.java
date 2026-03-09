@@ -11,9 +11,19 @@ public class Aerodactyl extends Pokemon {
     }
 
     public Aerodactyl(String name) {
-        super("Aerodactyl", 142, "Rock", "Flying",
-            5, 80, 105, 65,
-            60, 75, 130);
+        super(
+            "Aerodactyl",
+            142,
+            "Rock",
+            "Flying",
+            5,
+            80,
+            105,
+            65,
+            60,
+            75,
+            130
+        );
 
         this.setName(name);
 

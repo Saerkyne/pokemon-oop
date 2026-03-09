@@ -11,9 +11,19 @@ public class Clefable extends Pokemon {
     }
 
     public Clefable(String name) {
-        super("Clefable", 36, "Fairy", null,
-            5, 95, 70, 73,
-            95, 90, 60);
+        super(
+            "Clefable",
+            36,
+            "Fairy",
+            null,
+            5,
+            95,
+            70,
+            73,
+            95,
+            90,
+            60
+        );
 
         this.setName(name);
 

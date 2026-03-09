@@ -16,12 +16,8 @@ public class App {
         using one reference also apply to the other reference.
         */
         Pokemon Bulby = createPokemon("Bulbasaur", "Bulby");
-        Pokemon Chard = createPokemon("Charmander", "Chard");
-        Pokemon Squirt = createPokemon("Squirtle", "Squirt");
 
         trainer.addPokemonToTeam(Bulby);
-        trainer.addPokemonToTeam(Chard);
-        trainer.addPokemonToTeam(Squirt);
         trainer.getTeam().forEach(p -> System.out.println(p.getName() + " added to team!"));
         
 
@@ -34,6 +30,8 @@ public class App {
             }
         }
 
+        Bulby.setLevel(100);
+
         //Display team stats
         System.out.println();
         System.out.println("Your team's stats:");
@@ -44,56 +42,39 @@ public class App {
         }
 
 
-        Pokemon bulbyTest = trainer.getTeam().get(0); // Assuming Bulby is the first Pokemon in the team
-        // Is bulbyTest the same as Bulby?
-        System.out.println("Is bulbyTest the same as Bulby? " + (bulbyTest == Bulby)); // Should print true
-
         
-        System.out.println("Testing Attack Stat saving for " + bulbyTest.getName() + ": " + bulbyTest.getCurrentAttack());
-        System.out.println("Bulby's current attack stat: " + Bulby.getCurrentAttack()); // Should reflect the change made to bulbyTest's attack base
-
-        System.out.println(bulbyTest.getLevel());
-        System.out.println(Bulby.getLevel());
-
-        Bulby.setLevel(100);
-        System.out.println(bulbyTest.getLevel());
-        System.out.println(Bulby.getLevel());
 
 
         
 
-        bulbyTest.setAttackBase(180); // Change the attack base stat for bulbyTest
-        System.out.println("Testing Attack Stat saving for " + bulbyTest.getName() + " after setting base to 180: " + bulbyTest.getCurrentAttack());
-        System.out.println("Testing Attack Stat saving for Bulby after setting base to 180 on bulbyTest: " + Bulby.getCurrentAttack()); // Should reflect the change made to bulbyTest's attack base
-        // --- Interactive move teaching (all I/O lives here in the controller) ---
-        teachMoveFromLearnset(bulbyTest);
-        bulbyTest.getMoveset().forEach(move -> System.out.println(bulbyTest.getName() + " learned " + move.getMove().getMoveName()));
-        Bulby.getMoveset().forEach(move -> System.out.println(Bulby.getName() + " knows " + move.getMove().getMoveName())); // Should show the same move learned by bulbyTest
-        System.out.println(bulbyTest.getName() + " has a " + bulbyTest.getNature().getDisplayName() + " nature!");
-        System.out.println(Bulby.getName() + " has a " + Bulby.getNature().getDisplayName() + " nature!"); // Should show the same nature as bulbyTest  
-
+        
 
         
         
 
         // Teach some moves from its learnset
-        /*for (int i = 0; i < 4; i++) {
-            LearnsetEntry.teachFromLearnset(pikachu);
+        for (int i = 0; i < 4; i++) {
+            LearnsetEntry.getEligibleMoves(Bulby)                    .stream()
+                    .filter(e -> e.getSource() == LearnsetEntry.Source.LEVEL)
+                    .findFirst()
+                    .ifPresent(e -> {
+                        if (Bulby.addMove(e.getMove())) {
+                            System.out.println(Bulby.getName() + " learned " + e.getMove().getMoveName() + "!");
+                        }
+                    });
         }
         
-        pikachu.getMoveset().forEach(move -> System.out.println(pikachu.getName() + " learned " + move.getMoveName()));
-        */
 
         
 
         
         
 
-        //Iterate through Pikachu's moves and calculate effectiveness against Gengar instead of hardcoded attacks
-        /*for (Move move : pikachu.getMoveset()) {
-            System.out.println(pikachu.getName() + " used " + move.getMoveName() + " against " + gengar.getName() + "!");
+        //Iterate through Bulby's moves and calculate effectiveness against Gengar instead of hardcoded attacks
+        /*for (Move move : Bulby.getMoveset()) {
+            System.out.println(Bulby.getName() + " used " + move.getMoveName() + " against " + gengar.getName() + "!");
             Attack attack = new Attack();
-            float damageDone = attack.calculateDamage(pikachu, gengar, move);
+            float damageDone = attack.calculateDamage(Bulby, gengar, move);
 
             int roundedDamage = (int) Math.floor(damageDone);
             
@@ -103,9 +84,9 @@ public class App {
             System.out.println();
         }*/
 
-        /*System.out.println(pikachu.getName() + " used Thunder against " + gengar.getName() + "!");
+        /*System.out.println(Bulby.getName() + " used Thunder against " + gengar.getName() + "!");
         Attack attack = new Attack();
-        float damageDone = attack.calculateDamage(pikachu, gengar, new Thunder());
+        float damageDone = attack.calculateDamage(Bulby, gengar, new Thunder());
         int roundedDamage = (int) Math.floor(damageDone);
         System.out.println("Damage dealt: " + roundedDamage);  */
 

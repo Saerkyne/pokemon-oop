@@ -11,9 +11,19 @@ public class Caterpie extends Pokemon {
     }
 
     public Caterpie(String name) {
-        super("Caterpie", 10, "Bug", null,
-            5, 45, 30, 35,
-            20, 20, 45);
+        super(
+            "Caterpie",
+            10,
+            "Bug",
+            null,
+            5,
+            45,
+            30,
+            35,
+            20,
+            20,
+            45
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Drowzee extends Pokemon {
     }
 
     public Drowzee(String name) {
-        super("Drowzee", 96, "Psychic", null,
-            5, 60, 48, 45,
-            43, 90, 42);
+        super(
+            "Drowzee",
+            96,
+            "Psychic",
+            null,
+            5,
+            60,
+            48,
+            45,
+            43,
+            90,
+            42
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Dodrio extends Pokemon {
     }
 
     public Dodrio(String name) {
-        super("Dodrio", 85, "Normal", "Flying",
-            5, 60, 110, 70,
-            60, 60, 110);
+        super(
+            "Dodrio",
+            85,
+            "Normal",
+            "Flying",
+            5,
+            60,
+            110,
+            70,
+            60,
+            60,
+            110
+        );
 
         this.setName(name);
 

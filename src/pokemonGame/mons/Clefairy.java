@@ -11,9 +11,19 @@ public class Clefairy extends Pokemon {
     }
 
     public Clefairy(String name) {
-        super("Clefairy", 35, "Fairy", null,
-            5, 70, 45, 48,
-            60, 65, 35);
+        super(
+            "Clefairy",
+            35,
+            "Fairy",
+            null,
+            5,
+            70,
+            45,
+            48,
+            60,
+            65,
+            35
+        );
 
         this.setName(name);
 

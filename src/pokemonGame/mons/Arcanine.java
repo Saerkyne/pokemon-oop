@@ -11,9 +11,19 @@ public class Arcanine extends Pokemon {
     }
 
     public Arcanine(String name) {
-        super("Arcanine", 59, "Fire", null,
-            5, 90, 110, 80,
-            100, 80, 95);
+        super(
+            "Arcanine",
+            59,
+            "Fire",
+            null,
+            5,
+            90,
+            110,
+            80,
+            100,
+            80,
+            95
+        );
 
         this.setName(name);
 

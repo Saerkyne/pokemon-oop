@@ -11,9 +11,19 @@ public class Arbok extends Pokemon {
     }
 
     public Arbok(String name) {
-        super("Arbok", 24, "Poison", null,
-            5, 60, 95, 69,
-            65, 79, 80);
+        super(
+            "Arbok",
+            24,
+            "Poison",
+            null,
+            5,
+            60,
+            95,
+            69,
+            65,
+            79,
+            80
+        );
 
         this.setName(name);
 

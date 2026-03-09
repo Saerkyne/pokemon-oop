@@ -15,9 +15,19 @@ public class Charmeleon extends Pokemon {
     }
 
     public Charmeleon(String name) {
-        super("Charmeleon", 5, "Fire", null,
-            5, 58, 64, 58,
-            80, 65, 80);
+        super(
+            "Charmeleon",
+            5,
+            "Fire",
+            null,
+            5,
+            58,
+            64,
+            58,
+            80,
+            65,
+            80
+        );
 
         this.setName(name);
 

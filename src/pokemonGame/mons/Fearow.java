@@ -11,9 +11,19 @@ public class Fearow extends Pokemon {
     }
 
     public Fearow(String name) {
-        super("Fearow", 22, "Normal", "Flying",
-            5, 65, 90, 65,
-            61, 61, 100);
+        super(
+            "Fearow",
+            22,
+            "Normal",
+            "Flying",
+            5,
+            65,
+            90,
+            65,
+            61,
+            61,
+            100
+        );
 
         this.setName(name);
 

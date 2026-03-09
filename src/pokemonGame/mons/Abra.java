@@ -11,9 +11,19 @@ public class Abra extends Pokemon {
     }
 
     public Abra(String name) {
-        super("Abra", 63, "Psychic", null,
-            5, 25, 20, 15,
-            105, 55, 90);
+        super(
+            "Abra",
+            63,
+            "Psychic",
+            null,
+            5,
+            25,
+            20,
+            15,
+            105,
+            55,
+            90
+        );
 
         this.setName(name);
 

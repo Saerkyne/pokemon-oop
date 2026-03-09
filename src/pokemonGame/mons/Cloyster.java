@@ -11,9 +11,19 @@ public class Cloyster extends Pokemon {
     }
 
     public Cloyster(String name) {
-        super("Cloyster", 91, "Water", "Ice",
-            5, 50, 95, 180,
-            85, 45, 70);
+        super(
+            "Cloyster",
+            91,
+            "Water",
+            "Ice",
+            5,
+            50,
+            95,
+            180,
+            85,
+            45,
+            70
+        );
 
         this.setName(name);
 

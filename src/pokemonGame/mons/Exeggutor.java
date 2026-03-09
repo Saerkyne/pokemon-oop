@@ -11,9 +11,19 @@ public class Exeggutor extends Pokemon {
     }
 
     public Exeggutor(String name) {
-        super("Exeggutor", 103, "Grass", "Psychic",
-            5, 95, 95, 85,
-            125, 75, 55);
+        super(
+            "Exeggutor",
+            103,
+            "Grass",
+            "Psychic",
+            5,
+            95,
+            95,
+            85,
+            125,
+            75,
+            55
+        );
 
         this.setName(name);
 

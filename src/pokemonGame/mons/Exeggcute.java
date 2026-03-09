@@ -11,9 +11,19 @@ public class Exeggcute extends Pokemon {
     }
 
     public Exeggcute(String name) {
-        super("Exeggcute", 102, "Grass", "Psychic",
-            5, 60, 40, 80,
-            60, 45, 40);
+        super(
+            "Exeggcute",
+            102,
+            "Grass",
+            "Psychic",
+            5,
+            60,
+            40,
+            80,
+            60,
+            45,
+            40
+        );
 
         this.setName(name);
 

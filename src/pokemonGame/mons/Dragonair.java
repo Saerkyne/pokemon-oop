@@ -11,9 +11,19 @@ public class Dragonair extends Pokemon {
     }
 
     public Dragonair(String name) {
-        super("Dragonair", 148, "Dragon", null,
-            5, 61, 84, 65,
-            70, 70, 70);
+        super(
+            "Dragonair",
+            148,
+            "Dragon",
+            null,
+            5,
+            61,
+            84,
+            65,
+            70,
+            70,
+            70
+        );
 
         this.setName(name);
 

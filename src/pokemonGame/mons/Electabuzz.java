@@ -11,9 +11,19 @@ public class Electabuzz extends Pokemon {
     }
 
     public Electabuzz(String name) {
-        super("Electabuzz", 125, "Electric", null,
-            5, 65, 83, 57,
-            95, 85, 105);
+        super(
+            "Electabuzz",
+            125,
+            "Electric",
+            null,
+            5,
+            65,
+            83,
+            57,
+            95,
+            85,
+            105
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Bellsprout extends Pokemon {
     }
 
     public Bellsprout(String name) {
-        super("Bellsprout", 69, "Grass", "Poison",
-            5, 50, 75, 35,
-            70, 30, 40);
+        super(
+            "Bellsprout",
+            69,
+            "Grass",
+            "Poison",
+            5,
+            50,
+            75,
+            35,
+            70,
+            30,
+            40
+        );
 
         this.setName(name);
 

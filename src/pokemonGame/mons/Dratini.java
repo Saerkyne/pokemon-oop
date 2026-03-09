@@ -11,9 +11,19 @@ public class Dratini extends Pokemon {
     }
 
     public Dratini(String name) {
-        super("Dratini", 147, "Dragon", null,
-            5, 41, 64, 45,
-            50, 50, 50);
+        super(
+            "Dratini",
+            147,
+            "Dragon",
+            null,
+            5,
+            41,
+            64,
+            45,
+            50,
+            50,
+            50
+        );
 
         this.setName(name);
 

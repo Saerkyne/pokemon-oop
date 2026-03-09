@@ -11,9 +11,19 @@ public class Dragonite extends Pokemon {
     }
 
     public Dragonite(String name) {
-        super("Dragonite", 149, "Dragon", "Flying",
-            5, 91, 134, 95,
-            100, 100, 80);
+        super(
+            "Dragonite",
+            149,
+            "Dragon",
+            "Flying",
+            5,
+            91,
+            134,
+            95,
+            100,
+            100,
+            80
+        );
 
         this.setName(name);
 

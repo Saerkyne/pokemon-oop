@@ -11,9 +11,19 @@ public class Beedrill extends Pokemon {
     }
 
     public Beedrill(String name) {
-        super("Beedrill", 15, "Bug", "Poison",
-            5, 65, 90, 40,
-            45, 80, 75);
+        super(
+            "Beedrill",
+            15,
+            "Bug",
+            "Poison",
+            5,
+            65,
+            90,
+            40,
+            45,
+            80,
+            75
+        );
 
         this.setName(name);
 

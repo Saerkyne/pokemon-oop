@@ -11,9 +11,19 @@ public class Electrode extends Pokemon {
     }
 
     public Electrode(String name) {
-        super("Electrode", 101, "Electric", null,
-            5, 60, 50, 70,
-            80, 80, 150);
+        super(
+            "Electrode",
+            101,
+            "Electric",
+            null,
+            5,
+            60,
+            50,
+            70,
+            80,
+            80,
+            150
+        );
 
         this.setName(name);
 

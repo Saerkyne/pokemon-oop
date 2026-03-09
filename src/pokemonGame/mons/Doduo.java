@@ -11,9 +11,19 @@ public class Doduo extends Pokemon {
     }
 
     public Doduo(String name) {
-        super("Doduo", 84, "Normal", "Flying",
-            5, 35, 85, 45,
-            35, 35, 75);
+        super(
+            "Doduo",
+            84,
+            "Normal",
+            "Flying",
+            5,
+            35,
+            85,
+            45,
+            35,
+            35,
+            75
+        );
 
         this.setName(name);
 

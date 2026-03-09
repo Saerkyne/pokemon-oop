@@ -11,9 +11,19 @@ public class Farfetchd extends Pokemon {
     }
 
     public Farfetchd(String name) {
-        super("Farfetch'd", 83, "Normal", "Flying",
-            5, 52, 90, 55,
-            58, 62, 60);
+        super(
+            "Farfetch'd",
+            83,
+            "Normal",
+            "Flying",
+            5,
+            52,
+            90,
+            55,
+            58,
+            62,
+            60
+        );
 
         this.setName(name);
 

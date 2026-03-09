@@ -11,9 +11,19 @@ public class Ditto extends Pokemon {
     }
 
     public Ditto(String name) {
-        super("Ditto", 132, "Normal", null,
-            5, 48, 48, 48,
-            48, 48, 48);
+        super(
+            "Ditto",
+            132,
+            "Normal",
+            null,
+            5,
+            48,
+            48,
+            48,
+            48,
+            48,
+            48
+        );
 
         this.setName(name);
 

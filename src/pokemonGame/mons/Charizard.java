@@ -16,9 +16,19 @@ public class Charizard extends Pokemon {
     }
 
     public Charizard(String name) {
-        super("Charizard", 6, "Fire", "Flying",
-            5, 78, 84, 78,
-            109, 85, 100);
+        super(
+            "Charizard",
+            6,
+            "Fire",
+            "Flying",
+            5,
+            78,
+            84,
+            78,
+            109,
+            85,
+            100
+        );
 
         this.setName(name);
 

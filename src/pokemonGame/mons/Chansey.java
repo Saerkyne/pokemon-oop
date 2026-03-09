@@ -11,9 +11,19 @@ public class Chansey extends Pokemon {
     }
 
     public Chansey(String name) {
-        super("Chansey", 113, "Normal", null,
-            5, 250, 5, 5,
-            35, 105, 50);
+        super(
+            "Chansey",
+            113,
+            "Normal",
+            null,
+            5,
+            250,
+            5,
+            5,
+            35,
+            105,
+            50
+        );
 
         this.setName(name);
 

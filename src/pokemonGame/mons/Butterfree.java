@@ -11,9 +11,19 @@ public class Butterfree extends Pokemon {
     }
 
     public Butterfree(String name) {
-        super("Butterfree", 12, "Bug", "Flying",
-            5, 60, 45, 50,
-            90, 80, 70);
+        super(
+            "Butterfree",
+            12,
+            "Bug",
+            "Flying",
+            5,
+            60,
+            45,
+            50,
+            90,
+            80,
+            70
+        );
 
         this.setName(name);
 

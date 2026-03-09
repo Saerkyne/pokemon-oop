@@ -14,7 +14,19 @@ public class Eevee extends Pokemon {
     }
 
     public Eevee(String name) {
-        super("Eevee", 133, "Normal", null, 5, 55, 55, 50, 45, 65, 55);
+        super(
+            "Eevee",
+            133,
+            "Normal",
+            null,
+            5,
+            55,
+            55,
+            50,
+            45,
+            65,
+            55
+        );
         this.setName(name);
 
         int[] evYield = {0, 0, 0, 0, 1, 0}; // Eevee yields 1 EV point in Special Defense when defeated

@@ -138,7 +138,7 @@ Move categories must be exactly `"Physical"`, `"Special"`, or `"Status"`.
 
 ### Implemented
 
-- [x] All 151 Gen 1 Pokémon with base stats, types, and learnsets
+- [x] All 151 Gen 1 Pokémon with base stats, types
 - [x] 25 moves across Physical, Special, and Status categories
 - [x] Full stat system (IVs, EVs, natures, level-up stat recalculation)
 - [x] Damage calculation with STAB, type effectiveness, crits, and variance
@@ -149,6 +149,7 @@ Move categories must be exactly `"Physical"`, `"Special"`, or `"Status"`.
 
 ### Work in Progress
 
+- [ ] **Learnsets** — Learnsets will be hardcoded into Pokemon classes for each species
 - [ ] **Battle loop** — damage is calculated but never applied to `currentHP`; turn ordering is not implemented
 - [ ] **Special moves** — no special move effects are accounted for currently, only damage dealing
 - [ ] **Pokémon selection UI** — `selectFromAvailablePokemon()` is stubbed out

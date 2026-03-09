@@ -15,11 +15,23 @@ public class Gengar extends Pokemon {
     }
 
     public Gengar(String name) {
-        super("Gengar", 94, "Ghost", "Poison", 100, 60, 65, 60, 130, 75, 110);
+        super(
+            "Gengar",
+            94,
+            "Ghost",
+            "Poison",
+            5,
+            60,
+            65,
+            60,
+            130,
+            75,
+            110
+        );
 
         this.setName(name);
 
-        int[] evYield = {0, 0, 0, 2, 0, 0}; // Gengar yields 2 EV points in Special Attack when defeated
+        int[] evYield = {0, 0, 0, 3, 0, 0}; // Gengar yields 3 EV points in Special Attack when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();

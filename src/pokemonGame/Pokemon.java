@@ -2,7 +2,6 @@ package pokemonGame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 
 public class Pokemon {
@@ -33,20 +32,20 @@ public class Pokemon {
     private int ivSpecialAttack;
     private int ivSpecialDefense;
     private int ivSpeed;
-    private int evHp;
-    private int evAttack;
-    private int evDefense;
-    private int evSpecialAttack;
-    private int evSpecialDefense;
-    private int evSpeed;
-    private int evTotal; //This must be 252 or lower for each Pokemon.
+    private int evHp; // This must be 252 or lower for each Pokemon
+    private int evAttack; // This must be 252 or lower for each Pokemon
+    private int evDefense; // This must be 252 or lower for each Pokemon
+    private int evSpecialAttack; // This must be 252 or lower for each Pokemon
+    private int evSpecialDefense; // This must be 252 or lower for each Pokemon
+    private int evSpeed; // This must be 252 or lower for each Pokemon
+    private int evTotal; // This must be 510 or lower for each Pokemon.
     private int expYield; // This is the amount of experience points a Pokemon yields when defeated in battle
-    private int currentExp;
+    private int currentExp = 0; // This is the current amount of experience points a Pokemon has, which increases when it defeats other Pokemon in battle
     private int[] evYield; // This array holds the EV yield for each stat when this Pokemon is defeated in battle, 
     // in the order of HP, Attack, Defense, Special Attack, Special Defense, Speed
     private Natures nature;
-
     private final ArrayList<MoveSlot> moveset;
+    private static final String[] STAT_NAMES = {"HP", "Attack", "Defense", "Special Attack", "Special Defense", "Speed"};
     
     // each individual Pokémon object keeps its own learnset reference; most species override
     // the accessor to return a shared static list, but the base class provides an empty list
@@ -103,29 +102,39 @@ public class Pokemon {
     }
 
 
-    // Method to add a move to the Pokemon's moveset, with logic to handle the 4-move limit
-    public void addMove(Move move) {
+    // --- Moveset management (no I/O — callers handle user interaction) ---
+
+    /**
+     * Returns true when the moveset already has 4 moves and any new move
+     * would require replacing an existing one.
+     */
+    public boolean isMovesetFull() {
+        return moveset.size() >= 4;
+    }
+
+    /**
+     * Add a move to the moveset.  Only succeeds when there is an open slot
+     * (fewer than 4 moves).  Returns true if the move was added, false if
+     * the moveset is full (caller should use {@link #replaceMove} instead).
+     */
+    public boolean addMove(Move move) {
         if (moveset.size() >= 4) {
-            System.out.println("A Pokemon can only have 4 moves in its moveset.");
-            System.out.println("Would you like to replace one of the existing moves with " + move.getMoveName() + "? (yes/no)");
-            Scanner scanner = new Scanner(System.in);
-            String response = scanner.nextLine();
-            if (response.equals("yes")) {
-                System.out.println("Which move would you like to replace? (1-4)");
-                for (int i = 0; i < moveset.size(); i++) {
-                    System.out.println((i + 1) + ": " + moveset.get(i).getMove().getMoveName());
-                }
-                int moveToReplace = Integer.parseInt(scanner.nextLine());
-                if (moveToReplace >= 1 && moveToReplace <= 4) {
-                    moveset.set(moveToReplace - 1, new MoveSlot(move));
-                } else {
-                    System.out.println("Invalid move number. Move not added.");
-                }
-            }
-        } else {
-            moveset.add(new MoveSlot(move));
-            System.out.println(move.getMoveName() + " has been added to " + name + "'s moveset.");
+            return false; // Moveset full — caller must decide which slot to replace
         }
+        moveset.add(new MoveSlot(move));
+        return true;
+    }
+
+    /**
+     * Replace the move in the given slot (0-based index) with a new move.
+     * Returns true on success, false if the slot index is out of range.
+     */
+    public boolean replaceMove(int slot, Move newMove) {
+        if (slot < 0 || slot >= moveset.size()) {
+            return false;
+        }
+        moveset.set(slot, new MoveSlot(newMove));
+        return true;
     }
 
 
@@ -253,23 +262,15 @@ public class Pokemon {
         return evSpeed;
     }
 
+    public int getEvTotal() {
+        return evTotal;
+    }
+
     public String[] getEvYield() {
         String[] stringYield = new String[evYield.length];
         for (int i = 0; i < evYield.length; i++) {
-            if (i == 0) {
-                stringYield[i] = "HP: " + evYield[i];
-            } else if (i == 1) {
-                stringYield[i] = "Attack: " + evYield[i];
-            } else if (i == 2) {
-                stringYield[i] = "Defense: " + evYield[i];
-            } else if (i == 3) {
-                stringYield[i] = "Special Attack: " + evYield[i];
-            } else if (i == 4) {
-                stringYield[i] = "Special Defense: " + evYield[i];
-            } else if (i == 5) {
-                stringYield[i] = "Speed: " + evYield[i];
-            }
-        } 
+            stringYield[i] = STAT_NAMES[i] + ": " + evYield[i];
+        }
         
         return stringYield;
     }
@@ -392,28 +393,70 @@ public class Pokemon {
         this.ivSpeed = ivSpeed;
     }
 
-    public void setEvHp(int evHp) {
-        this.evHp = evHp;
+    public void setEvHp(int addedEvHp) {
+        if (evTotal < 510 && (evHp + addedEvHp) <= 252) {
+            this.evHp += addedEvHp;
+            this.evTotal += addedEvHp;
+        } else if (evTotal < 510 && (evHp + addedEvHp) > 252) {
+            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
+            this.evHp = 252;
+            this.evTotal += (252 - evHp); // Add only the amount needed to reach 252 to the total
+        }
     }
 
-    public void setEvAttack(int evAttack) {
-        this.evAttack = evAttack;
+    public void setEvAttack(int addedEvAttack) {
+        if (evTotal < 510 && (evAttack + addedEvAttack) <= 252) {
+            this.evAttack += addedEvAttack;
+            this.evTotal += addedEvAttack;
+        } else if (evTotal < 510 && (evAttack + addedEvAttack) > 252) {
+            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
+            this.evAttack = 252;
+            this.evTotal += (252 - evAttack); // Add only the amount needed to reach 252 to the total
+        }
     }
 
-    public void setEvDefense(int evDefense) {
-        this.evDefense = evDefense;
+    public void setEvDefense(int addedEvDefense) {
+        if (evTotal < 510 && (evDefense + addedEvDefense) <= 252) {
+            this.evDefense += addedEvDefense;
+            this.evTotal += addedEvDefense;
+        } else if (evTotal < 510 && (evDefense + addedEvDefense) > 252) {
+            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
+            this.evDefense = 252;
+            this.evTotal += (252 - evDefense); // Add only the amount needed to reach 252 to the total
+        }
     }
 
-    public void setEvSpecialAttack(int evSpecialAttack) {
-        this.evSpecialAttack = evSpecialAttack;
+    public void setEvSpecialAttack(int addedEvSpecialAttack) {
+        if (evTotal < 510 && (evSpecialAttack + addedEvSpecialAttack) <= 252) {
+            this.evSpecialAttack += addedEvSpecialAttack;
+            this.evTotal += addedEvSpecialAttack;
+        } else if (evTotal < 510 && (evSpecialAttack + addedEvSpecialAttack) > 252) {
+            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
+            this.evSpecialAttack = 252;
+            this.evTotal += (252 - evSpecialAttack); // Add only the amount needed to reach 252 to the total
+        }
     }
 
-    public void setEvSpecialDefense(int evSpecialDefense) {
-        this.evSpecialDefense = evSpecialDefense;
+    public void setEvSpecialDefense(int addedEvSpecialDefense) {
+        if (evTotal < 510 && (evSpecialDefense + addedEvSpecialDefense) <= 252) {
+            this.evSpecialDefense += addedEvSpecialDefense;
+            this.evTotal += addedEvSpecialDefense;
+        } else if (evTotal < 510 && (evSpecialDefense + addedEvSpecialDefense) > 252) {
+            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
+            this.evSpecialDefense = 252;
+            this.evTotal += (252 - evSpecialDefense); // Add only the amount needed to reach 252 to the total
+        }
     }
 
-    public void setEvSpeed(int evSpeed) {
-        this.evSpeed = evSpeed;
+    public void setEvSpeed(int addedEvSpeed) {
+        if (evTotal < 510 && (evSpeed + addedEvSpeed) <= 252) {
+            this.evSpeed += addedEvSpeed;
+            this.evTotal += addedEvSpeed;
+        } else if (evTotal < 510 && (evSpeed + addedEvSpeed) > 252) {
+            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
+            this.evSpeed = 252;
+            this.evTotal += (252 - evSpeed); // Add only the amount needed to reach 252 to the total
+        }
     }
 
     public void setEvYield(int[] evYield) {

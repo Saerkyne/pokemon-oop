@@ -21,7 +21,7 @@ public class Squirtle extends Pokemon {
         
         this.setName(name);
 
-        int[] evYield = {0, 0, 1, 0, 0, 0}; // Squirtle yields 1 EV point in Speed when defeated
+        int[] evYield = {0, 0, 1, 0, 0, 0}; // Squirtle yields 1 EV point in Defense when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();

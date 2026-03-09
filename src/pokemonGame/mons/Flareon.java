@@ -11,9 +11,19 @@ public class Flareon extends Pokemon {
     }
 
     public Flareon(String name) {
-        super("Flareon", 136, "Fire", null,
-            5, 65, 130, 60,
-            95, 110, 65);
+        super(
+            "Flareon",
+            136,
+            "Fire",
+            null,
+            5,
+            65,
+            130,
+            60,
+            95,
+            110,
+            65
+        );
 
         this.setName(name);
 

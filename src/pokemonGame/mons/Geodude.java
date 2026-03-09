@@ -11,9 +11,19 @@ public class Geodude extends Pokemon {
     }
 
     public Geodude(String name) {
-        super("Geodude", 74, "Rock", "Ground",
-            5, 40, 80, 100,
-            30, 30, 20);
+        super(
+            "Geodude",
+            74,
+            "Rock",
+            "Ground",
+            5,
+            40,
+            80,
+            100,
+            30,
+            30,
+            20
+        );
 
         this.setName(name);
 

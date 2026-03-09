@@ -11,9 +11,19 @@ public class Kakuna extends Pokemon {
     }
 
     public Kakuna(String name) {
-        super("Kakuna", 14, "Bug", "Poison",
-            5, 45, 25, 50,
-            25, 25, 35);
+        super(
+            "Kakuna",
+            14,
+            "Bug",
+            "Poison",
+            5,
+            45,
+            25,
+            50,
+            25,
+            25,
+            35
+        );
 
         this.setName(name);
 

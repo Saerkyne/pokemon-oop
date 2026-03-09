@@ -11,9 +11,19 @@ public class Kadabra extends Pokemon {
     }
 
     public Kadabra(String name) {
-        super("Kadabra", 64, "Psychic", null,
-            5, 40, 35, 30,
-            120, 70, 105);
+        super(
+            "Kadabra",
+            64,
+            "Psychic",
+            null,
+            5,
+            40,
+            35,
+            30,
+            120,
+            70,
+            105
+        );
 
         this.setName(name);
 

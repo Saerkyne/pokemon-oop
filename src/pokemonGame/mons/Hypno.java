@@ -11,9 +11,19 @@ public class Hypno extends Pokemon {
     }
 
     public Hypno(String name) {
-        super("Hypno", 97, "Psychic", null,
-            5, 85, 73, 70,
-            73, 115, 67);
+        super(
+            "Hypno",
+            97,
+            "Psychic",
+            null,
+            5,
+            85,
+            73,
+            70,
+            73,
+            115,
+            67
+        );
 
         this.setName(name);
 

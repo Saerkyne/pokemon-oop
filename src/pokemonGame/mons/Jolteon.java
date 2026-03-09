@@ -11,9 +11,19 @@ public class Jolteon extends Pokemon {
     }
 
     public Jolteon(String name) {
-        super("Jolteon", 135, "Electric", null,
-            5, 65, 65, 60,
-            110, 95, 130);
+        super(
+            "Jolteon",
+            135,
+            "Electric",
+            null,
+            5,
+            65,
+            65,
+            60,
+            110,
+            95,
+            130
+        );
 
         this.setName(name);
 

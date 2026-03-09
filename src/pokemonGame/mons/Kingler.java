@@ -11,9 +11,19 @@ public class Kingler extends Pokemon {
     }
 
     public Kingler(String name) {
-        super("Kingler", 99, "Water", null,
-            5, 55, 130, 115,
-            50, 50, 75);
+        super(
+            "Kingler",
+            99,
+            "Water",
+            null,
+            5,
+            55,
+            130,
+            115,
+            50,
+            50,
+            75
+        );
 
         this.setName(name);
 

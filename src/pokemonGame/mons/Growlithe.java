@@ -11,9 +11,19 @@ public class Growlithe extends Pokemon {
     }
 
     public Growlithe(String name) {
-        super("Growlithe", 58, "Fire", null,
-            5, 55, 70, 45,
-            70, 50, 60);
+        super(
+            "Growlithe",
+            58,
+            "Fire",
+            null,
+            5,
+            55,
+            70,
+            45,
+            70,
+            50,
+            60
+        );
 
         this.setName(name);
 

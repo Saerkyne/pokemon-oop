@@ -11,9 +11,19 @@ public class Graveler extends Pokemon {
     }
 
     public Graveler(String name) {
-        super("Graveler", 75, "Rock", "Ground",
-            5, 55, 95, 115,
-            45, 45, 35);
+        super(
+            "Graveler",
+            75,
+            "Rock",
+            "Ground",
+            5,
+            55,
+            95,
+            115,
+            45,
+            45,
+            35
+        );
 
         this.setName(name);
 

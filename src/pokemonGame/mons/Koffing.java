@@ -11,9 +11,19 @@ public class Koffing extends Pokemon {
     }
 
     public Koffing(String name) {
-        super("Koffing", 109, "Poison", null,
-            5, 40, 65, 95,
-            60, 45, 35);
+        super(
+            "Koffing",
+            109,
+            "Poison",
+            null,
+            5,
+            40,
+            65,
+            95,
+            60,
+            45,
+            35
+        );
 
         this.setName(name);
 

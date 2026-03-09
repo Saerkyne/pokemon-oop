@@ -11,9 +11,19 @@ public class Golem extends Pokemon {
     }
 
     public Golem(String name) {
-        super("Golem", 76, "Rock", "Ground",
-            5, 80, 120, 130,
-            55, 65, 45);
+        super(
+            "Golem",
+            76,
+            "Rock",
+            "Ground",
+            5,
+            80,
+            120,
+            130,
+            55,
+            65,
+            45
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Krabby extends Pokemon {
     }
 
     public Krabby(String name) {
-        super("Krabby", 98, "Water", null,
-            5, 30, 105, 90,
-            25, 25, 50);
+        super(
+            "Krabby",
+            98,
+            "Water",
+            null,
+            5,
+            30,
+            105,
+            90,
+            25,
+            25,
+            50
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Gastly extends Pokemon {
     }
 
     public Gastly(String name) {
-        super("Gastly", 92, "Ghost", "Poison",
-            5, 30, 35, 30,
-            100, 35, 80);
+        super(
+            "Gastly",
+            92,
+            "Ghost",
+            "Poison",
+            5,
+            30,
+            35,
+            30,
+            100,
+            35,
+            80
+        );
 
         this.setName(name);
 

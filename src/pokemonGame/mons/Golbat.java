@@ -11,9 +11,19 @@ public class Golbat extends Pokemon {
     }
 
     public Golbat(String name) {
-        super("Golbat", 42, "Poison", "Flying",
-            5, 75, 80, 70,
-            65, 75, 90);
+        super(
+            "Golbat",
+            42,
+            "Poison",
+            "Flying",
+            5,
+            75,
+            80,
+            70,
+            65,
+            75,
+            90
+        );
 
         this.setName(name);
 

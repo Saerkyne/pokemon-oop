@@ -11,9 +11,19 @@ public class Hitmonlee extends Pokemon {
     }
 
     public Hitmonlee(String name) {
-        super("Hitmonlee", 106, "Fighting", null,
-            5, 50, 120, 53,
-            35, 110, 87);
+        super(
+            "Hitmonlee",
+            106,
+            "Fighting",
+            null,
+            5,
+            50,
+            120,
+            53,
+            35,
+            110,
+            87
+        );
 
         this.setName(name);
 

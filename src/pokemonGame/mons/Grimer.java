@@ -11,9 +11,19 @@ public class Grimer extends Pokemon {
     }
 
     public Grimer(String name) {
-        super("Grimer", 88, "Poison", null,
-            5, 80, 80, 50,
-            40, 50, 25);
+        super(
+            "Grimer",
+            88,
+            "Poison",
+            null,
+            5,
+            80,
+            80,
+            50,
+            40,
+            50,
+            25
+        );
 
         this.setName(name);
 

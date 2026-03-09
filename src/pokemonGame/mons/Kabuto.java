@@ -11,9 +11,19 @@ public class Kabuto extends Pokemon {
     }
 
     public Kabuto(String name) {
-        super("Kabuto", 140, "Rock", "Water",
-            5, 30, 80, 90,
-            55, 45, 55);
+        super(
+            "Kabuto",
+            140,
+            "Rock",
+            "Water",
+            5,
+            30,
+            80,
+            90,
+            55,
+            45,
+            55
+        );
 
         this.setName(name);
 

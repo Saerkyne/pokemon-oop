@@ -11,9 +11,19 @@ public class Horsea extends Pokemon {
     }
 
     public Horsea(String name) {
-        super("Horsea", 116, "Water", null,
-            5, 30, 40, 70,
-            70, 25, 60);
+        super(
+            "Horsea",
+            116,
+            "Water",
+            null,
+            5,
+            30,
+            40,
+            70,
+            70,
+            25,
+            60
+        );
 
         this.setName(name);
 

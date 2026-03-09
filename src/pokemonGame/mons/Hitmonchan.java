@@ -11,9 +11,19 @@ public class Hitmonchan extends Pokemon {
     }
 
     public Hitmonchan(String name) {
-        super("Hitmonchan", 107, "Fighting", null,
-            5, 50, 105, 79,
-            35, 110, 76);
+        super(
+            "Hitmonchan",
+            107,
+            "Fighting",
+            null,
+            5,
+            50,
+            105,
+            79,
+            35,
+            110,
+            76
+        );
 
         this.setName(name);
 

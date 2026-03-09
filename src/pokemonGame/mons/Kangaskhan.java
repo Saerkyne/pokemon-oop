@@ -11,9 +11,19 @@ public class Kangaskhan extends Pokemon {
     }
 
     public Kangaskhan(String name) {
-        super("Kangaskhan", 115, "Normal", null,
-            5, 105, 95, 80,
-            40, 80, 90);
+        super(
+            "Kangaskhan",
+            115,
+            "Normal",
+            null,
+            5,
+            105,
+            95,
+            80,
+            40,
+            80,
+            90
+        );
 
         this.setName(name);
 

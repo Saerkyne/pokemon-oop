@@ -11,9 +11,19 @@ public class Gyarados extends Pokemon {
     }
 
     public Gyarados(String name) {
-        super("Gyarados", 130, "Water", "Flying",
-            5, 95, 125, 79,
-            60, 100, 81);
+        super(
+            "Gyarados",
+            130,
+            "Water",
+            "Flying",
+            5,
+            95,
+            125,
+            79,
+            60,
+            100,
+            81
+        );
 
         this.setName(name);
 

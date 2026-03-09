@@ -11,9 +11,19 @@ public class Kabutops extends Pokemon {
     }
 
     public Kabutops(String name) {
-        super("Kabutops", 141, "Rock", "Water",
-            5, 60, 115, 105,
-            65, 70, 80);
+        super(
+            "Kabutops",
+            141,
+            "Rock",
+            "Water",
+            5,
+            60,
+            115,
+            105,
+            65,
+            70,
+            80
+        );
 
         this.setName(name);
 

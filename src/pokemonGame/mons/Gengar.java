@@ -15,7 +15,19 @@ public class Gengar extends Pokemon {
     }
 
     public Gengar(String name) {
-        super("Gengar", 94, "Ghost", "Poison", 5, 60, 65, 60, 130, 75, 110);
+        super(
+            "Gengar",
+            94,
+            "Ghost",
+            "Poison",
+            5,
+            60,
+            65,
+            60,
+            130,
+            75,
+            110
+        );
 
         this.setName(name);
 

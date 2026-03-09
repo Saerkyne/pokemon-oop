@@ -11,9 +11,19 @@ public class Jigglypuff extends Pokemon {
     }
 
     public Jigglypuff(String name) {
-        super("Jigglypuff", 39, "Normal", "Fairy",
-            5, 115, 45, 20,
-            45, 25, 20);
+        super(
+            "Jigglypuff",
+            39,
+            "Normal",
+            "Fairy",
+            5,
+            115,
+            45,
+            20,
+            45,
+            25,
+            20
+        );
 
         this.setName(name);
 

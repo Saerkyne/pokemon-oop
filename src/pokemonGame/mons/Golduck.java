@@ -11,9 +11,19 @@ public class Golduck extends Pokemon {
     }
 
     public Golduck(String name) {
-        super("Golduck", 55, "Water", null,
-            5, 80, 82, 78,
-            95, 80, 85);
+        super(
+            "Golduck",
+            55,
+            "Water",
+            null,
+            5,
+            80,
+            82,
+            78,
+            95,
+            80,
+            85
+        );
 
         this.setName(name);
 

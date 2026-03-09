@@ -11,9 +11,19 @@ public class Goldeen extends Pokemon {
     }
 
     public Goldeen(String name) {
-        super("Goldeen", 118, "Water", null,
-            5, 45, 67, 60,
-            35, 50, 63);
+        super(
+            "Goldeen",
+            118,
+            "Water",
+            null,
+            5,
+            45,
+            67,
+            60,
+            35,
+            50,
+            63
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Gloom extends Pokemon {
     }
 
     public Gloom(String name) {
-        super("Gloom", 44, "Grass", "Poison",
-            5, 60, 65, 70,
-            85, 75, 40);
+        super(
+            "Gloom",
+            44,
+            "Grass",
+            "Poison",
+            5,
+            60,
+            65,
+            70,
+            85,
+            75,
+            40
+        );
 
         this.setName(name);
 

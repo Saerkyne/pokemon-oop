@@ -11,9 +11,19 @@ public class Haunter extends Pokemon {
     }
 
     public Haunter(String name) {
-        super("Haunter", 93, "Ghost", "Poison",
-            5, 45, 50, 45,
-            115, 55, 95);
+        super(
+            "Haunter",
+            93,
+            "Ghost",
+            "Poison",
+            5,
+            45,
+            50,
+            45,
+            115,
+            55,
+            95
+        );
 
         this.setName(name);
 

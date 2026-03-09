@@ -11,9 +11,19 @@ public class Jynx extends Pokemon {
     }
 
     public Jynx(String name) {
-        super("Jynx", 124, "Ice", "Psychic",
-            5, 65, 50, 35,
-            115, 95, 95);
+        super(
+            "Jynx",
+            124,
+            "Ice",
+            "Psychic",
+            5,
+            65,
+            50,
+            35,
+            115,
+            95,
+            95
+        );
 
         this.setName(name);
 

@@ -17,7 +17,8 @@ public class Pikachu extends Pokemon {
     }
 
     public Pikachu(String name) {
-        super("Pikachu", 25, "Electric", null, 100, 55, 40, 50, 50, 90, 90);
+        super("Pikachu", 25, "Electric", null,
+         5, 35, 55, 40, 50, 50, 90);
         this.setName(name);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Pikachu yields 2 EV points in Speed when defeated

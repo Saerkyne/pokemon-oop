@@ -15,9 +15,19 @@ public class Ivysaur extends Pokemon {
     }
 
     public Ivysaur(String name) {
-        super("Ivysaur", 2, "Grass", "Poison",
-            5, 60, 62, 63,
-            80, 80, 60);
+        super(
+            "Ivysaur",
+            2,
+            "Grass",
+            "Poison",
+            5,
+            60,
+            62,
+            63,
+            80,
+            80,
+            60
+        );
 
         this.setName(name);
 

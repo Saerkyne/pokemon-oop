@@ -1,6 +1,6 @@
 # Pokémon OOP — A Text-Based Pokémon Red Reimagining
 
-A Java learning project that reimplements Pokémon Red as a text-based game, built from the ground up using Object-Oriented Programming principles. Features all **151 Gen 1 Pokémon** with modernized mechanics inspired by later generations.
+A Java learning project that reimplements Pokémon Red as a text-based game, built from the ground up using Object-Oriented Programming principles. Features all **151 Gen 1 Pokémon** and **165 Gen 1 moves** with modernized mechanics inspired by later generations.
 
 ---
 
@@ -8,13 +8,14 @@ A Java learning project that reimplements Pokémon Red as a text-based game, bui
 
 This project is an educational OOP codebase that models the core systems of a Pokémon game:
 
-- **All 151 Kanto Pokémon** fully implemented with accurate base stats, types, and learnsets
-- **25 moves** implemented so far (Physical, Special, and Status categories)
+- **All 151 Kanto Pokémon** fully implemented with accurate base stats, types, and EV yields
+- **All 165 Gen 1 moves** implemented (Physical, Special, and Status categories)
+- **Learnsets** — infrastructure complete with level-up, TM, and HM support; Abra has a full learnset, remaining species in progress
 - **Modernized stat system** — Special is split into Sp.Atk / Sp.Def (Gen III+), IVs range 0–31, EVs use the modern 0–252 per stat / 510 total system
 - **25 Natures** with ±10% stat modifiers
 - **Full type chart** covering all 18 types with correct effectiveness multipliers
 - **Damage calculation** with STAB, type effectiveness, critical hits, and random variance
-- **Move learning system** with learnsets, level-up moves, and TM compatibility
+- **Move learning system** with learnsets, level-up moves, and TM/HM compatibility
 
 ### What Makes This Different from Mainline Games
 
@@ -32,7 +33,7 @@ This project is an educational OOP codebase that models the core systems of a Po
 ## Project Structure
 
 ```
-src/pokemonGame/
+src/main/java/pokemonGame/
 ├── App.java              # Entry point & I/O controller
 ├── Pokemon.java          # Base class — stats, IVs, EVs, natures, movesets
 ├── Move.java             # Abstract base for all moves
@@ -41,13 +42,13 @@ src/pokemonGame/
 ├── TypeChart.java        # 18×18 effectiveness matrix
 ├── Natures.java          # Enum of 25 natures with stat modifiers
 ├── Stat.java             # Enum: HP, ATTACK, DEFENSE, SPECIAL_ATTACK, SPECIAL_DEFENSE, SPEED
-├── LearnsetEntry.java    # Associates moves with learning sources (LEVEL, TM)
+├── LearnsetEntry.java    # Associates moves with learning sources (LEVEL, TM, HM)
 ├── Trainer.java          # Holds a name and a team of up to 6 Pokémon
 ├── mons/                 # 151 species subclasses (Bulbasaur.java … Mew.java)
-└── moves/                # 25 move subclasses (Tackle.java, Ember.java, etc.)
+└── moves/                # 165 move subclasses (Tackle.java, Ember.java, etc.)
 ```
 
-No build tool (Maven/Gradle) is used. The project compiles from `src/` to `bin/` via VS Code's Java Language Server.
+The project uses **Maven** for compilation and packaging (see `pom.xml`). Source follows the standard Maven layout (`src/main/java/`). VS Code's Java Language Server also compiles automatically.
 
 ---
 
@@ -55,18 +56,25 @@ No build tool (Maven/Gradle) is used. The project compiles from `src/` to `bin/`
 
 ### Prerequisites
 
-- **Java JDK** (8 or higher)
+- **Java JDK 18** or higher
 - **VS Code** with the [Java Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) (recommended), or any Java IDE
 
 ### Using VS Code
 
-Open the project folder in VS Code. The Java Language Server will automatically compile to `bin/`. Run `App.java` from the editor.
+Open the project folder in VS Code. The Java Language Server will automatically compile. Run `App.java` from the editor.
 
-### Using the Command Line
+### Using Maven
+
+```bash
+mvn clean package
+java -cp target/classes pokemonGame.App
+```
+
+### Using javac Directly
 
 ```bash
 # Compile
-javac -d bin src/pokemonGame/*.java src/pokemonGame/mons/*.java src/pokemonGame/moves/*.java
+javac -d bin src/main/java/pokemonGame/*.java src/main/java/pokemonGame/mons/*.java src/main/java/pokemonGame/moves/*.java
 
 # Run
 java -cp bin pokemonGame.App
@@ -138,22 +146,23 @@ Move categories must be exactly `"Physical"`, `"Special"`, or `"Status"`.
 
 ### Implemented
 
-- [x] All 151 Gen 1 Pokémon with base stats, types
-- [x] 25 moves across Physical, Special, and Status categories
+- [x] All 151 Gen 1 Pokémon with base stats, types, and EV yields
+- [x] All 165 Gen 1 moves across Physical, Special, and Status categories
 - [x] Full stat system (IVs, EVs, natures, level-up stat recalculation)
 - [x] Damage calculation with STAB, type effectiveness, crits, and variance
 - [x] 18-type effectiveness chart
-- [x] Move learning from learnsets (level-up and TM) with move replacement UI
+- [x] Move learning from learnsets with move replacement UI
 - [x] Trainer class with 6-Pokémon team limit
 - [x] PP tracking per move slot
+- [x] All 151 species registered in `App.createPokemon()` (supports case-insensitive name lookup)
+- [x] Maven build configuration
 
 ### Work in Progress
 
-- [ ] **Learnsets** — Learnsets will be hardcoded into Pokemon classes for each species
+- [ ] **Learnsets** — Abra is complete; remaining 150 species still need full learnsets (level-up, TM, HM)
 - [ ] **Battle loop** — damage is calculated but never applied to `currentHP`; turn ordering is not implemented
-- [ ] **Special moves** — no special move effects are accounted for currently, only damage dealing
+- [ ] **Special move effects** — Status and secondary effects are not yet applied, only damage dealing
 - [ ] **Pokémon selection UI** — `selectFromAvailablePokemon()` is stubbed out
-- [ ] **More moves** — only 25 of ~165 Gen 1 moves are implemented so far
 - [ ] **Input refactoring** — some input handling mixes `Scanner` and `System.console()`
 
 ### Planned (Future)

@@ -1,12 +1,12 @@
 package pokemonGame;
 import java.util.List;
-import java.util.Scanner;
+import java.io.Console;
 import pokemonGame.mons.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
         Trainer trainer = createTrainer("Joel");
-        Trainer opponent = new Trainer("Gary");
+        Trainer opponent = createTrainer("Gary");
 
         /*
         Personal Notes: when creating a pokemon this way, the Pokemon object created is the same
@@ -26,6 +26,7 @@ public class App {
 
         opponent.addPokemonToTeam(GaryAbra);
         opponent.getTeam().forEach(p -> System.out.println(p.getName() + " added to opponent's team!"));
+        GaryAbra.setLevel(50); // Level up Gary's Abra to level 50
 
         // Display the Team
         /*
@@ -102,6 +103,8 @@ public class App {
         System.out.println("Damage dealt: " + roundedDamage);  */
 
         //scanner.close();
+
+
 
     }
 
@@ -202,7 +205,11 @@ public class App {
      * (Pokemon, LearnsetEntry) remain I/O-free.
      */
     public static void teachMoveFromLearnset(Pokemon p) {
-        Scanner scanner = new Scanner(System.in);
+        Console console = System.console();
+        if (console == null) {
+            System.out.println("No console available. Cannot teach move.");
+            return;
+        }
         List<LearnsetEntry> eligible = LearnsetEntry.getEligibleMoves(p);
 
         if (eligible.isEmpty()) {
@@ -220,7 +227,7 @@ public class App {
         }
 
         System.out.print("Choice (1-" + eligible.size() + "): ");
-        int choice = Integer.parseInt(scanner.nextLine());
+        int choice = Integer.parseInt(console.readLine());
         if (choice < 1 || choice > eligible.size()) {
             System.out.println("Invalid choice. No move learned.");
             return;
@@ -237,7 +244,7 @@ public class App {
         // Moveset is full — ask which move to replace
         System.out.println(p.getName() + " already knows 4 moves.");
         System.out.println("Replace a move with " + picked.getMoveName() + "? (yes/no)");
-        String response = scanner.nextLine();
+        String response = console.readLine();
         if (!response.equalsIgnoreCase("yes")) {
             System.out.println(p.getName() + " did not learn " + picked.getMoveName() + ".");
             return;
@@ -248,7 +255,7 @@ public class App {
             System.out.println("  " + (i + 1) + ": " + p.getMoveset().get(i).getMove().getMoveName());
         }
         System.out.print("Choice (1-4): ");
-        int slot = Integer.parseInt(scanner.nextLine());
+        int slot = Integer.parseInt(console.readLine());
         if (p.replaceMove(slot - 1, picked)) {
             System.out.println(p.getName() + " forgot a move and learned " + picked.getMoveName() + "!");
         } else {

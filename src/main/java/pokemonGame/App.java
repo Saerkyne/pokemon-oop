@@ -6,6 +6,7 @@ import pokemonGame.mons.*;
 public class App {
     public static void main(String[] args) throws Exception {
         Trainer trainer = createTrainer("Joel");
+        Trainer opponent = new Trainer("Gary");
 
         /*
         Personal Notes: when creating a pokemon this way, the Pokemon object created is the same
@@ -15,24 +16,30 @@ public class App {
         trainer.getTeam()get(0) (assuming Bulby is in the first slot). Stat changes 
         using one reference also apply to the other reference.
         */
-        Pokemon Bulby = createPokemon("Bulbasaur", "Bulby");
+        Pokemon JoelAbra = createPokemon("Abra", "Joel's Abra");
+        Pokemon GaryAbra = createPokemon("Abra", "Gary's Abra");
 
-        trainer.addPokemonToTeam(Bulby);
+        trainer.addPokemonToTeam(JoelAbra);
         trainer.getTeam().forEach(p -> System.out.println(p.getName() + " added to team!"));
-        
+        JoelAbra.setLevel(50); // Level up Joel's Abra to level 50
 
 
-        //Display the Team
+        opponent.addPokemonToTeam(GaryAbra);
+        opponent.getTeam().forEach(p -> System.out.println(p.getName() + " added to opponent's team!"));
+
+        // Display the Team
+        /*
         System.out.println("Your team:");
         for (Pokemon p : trainer.getTeam()) {
             if (p != null) {
                 System.out.println("- " + p.getName());
             }
         }
+        */
 
-        Bulby.setLevel(100);
 
         //Display team stats
+        /*
         System.out.println();
         System.out.println("Your team's stats:");
         for (Pokemon p : trainer.getTeam()) {
@@ -40,35 +47,39 @@ public class App {
                 System.out.println(p.getName() + ": Level " + p.getLevel() + ", HP " + p.getMaxHP() + ", Attack " + p.getCurrentAttack() + ", Defense " + p.getCurrentDefense() + ", Special Attack " + p.getCurrentSpecialAttack() + ", Special Defense " + p.getCurrentSpecialDefense() + ", Speed " + p.getCurrentSpeed());
             }
         }
+        */
 
+        // Get all moves the Pokémon is eligible to learn right now
+        List<LearnsetEntry> JoelEligible = LearnsetEntry.getEligibleMoves(JoelAbra);
 
-        
-
-
-        
-
-        
-
-        
-        
-
-        // Teach some moves from its learnset
-        for (int i = 0; i < 4; i++) {
-            LearnsetEntry.getEligibleMoves(Bulby)                    .stream()
-                    .filter(e -> e.getSource() == LearnsetEntry.Source.LEVEL)
-                    .findFirst()
-                    .ifPresent(e -> {
-                        if (Bulby.addMove(e.getMove())) {
-                            System.out.println(Bulby.getName() + " learned " + e.getMove().getMoveName() + "!");
-                        }
-                    });
+        // Pick the move you want (e.g. by name)
+        for (LearnsetEntry entry : JoelEligible) {
+            if (entry.getMove().getMoveName().equals("Psychic")) {
+                JoelAbra.addMove(entry.getMove());  // works if moveset has < 4 moves
+                break;
+            }
         }
-        
 
-        
+        // Get all moves for the opponent's Pokémon
+        List<LearnsetEntry> GaryEligible = LearnsetEntry.getEligibleMoves(GaryAbra);
 
-        
-        
+        // Pick the move for the opponent's Pokémon
+        for (LearnsetEntry entry : GaryEligible) {
+            if (entry.getMove().getMoveName().equals("Teleport")) {
+                GaryAbra.addMove(entry.getMove());  // works if moveset has < 4 moves
+                break;
+            }
+        }   
+
+        // Display the moves each Pokémon has learned
+        System.out.println(JoelAbra.getName() + " knows:");
+        for (MoveSlot move : JoelAbra.getMoveset()) {
+            System.out.println("- " + move.getMove().getMoveName());
+        }
+        System.out.println(GaryAbra.getName() + " knows:");
+        for (MoveSlot move : GaryAbra.getMoveset()) {
+            System.out.println("- " + move.getMove().getMoveName());
+        }
 
         //Iterate through Bulby's moves and calculate effectiveness against Gengar instead of hardcoded attacks
         /*for (Move move : Bulby.getMoveset()) {

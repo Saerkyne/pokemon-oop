@@ -46,7 +46,8 @@ public class LearnsetEntry {
         List<LearnsetEntry> eligible = new ArrayList<>();
 
         for (LearnsetEntry e : catalog) {
-            // Skip moves above the Pokémon's current level
+            // Level-up moves are only eligible at or below the Pokémon's level;
+            // TM/HM moves (and other non-LEVEL sources) are always eligible.
             if (e.getSource() == Source.LEVEL && p.getLevel() < e.getParameter()) {
                 continue;
             }

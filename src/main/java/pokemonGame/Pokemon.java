@@ -194,6 +194,11 @@ public class Pokemon {
     public int getMaxHP() {
         return MaxHP;
     }
+
+    public int getCurrentHP() {
+        return currentHP;
+    }
+
     public int getCurrentAttack() {
         return currentAttack;
     }
@@ -347,6 +352,10 @@ public class Pokemon {
 
     public void setMaxHP(int MaxHP) {
         this.MaxHP = MaxHP;
+    }
+
+    public void setCurrentHP(int currentHP) {
+        this.currentHP = currentHP;
     }
 
     public void setCurrentAttack(int currentAttack) {
@@ -522,6 +531,8 @@ public class Pokemon {
         this.currentSpecialAttack = calcCurrentStat(getSpecialAttackBaseStat(), getLevel(), getIvSpecialAttack(), getEvSpecialAttack(), getNature().modifierFor(Stat.SPECIAL_ATTACK));
         this.currentSpecialDefense = calcCurrentStat(getSpecialDefenseBaseStat(), getLevel(), getIvSpecialDefense(), getEvSpecialDefense(), getNature().modifierFor(Stat.SPECIAL_DEFENSE));
         this.currentSpeed = calcCurrentStat(getSpeedBaseStat(), getLevel(), getIvSpeed(), getEvSpeed(), getNature().modifierFor(Stat.SPEED));
+        this.currentHP = this.MaxHP; // Heal to full HP whenever stats are recalculated (e.g. on level up)
+        // I know that this may cause issues, review the best place for this later on. 
     }
 
     /**

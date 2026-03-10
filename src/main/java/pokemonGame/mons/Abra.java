@@ -59,6 +59,9 @@ public class Abra extends Pokemon {
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        
+        // Set current HP to max HP at Pokemon Generation
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

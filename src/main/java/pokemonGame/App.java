@@ -2,6 +2,7 @@ package pokemonGame;
 import java.util.List;
 import java.io.Console;
 import pokemonGame.mons.*;
+import pokemonGame.Battle;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -22,6 +23,7 @@ public class App {
         trainer.addPokemonToTeam(JoelAbra);
         trainer.getTeam().forEach(p -> System.out.println(p.getName() + " added to team!"));
         JoelAbra.setLevel(50); // Level up Joel's Abra to level 50
+        
 
 
         opponent.addPokemonToTeam(GaryAbra);
@@ -50,27 +52,8 @@ public class App {
         }
         */
 
-        // Get all moves the Pokémon is eligible to learn right now
-        List<LearnsetEntry> JoelEligible = LearnsetEntry.getEligibleMoves(JoelAbra);
-
-        // Pick the move you want (e.g. by name)
-        for (LearnsetEntry entry : JoelEligible) {
-            if (entry.getMove().getMoveName().equals("Psychic")) {
-                JoelAbra.addMove(entry.getMove());  // works if moveset has < 4 moves
-                break;
-            }
-        }
-
-        // Get all moves for the opponent's Pokémon
-        List<LearnsetEntry> GaryEligible = LearnsetEntry.getEligibleMoves(GaryAbra);
-
-        // Pick the move for the opponent's Pokémon
-        for (LearnsetEntry entry : GaryEligible) {
-            if (entry.getMove().getMoveName().equals("Teleport")) {
-                GaryAbra.addMove(entry.getMove());  // works if moveset has < 4 moves
-                break;
-            }
-        }   
+        teachMoveFromLearnset(GaryAbra);
+        teachMoveFromLearnset(JoelAbra);  
 
         // Display the moves each Pokémon has learned
         System.out.println(JoelAbra.getName() + " knows:");
@@ -81,6 +64,28 @@ public class App {
         for (MoveSlot move : GaryAbra.getMoveset()) {
             System.out.println("- " + move.getMove().getMoveName());
         }
+
+        System.out.println();
+        System.out.println("Your team stats:");
+        for (Pokemon p : trainer.getTeam()) {
+            if (p != null) {
+                System.out.println(p.getName() + ": Level " + p.getLevel() + ",  Max HP " + p.getMaxHP() + ", Current HP " + p.getCurrentHP() + ", Attack " + p.getCurrentAttack() + ", Defense " + p.getCurrentDefense() + ", Special Attack " + p.getCurrentSpecialAttack() + ", Special Defense " + p.getCurrentSpecialDefense() + ", Speed " + p.getCurrentSpeed());
+            }
+        }
+        System.out.println();
+        System.out.println("Opponent's team stats:");
+        for (Pokemon p : opponent.getTeam()) {
+            if (p != null) {
+                System.out.println(p.getName() + ": Level " + p.getLevel() + ",  Max HP " + p.getMaxHP() + ", Current HP " + p.getCurrentHP() + ", Attack " + p.getCurrentAttack() + ", Defense " + p.getCurrentDefense() + ", Special Attack " + p.getCurrentSpecialAttack() + ", Special Defense " + p.getCurrentSpecialDefense() + ", Speed " + p.getCurrentSpeed());
+            }
+        }
+        System.out.println();
+
+
+        Battle.dealDamage(JoelAbra, GaryAbra, JoelAbra.getMoveset().get(0).getMove());
+
+        System.out.println("Opposing " + GaryAbra.getName() + " has " + GaryAbra.getCurrentHP() + " HP left after the attack!");    
+
 
         //Iterate through Bulby's moves and calculate effectiveness against Gengar instead of hardcoded attacks
         /*for (Move move : Bulby.getMoveset()) {

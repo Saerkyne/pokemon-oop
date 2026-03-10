@@ -4,6 +4,10 @@ import pokemonGame.Move;
 public class Thunder extends Move {
     public Thunder() {
         super("Thunder", 120, "Electric", "Special", 70, 10);
+        // == Special Effect (Not Yet Implemented) ==
+        // 30% chance to paralyze the target. Can hit Pokémon using Fly.
+        // In rain, bypasses accuracy checks. In harsh sunlight,
+        // accuracy drops to 50%.
     }
 
 }

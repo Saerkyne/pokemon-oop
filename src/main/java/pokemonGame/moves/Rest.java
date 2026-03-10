@@ -1,0 +1,11 @@
+package pokemonGame.moves;
+import pokemonGame.Move;
+
+public class Rest extends Move {
+    public Rest() {
+        super("Rest", 0, "Psychic", "Status", 0, 10);
+        // == Special Effect (Not Yet Implemented) ==
+        // User fully restores its HP but falls asleep for 2 turns.
+        // Accuracy: 0 is a placeholder — PokemonDB lists no accuracy (self-targeting).
+    }
+}

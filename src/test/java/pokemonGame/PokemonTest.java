@@ -11,8 +11,6 @@ import pokemonGame.moves.MegaPunch;
 import pokemonGame.moves.MegaKick;
 import pokemonGame.moves.Toxic;
 
-import java.util.List;
-
 class PokemonTest {
 
     private Pokemon abra;

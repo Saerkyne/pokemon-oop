@@ -11,9 +11,19 @@ public class Sandshrew extends Pokemon {
     }
 
     public Sandshrew(String name) {
-        super("Sandshrew", 27, "Ground", null,
-            5, 50, 75, 85,
-            20, 30, 40);
+        super(
+            "Sandshrew",
+            27,
+            "Ground",
+            null,
+            5,
+            50,
+            75,
+            85,
+            20,
+            30,
+            40
+        );
 
         this.setName(name);
 

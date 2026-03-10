@@ -11,9 +11,19 @@ public class Wigglytuff extends Pokemon {
     }
 
     public Wigglytuff(String name) {
-        super("Wigglytuff", 40, "Normal", "Fairy",
-            5, 140, 70, 45,
-            85, 50, 45);
+        super(
+            "Wigglytuff",
+            40,
+            "Normal",
+            "Fairy",
+            5,
+            140,
+            70,
+            45,
+            85,
+            50,
+            45
+        );
 
         this.setName(name);
 

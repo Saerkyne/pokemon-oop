@@ -11,9 +11,19 @@ public class Meowth extends Pokemon {
     }
 
     public Meowth(String name) {
-        super("Meowth", 52, "Normal", null,
-            5, 40, 45, 35,
-            40, 40, 90);
+        super(
+            "Meowth",
+            52,
+            "Normal",
+            null,
+            5,
+            40,
+            45,
+            35,
+            40,
+            40,
+            90
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Shellder extends Pokemon {
     }
 
     public Shellder(String name) {
-        super("Shellder", 90, "Water", null,
-            5, 30, 65, 100,
-            45, 25, 40);
+        super(
+            "Shellder",
+            90,
+            "Water",
+            null,
+            5,
+            30,
+            65,
+            100,
+            45,
+            25,
+            40
+        );
 
         this.setName(name);
 

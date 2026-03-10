@@ -11,9 +11,19 @@ public class Seel extends Pokemon {
     }
 
     public Seel(String name) {
-        super("Seel", 86, "Water", null,
-            5, 65, 45, 55,
-            45, 70, 45);
+        super(
+            "Seel",
+            86,
+            "Water",
+            null,
+            5,
+            65,
+            45,
+            55,
+            45,
+            70,
+            45
+        );
 
         this.setName(name);
 

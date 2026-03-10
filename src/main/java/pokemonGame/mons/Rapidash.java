@@ -11,9 +11,19 @@ public class Rapidash extends Pokemon {
     }
 
     public Rapidash(String name) {
-        super("Rapidash", 78, "Fire", null,
-            5, 65, 100, 70,
-            80, 80, 105);
+        super(
+            "Rapidash",
+            78,
+            "Fire",
+            null,
+            5,
+            65,
+            100,
+            70,
+            80,
+            80,
+            105
+        );
 
         this.setName(name);
 

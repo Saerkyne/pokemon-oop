@@ -11,9 +11,19 @@ public class Rattata extends Pokemon {
     }
 
     public Rattata(String name) {
-        super("Rattata", 19, "Normal", null,
-            5, 30, 56, 35,
-            25, 35, 72);
+        super(
+            "Rattata",
+            19,
+            "Normal",
+            null,
+            5,
+            30,
+            56,
+            35,
+            25,
+            35,
+            72
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Parasect extends Pokemon {
     }
 
     public Parasect(String name) {
-        super("Parasect", 47, "Bug", "Grass",
-            5, 60, 95, 80,
-            60, 80, 30);
+        super(
+            "Parasect",
+            47,
+            "Bug",
+            "Grass",
+            5,
+            60,
+            95,
+            80,
+            60,
+            80,
+            30
+        );
 
         this.setName(name);
 

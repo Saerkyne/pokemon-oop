@@ -11,9 +11,19 @@ public class Machamp extends Pokemon {
     }
 
     public Machamp(String name) {
-        super("Machamp", 68, "Fighting", null,
-            5, 90, 130, 80,
-            65, 85, 55);
+        super(
+            "Machamp",
+            68,
+            "Fighting",
+            null,
+            5,
+            90,
+            130,
+            80,
+            65,
+            85,
+            55
+        );
 
         this.setName(name);
 

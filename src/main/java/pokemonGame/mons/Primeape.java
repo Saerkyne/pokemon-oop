@@ -11,9 +11,19 @@ public class Primeape extends Pokemon {
     }
 
     public Primeape(String name) {
-        super("Primeape", 57, "Fighting", null,
-            5, 65, 105, 60,
-            60, 70, 95);
+        super(
+            "Primeape",
+            57,
+            "Fighting",
+            null,
+            5,
+            65,
+            105,
+            60,
+            60,
+            70,
+            95
+        );
 
         this.setName(name);
 

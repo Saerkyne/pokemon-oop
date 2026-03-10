@@ -11,9 +11,19 @@ public class Ponyta extends Pokemon {
     }
 
     public Ponyta(String name) {
-        super("Ponyta", 77, "Fire", null,
-            5, 50, 85, 55,
-            65, 65, 90);
+        super(
+            "Ponyta",
+            77,
+            "Fire",
+            null,
+            5,
+            50,
+            85,
+            55,
+            65,
+            65,
+            90
+        );
 
         this.setName(name);
 

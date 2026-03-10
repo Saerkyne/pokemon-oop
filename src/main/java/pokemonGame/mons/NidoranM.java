@@ -11,9 +11,19 @@ public class NidoranM extends Pokemon {
     }
 
     public NidoranM(String name) {
-        super("NidoranM", 32, "Poison", null,
-            5, 46, 57, 40,
-            40, 40, 50);
+        super(
+            "NidoranM",
+            32,
+            "Poison",
+            null,
+            5,
+            46,
+            57,
+            40,
+            40,
+            40,
+            50
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Raichu extends Pokemon {
     }
 
     public Raichu(String name) {
-        super("Raichu", 26, "Electric", null,
-            5, 60, 90, 55,
-            90, 80, 110);
+        super(
+            "Raichu",
+            26,
+            "Electric",
+            null,
+            5,
+            60,
+            90,
+            55,
+            90,
+            80,
+            110
+        );
 
         this.setName(name);
 

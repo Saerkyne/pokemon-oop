@@ -11,9 +11,19 @@ public class Pinsir extends Pokemon {
     }
 
     public Pinsir(String name) {
-        super("Pinsir", 127, "Bug", null,
-            5, 65, 125, 100,
-            55, 70, 85);
+        super(
+            "Pinsir",
+            127,
+            "Bug",
+            null,
+            5,
+            65,
+            125,
+            100,
+            55,
+            70,
+            85
+        );
 
         this.setName(name);
 

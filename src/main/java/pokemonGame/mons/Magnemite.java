@@ -11,9 +11,19 @@ public class Magnemite extends Pokemon {
     }
 
     public Magnemite(String name) {
-        super("Magnemite", 81, "Electric", "Steel",
-            5, 25, 35, 70,
-            95, 55, 45);
+        super(
+            "Magnemite",
+            81,
+            "Electric",
+            "Steel",
+            5,
+            25,
+            35,
+            70,
+            95,
+            55,
+            45
+        );
 
         this.setName(name);
 

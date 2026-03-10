@@ -11,9 +11,19 @@ public class Nidorino extends Pokemon {
     }
 
     public Nidorino(String name) {
-        super("Nidorino", 33, "Poison", null,
-            5, 61, 72, 57,
-            55, 55, 65);
+        super(
+            "Nidorino",
+            33,
+            "Poison",
+            null,
+            5,
+            61,
+            72,
+            57,
+            55,
+            55,
+            65
+        );
 
         this.setName(name);
 

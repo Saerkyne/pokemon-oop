@@ -11,9 +11,19 @@ public class Zubat extends Pokemon {
     }
 
     public Zubat(String name) {
-        super("Zubat", 41, "Poison", "Flying",
-            5, 40, 45, 35,
-            30, 40, 55);
+        super(
+            "Zubat",
+            41,
+            "Poison",
+            "Flying",
+            5,
+            40,
+            45,
+            35,
+            30,
+            40,
+            55
+        );
 
         this.setName(name);
 

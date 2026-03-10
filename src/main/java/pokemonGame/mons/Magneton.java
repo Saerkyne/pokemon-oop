@@ -11,9 +11,19 @@ public class Magneton extends Pokemon {
     }
 
     public Magneton(String name) {
-        super("Magneton", 82, "Electric", "Steel",
-            5, 50, 60, 95,
-            120, 70, 70);
+        super(
+            "Magneton",
+            82,
+            "Electric",
+            "Steel",
+            5,
+            50,
+            60,
+            95,
+            120,
+            70,
+            70
+        );
 
         this.setName(name);
 

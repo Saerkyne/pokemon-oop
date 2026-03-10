@@ -11,9 +11,19 @@ public class Moltres extends Pokemon {
     }
 
     public Moltres(String name) {
-        super("Moltres", 146, "Fire", "Flying",
-            5, 90, 100, 90,
-            125, 85, 90);
+        super(
+            "Moltres",
+            146,
+            "Fire",
+            "Flying",
+            5,
+            90,
+            100,
+            90,
+            125,
+            85,
+            90
+        );
 
         this.setName(name);
 

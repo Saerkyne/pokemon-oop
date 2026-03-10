@@ -11,9 +11,19 @@ public class Poliwag extends Pokemon {
     }
 
     public Poliwag(String name) {
-        super("Poliwag", 60, "Water", null,
-            5, 40, 50, 40,
-            40, 40, 90);
+        super(
+            "Poliwag",
+            60,
+            "Water",
+            null,
+            5,
+            40,
+            50,
+            40,
+            40,
+            40,
+            90
+        );
 
         this.setName(name);
 

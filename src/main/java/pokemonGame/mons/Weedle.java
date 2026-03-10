@@ -11,9 +11,19 @@ public class Weedle extends Pokemon {
     }
 
     public Weedle(String name) {
-        super("Weedle", 13, "Bug", "Poison",
-            5, 40, 35, 30,
-            20, 20, 50);
+        super(
+            "Weedle",
+            13,
+            "Bug",
+            "Poison",
+            5,
+            40,
+            35,
+            30,
+            20,
+            20,
+            50
+        );
 
         this.setName(name);
 

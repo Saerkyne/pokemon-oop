@@ -11,9 +11,19 @@ public class Omastar extends Pokemon {
     }
 
     public Omastar(String name) {
-        super("Omastar", 139, "Rock", "Water",
-            5, 70, 60, 125,
-            115, 70, 55);
+        super(
+            "Omastar",
+            139,
+            "Rock",
+            "Water",
+            5,
+            70,
+            60,
+            125,
+            115,
+            70,
+            55
+        );
 
         this.setName(name);
 

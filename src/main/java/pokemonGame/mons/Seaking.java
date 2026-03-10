@@ -11,9 +11,19 @@ public class Seaking extends Pokemon {
     }
 
     public Seaking(String name) {
-        super("Seaking", 119, "Water", null,
-            5, 80, 92, 65,
-            65, 80, 68);
+        super(
+            "Seaking",
+            119,
+            "Water",
+            null,
+            5,
+            80,
+            92,
+            65,
+            65,
+            80,
+            68
+        );
 
         this.setName(name);
 

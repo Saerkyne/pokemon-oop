@@ -11,9 +11,19 @@ public class Pidgey extends Pokemon {
     }
 
     public Pidgey(String name) {
-        super("Pidgey", 16, "Normal", "Flying",
-            5, 40, 45, 40,
-            35, 35, 56);
+        super(
+            "Pidgey",
+            16,
+            "Normal",
+            "Flying",
+            5,
+            40,
+            45,
+            40,
+            35,
+            35,
+            56
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Pidgeotto extends Pokemon {
     }
 
     public Pidgeotto(String name) {
-        super("Pidgeotto", 17, "Normal", "Flying",
-            5, 63, 60, 55,
-            50, 50, 71);
+        super(
+            "Pidgeotto",
+            17,
+            "Normal",
+            "Flying",
+            5,
+            63,
+            60,
+            55,
+            50,
+            50,
+            71
+        );
 
         this.setName(name);
 

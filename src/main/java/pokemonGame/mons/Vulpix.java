@@ -11,9 +11,19 @@ public class Vulpix extends Pokemon {
     }
 
     public Vulpix(String name) {
-        super("Vulpix", 37, "Fire", null,
-            5, 38, 41, 40,
-            50, 65, 65);
+        super(
+            "Vulpix",
+            37,
+            "Fire",
+            null,
+            5,
+            38,
+            41,
+            40,
+            50,
+            65,
+            65
+        );
 
         this.setName(name);
 

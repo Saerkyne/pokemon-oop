@@ -11,9 +11,19 @@ public class Nidoqueen extends Pokemon {
     }
 
     public Nidoqueen(String name) {
-        super("Nidoqueen", 31, "Poison", "Ground",
-            5, 90, 92, 87,
-            75, 85, 76);
+        super(
+            "Nidoqueen",
+            31,
+            "Poison",
+            "Ground",
+            5,
+            90,
+            92,
+            87,
+            75,
+            85,
+            76
+        );
 
         this.setName(name);
 

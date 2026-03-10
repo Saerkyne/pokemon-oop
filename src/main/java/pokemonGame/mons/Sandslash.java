@@ -11,9 +11,19 @@ public class Sandslash extends Pokemon {
     }
 
     public Sandslash(String name) {
-        super("Sandslash", 28, "Ground", null,
-            5, 75, 100, 110,
-            45, 55, 65);
+        super(
+            "Sandslash",
+            28,
+            "Ground",
+            null,
+            5,
+            75,
+            100,
+            110,
+            45,
+            55,
+            65
+        );
 
         this.setName(name);
 

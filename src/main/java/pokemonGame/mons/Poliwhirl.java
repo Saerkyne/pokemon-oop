@@ -11,9 +11,19 @@ public class Poliwhirl extends Pokemon {
     }
 
     public Poliwhirl(String name) {
-        super("Poliwhirl", 61, "Water", null,
-            5, 65, 65, 65,
-            50, 50, 90);
+        super(
+            "Poliwhirl",
+            61,
+            "Water",
+            null,
+            5,
+            65,
+            65,
+            65,
+            50,
+            50,
+            90
+        );
 
         this.setName(name);
 

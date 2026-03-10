@@ -11,9 +11,19 @@ public class Machop extends Pokemon {
     }
 
     public Machop(String name) {
-        super("Machop", 66, "Fighting", null,
-            5, 70, 80, 50,
-            35, 35, 35);
+        super(
+            "Machop",
+            66,
+            "Fighting",
+            null,
+            5,
+            70,
+            80,
+            50,
+            35,
+            35,
+            35
+        );
 
         this.setName(name);
 

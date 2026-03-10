@@ -11,9 +11,19 @@ public class Porygon extends Pokemon {
     }
 
     public Porygon(String name) {
-        super("Porygon", 137, "Normal", null,
-            5, 65, 60, 70,
-            85, 75, 40);
+        super(
+            "Porygon",
+            137,
+            "Normal",
+            null,
+            5,
+            65,
+            60,
+            70,
+            85,
+            75,
+            40
+        );
 
         this.setName(name);
 

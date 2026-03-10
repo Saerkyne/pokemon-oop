@@ -11,9 +11,19 @@ public class Snorlax extends Pokemon {
     }
 
     public Snorlax(String name) {
-        super("Snorlax", 143, "Normal", null,
-            5, 160, 110, 65,
-            65, 110, 30);
+        super(
+            "Snorlax",
+            143,
+            "Normal",
+            null,
+            5,
+            160,
+            110,
+            65,
+            65,
+            110,
+            30
+        );
 
         this.setName(name);
 

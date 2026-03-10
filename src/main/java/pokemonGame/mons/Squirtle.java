@@ -15,9 +15,19 @@ public class Squirtle extends Pokemon {
     }
 
     public Squirtle(String name) {
-        super("Squirtle", 7, "Water", null,
-            5, 44, 48, 65, 50,
-            64, 43);
+        super(
+            "Squirtle",
+            7,
+            "Water",
+            null,
+            5,
+            44,
+            48,
+            65,
+            50,
+            64,
+            43
+        );
         
         this.setName(name);
 

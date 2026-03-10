@@ -11,9 +11,19 @@ public class Omanyte extends Pokemon {
     }
 
     public Omanyte(String name) {
-        super("Omanyte", 138, "Rock", "Water",
-            5, 35, 40, 100,
-            90, 55, 35);
+        super(
+            "Omanyte",
+            138,
+            "Rock",
+            "Water",
+            5,
+            35,
+            40,
+            100,
+            90,
+            55,
+            35
+        );
 
         this.setName(name);
 

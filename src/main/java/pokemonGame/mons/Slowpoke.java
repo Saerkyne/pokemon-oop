@@ -11,9 +11,19 @@ public class Slowpoke extends Pokemon {
     }
 
     public Slowpoke(String name) {
-        super("Slowpoke", 79, "Water", "Psychic",
-            5, 90, 65, 65,
-            40, 40, 15);
+        super(
+            "Slowpoke",
+            79,
+            "Water",
+            "Psychic",
+            5,
+            90,
+            65,
+            65,
+            40,
+            40,
+            15
+        );
 
         this.setName(name);
 

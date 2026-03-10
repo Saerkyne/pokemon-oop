@@ -11,9 +11,19 @@ public class Magikarp extends Pokemon {
     }
 
     public Magikarp(String name) {
-        super("Magikarp", 129, "Water", null,
-            5, 20, 10, 55,
-            15, 20, 80);
+        super(
+            "Magikarp",
+            129,
+            "Water",
+            null,
+            5,
+            20,
+            10,
+            55,
+            15,
+            20,
+            80
+        );
 
         this.setName(name);
 

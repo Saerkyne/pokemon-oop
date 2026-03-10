@@ -11,9 +11,19 @@ public class Onix extends Pokemon {
     }
 
     public Onix(String name) {
-        super("Onix", 95, "Rock", "Ground",
-            5, 35, 45, 160,
-            30, 45, 70);
+        super(
+            "Onix",
+            95,
+            "Rock",
+            "Ground",
+            5,
+            35,
+            45,
+            160,
+            30,
+            45,
+            70
+        );
 
         this.setName(name);
 

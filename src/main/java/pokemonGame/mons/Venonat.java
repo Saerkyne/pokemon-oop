@@ -11,9 +11,19 @@ public class Venonat extends Pokemon {
     }
 
     public Venonat(String name) {
-        super("Venonat", 48, "Bug", "Poison",
-            5, 60, 55, 50,
-            40, 55, 45);
+        super(
+            "Venonat",
+            48,
+            "Bug",
+            "Poison",
+            5,
+            60,
+            55,
+            50,
+            40,
+            55,
+            45
+        );
 
         this.setName(name);
 

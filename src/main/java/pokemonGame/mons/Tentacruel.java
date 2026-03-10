@@ -11,9 +11,19 @@ public class Tentacruel extends Pokemon {
     }
 
     public Tentacruel(String name) {
-        super("Tentacruel", 73, "Water", "Poison",
-            5, 80, 70, 65,
-            80, 120, 100);
+        super(
+            "Tentacruel",
+            73,
+            "Water",
+            "Poison",
+            5,
+            80,
+            70,
+            65,
+            80,
+            120,
+            100
+        );
 
         this.setName(name);
 

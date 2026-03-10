@@ -11,9 +11,19 @@ public class Magmar extends Pokemon {
     }
 
     public Magmar(String name) {
-        super("Magmar", 126, "Fire", null,
-            5, 65, 95, 57,
-            100, 85, 93);
+        super(
+            "Magmar",
+            126,
+            "Fire",
+            null,
+            5,
+            65,
+            95,
+            57,
+            100,
+            85,
+            93
+        );
 
         this.setName(name);
 

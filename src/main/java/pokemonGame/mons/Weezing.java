@@ -11,9 +11,19 @@ public class Weezing extends Pokemon {
     }
 
     public Weezing(String name) {
-        super("Weezing", 110, "Poison", null,
-            5, 65, 90, 120,
-            85, 70, 60);
+        super(
+            "Weezing",
+            110,
+            "Poison",
+            null,
+            5,
+            65,
+            90,
+            120,
+            85,
+            70,
+            60
+        );
 
         this.setName(name);
 

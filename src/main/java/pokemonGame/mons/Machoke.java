@@ -11,9 +11,19 @@ public class Machoke extends Pokemon {
     }
 
     public Machoke(String name) {
-        super("Machoke", 67, "Fighting", null,
-            5, 80, 100, 70,
-            50, 60, 45);
+        super(
+            "Machoke",
+            67,
+            "Fighting",
+            null,
+            5,
+            80,
+            100,
+            70,
+            50,
+            60,
+            45
+        );
 
         this.setName(name);
 

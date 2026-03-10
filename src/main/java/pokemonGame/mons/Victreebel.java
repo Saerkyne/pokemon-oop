@@ -11,9 +11,19 @@ public class Victreebel extends Pokemon {
     }
 
     public Victreebel(String name) {
-        super("Victreebel", 71, "Grass", "Poison",
-            5, 80, 105, 65,
-            100, 70, 70);
+        super(
+            "Victreebel",
+            71,
+            "Grass",
+            "Poison",
+            5,
+            80,
+            105,
+            65,
+            100,
+            70,
+            70
+        );
 
         this.setName(name);
 

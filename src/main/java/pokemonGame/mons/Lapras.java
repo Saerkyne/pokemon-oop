@@ -11,9 +11,19 @@ public class Lapras extends Pokemon {
     }
 
     public Lapras(String name) {
-        super("Lapras", 131, "Water", "Ice",
-            5, 130, 85, 80,
-            85, 95, 60);
+        super(
+            "Lapras",
+            131,
+            "Water",
+            "Ice",
+            5,
+            130,
+            85,
+            80,
+            85,
+            95,
+            60
+        );
 
         this.setName(name);
 

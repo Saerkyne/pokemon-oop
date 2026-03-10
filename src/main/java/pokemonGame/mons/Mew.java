@@ -11,9 +11,19 @@ public class Mew extends Pokemon {
     }
 
     public Mew(String name) {
-        super("Mew", 151, "Psychic", null,
-            5, 100, 100, 100,
-            100, 100, 100);
+        super(
+            "Mew",
+            151,
+            "Psychic",
+            null,
+            5,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+        );
 
         this.setName(name);
 

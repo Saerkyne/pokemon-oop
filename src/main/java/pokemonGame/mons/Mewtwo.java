@@ -28,9 +28,19 @@ public class Mewtwo extends Pokemon {
     public Mewtwo(String name) {
         
         // Call the superclass constructor to initialize Mewtwo's base stats and type
-        super("Mewtwo", 150, "Psychic", null,
-        5, 106, 110, 90, 154, 
-        90, 130);
+        super(
+            "Mewtwo",
+            150,
+            "Psychic",
+            null,
+            5,
+            106,
+            110,
+            90,
+            154,
+            90,
+            130
+        );
 
         this.setName(name);
 

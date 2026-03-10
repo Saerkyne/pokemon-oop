@@ -11,9 +11,19 @@ public class Tangela extends Pokemon {
     }
 
     public Tangela(String name) {
-        super("Tangela", 114, "Grass", null,
-            5, 65, 55, 115,
-            100, 40, 60);
+        super(
+            "Tangela",
+            114,
+            "Grass",
+            null,
+            5,
+            65,
+            55,
+            115,
+            100,
+            40,
+            60
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Tauros extends Pokemon {
     }
 
     public Tauros(String name) {
-        super("Tauros", 128, "Normal", null,
-            5, 75, 100, 95,
-            40, 70, 110);
+        super(
+            "Tauros",
+            128,
+            "Normal",
+            null,
+            5,
+            75,
+            100,
+            95,
+            40,
+            70,
+            110
+        );
 
         this.setName(name);
 

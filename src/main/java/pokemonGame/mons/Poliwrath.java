@@ -11,9 +11,19 @@ public class Poliwrath extends Pokemon {
     }
 
     public Poliwrath(String name) {
-        super("Poliwrath", 62, "Water", "Fighting",
-            5, 90, 95, 95,
-            70, 90, 70);
+        super(
+            "Poliwrath",
+            62,
+            "Water",
+            "Fighting",
+            5,
+            90,
+            95,
+            95,
+            70,
+            90,
+            70
+        );
 
         this.setName(name);
 

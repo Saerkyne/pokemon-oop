@@ -11,9 +11,19 @@ public class Voltorb extends Pokemon {
     }
 
     public Voltorb(String name) {
-        super("Voltorb", 100, "Electric", null,
-            5, 40, 30, 50,
-            55, 55, 100);
+        super(
+            "Voltorb",
+            100,
+            "Electric",
+            null,
+            5,
+            40,
+            30,
+            50,
+            55,
+            55,
+            100
+        );
 
         this.setName(name);
 

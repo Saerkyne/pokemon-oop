@@ -11,9 +11,19 @@ public class Seadra extends Pokemon {
     }
 
     public Seadra(String name) {
-        super("Seadra", 117, "Water", null,
-            5, 55, 65, 95,
-            95, 45, 85);
+        super(
+            "Seadra",
+            117,
+            "Water",
+            null,
+            5,
+            55,
+            65,
+            95,
+            95,
+            45,
+            85
+        );
 
         this.setName(name);
 

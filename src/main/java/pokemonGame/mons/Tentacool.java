@@ -11,9 +11,19 @@ public class Tentacool extends Pokemon {
     }
 
     public Tentacool(String name) {
-        super("Tentacool", 72, "Water", "Poison",
-            5, 40, 40, 35,
-            50, 100, 70);
+        super(
+            "Tentacool",
+            72,
+            "Water",
+            "Poison",
+            5,
+            40,
+            40,
+            35,
+            50,
+            100,
+            70
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Venomoth extends Pokemon {
     }
 
     public Venomoth(String name) {
-        super("Venomoth", 49, "Bug", "Poison",
-            5, 70, 65, 60,
-            90, 75, 90);
+        super(
+            "Venomoth",
+            49,
+            "Bug",
+            "Poison",
+            5,
+            70,
+            65,
+            60,
+            90,
+            75,
+            90
+        );
 
         this.setName(name);
 

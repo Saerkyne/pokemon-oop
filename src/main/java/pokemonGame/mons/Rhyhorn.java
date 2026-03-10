@@ -11,9 +11,19 @@ public class Rhyhorn extends Pokemon {
     }
 
     public Rhyhorn(String name) {
-        super("Rhyhorn", 111, "Ground", "Rock",
-            5, 80, 85, 95,
-            30, 30, 25);
+        super(
+            "Rhyhorn",
+            111,
+            "Ground",
+            "Rock",
+            5,
+            80,
+            85,
+            95,
+            30,
+            30,
+            25
+        );
 
         this.setName(name);
 

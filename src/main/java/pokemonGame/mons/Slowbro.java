@@ -11,9 +11,19 @@ public class Slowbro extends Pokemon {
     }
 
     public Slowbro(String name) {
-        super("Slowbro", 80, "Water", "Psychic",
-            5, 95, 75, 110,
-            100, 80, 30);
+        super(
+            "Slowbro",
+            80,
+            "Water",
+            "Psychic",
+            5,
+            95,
+            75,
+            110,
+            100,
+            80,
+            30
+        );
 
         this.setName(name);
 

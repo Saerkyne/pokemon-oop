@@ -11,9 +11,19 @@ public class Lickitung extends Pokemon {
     }
 
     public Lickitung(String name) {
-        super("Lickitung", 108, "Normal", null,
-            5, 90, 55, 75,
-            60, 75, 30);
+        super(
+            "Lickitung",
+            108,
+            "Normal",
+            null,
+            5,
+            90,
+            55,
+            75,
+            60,
+            75,
+            30
+        );
 
         this.setName(name);
 

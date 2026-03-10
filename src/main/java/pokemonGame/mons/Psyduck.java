@@ -11,9 +11,19 @@ public class Psyduck extends Pokemon {
     }
 
     public Psyduck(String name) {
-        super("Psyduck", 54, "Water", null,
-            5, 50, 52, 48,
-            65, 50, 55);
+        super(
+            "Psyduck",
+            54,
+            "Water",
+            null,
+            5,
+            50,
+            52,
+            48,
+            65,
+            50,
+            55
+        );
 
         this.setName(name);
 

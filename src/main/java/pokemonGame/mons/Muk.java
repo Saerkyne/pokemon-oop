@@ -11,9 +11,19 @@ public class Muk extends Pokemon {
     }
 
     public Muk(String name) {
-        super("Muk", 89, "Poison", null,
-            5, 105, 105, 75,
-            65, 100, 50);
+        super(
+            "Muk",
+            89,
+            "Poison",
+            null,
+            5,
+            105,
+            105,
+            75,
+            65,
+            100,
+            50
+        );
 
         this.setName(name);
 

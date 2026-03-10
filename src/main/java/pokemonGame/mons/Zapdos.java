@@ -11,9 +11,19 @@ public class Zapdos extends Pokemon {
     }
 
     public Zapdos(String name) {
-        super("Zapdos", 145, "Electric", "Flying",
-            5, 90, 90, 85,
-            125, 90, 100);
+        super(
+            "Zapdos",
+            145,
+            "Electric",
+            "Flying",
+            5,
+            90,
+            90,
+            85,
+            125,
+            90,
+            100
+        );
 
         this.setName(name);
 

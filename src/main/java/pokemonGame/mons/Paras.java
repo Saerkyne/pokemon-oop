@@ -11,9 +11,19 @@ public class Paras extends Pokemon {
     }
 
     public Paras(String name) {
-        super("Paras", 46, "Bug", "Grass",
-            5, 35, 70, 55,
-            45, 55, 25);
+        super(
+            "Paras",
+            46,
+            "Bug",
+            "Grass",
+            5,
+            35,
+            70,
+            55,
+            45,
+            55,
+            25
+        );
 
         this.setName(name);
 

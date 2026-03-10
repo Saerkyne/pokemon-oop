@@ -11,9 +11,19 @@ public class Nidoking extends Pokemon {
     }
 
     public Nidoking(String name) {
-        super("Nidoking", 34, "Poison", "Ground",
-            5, 81, 102, 77,
-            85, 75, 85);
+        super(
+            "Nidoking",
+            34,
+            "Poison",
+            "Ground",
+            5,
+            81,
+            102,
+            77,
+            85,
+            75,
+            85
+        );
 
         this.setName(name);
 

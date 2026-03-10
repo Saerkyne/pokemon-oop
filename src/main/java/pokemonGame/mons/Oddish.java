@@ -11,9 +11,19 @@ public class Oddish extends Pokemon {
     }
 
     public Oddish(String name) {
-        super("Oddish", 43, "Grass", "Poison",
-            5, 45, 50, 55,
-            75, 65, 30);
+        super(
+            "Oddish",
+            43,
+            "Grass",
+            "Poison",
+            5,
+            45,
+            50,
+            55,
+            75,
+            65,
+            30
+        );
 
         this.setName(name);
 

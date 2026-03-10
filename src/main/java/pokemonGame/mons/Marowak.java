@@ -11,9 +11,19 @@ public class Marowak extends Pokemon {
     }
 
     public Marowak(String name) {
-        super("Marowak", 105, "Ground", null,
-            5, 60, 80, 110,
-            50, 80, 45);
+        super(
+            "Marowak",
+            105,
+            "Ground",
+            null,
+            5,
+            60,
+            80,
+            110,
+            50,
+            80,
+            45
+        );
 
         this.setName(name);
 

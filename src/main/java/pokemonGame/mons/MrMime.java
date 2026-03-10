@@ -11,9 +11,19 @@ public class MrMime extends Pokemon {
     }
 
     public MrMime(String name) {
-        super("Mr. Mime", 122, "Psychic", "Fairy",
-            5, 40, 45, 65,
-            100, 120, 90);
+        super(
+            "Mr. Mime",
+            122,
+            "Psychic",
+            "Fairy",
+            5,
+            40,
+            45,
+            65,
+            100,
+            120,
+            90
+        );
 
         this.setName(name);
 

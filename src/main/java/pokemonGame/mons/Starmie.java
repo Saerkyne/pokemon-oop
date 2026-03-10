@@ -11,9 +11,19 @@ public class Starmie extends Pokemon {
     }
 
     public Starmie(String name) {
-        super("Starmie", 121, "Water", "Psychic",
-            5, 60, 75, 85,
-            100, 85, 115);
+        super(
+            "Starmie",
+            121,
+            "Water",
+            "Psychic",
+            5,
+            60,
+            75,
+            85,
+            100,
+            85,
+            115
+        );
 
         this.setName(name);
 

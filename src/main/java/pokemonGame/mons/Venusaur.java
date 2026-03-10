@@ -16,9 +16,19 @@ public class Venusaur extends Pokemon {
     }
 
     public Venusaur(String name) {
-        super("Venusaur", 3, "Grass", "Poison",
-            5, 80, 82, 83,
-            100, 100, 80);
+        super(
+            "Venusaur",
+            3,
+            "Grass",
+            "Poison",
+            5,
+            80,
+            82,
+            83,
+            100,
+            100,
+            80
+        );
 
         this.setName(name);
 

@@ -11,9 +11,19 @@ public class Vaporeon extends Pokemon {
     }
 
     public Vaporeon(String name) {
-        super("Vaporeon", 134, "Water", null,
-            5, 130, 65, 60,
-            110, 95, 65);
+        super(
+            "Vaporeon",
+            134,
+            "Water",
+            null,
+            5,
+            130,
+            65,
+            60,
+            110,
+            95,
+            65
+        );
 
         this.setName(name);
 

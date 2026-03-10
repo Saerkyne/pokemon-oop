@@ -11,9 +11,19 @@ public class Staryu extends Pokemon {
     }
 
     public Staryu(String name) {
-        super("Staryu", 120, "Water", null,
-            5, 30, 45, 55,
-            70, 55, 85);
+        super(
+            "Staryu",
+            120,
+            "Water",
+            null,
+            5,
+            30,
+            45,
+            55,
+            70,
+            55,
+            85
+        );
 
         this.setName(name);
 

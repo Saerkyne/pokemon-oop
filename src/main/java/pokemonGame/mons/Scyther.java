@@ -11,9 +11,19 @@ public class Scyther extends Pokemon {
     }
 
     public Scyther(String name) {
-        super("Scyther", 123, "Bug", "Flying",
-            5, 70, 110, 80,
-            55, 80, 105);
+        super(
+            "Scyther",
+            123,
+            "Bug",
+            "Flying",
+            5,
+            70,
+            110,
+            80,
+            55,
+            80,
+            105
+        );
 
         this.setName(name);
 

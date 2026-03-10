@@ -11,9 +11,19 @@ public class Rhydon extends Pokemon {
     }
 
     public Rhydon(String name) {
-        super("Rhydon", 112, "Ground", "Rock",
-            5, 105, 130, 120,
-            45, 45, 40);
+        super(
+            "Rhydon",
+            112,
+            "Ground",
+            "Rock",
+            5,
+            105,
+            130,
+            120,
+            45,
+            45,
+            40
+        );
 
         this.setName(name);
 

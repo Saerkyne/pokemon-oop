@@ -11,9 +11,19 @@ public class Raticate extends Pokemon {
     }
 
     public Raticate(String name) {
-        super("Raticate", 20, "Normal", null,
-            5, 55, 81, 60,
-            50, 70, 97);
+        super(
+            "Raticate",
+            20,
+            "Normal",
+            null,
+            5,
+            55,
+            81,
+            60,
+            50,
+            70,
+            97
+        );
 
         this.setName(name);
 

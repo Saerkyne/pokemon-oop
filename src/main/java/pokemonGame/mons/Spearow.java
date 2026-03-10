@@ -11,9 +11,19 @@ public class Spearow extends Pokemon {
     }
 
     public Spearow(String name) {
-        super("Spearow", 21, "Normal", "Flying",
-            5, 40, 60, 30,
-            31, 31, 70);
+        super(
+            "Spearow",
+            21,
+            "Normal",
+            "Flying",
+            5,
+            40,
+            60,
+            30,
+            31,
+            31,
+            70
+        );
 
         this.setName(name);
 

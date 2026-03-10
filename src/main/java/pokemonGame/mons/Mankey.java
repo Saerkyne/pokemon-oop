@@ -11,9 +11,19 @@ public class Mankey extends Pokemon {
     }
 
     public Mankey(String name) {
-        super("Mankey", 56, "Fighting", null,
-            5, 40, 80, 35,
-            35, 45, 70);
+        super(
+            "Mankey",
+            56,
+            "Fighting",
+            null,
+            5,
+            40,
+            80,
+            35,
+            35,
+            45,
+            70
+        );
 
         this.setName(name);
 

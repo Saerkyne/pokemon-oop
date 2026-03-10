@@ -11,9 +11,19 @@ public class Ninetales extends Pokemon {
     }
 
     public Ninetales(String name) {
-        super("Ninetales", 38, "Fire", null,
-            5, 73, 76, 75,
-            81, 100, 100);
+        super(
+            "Ninetales",
+            38,
+            "Fire",
+            null,
+            5,
+            73,
+            76,
+            75,
+            81,
+            100,
+            100
+        );
 
         this.setName(name);
 

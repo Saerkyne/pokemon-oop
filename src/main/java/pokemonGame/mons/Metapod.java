@@ -11,9 +11,19 @@ public class Metapod extends Pokemon {
     }
 
     public Metapod(String name) {
-        super("Metapod", 11, "Bug", null,
-            5, 50, 20, 55,
-            25, 25, 30);
+        super(
+            "Metapod",
+            11,
+            "Bug",
+            null,
+            5,
+            50,
+            20,
+            55,
+            25,
+            25,
+            30
+        );
 
         this.setName(name);
 

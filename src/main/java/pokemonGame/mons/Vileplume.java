@@ -11,9 +11,19 @@ public class Vileplume extends Pokemon {
     }
 
     public Vileplume(String name) {
-        super("Vileplume", 45, "Grass", "Poison",
-            5, 75, 80, 85,
-            110, 90, 50);
+        super(
+            "Vileplume",
+            45,
+            "Grass",
+            "Poison",
+            5,
+            75,
+            80,
+            85,
+            110,
+            90,
+            50
+        );
 
         this.setName(name);
 

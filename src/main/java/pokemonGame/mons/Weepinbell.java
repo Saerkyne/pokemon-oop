@@ -11,9 +11,19 @@ public class Weepinbell extends Pokemon {
     }
 
     public Weepinbell(String name) {
-        super("Weepinbell", 70, "Grass", "Poison",
-            5, 65, 90, 50,
-            85, 45, 55);
+        super(
+            "Weepinbell",
+            70,
+            "Grass",
+            "Poison",
+            5,
+            65,
+            90,
+            50,
+            85,
+            45,
+            55
+        );
 
         this.setName(name);
 

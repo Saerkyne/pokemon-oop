@@ -11,9 +11,19 @@ public class Persian extends Pokemon {
     }
 
     public Persian(String name) {
-        super("Persian", 53, "Normal", null,
-            5, 65, 70, 60,
-            65, 65, 115);
+        super(
+            "Persian",
+            53,
+            "Normal",
+            null,
+            5,
+            65,
+            70,
+            60,
+            65,
+            65,
+            115
+        );
 
         this.setName(name);
 

@@ -44,6 +44,8 @@ public class Pokemon {
     private int[] evYield; // This array holds the EV yield for each stat when this Pokemon is defeated in battle, 
     // in the order of HP, Attack, Defense, Special Attack, Special Defense, Speed
     private Natures nature;
+    private String[] statusConditions; // This array holds any status conditions currently affecting the Pokemon (e.g. "Paralyzed", "Burned")
+    private Boolean isFainted = false; // This boolean indicates whether the Pokemon has fainted (current HP is 0 or less)
     private final ArrayList<MoveSlot> moveset;
     private static final String[] STAT_NAMES = {"HP", "Attack", "Defense", "Special Attack", "Special Defense", "Speed"};
     
@@ -159,8 +161,28 @@ public class Pokemon {
         return species;
     }
 
+    public Boolean getIsFainted() {
+        return isFainted;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public String[] getStatusConditions() {
+        return statusConditions;
+    }
+
     public int getLevel() {
         return level;
+    }
+
+    public int getCurrentExp() {
+        return currentExp;
+    }
+
+    public int getExpYield() {
+        return expYield;
     }
 
     public Natures getNature() {
@@ -319,6 +341,14 @@ public class Pokemon {
     public void setNature(Natures nature) {
         this.nature = nature;
     }
+
+    public void setIsFainted(Boolean isFainted) {
+        this.isFainted = isFainted;
+    }
+
+    public void setStatusConditions(String[] statusConditions) {
+        this.statusConditions = statusConditions;
+    }   
     
     public void setHpBase(int hp) {
         this.hpBase = hp;
@@ -378,6 +408,10 @@ public class Pokemon {
         this.currentSpeed = currentSpeed;
     }
 
+    public void setCurrentExp(int currentExp) {
+        this.currentExp = currentExp;
+    }   
+
     public void setIvHp(int ivHp) {
         this.ivHp = ivHp;
     }
@@ -403,69 +437,63 @@ public class Pokemon {
     }
 
     public void setEvHp(int addedEvHp) {
-        if (evTotal < 510 && (evHp + addedEvHp) <= 252) {
-            this.evHp += addedEvHp;
-            this.evTotal += addedEvHp;
-        } else if (evTotal < 510 && (evHp + addedEvHp) > 252) {
-            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
-            this.evHp = 252;
-            this.evTotal += (252 - evHp); // Add only the amount needed to reach 252 to the total
-        }
+        if (evTotal >= 510) return;
+        int roomTotal = 510 - evTotal;
+        int roomStat = 252 - evHp;
+        int actual = Math.min(addedEvHp, Math.min(roomTotal, roomStat));
+        if (actual <= 0) return;
+        this.evHp += actual;
+        this.evTotal += actual;
     }
 
     public void setEvAttack(int addedEvAttack) {
-        if (evTotal < 510 && (evAttack + addedEvAttack) <= 252) {
-            this.evAttack += addedEvAttack;
-            this.evTotal += addedEvAttack;
-        } else if (evTotal < 510 && (evAttack + addedEvAttack) > 252) {
-            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
-            this.evAttack = 252;
-            this.evTotal += (252 - evAttack); // Add only the amount needed to reach 252 to the total
-        }
+        if (evTotal >= 510) return;
+        int roomTotal = 510 - evTotal;
+        int roomStat = 252 - evAttack;
+        int actual = Math.min(addedEvAttack, Math.min(roomTotal, roomStat));
+        if (actual <= 0) return;
+        this.evAttack += actual;
+        this.evTotal += actual;
     }
 
     public void setEvDefense(int addedEvDefense) {
-        if (evTotal < 510 && (evDefense + addedEvDefense) <= 252) {
-            this.evDefense += addedEvDefense;
-            this.evTotal += addedEvDefense;
-        } else if (evTotal < 510 && (evDefense + addedEvDefense) > 252) {
-            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
-            this.evDefense = 252;
-            this.evTotal += (252 - evDefense); // Add only the amount needed to reach 252 to the total
-        }
+        if (evTotal >= 510) return;
+        int roomTotal = 510 - evTotal;
+        int roomStat = 252 - evDefense;
+        int actual = Math.min(addedEvDefense, Math.min(roomTotal, roomStat));
+        if (actual <= 0) return;
+        this.evDefense += actual;
+        this.evTotal += actual;
     }
 
     public void setEvSpecialAttack(int addedEvSpecialAttack) {
-        if (evTotal < 510 && (evSpecialAttack + addedEvSpecialAttack) <= 252) {
-            this.evSpecialAttack += addedEvSpecialAttack;
-            this.evTotal += addedEvSpecialAttack;
-        } else if (evTotal < 510 && (evSpecialAttack + addedEvSpecialAttack) > 252) {
-            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
-            this.evSpecialAttack = 252;
-            this.evTotal += (252 - evSpecialAttack); // Add only the amount needed to reach 252 to the total
-        }
+        if (evTotal >= 510) return;
+        int roomTotal = 510 - evTotal;
+        int roomStat = 252 - evSpecialAttack;
+        int actual = Math.min(addedEvSpecialAttack, Math.min(roomTotal, roomStat));
+        if (actual <= 0) return;
+        this.evSpecialAttack += actual;
+        this.evTotal += actual;
     }
 
     public void setEvSpecialDefense(int addedEvSpecialDefense) {
-        if (evTotal < 510 && (evSpecialDefense + addedEvSpecialDefense) <= 252) {
-            this.evSpecialDefense += addedEvSpecialDefense;
-            this.evTotal += addedEvSpecialDefense;
-        } else if (evTotal < 510 && (evSpecialDefense + addedEvSpecialDefense) > 252) {
-            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
-            this.evSpecialDefense = 252;
-            this.evTotal += (252 - evSpecialDefense); // Add only the amount needed to reach 252 to the total
-        }
+        if (evTotal >= 510) return;
+        int roomTotal = 510 - evTotal;
+        int roomStat = 252 - evSpecialDefense;
+        int actual = Math.min(addedEvSpecialDefense, Math.min(roomTotal, roomStat));
+        if (actual <= 0) return;
+        this.evSpecialDefense += actual;
+        this.evTotal += actual;
     }
 
     public void setEvSpeed(int addedEvSpeed) {
-        if (evTotal < 510 && (evSpeed + addedEvSpeed) <= 252) {
-            this.evSpeed += addedEvSpeed;
-            this.evTotal += addedEvSpeed;
-        } else if (evTotal < 510 && (evSpeed + addedEvSpeed) > 252) {
-            System.out.println("EV total cannot exceed 510 and individual EVs cannot exceed 252.");
-            this.evSpeed = 252;
-            this.evTotal += (252 - evSpeed); // Add only the amount needed to reach 252 to the total
-        }
+        if (evTotal >= 510) return;
+        int roomTotal = 510 - evTotal;
+        int roomStat = 252 - evSpeed;
+        int actual = Math.min(addedEvSpeed, Math.min(roomTotal, roomStat));
+        if (actual <= 0) return;
+        this.evSpeed += actual;
+        this.evTotal += actual;
     }
 
     public void setEvYield(int[] evYield) {

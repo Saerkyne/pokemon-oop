@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 import pokemonGame.mons.Abra;
+import pokemonGame.mons.Bulbasaur;
 
 class TrainerTest {
 
@@ -61,5 +62,41 @@ class TrainerTest {
         trainer.addPokemonToTeam(abra);
         assertSame(abra, trainer.getTeam().get(0),
                 "The same Pokémon object should be retrievable from the team");
+    }
+
+    @Test
+    void teamPreservesInsertionOrder() {
+        Pokemon first = new Abra("First");
+        Pokemon second = new Bulbasaur("Second");
+        Pokemon third = new Abra("Third");
+
+        trainer.addPokemonToTeam(first);
+        trainer.addPokemonToTeam(second);
+        trainer.addPokemonToTeam(third);
+
+        assertSame(first, trainer.getTeam().get(0));
+        assertSame(second, trainer.getTeam().get(1));
+        assertSame(third, trainer.getTeam().get(2));
+    }
+
+    @Test
+    void canAddDifferentSpecies() {
+        trainer.addPokemonToTeam(new Abra("Abra"));
+        trainer.addPokemonToTeam(new Bulbasaur("Bulbasaur"));
+        assertEquals(2, trainer.getTeam().size());
+        assertEquals("Abra", trainer.getTeam().get(0).getName());
+        assertEquals("Bulbasaur", trainer.getTeam().get(1).getName());
+    }
+
+    @Test
+    void twoTrainersHaveIndependentTeams() {
+        Trainer other = new Trainer("Gary");
+        trainer.addPokemonToTeam(new Abra("Ash's Abra"));
+        other.addPokemonToTeam(new Bulbasaur("Gary's Bulbasaur"));
+
+        assertEquals(1, trainer.getTeam().size());
+        assertEquals(1, other.getTeam().size());
+        assertEquals("Ash's Abra", trainer.getTeam().get(0).getName());
+        assertEquals("Gary's Bulbasaur", other.getTeam().get(0).getName());
     }
 }

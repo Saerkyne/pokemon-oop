@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 import pokemonGame.mons.Abra;
+import pokemonGame.mons.Bulbasaur;
 import pokemonGame.moves.Psychic;
 import pokemonGame.moves.Teleport;
 import pokemonGame.moves.MegaPunch;
@@ -39,6 +40,44 @@ class PokemonTest {
         abra.setLevel(50);
         assertTrue(abra.getMaxHP() > hpAtLevel5,
                 "Max HP at level 50 should be higher than at level 5");
+    }
+
+    @Test
+    void setLevelResetsCurrentHPToMax() {
+        abra.setLevel(50);
+        assertEquals(abra.getMaxHP(), abra.getCurrentHP(),
+                "After setLevel, current HP should equal max HP");
+    }
+
+    @Test
+    void levelUpIncrementsLevel() {
+        int before = abra.getLevel();
+        abra.levelUp();
+        assertEquals(before + 1, abra.getLevel());
+    }
+
+    @Test
+    void levelUpRecalculatesStats() {
+        abra.setLevel(49);
+        int hpAt49 = abra.getMaxHP();
+        abra.levelUp();
+        assertTrue(abra.getMaxHP() >= hpAt49,
+                "Max HP should not decrease after leveling up");
+        assertEquals(50, abra.getLevel());
+    }
+
+    // --- Name ---
+
+    @Test
+    void setNameUpdatesName() {
+        abra.setName("Kadabra");
+        assertEquals("Kadabra", abra.getName());
+    }
+
+    @Test
+    void defaultNameMatchesSpecies() {
+        Pokemon fresh = new Abra("Abra");
+        assertEquals("Abra", fresh.getName());
     }
 
     // --- Moveset management ---
@@ -103,7 +142,6 @@ class PokemonTest {
 
     @Test
     void physicalMoveUsesAttackStat() {
-        // MegaPunch is Physical
         Move physical = new MegaPunch();
         assertEquals("Physical", physical.getMoveCategory());
         int attackStat = abra.getAttackStatForMove(physical);
@@ -112,18 +150,41 @@ class PokemonTest {
 
     @Test
     void specialMoveUsesSpecialAttackStat() {
-        // Psychic is Special
         Move special = new Psychic();
         assertEquals("Special", special.getMoveCategory());
         int spAtkStat = abra.getAttackStatForMove(special);
         assertEquals(abra.getCurrentSpecialAttack(), spAtkStat);
     }
 
+    @Test
+    void statusMoveReturnsZeroAttack() {
+        Move teleport = new Teleport();
+        assertEquals("Status", teleport.getMoveCategory());
+        assertEquals(0, abra.getAttackStatForMove(teleport));
+    }
+
+    @Test
+    void physicalMoveUsesDefenseStat() {
+        Move physical = new MegaPunch();
+        assertEquals(abra.getCurrentDefense(), abra.getDefenseStatForMove(physical));
+    }
+
+    @Test
+    void specialMoveUsesSpecialDefenseStat() {
+        Move special = new Psychic();
+        assertEquals(abra.getCurrentSpecialDefense(), abra.getDefenseStatForMove(special));
+    }
+
+    @Test
+    void statusMoveReturnsZeroDefense() {
+        Move teleport = new Teleport();
+        assertEquals(0, abra.getDefenseStatForMove(teleport));
+    }
+
     // --- IVs ---
 
     @Test
     void ivsAreInValidRange() {
-        // IVs should be 0-31
         assertTrue(abra.getIvHp() >= 0 && abra.getIvHp() <= 31);
         assertTrue(abra.getIvAttack() >= 0 && abra.getIvAttack() <= 31);
         assertTrue(abra.getIvDefense() >= 0 && abra.getIvDefense() <= 31);
@@ -151,8 +212,23 @@ class PokemonTest {
     void evCapsAtPerStatMax252() {
         abra.setEvHp(252);
         abra.setEvHp(10); // Should not exceed 252
-        // Total should stay at 252, not 262
         assertEquals(252, abra.getEvTotal());
+    }
+
+    @Test
+    void evTotalCannotExceed510() {
+        abra.setEvAttack(252);
+        abra.setEvSpeed(252);
+        // evTotal is now 504
+        abra.setEvHp(100); // Would push total to 604, should be rejected
+        assertTrue(abra.getEvTotal() <= 510,
+                "EV total should not exceed 510");
+    }
+
+    @Test
+    void individualEvsCappedAt252() {
+        abra.setEvDefense(252);
+        assertEquals(252, abra.getEvDefense());
     }
 
     // --- Nature ---
@@ -161,6 +237,92 @@ class PokemonTest {
     void pokemonHasNatureAssigned() {
         assertNotNull(abra.getNature(),
                 "A newly created Pokémon should have a nature assigned");
+    }
+
+    @Test
+    void setNatureUpdatesNature() {
+        abra.setNature(Natures.ADAMANT);
+        assertEquals(Natures.ADAMANT, abra.getNature());
+    }
+
+    @Test
+    void applyNatureSetsANature() {
+        abra.applyNature();
+        assertNotNull(abra.getNature());
+    }
+
+    // --- isFainted ---
+
+    @Test
+    void newPokemonIsNotFainted() {
+        assertFalse(abra.getIsFainted());
+    }
+
+    @Test
+    void setIsFaintedUpdatesFlag() {
+        abra.setIsFainted(true);
+        assertTrue(abra.getIsFainted());
+    }
+
+    @Test
+    void setIsFaintedBackToFalse() {
+        abra.setIsFainted(true);
+        abra.setIsFainted(false);
+        assertFalse(abra.getIsFainted());
+    }
+
+    // --- HP management ---
+
+    @Test
+    void currentHPStartsAtMaxHP() {
+        assertEquals(abra.getMaxHP(), abra.getCurrentHP(),
+                "Current HP should start at max HP");
+    }
+
+    @Test
+    void setCurrentHPUpdatesHP() {
+        abra.setCurrentHP(10);
+        assertEquals(10, abra.getCurrentHP());
+    }
+
+    @Test
+    void setCurrentHPAllowsNegative() {
+        abra.setCurrentHP(-5);
+        assertEquals(-5, abra.getCurrentHP());
+    }
+
+    // --- Stat calculation formulas ---
+
+    @Test
+    void calcMaxHPUsesCorrectFormula() {
+        // Formula: ((2*base + IV + EV/4) * level / 100) + level + 10
+        int result = abra.calcMaxHP(45, 50, 15, 100);
+        int expected = ((2 * 45 + 15 + 100 / 4) * 50 / 100) + 50 + 10;
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void calcCurrentStatUsesCorrectFormula() {
+        // Formula: (((2*base + IV + EV/4) * level / 100) + 5) * nature
+        int result = abra.calcCurrentStat(80, 50, 20, 0, 1.0);
+        int expected = (int) Math.floor((((2 * 80 + 20 + 0) * 50 / 100) + 5) * 1.0);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void calcCurrentStatWithNatureBoost() {
+        int neutral = abra.calcCurrentStat(80, 50, 20, 0, 1.0);
+        int boosted = abra.calcCurrentStat(80, 50, 20, 0, 1.1);
+        assertTrue(boosted > neutral,
+                "A boosted nature should give a higher stat");
+    }
+
+    @Test
+    void calcCurrentStatWithNaturePenalty() {
+        int neutral = abra.calcCurrentStat(80, 50, 20, 0, 1.0);
+        int lowered = abra.calcCurrentStat(80, 50, 20, 0, 0.9);
+        assertTrue(lowered < neutral,
+                "A lowered nature should give a lower stat");
     }
 
     // --- Species info ---
@@ -181,10 +343,43 @@ class PokemonTest {
                 "Abra is a single-type Pokémon, secondary should be null");
     }
 
+    @Test
+    void dualTypePokemonHasSecondaryType() {
+        Pokemon bulba = new Bulbasaur("Bulba");
+        assertEquals("Grass", bulba.getTypePrimary());
+        assertEquals("Poison", bulba.getTypeSecondary());
+    }
+
     // --- Learnset ---
 
     @Test
     void learnsetIsNotEmpty() {
         assertFalse(abra.getLearnset().isEmpty());
+    }
+
+    // --- EV yield ---
+
+    @Test
+    void evYieldIsNotNull() {
+        assertNotNull(abra.getEvYield(),
+                "EV yield should be set for species");
+    }
+
+    // --- Base stat setters recalculate ---
+
+    @Test
+    void setHpBaseRecalculatesStats() {
+        int hpBefore = abra.getMaxHP();
+        abra.setHpBase(200);
+        assertTrue(abra.getMaxHP() > hpBefore,
+                "Increasing HP base should increase max HP");
+    }
+
+    @Test
+    void setSpeedBaseRecalculatesStats() {
+        int speedBefore = abra.getCurrentSpeed();
+        abra.setSpeedBase(200);
+        assertTrue(abra.getCurrentSpeed() > speedBefore,
+                "Increasing speed base should increase current speed");
     }
 }

@@ -2,7 +2,8 @@ package pokemonGame;
 import java.util.List;
 import java.io.Console;
 import pokemonGame.mons.*;
-import pokemonGame.Battle;
+// For testing only: 
+import pokemonGame.moves.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -52,8 +53,10 @@ public class App {
         }
         */
 
-        teachMoveFromLearnset(GaryAbra);
-        teachMoveFromLearnset(JoelAbra);  
+        
+        JoelAbra.addMove(new Psychic());
+        JoelAbra.addMove(new Recover());
+        GaryAbra.addMove(new Teleport());
 
         // Display the moves each Pokémon has learned
         System.out.println(JoelAbra.getName() + " knows:");
@@ -82,9 +85,8 @@ public class App {
         System.out.println();
 
 
-        Battle.dealDamage(JoelAbra, GaryAbra, JoelAbra.getMoveset().get(0).getMove());
+        Battle.enterBattleState(trainer, opponent);
 
-        System.out.println("Opposing " + GaryAbra.getName() + " has " + GaryAbra.getCurrentHP() + " HP left after the attack!");    
 
 
         //Iterate through Bulby's moves and calculate effectiveness against Gengar instead of hardcoded attacks

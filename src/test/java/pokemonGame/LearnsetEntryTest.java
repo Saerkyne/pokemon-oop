@@ -4,9 +4,33 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import pokemonGame.mons.Abra;
+import pokemonGame.moves.Psychic;
 import java.util.List;
 
 class LearnsetEntryTest {
+
+    // --- Constructor / getters ---
+
+    @Test
+    void constructorStoresMove() {
+        Move psychic = new Psychic();
+        LearnsetEntry entry = new LearnsetEntry(psychic, LearnsetEntry.Source.TM, 29);
+        assertSame(psychic, entry.getMove());
+    }
+
+    @Test
+    void constructorStoresSource() {
+        LearnsetEntry entry = new LearnsetEntry(new Psychic(), LearnsetEntry.Source.TM, 29);
+        assertEquals(LearnsetEntry.Source.TM, entry.getSource());
+    }
+
+    @Test
+    void constructorStoresParameter() {
+        LearnsetEntry entry = new LearnsetEntry(new Psychic(), LearnsetEntry.Source.LEVEL, 16);
+        assertEquals(16, entry.getParameter());
+    }
+
+    // --- getEligibleMoves ---
 
     @Test
     void eligibleMovesExcludesAlreadyKnownMoves() {
@@ -79,5 +103,30 @@ class LearnsetEntryTest {
         List<LearnsetEntry> eligible = LearnsetEntry.getEligibleMoves(null);
         assertNotNull(eligible);
         assertTrue(eligible.isEmpty());
+    }
+
+    @Test
+    void eligibleMovesCountDecreaseAfterLearning() {
+        Pokemon abra = new Abra("Test Abra");
+        List<LearnsetEntry> before = LearnsetEntry.getEligibleMoves(abra);
+        int countBefore = before.size();
+
+        // Learn a move — may appear under multiple sources (e.g. LEVEL + TM),
+        // so all entries for that move name get filtered out
+        abra.addMove(before.get(0).getMove());
+
+        List<LearnsetEntry> after = LearnsetEntry.getEligibleMoves(abra);
+        assertTrue(after.size() < countBefore,
+                "Eligible move count should decrease after learning a move");
+    }
+
+    @Test
+    void allSourceEnumsExist() {
+        // Verify all expected Source enum values are present
+        assertNotNull(LearnsetEntry.Source.LEVEL);
+        assertNotNull(LearnsetEntry.Source.TM);
+        assertNotNull(LearnsetEntry.Source.HM);
+        assertNotNull(LearnsetEntry.Source.EGG);
+        assertNotNull(LearnsetEntry.Source.TUTOR);
     }
 }

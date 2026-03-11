@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LearnsetEntry {
-    public enum Source { LEVEL, TM, EGG, TUTOR, HM /* … */ }
+    // Egg and Tutor moves don't exist in Gen 1, but we can still use the same
+    //  class to represent them for future generations if added.
+    // The parameter field can be used for different purposes depending on the source:
+    // - For LEVEL, it indicates the level at which the move is learned.
+    // - For TM/HM, it indicates the TM/HM number.
+    // - For EGG, TUTOR, PRE_EVOLUTION, it can be set to 0, 1, or ignored.
+    public enum Source { LEVEL, TM, EGG, TUTOR, HM, PRE_EVOLUTION /* … */ }
 
     private final Move move;
     private final Source source;

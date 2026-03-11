@@ -2,6 +2,7 @@ package pokemonGame;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import static org.junit.jupiter.api.Assertions.*;
 
 import pokemonGame.mons.Abra;
@@ -219,10 +220,12 @@ class PokemonTest {
     void evTotalCannotExceed510() {
         abra.setEvAttack(252);
         abra.setEvSpeed(252);
-        // evTotal is now 504
-        abra.setEvHp(100); // Would push total to 604, should be rejected
-        assertTrue(abra.getEvTotal() <= 510,
-                "EV total should not exceed 510");
+        // evTotal is now 504; only 6 more EVs can fit under the 510 cap
+        abra.setEvHp(100); // Requests 100 but only 6 should be granted
+        assertEquals(510, abra.getEvTotal(),
+                "EV total should be capped at exactly 510");
+        assertEquals(6, abra.getEvHp(),
+                "Only 6 HP EVs should have been added (510 - 504 = 6 remaining room)");
     }
 
     @Test
@@ -285,10 +288,17 @@ class PokemonTest {
         assertEquals(10, abra.getCurrentHP());
     }
 
+    // IDEAL BEHAVIOR: setCurrentHP should clamp at 0 so HP is never negative.
+    // CURRENT BEHAVIOR: setCurrentHP stores whatever int it receives, including
+    // negative values. This is the root cause of the HP-below-zero issues
+    // documented in BattleTest.dealDamage_hpShouldBeClampedAtZero.
+    // TODO: Remove @Disabled when setCurrentHP clamps at 0.
+    @Disabled("KNOWN LIMITATION: setCurrentHP does not clamp — negative HP can be stored")
     @Test
-    void setCurrentHPAllowsNegative() {
+    void setCurrentHP_shouldClampAtZero() {
         abra.setCurrentHP(-5);
-        assertEquals(-5, abra.getCurrentHP());
+        assertEquals(0, abra.getCurrentHP(),
+                "HP should be clamped at 0 when set to a negative value");
     }
 
     // --- Stat calculation formulas ---

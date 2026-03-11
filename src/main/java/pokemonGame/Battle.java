@@ -30,6 +30,17 @@ public class Battle {
         System.out.println("Battle has started between " + player.getName() + " and " + opponent.getName() + "!");
         System.out.println(speedCheck.getName() + " will go first!");
 
+        for (Pokemon pokemon : player.getTeam()) {
+            Boolean checkFainted = checkFainted(pokemon);
+        
+            if (checkFainted) {
+                System.out.println(pokemon.getName() + " has fainted and cannot battle!");
+            } else {
+                System.out.println(pokemon.getName() + " is ready to battle!");
+            }          
+        }
+        
+
         
     }
 

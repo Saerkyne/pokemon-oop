@@ -181,13 +181,17 @@ class AttackTest {
 
     @Test
     void criticalHitReturnsBooleanWithoutError() {
+        // SMOKE TEST: The real purpose is to verify calculateCriticalHit runs
+        // without throwing an exception. The assertion below is intentionally
+        // tautological — (crit || !crit) is always true. We use it because
+        // JUnit requires at least one assertion, and the meaningful check is
+        // "no exception was thrown during execution."
         Pokemon attacker = new Abra("Attacker");
         Pokemon defender = new Abra("Defender");
         attacker.setLevel(50);
         defender.setLevel(50);
-        // Just verify it doesn't throw — result is random
         boolean crit = attack.calculateCriticalHit(attacker, defender);
-        assertTrue(crit || !crit); // always true, just checking no exception
+        assertTrue(crit || !crit); // tautology — the real test is no exception above
     }
 
     @Test
@@ -213,7 +217,12 @@ class AttackTest {
 
     @Test
     void critChanceNeverExceedsCap() {
-        // Even with massive speed difference, crit rate capped at 15%
+        // The crit formula caps at 15% (1500/10000). Over 10,000 trials, the
+        // observed rate should stay near 15%. We allow up to 17% to account
+        // for normal statistical fluctuation, but anything higher than that
+        // suggests the cap logic is broken.
+        // (Previously this threshold was 20%, which was too loose — a 5%
+        // margin above a 15% cap could hide real bugs.)
         Pokemon fast = new Electrode("Fast");
         Pokemon slow = new Slowbro("Slow");
         fast.setLevel(100);
@@ -225,7 +234,7 @@ class AttackTest {
             if (attack.calculateCriticalHit(fast, slow)) crits++;
         }
         double critRate = (double) crits / trials;
-        assertTrue(critRate <= 0.20,
+        assertTrue(critRate <= 0.17,
                 "Crit rate should not greatly exceed 15% cap, got " + (critRate * 100) + "%");
     }
 }

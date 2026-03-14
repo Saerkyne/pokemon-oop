@@ -11,12 +11,30 @@ public class Battle {
         Attack attack = new Attack();
         int damage = attack.calculateDamage(attacker, defender, move);
 
+        // Check for damage amount, clamp to 0 if it would go negative
+        try {
+            if ((defender.getCurrentHP() - damage) < 0) {
+                throw new IllegalArgumentException("Damage cannot send HP negative. Setting defender HP to 0.");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            damage = defender.getCurrentHP();
+        }
+        
         // Apply damage to the defender
         defender.setCurrentHP(defender.getCurrentHP() - damage);
 
         // Print out the result of the attack
         System.out.println(attacker.getName() + " used " + move.getMoveName() + "!");
-        System.out.println(defender.getName() + " took " + damage + " damage and has " + defender.getCurrentHP() + " HP left.");
+
+        if (!checkFainted(defender)) {
+            System.out.println(defender.getName() + " took " + damage + " damage and has " + defender.getCurrentHP() + " HP left.");
+        } else {
+            System.out.println(defender.getName() + " took " + damage + " damage and has fainted!");
+
+        }
+
+        
     }
 
     public static void enterBattleState(Trainer player, Trainer opponent) {
@@ -71,7 +89,6 @@ public class Battle {
 
     public static Boolean checkFainted(Pokemon pokemon) {
         if (pokemon.getCurrentHP() <= 0) {
-            System.out.println(pokemon.getName() + " has fainted!");
             pokemon.setIsFainted(true);
             return pokemon.getIsFainted();
         }

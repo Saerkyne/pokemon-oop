@@ -117,14 +117,16 @@ instance_id | trainer_id | species    | nickname   | level | nature  | iv_hp | i
 ```sql
 CREATE TABLE pokemon_movesets (
     instance_id  INTEGER NOT NULL REFERENCES pokemon_instances(instance_id),
-    slot_index   SMALLINT NOT NULL,
+    slot_index   SMALLINT NOT NULL 
+        CONSTRAINT four_moves_or_less
+        CHECK (slot_index BETWEEN 0 AND 3),
     move_name    VARCHAR(50) NOT NULL,
     current_pp   SMALLINT NOT NULL,
     PRIMARY KEY (instance_id, slot_index)
 );
 ```
 
-The `move_name` column acts as a key to look up the corresponding Java `Move` object at load time. The move's stats (power, type, etc.) still come from the Java class — only the PP consumption is per-instance. NOTE: Check if there is a way to limit the number of records in a table - this table should only have UP TO 4 records (moves) at a time.
+The `move_name` column acts as a key to look up the corresponding Java `Move` object at load time. The move's stats (power, type, etc.) still come from the Java class — only the PP consumption is per-instance. 
 
 Example data:
 
@@ -141,7 +143,9 @@ instance_id | slot_index | move_name  | current_pp
 ```sql
 CREATE TABLE trainer_teams (
     trainer_id   INTEGER NOT NULL REFERENCES trainers(trainer_id),
-    slot_index   SMALLINT NOT NULL,
+    slot_index   SMALLINT NOT NULL
+        CONSTRAINT six_poke_instances_or_less
+        CHECK (slot_index BETWEEN 0 AND 5),
     instance_id  INTEGER NOT NULL REFERENCES pokemon_instances(instance_id),
     PRIMARY KEY (trainer_id, slot_index)
 );

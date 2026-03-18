@@ -15,8 +15,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DatabaseSetup {
+
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseSetup.class);
+
+
     private static final String URL = "jdbc:mariadb://192.168.1.212:3306/pokemon_db";
     private static final String USER = "pokemon_db_user";
     // This is temporary for testing purposes, in production this should be stored 
@@ -24,14 +30,17 @@ public class DatabaseSetup {
     private static final String PASSWORD = "fdr3invoices3MUY3wyatt";
 
     public static Connection getConnection() throws SQLException {
+        logger.info("Attempting to connect to database at {}", URL);
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     public static void main(String[] args) {
         try (Connection conn = getConnection()) {
-            System.out.println("Connected to: " + conn.getMetaData().getDatabaseProductName()
-                    + " " + conn.getMetaData().getDatabaseProductVersion() + " at " + 
-                    conn.getMetaData().getURL() + " as user " + conn.getMetaData().getUserName());
+            logger.info("Connected to: {} {} at {} as user {}", 
+                    conn.getMetaData().getDatabaseProductName(),
+                    conn.getMetaData().getDatabaseProductVersion(),
+                    conn.getMetaData().getURL(),
+                    conn.getMetaData().getUserName());
 
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute("""

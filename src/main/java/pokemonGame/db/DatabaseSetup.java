@@ -1,3 +1,14 @@
+// This class sets a connection to the database and creates the type_chart table
+// if it does not already exist.
+
+// In a production environment, the database credentials should be stored securely,
+// such as in environment variables or a secure vault, rather than hardcoded in the source code.
+
+// The connection code in this class is basic and does not include connection pooling, 
+// but it can be used as a starting point and template for a dedicated connection manager
+
+
+
 package pokemonGame.db;
 
 import java.sql.Connection;
@@ -19,7 +30,8 @@ public class DatabaseSetup {
     public static void main(String[] args) {
         try (Connection conn = getConnection()) {
             System.out.println("Connected to: " + conn.getMetaData().getDatabaseProductName()
-                    + " " + conn.getMetaData().getDatabaseProductVersion());
+                    + " " + conn.getMetaData().getDatabaseProductVersion() + " at " + 
+                    conn.getMetaData().getURL() + " as user " + conn.getMetaData().getUserName());
 
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute("""

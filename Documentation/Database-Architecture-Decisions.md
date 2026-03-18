@@ -59,6 +59,7 @@ This is data that's **unique to each player** and must **survive** between bot s
 CREATE TABLE trainers (
     trainer_id   SERIAL PRIMARY KEY,
     discord_id   BIGINT UNIQUE NOT NULL,
+    discord_username VARCHAR(50) NOT NULL,
     name         VARCHAR(50) NOT NULL
 );
 ```
@@ -66,10 +67,10 @@ CREATE TABLE trainers (
 Example data:
 
 ```
-trainer_id | discord_id  | name
------------+-------------+-------
-1          | 28374918273 | Red
-2          | 91827364510 | Blue
+trainer_id | discord_id  | discord_username | name
+-----------+-------------+------------------+------
+1          | 28374918273 | Calabriel        | Red
+2          | 91827364510 | JonBelf          | Blue
 ```
 
 ### `pokemon_instances` — Each Specific Pokémon a Player Owns
@@ -123,7 +124,7 @@ CREATE TABLE pokemon_movesets (
 );
 ```
 
-The `move_name` column acts as a key to look up the corresponding Java `Move` object at load time. The move's stats (power, type, etc.) still come from the Java class — only the PP consumption is per-instance.
+The `move_name` column acts as a key to look up the corresponding Java `Move` object at load time. The move's stats (power, type, etc.) still come from the Java class — only the PP consumption is per-instance. NOTE: Check if there is a way to limit the number of records in a table - this table should only have UP TO 4 records (moves) at a time.
 
 Example data:
 
@@ -145,6 +146,8 @@ CREATE TABLE trainer_teams (
     PRIMARY KEY (trainer_id, slot_index)
 );
 ```
+
+NOTE: This table should only have UP TO 6 records (pokemon instances) at a time.
 
 Example data:
 

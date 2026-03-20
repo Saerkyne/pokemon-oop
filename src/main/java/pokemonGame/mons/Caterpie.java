@@ -1,13 +1,16 @@
 ﻿package pokemonGame.mons;
 import pokemonGame.Pokemon;
 import pokemonGame.LearnsetEntry;
+import pokemonGame.moves.*;
 import java.util.List;
 
 public class Caterpie extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
-        // Learnset will be populated manually later
+        // Level up moves
+        LEARNSET.add(new LearnsetEntry(new Tackle(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new StringShot(), LearnsetEntry.Source.LEVEL, 1));
     }
 
     public Caterpie(String name) {

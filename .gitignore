@@ -5,6 +5,9 @@ target/
 # VS Code
 .vscode/
 
+# Zed
+.zed/
+
 # IDE files
 *.class
 *.jar

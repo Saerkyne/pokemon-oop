@@ -1,13 +1,17 @@
 ﻿package pokemonGame.mons;
 import pokemonGame.Pokemon;
 import pokemonGame.LearnsetEntry;
+import pokemonGame.moves.*;
 import java.util.List;
 
 public class Kakuna extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
-        // Learnset will be populated manually later
+        LEARNSET.add(new LearnsetEntry(new Harden(), LearnsetEntry.Source.LEVEL, 1));
+
+        LEARNSET.add(new LearnsetEntry(new PoisonSting(), LearnsetEntry.Source.PRE_EVOLUTION, 0));
+        LEARNSET.add(new LearnsetEntry(new StringShot(), LearnsetEntry.Source.PRE_EVOLUTION, 0));
     }
 
     public Kakuna(String name) {

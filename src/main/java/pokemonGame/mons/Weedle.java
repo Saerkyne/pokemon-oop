@@ -1,13 +1,15 @@
 ﻿package pokemonGame.mons;
 import pokemonGame.Pokemon;
 import pokemonGame.LearnsetEntry;
+import pokemonGame.moves.*;
 import java.util.List;
 
 public class Weedle extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
-        // Learnset will be populated manually later
+        LEARNSET.add(new LearnsetEntry(new PoisonSting(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(new StringShot(), LearnsetEntry.Source.LEVEL, 1));
     }
 
     public Weedle(String name) {

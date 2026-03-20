@@ -1,13 +1,15 @@
 ﻿package pokemonGame.mons;
 import pokemonGame.Pokemon;
 import pokemonGame.LearnsetEntry;
+import pokemonGame.moves.*;
 import java.util.List;
 
 public class Ditto extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
-        // Learnset will be populated manually later
+        // Level up moves
+        LEARNSET.add(new LearnsetEntry(new Transform(), LearnsetEntry.Source.LEVEL, 1));
     }
 
     public Ditto(String name) {

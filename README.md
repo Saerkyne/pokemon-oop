@@ -56,7 +56,7 @@ The project uses **Maven** for compilation and packaging (see `pom.xml`). Source
 
 ### Prerequisites
 
-- **Java JDK 18** or higher
+- **Java JDK 21** or higher
 - **VS Code** with the [Java Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) (recommended), or any Java IDE
 
 ### Using VS Code
@@ -156,10 +156,11 @@ Move categories must be exactly `"Physical"`, `"Special"`, or `"Status"`.
 - [x] PP tracking per move slot
 - [x] All 151 species registered in `App.createPokemon()` (supports case-insensitive name lookup)
 - [x] Maven build configuration
+- [x] Learnsets — All Pokemon have full learnsets from PokemonDB
 
 ### Work in Progress
 
-- [ ] **Learnsets** — Abra is complete; remaining 150 species still need full learnsets (level-up, TM, HM)
+- [ ] **Database creation** - MariaDB is used to store unique trainer, team, pokemon, and move instance states
 - [ ] **Battle loop** — damage is calculated but never applied to `currentHP`; turn ordering is not implemented
 - [ ] **Special move effects** — Status and secondary effects are not yet applied, only damage dealing
 - [ ] **Pokémon selection UI** — `selectFromAvailablePokemon()` is stubbed out

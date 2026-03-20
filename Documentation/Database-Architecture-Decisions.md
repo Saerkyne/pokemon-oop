@@ -78,7 +78,7 @@ trainer_id | discord_id  | discord_username | name
 ```sql
 CREATE TABLE pokemon_instances (
     instance_id  SERIAL PRIMARY KEY,
-    trainer_id   INTEGER NOT NULL REFERENCES trainers(trainer_id),
+    trainer_id   INTEGER NOT NULL REFERENCES trainers (trainer_id),
     species      VARCHAR(50) NOT NULL,
     nickname     VARCHAR(50) NOT NULL,
     level        SMALLINT NOT NULL DEFAULT 5,

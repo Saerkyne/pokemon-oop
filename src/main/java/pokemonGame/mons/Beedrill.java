@@ -1,4 +1,4 @@
-﻿package pokemonGame.mons;
+package pokemonGame.mons;
 
 import java.util.List;
 import pokemonGame.LearnsetEntry;

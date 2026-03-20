@@ -1,4 +1,4 @@
-﻿package pokemonGame.mons;
+package pokemonGame.mons;
 import pokemonGame.Pokemon;
 import pokemonGame.LearnsetEntry;
 import pokemonGame.moves.*;

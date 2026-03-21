@@ -1,16 +1,18 @@
 package pokemonGame;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.provider.Arguments;
 
 import pokemonGame.mons.Abra;
 import pokemonGame.mons.Bulbasaur;
 import pokemonGame.mons.Electrode;
 import pokemonGame.mons.Slowbro;
-import pokemonGame.moves.Psychic;
-import pokemonGame.moves.MegaPunch;
-import pokemonGame.moves.Flamethrower;
+import pokemonGame.moves.*;
 
 class AttackTest {
 
@@ -25,68 +27,468 @@ class AttackTest {
 
     /*
      * CHECKS:  calculateEffectiveness() returns 2.0f for a super-effective matchup
-     *          (Psychic type move against a Poison-type defender).
-     * HOW:     Instantiates a Psychic move, passes "Poison" as the defending type, and
-     *          asserts the result equals 2.0f exactly.
-     * IMPROVE: Parameterize with multiple super-effective pairs (e.g., Water→Fire,
-     *          Electric→Water) to confirm the whole type chart is correctly populated,
-     *          not just this single entry.
+     * HOW: Uses a parameterized test with multiple super-effective pairs to verify that the type
+     *  chart is correctly implemented for all known super-effective relationships, rather than relying on a single example.
+     * 
+     * 3/21/2026: Added parameterized test with multiple super-effective pairs to increase coverage 
+     * and confidence in the type chart implementation.
      */
-    @Test
-    void superEffectiveReturns2() {
-        Move psychic = new Psychic(); // Psychic type
-        // Psychic vs Poison should be super effective
-        float eff = attack.calculateEffectiveness("Poison", psychic);
+
+    static Stream<Arguments> provideSuperEffectivePairs() {
+        return Stream.of(
+            // Normal is super effective against nothing
+            // Fire is super effective against Grass, Ice, Bug, and Steel
+            Arguments.of("Grass", new Flamethrower()),
+            Arguments.of("Ice", new Flamethrower()),
+            Arguments.of("Bug", new Flamethrower()),
+            Arguments.of("Steel", new Flamethrower()),
+            // Water is super effective against Fire, Ground, and Rock
+            Arguments.of("Fire", new Surf()),
+            Arguments.of("Ground", new Surf()),
+            Arguments.of("Rock", new Surf()),
+            // Electric is super effective against Water and Flying
+            Arguments.of("Water", new ThunderShock()),
+            Arguments.of("Flying", new ThunderShock()),
+            // Grass is super effective against Water, Ground, and Rock
+            Arguments.of("Water", new RazorLeaf()),
+            Arguments.of("Ground", new RazorLeaf()),
+            Arguments.of("Rock", new RazorLeaf()),
+            // Ice is super effective against Grass, Ground, Flying, and Dragon
+            Arguments.of("Grass", new IceBeam()),
+            Arguments.of("Ground", new IceBeam()),
+            Arguments.of("Flying", new IceBeam()),
+            Arguments.of("Dragon", new IceBeam()),
+            // Fighting is super effective against Normal, Rock, Steel, Ice, and Dark
+            Arguments.of("Normal", new Submission()), 
+            Arguments.of("Rock", new Submission()), 
+            Arguments.of("Steel", new Submission()), 
+            Arguments.of("Ice", new Submission()),
+            Arguments.of("Dark", new Submission()),
+            // Poison is super effective against Grass and Fairy
+            Arguments.of("Grass", new PoisonSting()),
+            Arguments.of("Fairy", new PoisonSting()),
+            // Ground is super effective against Fire, Electric, Poison, Rock, and Steel
+            Arguments.of("Fire", new Dig()),
+            Arguments.of("Poison", new Dig()),
+            Arguments.of("Rock", new Dig()),
+            Arguments.of("Steel", new Dig()),
+            Arguments.of("Electric", new Dig()),
+            // Flying is super effective against Fighting, Bug, and Grass
+            Arguments.of("Fighting", new Fly()),
+            Arguments.of("Bug", new Fly()),
+            Arguments.of("Grass", new Fly()),
+            // Psychic is super effective against Fighting and Poison
+            Arguments.of("Fighting", new Psychic()),
+            Arguments.of("Poison", new Psychic()),
+            // Bug is super effective against Grass, Psychic, and Dark
+            Arguments.of("Grass", new Twineedle()),
+            Arguments.of("Psychic", new Twineedle()),
+            Arguments.of("Dark", new Twineedle()),          
+            // Rock is super effective against Fire, Ice, Flying, and Bug
+            Arguments.of("Fire", new RockThrow()),
+            Arguments.of("Ice", new RockThrow()),
+            Arguments.of("Flying", new RockThrow()),
+            Arguments.of("Bug", new RockThrow()),
+            // Ghost is super effective against Psychic and Ghost
+            Arguments.of("Psychic", new Lick()),
+            Arguments.of("Ghost", new Lick()),
+            // Dragon is super effective against Dragon
+            Arguments.of("Dragon", new DragonRage())
+            // Steel is super effective against Ice, Rock, and Fairy (No Steel Moves in Gen 1)
+            // Arguments.of("Ice", new IronTail()),
+            // Arguments.of("Rock", new IronTail()),
+            // Arguments.of("Fairy", new IronTail()),
+            // Dark is super effective against Psychic and Ghost (No Dark Moves in Gen 1)
+            // Arguments.of("Psychic", new Bite()),
+            // Arguments.of("Ghost", new Bite()),
+            // Fairy is super effective against Fighting, Dragon, and Dark (No Fairy Moves in Gen 1)
+            // Arguments.of("Fighting", new Moonblast()),
+            // Arguments.of("Dragon", new Moonblast()),
+            // Arguments.of("Dark", new Moonblast())
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideSuperEffectivePairs")
+    void superEffectiveReturns2(String defendingType, Move move) {
+        float eff = attack.calculateEffectiveness(defendingType, move);
         assertEquals(2.0f, eff);
     }
 
     /*
      * CHECKS:  calculateEffectiveness() returns 0.5f for a resisted matchup
-     *          (Fire move against a Water-type defender).
-     * HOW:     Instantiates a Flamethrower, passes "Water" as the defending type, and
-     *          asserts the result equals 0.5f exactly.
-     * IMPROVE: Parameterize with multiple not-very-effective pairs; also assert the
-     *          inverse matchup (Water→Fire = 2.0) to confirm type asymmetry is not
-     *          accidentally collapsed in the chart lookup.
+     * HOW: Uses a parameterized test with multiple not-very-effective pairs to verify that all known
+     *  resistances are correctly implemented in the type chart, rather than relying on a single example.
+     *
+     * 3/21/2026: Added parameterized test with multiple not-very-effective pairs to increase coverage
+     * and confidence in the type chart implementation.
      */
-    @Test
-    void notVeryEffectiveReturnsHalf() {
-        // Fire vs Water = 0.5
-        Move flamethrower = new Flamethrower();
-        float eff = attack.calculateEffectiveness("Water", flamethrower);
+
+    static Stream<Arguments> provideNotVeryEffectivePairs() {
+        return Stream.of(
+            // Normal is not very effective against Rock and Steel
+            Arguments.of("Rock", new Cut()),
+            Arguments.of("Steel", new Cut()),
+            // Fire is not very effective against Fire, Water, Rock, and Dragon
+            Arguments.of("Fire", new Flamethrower()),
+            Arguments.of("Water", new Flamethrower()),
+            Arguments.of("Rock", new Flamethrower()),
+            Arguments.of("Dragon", new Flamethrower()),
+            // Water is not very effective against Water, Grass, and Dragon
+            Arguments.of("Water", new Surf()),
+            Arguments.of("Grass", new Surf()),
+            Arguments.of("Dragon", new Surf()),
+            // Electric is not very effective against Electric, Grass, and Dragon
+            Arguments.of("Electric", new ThunderShock()),
+            Arguments.of("Grass", new ThunderShock()),
+            Arguments.of("Dragon", new ThunderShock()),
+            // Grass is not very effective against Fire, Grass, Poison, Flying, Bug, Dragon, and Steel
+            Arguments.of("Fire", new RazorLeaf()),
+            Arguments.of("Grass", new RazorLeaf()),
+            Arguments.of("Poison", new RazorLeaf()),
+            Arguments.of("Flying", new RazorLeaf()),
+            Arguments.of("Bug", new RazorLeaf()),
+            Arguments.of("Dragon", new RazorLeaf()),
+            Arguments.of("Steel", new RazorLeaf()),
+            // Ice is not very effective against Fire, Water, Ice, and Steel
+            Arguments.of("Fire", new IceBeam()),
+            Arguments.of("Water", new IceBeam()),
+            Arguments.of("Ice", new IceBeam()),
+            Arguments.of("Steel", new IceBeam()),
+            // Fighting is not very effective against Poison, Flying, Psychic, Bug, and Fairy
+            Arguments.of("Poison", new Submission()),
+            Arguments.of("Flying", new Submission()),
+            Arguments.of("Psychic", new Submission()),
+            Arguments.of("Bug", new Submission()),
+            Arguments.of("Fairy", new Submission()),
+            // Poison is not very effective against Poison, Ground, Rock, and Ghost
+            Arguments.of("Poison", new PoisonSting()),
+            Arguments.of("Ground", new PoisonSting()),
+            Arguments.of("Rock", new PoisonSting()),
+            Arguments.of("Ghost", new PoisonSting()),
+            // Ground is not very effective against Bug and Grass
+            Arguments.of("Bug", new Dig()),
+            Arguments.of("Grass", new Dig()),
+            // Flying is not very effective against Electric, Rock, and Steel
+            Arguments.of("Electric", new Fly()),
+            Arguments.of("Rock", new Fly()),
+            Arguments.of("Steel", new Fly()),
+            // Psychic is not very effective against Psychic and Steel
+            Arguments.of("Psychic", new Psychic()),
+            Arguments.of("Steel", new Psychic()),
+            // Bug is not very effective against Fire, Fighting, Poison, Flying, Ghost, Steel, and Fairy
+            Arguments.of("Fire", new Twineedle()),
+            Arguments.of("Fighting", new Twineedle()),
+            Arguments.of("Poison", new Twineedle()),
+            Arguments.of("Flying", new Twineedle()),
+            Arguments.of("Ghost", new Twineedle()),
+            Arguments.of("Steel", new Twineedle()),
+            Arguments.of("Fairy", new Twineedle()),
+            // Rock is not very effective against Fighting, Ground, and Steel
+            Arguments.of("Fighting", new RockThrow()),
+            Arguments.of("Ground", new RockThrow()),
+            Arguments.of("Steel", new RockThrow()),
+            // Ghost is not very effective against Dark
+            Arguments.of("Dark", new Lick()),
+            // Dragon is not very effective against Steel
+            Arguments.of("Steel", new DragonRage())
+            // Dark is not very effective against Fighting, Dark, and Fairy (No Dark Moves in Gen 1)
+            // Arguments.of("Fighting", new Bite()),
+            // Arguments.of("Dark", new Bite()),
+            // Arguments.of("Fairy", new Bite()),
+            // Steel is not very effective against Fire, Water, Electric, and Steel (No Steel Moves in Gen 1)
+            // Arguments.of("Fire", new IronTail()),
+            // Arguments.of("Water", new IronTail()),
+            // Arguments.of("Electric", new IronTail()),
+            // Arguments.of("Steel", new IronTail()),
+            // Fairy is not very effective against Fire, Poison, and Steel (No Fairy Moves in Gen 1)
+            // Arguments.of("Fire", new Moonblast()),
+            // Arguments.of("Poison", new Moonblast()),
+            // Arguments.of("Steel", new Moonblast()
+        );
+    }
+    
+    @ParameterizedTest
+    @MethodSource("provideNotVeryEffectivePairs")
+    void notVeryEffectiveReturnsHalf(String defenderType, Move move) {
+        float eff = attack.calculateEffectiveness(defenderType, move);
         assertEquals(0.5f, eff);
     }
 
     /*
      * CHECKS:  calculateEffectiveness() returns 0.0f when the attacking type is
-     *          completely immune to the defending type (Normal vs Ghost).
-     * HOW:     Instantiates a MegaPunch (Normal type), passes "Ghost" as the defending
-     *          type, and asserts the result equals 0.0f exactly.
-     * IMPROVE: Test additional immunities (Electric→Ground, Ground→Flying, Psychic→Dark)
-     *          to increase confidence that immunity handling works broadly across the
-     *          chart, not just for this single pair.
+     *          completely immune to the defending type.
+     * HOW:     Uses a parameterized test with multiple immune pairs to verify that all
+     *          known immunities are correctly implemented in the type chart.
+     * 3/21/2026: Added multiple immune pairs to increase coverage and confidence in the type chart implementation.
      */
-    @Test
-    void immunityReturnsZero() {
-        // Normal vs Ghost = 0.0
-        Move megaPunch = new MegaPunch();
-        float eff = attack.calculateEffectiveness("Ghost", megaPunch);
+
+    static Stream<Arguments> provideImmunePairs() {
+        return Stream.of(
+            // Ghost is immune to Normal and Fighting
+            Arguments.of("Ghost", new Cut()),
+            Arguments.of("Ghost", new Submission()),
+            // Normal is immune to Ghost
+            Arguments.of("Normal", new Lick()),
+            // Ground is immune to Electric
+            Arguments.of("Ground", new ThunderShock()),
+            // Flying is immune to Ground
+            Arguments.of("Flying", new Dig()),
+            // Dark is immune to Psychic
+            Arguments.of("Dark", new Psychic()),
+            // Steel is immune to Poison
+            Arguments.of("Steel", new PoisonSting()),
+            // Fairy is immune to Dragon
+            Arguments.of("Fairy", new DragonRage())
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideImmunePairs")
+    void immunityReturnsZero(String defenderType, Move move) {
+        float eff = attack.calculateEffectiveness(defenderType, move);
         assertEquals(0.0f, eff);
     }
 
     /*
      * CHECKS:  calculateEffectiveness() returns 1.0f for a neutral matchup where the
-     *          attacking type has no special relationship with the defending type
-     *          (Normal vs Water).
-     * HOW:     Instantiates a MegaPunch (Normal type), passes "Water" as the defending
-     *          type, and asserts the result equals 1.0f exactly.
-     * IMPROVE: Also verify that an unknown or unrecognized type string returns 1.0 as
-     *          the default fallback, strengthening boundary-value coverage.
+     *          attacking type has no special relationship with the defending type.
+     * HOW:     Uses a parameterized test with multiple neutral pairs to verify that all
+     *          known neutral interactions are correctly implemented in the type chart.
+     *
+     * 3/21/2026: Added multiple neutral pairs to increase coverage and confidence in the type chart implementation.
      */
-    @Test
-    void neutralEffectivenessReturns1() {
-        Move megaPunch = new MegaPunch(); // Normal type
-        float eff = attack.calculateEffectiveness("Water", megaPunch);
+
+    static Stream<Arguments> provideNeutralPairs() {
+        return Stream.of(
+            // Normal is neutral against all types except Rock, Steel, and Ghost
+            Arguments.of("Fire", new Cut()),
+            Arguments.of("Water", new Cut()),
+            Arguments.of("Electric", new Cut()),
+            Arguments.of("Grass", new Cut()),
+            Arguments.of("Ice", new Cut()),
+            Arguments.of("Fighting", new Cut()),
+            Arguments.of("Poison", new Cut()),
+            Arguments.of("Ground", new Cut()),
+            Arguments.of("Flying", new Cut()),
+            Arguments.of("Psychic", new Cut()),
+            Arguments.of("Bug", new Cut()),
+            Arguments.of("Dragon", new Cut()),
+            Arguments.of("Dark", new Cut()),
+            Arguments.of("Fairy", new Cut()),
+            // Fire is neutral against Normal, Electric, Fighting, Poison, Flying, Psychic, Ghost, Dark, and Fairy
+            Arguments.of("Normal", new Flamethrower()),
+            Arguments.of("Electric", new Flamethrower()),
+            Arguments.of("Fighting", new Flamethrower()),
+            Arguments.of("Poison", new Flamethrower()),
+            Arguments.of("Flying", new Flamethrower()),
+            Arguments.of("Psychic", new Flamethrower()),
+            Arguments.of("Ghost", new Flamethrower()),
+            Arguments.of("Dark", new Flamethrower()),
+            Arguments.of("Fairy", new Flamethrower()),
+            // Water is neutral against Normal, Electric, Ice, Fighting, Poison, Flying, Psychic, Bug, Ghost, Dark, Steel, and Fairy
+            Arguments.of("Normal", new Surf()),
+            Arguments.of("Electric", new Surf()),
+            Arguments.of("Ice", new Surf()),
+            Arguments.of("Fighting", new Surf()),
+            Arguments.of("Poison", new Surf()),
+            Arguments.of("Flying", new Surf()),
+            Arguments.of("Psychic", new Surf()),
+            Arguments.of("Bug", new Surf()),
+            Arguments.of("Ghost", new Surf()),
+            Arguments.of("Dark", new Surf()),
+            Arguments.of("Steel", new Surf()),
+            Arguments.of("Fairy", new Surf()),
+            // Electric is neutral against Normal, Fire, Ice, Fighting, Poison, Psychic, Bug, Rock, Ghost, Dark, Steel, and Fairy
+            Arguments.of("Normal", new ThunderShock()),
+            Arguments.of("Fire", new ThunderShock()),
+            Arguments.of("Ice", new ThunderShock()),
+            Arguments.of("Fighting", new ThunderShock()),
+            Arguments.of("Poison", new ThunderShock()),
+            Arguments.of("Psychic", new ThunderShock()),
+            Arguments.of("Bug", new ThunderShock()),
+            Arguments.of("Rock", new ThunderShock()),
+            Arguments.of("Ghost", new ThunderShock()),
+            Arguments.of("Dark", new ThunderShock()),
+            Arguments.of("Steel", new ThunderShock()),
+            Arguments.of("Fairy", new ThunderShock()),
+            // Grass is neutral against Normal, Electric, Ice, Fighting, Psychic, Ghost, Dark, and Fairy
+            Arguments.of("Normal", new RazorLeaf()),
+            Arguments.of("Electric", new RazorLeaf()),
+            Arguments.of("Ice", new RazorLeaf()),
+            Arguments.of("Fighting", new RazorLeaf()),
+            Arguments.of("Psychic", new RazorLeaf()),
+            Arguments.of("Ghost", new RazorLeaf()),
+            Arguments.of("Dark", new RazorLeaf()),
+            Arguments.of("Fairy", new RazorLeaf()),
+            // Ice is neutral against Normal, Electric, Fighting, Poison, Psychic, Bug, Rock, Ghost, Dark, and Fairy
+            Arguments.of("Normal", new IceBeam()),
+            Arguments.of("Electric", new IceBeam()),
+            Arguments.of("Fighting", new IceBeam()),
+            Arguments.of("Poison", new IceBeam()),
+            Arguments.of("Psychic", new IceBeam()),
+            Arguments.of("Bug", new IceBeam()),
+            Arguments.of("Rock", new IceBeam()),
+            Arguments.of("Ghost", new IceBeam()),
+            Arguments.of("Dark", new IceBeam()),
+            Arguments.of("Fairy", new IceBeam()),
+            // Fighting is neutral against Fire, Water, Electric, Grass, Fighting, Ground, and Dragon
+            Arguments.of("Fire", new Submission()),
+            Arguments.of("Water", new Submission()),
+            Arguments.of("Electric", new Submission()),
+            Arguments.of("Grass", new Submission()),
+            Arguments.of("Fighting", new Submission()),
+            Arguments.of("Ground", new Submission()),
+            Arguments.of("Dragon", new Submission()),
+            // Poison is neutral against Normal, Fire, Water, Electric, Ice, Fighting, Flying, Psychic, Bug, Dragon, and Dark
+            Arguments.of("Normal", new PoisonSting()),
+            Arguments.of("Fire", new PoisonSting()),
+            Arguments.of("Water", new PoisonSting()),
+            Arguments.of("Electric", new PoisonSting()),
+            Arguments.of("Ice", new PoisonSting()),
+            Arguments.of("Fighting", new PoisonSting()),
+            Arguments.of("Flying", new PoisonSting()),
+            Arguments.of("Psychic", new PoisonSting()),
+            Arguments.of("Bug", new PoisonSting()),
+            Arguments.of("Dragon", new PoisonSting()),
+            Arguments.of("Dark", new PoisonSting()),
+            // Ground is neutral against Normal, Water, Ice, Fighting, Ground, Psychic, Ghost, Dragon, Dark, and Fairy
+            Arguments.of("Normal", new Dig()),
+            Arguments.of("Water", new Dig()),
+            Arguments.of("Ice", new Dig()),
+            Arguments.of("Fighting", new Dig()),
+            Arguments.of("Ground", new Dig()),
+            Arguments.of("Psychic", new Dig()),
+            Arguments.of("Ghost", new Dig()),
+            Arguments.of("Dragon", new Dig()),
+            Arguments.of("Dark", new Dig()),
+            Arguments.of("Fairy", new Dig()),
+            // Flying is neutral against Normal, Fire, Water, Ice, Poison, Ground, Flying, Psychic, Ghost, Dragon, Dark, and Fairy
+            Arguments.of("Normal", new Fly()),
+            Arguments.of("Fire", new Fly()),
+            Arguments.of("Water", new Fly()),
+            Arguments.of("Ice", new Fly()),
+            Arguments.of("Poison", new Fly()),
+            Arguments.of("Ground", new Fly()),
+            Arguments.of("Flying", new Fly()),
+            Arguments.of("Psychic", new Fly()),
+            Arguments.of("Ghost", new Fly()),
+            Arguments.of("Dragon", new Fly()),
+            Arguments.of("Dark", new Fly()),
+            Arguments.of("Fairy", new Fly()),
+            // Psychic is neutral against Normal, Fire, Water, Electric, Grass, Ice, Ground, Flying, Bug, Rock, Ghost, Dragon, and Fairy
+            Arguments.of("Normal", new Psychic()),
+            Arguments.of("Fire", new Psychic()),
+            Arguments.of("Water", new Psychic()),
+            Arguments.of("Electric", new Psychic()),
+            Arguments.of("Grass", new Psychic()),
+            Arguments.of("Ice", new Psychic()),
+            Arguments.of("Ground", new Psychic()),
+            Arguments.of("Flying", new Psychic()),
+            Arguments.of("Bug", new Psychic()),
+            Arguments.of("Rock", new Psychic()),
+            Arguments.of("Ghost", new Psychic()),
+            Arguments.of("Dragon", new Psychic()),
+            Arguments.of("Fairy", new Psychic()),
+            // Bug is neutral against Normal, Water, Electric, Ice, Ground, Bug, Rock, and Dragon
+            Arguments.of("Normal", new Twineedle()),
+            Arguments.of("Water", new Twineedle()),
+            Arguments.of("Electric", new Twineedle()),
+            Arguments.of("Ice", new Twineedle()),
+            Arguments.of("Ground", new Twineedle()),
+            Arguments.of("Bug", new Twineedle()),
+            Arguments.of("Rock", new Twineedle()),
+            Arguments.of("Dragon", new Twineedle()),
+            // Rock is neutral against Normal, Water, Electric, Grass, Poison, Psychic, Rock, Ghost, Dragon, Dark, and Fairy
+            Arguments.of("Normal", new RockThrow()),
+            Arguments.of("Water", new RockThrow()),
+            Arguments.of("Electric", new RockThrow()),
+            Arguments.of("Grass", new RockThrow()),
+            Arguments.of("Poison", new RockThrow()),
+            Arguments.of("Psychic", new RockThrow()),
+            Arguments.of("Rock", new RockThrow()),
+            Arguments.of("Ghost", new RockThrow()),
+            Arguments.of("Dragon", new RockThrow()),
+            Arguments.of("Dark", new RockThrow()),
+            Arguments.of("Fairy", new RockThrow()),
+            // Ghost is neutral against Fire, Water, Electric, Grass, Ice, Fighting, Poison, Ground, Flying, Bug, Rock, Dragon, Steel, and Fairy
+            Arguments.of("Fire", new Lick()),
+            Arguments.of("Water", new Lick()),
+            Arguments.of("Electric", new Lick()),
+            Arguments.of("Grass", new Lick()),
+            Arguments.of("Ice", new Lick()),
+            Arguments.of("Fighting", new Lick()),
+            Arguments.of("Poison", new Lick()),
+            Arguments.of("Ground", new Lick()),
+            Arguments.of("Flying", new Lick()),
+            Arguments.of("Bug", new Lick()),
+            Arguments.of("Rock", new Lick()),
+            Arguments.of("Dragon", new Lick()),
+            Arguments.of("Steel", new Lick()),
+            Arguments.of("Fairy", new Lick()),
+            // Dragon is neutral against Normal, Fire, Water, Electric, Grass, Ice, Fighting, Poison, Ground, Flying Psychic, Bug, Rock, Ghost, and Dark
+            Arguments.of("Normal", new DragonRage()),
+            Arguments.of("Fire", new DragonRage()),
+            Arguments.of("Water", new DragonRage()),
+            Arguments.of("Electric", new DragonRage()),
+            Arguments.of("Grass", new DragonRage()),
+            Arguments.of("Ice", new DragonRage()),
+            Arguments.of("Fighting", new DragonRage()),
+            Arguments.of("Poison", new DragonRage()),
+            Arguments.of("Ground", new DragonRage()),
+            Arguments.of("Flying", new DragonRage()),
+            Arguments.of("Psychic", new DragonRage()),
+            Arguments.of("Bug", new DragonRage()),
+            Arguments.of("Rock", new DragonRage()),
+            Arguments.of("Ghost", new DragonRage()),
+            Arguments.of("Dark", new DragonRage()),
+            // Dark is neutral against Normal, Fire, Water, Electric, Grass, Ice, Poison, Ground, Flying, Bug, Rock, Dragon, and Steel
+            //Arguments.of("Normal", new Bite()),
+            //Arguments.of("Fire", new Bite()),
+            //Arguments.of("Water", new Bite()),
+            //Arguments.of("Electric", new Bite()),
+            //Arguments.of("Grass", new Bite()),
+            //Arguments.of("Ice", new Bite()),
+            //Arguments.of("Poison", new Bite()),
+            //Arguments.of("Ground", new Bite()),
+            //Arguments.of("Flying", new Bite()),
+            //Arguments.of("Bug", new Bite()),
+            //Arguments.of("Rock", new Bite()),
+            //Arguments.of("Dragon", new Bite()),
+            //Arguments.of("Steel", new Bite()),
+            // Steel is neutral against Normal, Grass, Fighting, Poison, Ground, Flying, Psychic, Bug, Ghost, Dragon, and Dark
+            // Arguments.of("Normal", new IronTail()),
+            // Arguments.of("Grass", new IronTail()),
+            // Arguments.of("Fighting", new IronTail()),
+            // Arguments.of("Poison", new IronTail()),
+            // Arguments.of("Ground", new IronTail()),
+            // Arguments.of("Flying", new IronTail()),
+            // Arguments.of("Psychic", new IronTail()),
+            // Arguments.of("Bug", new IronTail()),
+            // Arguments.of("Ghost", new IronTail()),
+            // Arguments.of("Dragon", new IronTail()),
+            // Arguments.of("Dark", new IronTail()),
+            // Fairy is neutral against Normal, Water, Electric, Ice, Ground, Flying, Psychic, Bug, Rock, Ghost, and Fairy
+            // Arguments.of("Normal", new Moonblast()),
+            // Arguments.of("Water", new Moonblast()),
+            // Arguments.of("Electric", new Moonblast()),
+            // Arguments.of("Ice", new Moonblast()),
+            // Arguments.of("Ground", new Moonblast()),
+            // Arguments.of("Flying", new Moonblast()),
+            // Arguments.of("Psychic", new Moonblast()),
+            // Arguments.of("Bug", new Moonblast()),
+            // Arguments.of("Rock", new Moonblast()),
+            // Arguments.of("Ghost", new Moonblast()),
+            // Arguments.of("Fairy", new Moonblast()),
+            // Unrecognized type should default to neutral
+            Arguments.of(null, new MegaPunch())
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideNeutralPairs")
+    void neutralEffectivenessReturns1(String defenderType, Move move) {
+        float eff = attack.calculateEffectiveness(defenderType, move);
         assertEquals(1.0f, eff);
     }
 

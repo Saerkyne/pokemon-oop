@@ -2,14 +2,17 @@ package pokemonGame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import pokemonGame.mons.*;
 
 
 public class Pokemon {
 
     // Initialize attributes for all Pokemon
+    private Trainer trainer; // This attribute will be set when the Pokémon is added to a trainer's team
+    private int id; // This can be used to link the Pokémon to the database record
     private String species;
     private String name;
-    private int index;
+    private int DexIndex;
     private String typePrimary;
     private String typeSecondary;
     private int level;
@@ -58,7 +61,7 @@ public class Pokemon {
     protected Pokemon(String species, int index, String typePrimary, String typeSecondary) {
         this.species = species;
         this.name = species; // Default name is the same as species
-        this.index = index;
+        this.DexIndex = index;
         this.typePrimary = typePrimary;
         this.typeSecondary = typeSecondary;
         this.level = 5;
@@ -82,7 +85,7 @@ public class Pokemon {
     protected Pokemon(String species, int index, String typePrimary, String typeSecondary, int level, int hp, int attack, int defense, int specialAttack, int specialDefense, int speed) {
         this.species = species;
         this.name = species; // Default name is the same as species
-        this.index = index;
+        this.DexIndex = index;
         this.typePrimary = typePrimary;
         this.typeSecondary = typeSecondary;
         this.level = level;
@@ -165,8 +168,12 @@ public class Pokemon {
         return isFainted;
     }
 
-    public int getIndex() {
-        return index;
+    public int getDexIndex() {
+        return DexIndex;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String[] getStatusConditions() {
@@ -293,6 +300,10 @@ public class Pokemon {
         return evTotal;
     }
 
+    public Trainer getTrainer() {
+        return trainer;
+    }
+
     public String[] getEvYield() {
         String[] stringYield = new String[evYield.length];
         for (int i = 0; i < evYield.length; i++) {
@@ -332,6 +343,14 @@ public class Pokemon {
     public void setLevel(int level) {
         this.level = level;
         calculateCurrentStats();
+    }
+
+    public void setTrainer(Trainer trainer) {
+        this.trainer = trainer;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setName(String name) {
@@ -581,6 +600,176 @@ public class Pokemon {
      */
     public List<LearnsetEntry> getLearnset() {
         return learnset;
+    }
+
+    // This method can be used to create a new Pokémon instance based on user input for species, level, and other attributes.  
+    // It can return the newly created Pokémon instance.
+    public static Pokemon createPokemon(String species, String name, Trainer trainer) {
+        Pokemon createdMon = null;
+        if (species == null) {
+            System.out.println("No species selected. Please choose a valid Pokémon species.");
+            return null;
+        }
+
+        switch (species.toLowerCase()) {
+            case "bulbasaur": createdMon = new Bulbasaur(name); break;
+            case "ivysaur": createdMon = new Ivysaur(name); break;
+            case "venusaur": createdMon = new Venusaur(name); break;
+            case "charmander": createdMon = new Charmander(name); break;
+            case "charmeleon": createdMon = new Charmeleon(name); break;
+            case "charizard": createdMon = new Charizard(name); break;
+            case "squirtle": createdMon = new Squirtle(name); break;
+            case "wartortle": createdMon = new Wartortle(name); break;
+            case "blastoise": createdMon = new Blastoise(name); break;
+            case "caterpie": createdMon = new Caterpie(name); break;
+            case "metapod": createdMon = new Metapod(name); break;
+            case "butterfree": createdMon = new Butterfree(name); break;
+            case "weedle": createdMon = new Weedle(name); break;
+            case "kakuna": createdMon = new Kakuna(name); break;
+            case "beedrill": createdMon = new Beedrill(name); break;
+            case "pidgey": createdMon = new Pidgey(name); break;
+            case "pidgeotto": createdMon = new Pidgeotto(name); break;
+            case "pidgeot": createdMon = new Pidgeot(name); break;
+            case "rattata": createdMon = new Rattata(name); break;
+            case "raticate": createdMon = new Raticate(name); break;
+            case "spearow": createdMon = new Spearow(name); break;
+            case "fearow": createdMon = new Fearow(name); break;
+            case "ekans": createdMon = new Ekans(name); break;
+            case "arbok": createdMon = new Arbok(name); break;
+            case "pikachu": createdMon = new Pikachu(name); break;
+            case "raichu": createdMon = new Raichu(name); break;
+            case "sandshrew": createdMon = new Sandshrew(name); break;
+            case "sandslash": createdMon = new Sandslash(name); break;
+            case "nidoran f": case "nidoranf": createdMon = new NidoranF(name); break;
+            case "nidorina": createdMon = new Nidorina(name); break;
+            case "nidoqueen": createdMon = new Nidoqueen(name); break;
+            case "nidoran m": case "nidoranm": createdMon = new NidoranM(name); break;
+            case "nidorino": createdMon = new Nidorino(name); break;
+            case "nidoking": createdMon = new Nidoking(name); break;
+            case "clefairy": createdMon = new Clefairy(name); break;
+            case "clefable": createdMon = new Clefable(name); break;
+            case "vulpix": createdMon = new Vulpix(name); break;
+            case "ninetales": createdMon = new Ninetales(name); break;
+            case "jigglypuff": createdMon = new Jigglypuff(name); break;
+            case "wigglytuff": createdMon = new Wigglytuff(name); break;
+            case "zubat": createdMon = new Zubat(name); break;
+            case "golbat": createdMon = new Golbat(name); break;
+            case "oddish": createdMon = new Oddish(name); break;
+            case "gloom": createdMon = new Gloom(name); break;
+            case "vileplume": createdMon = new Vileplume(name); break;
+            case "paras": createdMon = new Paras(name); break;
+            case "parasect": createdMon = new Parasect(name); break;
+            case "venonat": createdMon = new Venonat(name); break;
+            case "venomoth": createdMon = new Venomoth(name); break;
+            case "diglett": createdMon = new Diglett(name); break;
+            case "dugtrio": createdMon = new Dugtrio(name); break;
+            case "meowth": createdMon = new Meowth(name); break;
+            case "persian": createdMon = new Persian(name); break;
+            case "psyduck": createdMon = new Psyduck(name); break;
+            case "golduck": createdMon = new Golduck(name); break;
+            case "mankey": createdMon = new Mankey(name); break;
+            case "primeape": createdMon = new Primeape(name); break;
+            case "growlithe": createdMon = new Growlithe(name); break;
+            case "arcanine": createdMon = new Arcanine(name); break;
+            case "poliwag": createdMon = new Poliwag(name); break;
+            case "poliwhirl": createdMon = new Poliwhirl(name); break;
+            case "poliwrath": createdMon = new Poliwrath(name); break;
+            case "abra": createdMon = new Abra(name); break;
+            case "kadabra": createdMon = new Kadabra(name); break;
+            case "alakazam": createdMon = new Alakazam(name); break;
+            case "machop": createdMon = new Machop(name); break;
+            case "machoke": createdMon = new Machoke(name); break;
+            case "machamp": createdMon = new Machamp(name); break;
+            case "bellsprout": createdMon = new Bellsprout(name); break;
+            case "weepinbell": createdMon = new Weepinbell(name); break;
+            case "victreebel": createdMon = new Victreebel(name); break;
+            case "tentacool": createdMon = new Tentacool(name); break;
+            case "tentacruel": createdMon = new Tentacruel(name); break;
+            case "geodude": createdMon = new Geodude(name); break;
+            case "graveler": createdMon = new Graveler(name); break;
+            case "golem": createdMon = new Golem(name); break;
+            case "ponyta": createdMon = new Ponyta(name); break;
+            case "rapidash": createdMon = new Rapidash(name); break;
+            case "slowpoke": createdMon = new Slowpoke(name); break;
+            case "slowbro": createdMon = new Slowbro(name); break;
+            case "magnemite": createdMon = new Magnemite(name); break;
+            case "magneton": createdMon = new Magneton(name); break;
+            case "farfetch'd": case "farfetchd": createdMon = new Farfetchd(name); break;
+            case "doduo": createdMon = new Doduo(name); break;
+            case "dodrio": createdMon = new Dodrio(name); break;
+            case "seel": createdMon = new Seel(name); break;
+            case "dewgong": createdMon = new Dewgong(name); break;
+            case "grimer": createdMon = new Grimer(name); break;
+            case "muk": createdMon = new Muk(name); break;
+            case "shellder": createdMon = new Shellder(name); break;
+            case "cloyster": createdMon = new Cloyster(name); break;
+            case "gastly": createdMon = new Gastly(name); break;
+            case "haunter": createdMon = new Haunter(name); break;
+            case "gengar": createdMon = new Gengar(name); break;
+            case "onix": createdMon = new Onix(name); break;
+            case "drowzee": createdMon = new Drowzee(name); break;
+            case "hypno": createdMon = new Hypno(name); break;
+            case "krabby": createdMon = new Krabby(name); break;
+            case "kingler": createdMon = new Kingler(name); break;
+            case "voltorb": createdMon = new Voltorb(name); break;
+            case "electrode": createdMon = new Electrode(name); break;
+            case "exeggcute": createdMon = new Exeggcute(name); break;
+            case "exeggutor": createdMon = new Exeggutor(name); break;
+            case "cubone": createdMon = new Cubone(name); break;
+            case "marowak": createdMon = new Marowak(name); break;
+            case "hitmonlee": createdMon = new Hitmonlee(name); break;
+            case "hitmonchan": createdMon = new Hitmonchan(name); break;
+            case "lickitung": createdMon = new Lickitung(name); break;
+            case "koffing": createdMon = new Koffing(name); break;
+            case "weezing": createdMon = new Weezing(name); break;
+            case "rhyhorn": createdMon = new Rhyhorn(name); break;
+            case "rhydon": createdMon = new Rhydon(name); break;
+            case "chansey": createdMon = new Chansey(name); break;
+            case "tangela": createdMon = new Tangela(name); break;
+            case "kangaskhan": createdMon = new Kangaskhan(name); break;
+            case "horsea": createdMon = new Horsea(name); break;
+            case "seadra": createdMon = new Seadra(name); break;
+            case "goldeen": createdMon = new Goldeen(name); break;
+            case "seaking": createdMon = new Seaking(name); break;
+            case "staryu": createdMon = new Staryu(name); break;
+            case "starmie": createdMon = new Starmie(name); break;
+            case "mr. mime": case "mrmime": createdMon = new MrMime(name); break;
+            case "scyther": createdMon = new Scyther(name); break;
+            case "jynx": createdMon = new Jynx(name); break;
+            case "electabuzz": createdMon = new Electabuzz(name); break;
+            case "magmar": createdMon = new Magmar(name); break;
+            case "pinsir": createdMon = new Pinsir(name); break;
+            case "tauros": createdMon = new Tauros(name); break;
+            case "magikarp": createdMon = new Magikarp(name); break;
+            case "gyarados": createdMon = new Gyarados(name); break;
+            case "lapras": createdMon = new Lapras(name); break;
+            case "ditto": createdMon = new Ditto(name); break;
+            case "eevee": createdMon = new Eevee(name); break;
+            case "vaporeon": createdMon = new Vaporeon(name); break;
+            case "jolteon": createdMon = new Jolteon(name); break;
+            case "flareon": createdMon = new Flareon(name); break;
+            case "porygon": createdMon = new Porygon(name); break;
+            case "omanyte": createdMon = new Omanyte(name); break;
+            case "omastar": createdMon = new Omastar(name); break;
+            case "kabuto": createdMon = new Kabuto(name); break;
+            case "kabutops": createdMon = new Kabutops(name); break;
+            case "aerodactyl": createdMon = new Aerodactyl(name); break;
+            case "snorlax": createdMon = new Snorlax(name); break;
+            case "articuno": createdMon = new Articuno(name); break;
+            case "zapdos": createdMon = new Zapdos(name); break;
+            case "moltres": createdMon = new Moltres(name); break;
+            case "dratini": createdMon = new Dratini(name); break;
+            case "dragonair": createdMon = new Dragonair(name); break;
+            case "dragonite": createdMon = new Dragonite(name); break;
+            case "mewtwo": createdMon = new Mewtwo(name); break;
+            case "mew": createdMon = new Mew(name); break;
+            default:
+                System.out.println("Species not recognized. Please choose a valid Pokémon species.");
+                return null;
+        }
+
+        createdMon.setTrainer(trainer); // Set the trainer for the created Pokémon
+        return createdMon;
     }
       
 }

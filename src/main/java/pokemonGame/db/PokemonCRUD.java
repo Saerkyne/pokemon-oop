@@ -14,89 +14,115 @@
 // should be kept in the code, not the database.   
 
 package pokemonGame.db;
+import pokemonGame.Pokemon;
+import pokemonGame.Trainer;
+import pokemonGame.Natures;
 import java.sql.*;
 
 public class PokemonCRUD {
-    public static void main(String[] args) {
-        // initialize database connection
+
+    public int createDBPokemon(Pokemon pokemon) {
         try (Connection conn = DatabaseSetup.getConnection()) {
-            // Create a trainer and some Pokémon for testing
-            try (Statement stmt = conn.createStatement()) {
-                stmt.executeUpdate(
-                    "INSERT INTO trainers (discord_id, discord_username, name) "
-                    + "VALUES (123456789012345678, 'Calabriel', 'Red')"
-                );
-                // Get the ID of the newly created trainer
-                ResultSet rs = stmt.executeQuery(
-                    "SELECT trainer_id FROM trainers WHERE discord_id = 123456789012345678"
-                );
-                // Assuming the trainer was created successfully, we should have a result
-                rs.next();
-                // Get the trainer ID for 'Red'
-                int redId = rs.getInt("trainer_id");
-                // Print the trainer ID to confirm it was created
-                System.out.println("Created trainer 'Red' with ID: " + redId);
-                // Now we can create some Pokémon for 'Red' using the retrieved trainer ID
-                stmt.executeUpdate(
-                    "INSERT INTO pokemon_instances "
+            String sql = "INSERT INTO pokemon_instances "
                     + "(trainer_id, species, nickname, level, nature, "
                     + "iv_hp, iv_attack, iv_defense, iv_sp_attack, iv_sp_defense, iv_speed, "
-                    + "current_hp) VALUES "
-                    + "(" + redId + ", 'Bulbasaur', 'Bulby', 5, 'Adamant', "
-                    + "28, 31, 14, 22, 19, 25, "
-                    + "21)"
-                );
+                    + "current_hp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-                stmt.executeUpdate(
-                    "INSERT INTO pokemon_instances "
-                    + "(trainer_id, species, nickname, level, nature, "
-                    + "iv_hp, iv_attack, iv_defense, iv_sp_attack, iv_sp_defense, iv_speed, "
-                    + "current_hp) VALUES "
-                    + "(" + redId + ", 'Charmander', 'Charmander', 5, 'Jolly', "
-                    + "15, 22, 18, 27, 11, 30, "
-                    + "19)"
-                );
-            }
+            try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setInt(1, pokemon.getTrainer().getId());
+                pstmt.setString(2, pokemon.getSpecies());
+                pstmt.setString(3, pokemon.getName());
+                pstmt.setInt(4, pokemon.getLevel());
+                pstmt.setString(5, pokemon.getNature().getDisplayName());
+                pstmt.setInt(6, pokemon.getIvHp());
+                pstmt.setInt(7, pokemon.getIvAttack());
+                pstmt.setInt(8, pokemon.getIvDefense());
+                pstmt.setInt(9, pokemon.getIvSpecialAttack());
+                pstmt.setInt(10, pokemon.getIvSpecialDefense());
+                pstmt.setInt(11, pokemon.getIvSpeed());
+                pstmt.setInt(12, pokemon.getCurrentHP());
 
-            try (Statement stmt = conn.createStatement()) {
-                ResultSet rs = stmt.executeQuery(
-                    "SELECT pi.nickname, pi.species, pi.level, pi.nature, pi.current_hp "
-                    + "FROM pokemon_instances pi "
-                    + "JOIN trainers t ON pi.trainer_id = t.trainer_id "
-                    + "WHERE t.name = 'Red'"
-                );
+                pstmt.executeUpdate();
+                System.out.println("Pokemon '" + pokemon.getName() + "' (" + pokemon.getSpecies()
+                 + ") created successfully for trainer ID " + pokemon.getTrainer().getId() + ".");
 
-                System.out.println("\nRed's team:");
-                while (rs.next()) {
-                    System.out.printf("  Lv.%d %s (%s) [%s] HP: %d%n",
-                            rs.getInt("level"),
-                            rs.getString("nickname"),
-                            rs.getString("species"),
-                            rs.getString("nature"),
-                            rs.getInt("current_hp"));
+                try (ResultSet pkmnSet = pstmt.getGeneratedKeys()) {
+                    if (pkmnSet.next()) {
+                        int pokemonId = pkmnSet.getInt(1);
+                        System.out.println("New Pokemon ID: " + pokemonId);
+                        return pokemonId; // Return the generated Pokémon ID
+                    }
                 }
             }
-
-            try (Statement stmt = conn.createStatement()) {
-                int rows = stmt.executeUpdate(
-                    "UPDATE pokemon_instances SET level = 6 "
-                    + "WHERE species = 'Bulbasaur' AND nickname = 'Bulby'"
-                );
-                System.out.println("\nUpdated " + rows + " row(s) — Bulby leveled up to 6!");
-            }
-
-            try (Statement stmt = conn.createStatement()) {
-                int rows = stmt.executeUpdate(
-                    "DELETE FROM pokemon_instances "
-                    + "WHERE species = 'Charmander' AND nickname = 'Charmander'"
-                );
-                System.out.println("Deleted " + rows + " row(s) — Charmander was released.");
-            }
-
         } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
+            System.err.println("Error creating Pokemon: " + e.getMessage());
             e.printStackTrace();
+            return -1; // Return -1 to indicate an error occurred
+        }
+        return -1; // Return -1 if Pokemon creation failed
+    }
+
+    public Pokemon getSpecificDBPokemonForTrainer(Trainer trainer, int pokemonId) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND instance_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setInt(1, trainer.getId());
+                pstmt.setInt(2, pokemonId);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        int foundPokemonId = rs.getInt("instance_id");
+                        String species = rs.getString("species");
+                        String name = rs.getString("nickname");
+                        int level = rs.getInt("level");
+                        String nature = rs.getString("nature");
+                        int ivHp = rs.getInt("iv_hp");
+                        int ivAttack = rs.getInt("iv_attack");
+                        int ivDefense = rs.getInt("iv_defense");
+                        int ivSpAttack = rs.getInt("iv_sp_attack");
+                        int ivSpDefense = rs.getInt("iv_sp_defense");
+                        int ivSpeed = rs.getInt("iv_speed");
+                        int currentHp = rs.getInt("current_hp");
+                        int evHp = rs.getInt("ev_hp");
+                        int evAttack = rs.getInt("ev_attack");
+                        int evDefense = rs.getInt("ev_defense");
+                        int evSpAttack = rs.getInt("ev_sp_attack");
+                        int evSpDefense = rs.getInt("ev_sp_defense");
+                        int evSpeed = rs.getInt("ev_speed");
+                        int currentExp = rs.getInt("current_exp");
+                        Boolean isFainted = rs.getBoolean("is_fainted");
+                        // Create a new Pokemon object and populate its fields from the ResultSet
+                        Pokemon foundPokemon = Pokemon.createPokemon(species, name, trainer);
+                        foundPokemon.setId(foundPokemonId);
+                        foundPokemon.setLevel(level);
+                        foundPokemon.setNature(Natures.valueOf(nature.toUpperCase()));
+                        foundPokemon.setIvHp(ivHp);
+                        foundPokemon.setIvAttack(ivAttack);
+                        foundPokemon.setIvDefense(ivDefense);
+                        foundPokemon.setIvSpecialAttack(ivSpAttack);
+                        foundPokemon.setIvSpecialDefense(ivSpDefense);
+                        foundPokemon.setIvSpeed(ivSpeed);
+                        foundPokemon.setCurrentHP(currentHp);
+                        foundPokemon.setEvHp(evHp);
+                        foundPokemon.setEvAttack(evAttack);
+                        foundPokemon.setEvDefense(evDefense);
+                        foundPokemon.setEvSpecialAttack(evSpAttack);
+                        foundPokemon.setEvSpecialDefense(evSpDefense);
+                        foundPokemon.setEvSpeed(evSpeed);
+                        foundPokemon.setCurrentExp(currentExp);
+                        foundPokemon.setIsFainted(isFainted);
+                        return foundPokemon; // Return the Pokémon object
+                    } else {
+                        System.out.println("No Pokemon found for trainer ID: " + trainer.getId());
+                        return null; // Return null to indicate no Pokemon found
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving Pokemon: " + e.getMessage());
+            e.printStackTrace();
+            return null; // Return null to indicate an error occurred
         }
     }
+    
 }
 

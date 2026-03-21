@@ -17,6 +17,11 @@ This project is an educational OOP codebase that models the core systems of a Po
 - **Damage calculation** with STAB, type effectiveness, critical hits, and random variance
 - **Move learning system** with learnsets, level-up moves, and TM/HM compatibility
 
+It also adds other capability as a learning project:
+
+- **Database Integration** for persistence
+- **Discord bot** to manage battles between friends
+
 ### What Makes This Different from Mainline Games
 
 | Mechanic | Pokémon Red (Gen I) | This Project |
@@ -35,17 +40,20 @@ This project is an educational OOP codebase that models the core systems of a Po
 ```
 src/main/java/pokemonGame/
 ├── App.java              # Entry point & I/O controller
+├── Attack.java           # Stateless damage calculator (STAB, crits, effectiveness)
+├── Battle.java           # Handles Battle state
 ├── Pokemon.java          # Base class — stats, IVs, EVs, natures, movesets
 ├── Move.java             # Abstract base for all moves
 ├── MoveSlot.java         # Wraps a Move with mutable PP tracking
-├── Attack.java           # Stateless damage calculator (STAB, crits, effectiveness)
 ├── TypeChart.java        # 18×18 effectiveness matrix
 ├── Natures.java          # Enum of 25 natures with stat modifiers
 ├── Stat.java             # Enum: HP, ATTACK, DEFENSE, SPECIAL_ATTACK, SPECIAL_DEFENSE, SPEED
 ├── LearnsetEntry.java    # Associates moves with learning sources (LEVEL, TM, HM)
 ├── Trainer.java          # Holds a name and a team of up to 6 Pokémon
+├── db/                   # Holds database connection classes
 ├── mons/                 # 151 species subclasses (Bulbasaur.java … Mew.java)
 └── moves/                # 165 move subclasses (Tackle.java, Ember.java, etc.)
+
 ```
 
 The project uses **Maven** for compilation and packaging (see `pom.xml`). Source follows the standard Maven layout (`src/main/java/`). VS Code's Java Language Server also compiles automatically.
@@ -110,6 +118,15 @@ HP uses a variant formula (see `Pokemon.calcMaxHP`).
 2. **Type effectiveness** — looked up from the 18×18 `TypeChart` matrix (supports dual types)
 3. **Critical hits** — custom speed-differential formula: base 4.17% chance, +0.83% per speed point the attacker is faster, capped at 15%
 4. **Random variance** — damage is multiplied by a random factor (217–255 / 255)
+
+### Database Connection
+
+MariaDB handles four tables to save trainers, teams, unique Pokemon instances, and moveslots on those pokemon:
+1. pokemon_db.pokemon_instances
+2. pokemon_db.pokemon_movesets
+3. pokemon_db.trainers
+4. pokemon_db.trainer_teams
+Reference the Database-Documentation.md document for Database construction.
 
 ---
 

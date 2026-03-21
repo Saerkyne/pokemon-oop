@@ -14,7 +14,6 @@ package pokemonGame.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,28 +33,4 @@ public class DatabaseSetup {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    public static void main(String[] args) {
-        try (Connection conn = getConnection()) {
-            logger.info("Connected to: {} {} at {} as user {}", 
-                    conn.getMetaData().getDatabaseProductName(),
-                    conn.getMetaData().getDatabaseProductVersion(),
-                    conn.getMetaData().getURL(),
-                    conn.getMetaData().getUserName());
-
-            try (Statement stmt = conn.createStatement()) {
-                stmt.execute("""
-                        CREATE TABLE IF NOT EXISTS type_chart (
-                            attacking_type VARCHAR(20) NOT NULL,
-                            defending_type VARCHAR(20) NOT NULL,
-                            effectiveness DECIMAL(3,2) NOT NULL,
-                            PRIMARY KEY (attacking_type, defending_type)
-                        )
-                """);
-                        System.out.println("type_chart table ready.");
-            }
-        } catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 }

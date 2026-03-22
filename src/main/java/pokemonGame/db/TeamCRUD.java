@@ -1,5 +1,9 @@
 package pokemonGame.db;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import pokemonGame.Pokemon;
+import pokemonGame.Trainer;
 
 public class TeamCRUD {
     public int addPokemonToDBTeam(int trainerId, int pokemonId) {
@@ -61,4 +65,51 @@ public class TeamCRUD {
         return -1; // Return -1 if checking slot index failed
     }
 
+    public Boolean removePokemonFromDBTeam(int trainerId, int pokemonId) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "DELETE FROM trainer_teams WHERE trainer_id = ? AND instance_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainerId);
+                pstmt.setInt(2, pokemonId);
+
+                int affectedRows = pstmt.executeUpdate();
+                if (affectedRows > 0) {
+                    System.out.println("Pokemon with ID " + pokemonId + " removed from trainer ID " + trainerId + "'s team.");
+                    return true; // Return true to indicate successful removal
+                } else {
+                    System.out.println("No Pokemon with ID " + pokemonId + " found in trainer ID " + trainerId + "'s team.");
+                    return false; // Return false to indicate no Pokemon found to remove
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error removing Pokemon from team: " + e.getMessage());
+            e.printStackTrace();
+            return false; // Return false to indicate an error occurred
+        }
+    }
+
+    public List<Pokemon> getDBTeamForTrainer(Trainer trainer) {
+        List<Pokemon> team = new ArrayList<>();
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT p.* FROM pokemon_instances p "
+                    + "JOIN trainer_teams tt ON p.instance_id = tt.instance_id "
+                    + "WHERE tt.trainer_id = ? ORDER BY tt.slot_index";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainer.getId());
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainer);
+                        team.add(pokemon);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving team for trainer ID " + trainer.getId() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        return team;
+    }
 }

@@ -1,9 +1,6 @@
 package pokemonGame;
 import java.util.ArrayList;
 
-import pokemonGame.db.TeamCRUD;
-import pokemonGame.db.PokemonCRUD;
-
 
 
 // Create a Trainer class to represent a Pokémon trainer.  This can hold information 
@@ -35,11 +32,6 @@ public class Trainer {
         return team;
     }
 
-    public Pokemon getPokemonByInstanceId(int pokemonId) {
-        PokemonCRUD pokemonCRUD = new PokemonCRUD();
-        return pokemonCRUD.getSpecificDBPokemonForTrainer(this, pokemonId); // Fetch the specific Pokémon from the database
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -47,12 +39,10 @@ public class Trainer {
     // Add single pokemon to team
     public void addPokemonToTeam(Pokemon pokemon) {
 
-        TeamCRUD teamCRUD = new TeamCRUD();
-
-        teamCRUD.addPokemonToDBTeam(this.id, pokemon.getId()); // Add the Pokémon to the database team table
         if (team.size() < 6) {
             team.add(pokemon);
-
+            System.out.println("Added " + pokemon.getName() + " (" + pokemon.getSpecies() + ") to " + this.name + "'s team.");
+            
         } else {
             System.out.println("Team is full! Cannot add more Pokémon.");
         }

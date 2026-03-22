@@ -124,5 +124,123 @@ public class PokemonCRUD {
         }
     }
     
+    public boolean updateDBPokemon(Pokemon pokemon) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "UPDATE pokemon_instances SET "
+                    + "species = ?, nickname = ?, level = ?, nature = ?, "
+                    + "iv_hp = ?, iv_attack = ?, iv_defense = ?, iv_sp_attack = ?, iv_sp_defense = ?, iv_speed = ?, "
+                    + "current_hp = ?, ev_hp = ?, ev_attack = ?, ev_defense = ?, ev_sp_attack = ?, ev_sp_defense = ?, ev_speed = ?, "
+                    + "current_exp = ?, is_fainted = ? "
+                    + "WHERE instance_id = ? AND trainer_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setString(1, pokemon.getSpecies());
+                pstmt.setString(2, pokemon.getName());
+                pstmt.setInt(3, pokemon.getLevel());
+                pstmt.setString(4, pokemon.getNature().getDisplayName());
+                pstmt.setInt(5, pokemon.getIvHp());
+                pstmt.setInt(6, pokemon.getIvAttack());
+                pstmt.setInt(7, pokemon.getIvDefense());
+                pstmt.setInt(8, pokemon.getIvSpecialAttack());
+                pstmt.setInt(9, pokemon.getIvSpecialDefense());
+                pstmt.setInt(10, pokemon.getIvSpeed());
+                pstmt.setInt(11, pokemon.getCurrentHP());
+                pstmt.setInt(12, pokemon.getEvHp());
+                pstmt.setInt(13, pokemon.getEvAttack());
+                pstmt.setInt(14, pokemon.getEvDefense());
+                pstmt.setInt(15, pokemon.getEvSpecialAttack());
+                pstmt.setInt(16, pokemon.getEvSpecialDefense());
+                pstmt.setInt(17, pokemon.getEvSpeed());
+                pstmt.setInt(18, pokemon.getCurrentExp());
+                pstmt.setBoolean(19, pokemon.getIsFainted());
+                pstmt.setInt(20, pokemon.getId());
+                pstmt.setInt(21, pokemon.getTrainer().getId());
+
+                int rowsAffected = pstmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    System.out.println("Pokemon '" + pokemon.getName() + "' (" + pokemon.getSpecies()
+                     + ") updated successfully for trainer ID " + pokemon.getTrainer().getId() + ".");
+                    return true; // Return true to indicate successful update
+                } else {
+                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainer().getId());
+                    return false; // Return false to indicate no Pokemon found to update
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating Pokemon: " + e.getMessage());
+            e.printStackTrace();
+            return false; // Return false to indicate an error occurred
+        }
+    }
+
+    public boolean deleteDBPokemon(Pokemon pokemon) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "DELETE FROM pokemon_instances WHERE instance_id = ? AND trainer_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setInt(1, pokemon.getId());
+                pstmt.setInt(2, pokemon.getTrainer().getId());
+
+                int rowsAffected = pstmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    System.out.println("Pokemon '" + pokemon.getName() + "' (" + pokemon.getSpecies()
+                     + ") deleted successfully for trainer ID " + pokemon.getTrainer().getId() + ".");
+                    return true; // Return true to indicate successful deletion
+                } else {
+                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainer().getId());
+                    return false; // Return false to indicate no Pokemon found to delete
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error deleting Pokemon: " + e.getMessage());
+            e.printStackTrace();
+            return false; // Return false to indicate an error occurred
+        }
+    }
+
+    public static Pokemon mapResultSetToPokemon(ResultSet rs, Trainer trainer) throws SQLException {
+        int foundPokemonId = rs.getInt("instance_id");
+        String species = rs.getString("species");
+        String name = rs.getString("nickname");
+        int level = rs.getInt("level");
+        String nature = rs.getString("nature");
+        int ivHp = rs.getInt("iv_hp");
+        int ivAttack = rs.getInt("iv_attack");
+        int ivDefense = rs.getInt("iv_defense");
+        int ivSpAttack = rs.getInt("iv_sp_attack");
+        int ivSpDefense = rs.getInt("iv_sp_defense");
+        int ivSpeed = rs.getInt("iv_speed");
+        int currentHp = rs.getInt("current_hp");
+        int evHp = rs.getInt("ev_hp");
+        int evAttack = rs.getInt("ev_attack");
+        int evDefense = rs.getInt("ev_defense");
+        int evSpAttack = rs.getInt("ev_sp_attack");
+        int evSpDefense = rs.getInt("ev_sp_defense");
+        int evSpeed = rs.getInt("ev_speed");
+        int currentExp = rs.getInt("current_exp");
+        Boolean isFainted = rs.getBoolean("is_fainted");
+
+        // Create a new Pokemon object and populate its fields from the ResultSet
+        Pokemon foundPokemon = Pokemon.createPokemon(species, name, trainer);
+        foundPokemon.setId(foundPokemonId);
+        foundPokemon.setLevel(level);
+        foundPokemon.setNature(Natures.valueOf(nature.toUpperCase()));
+        foundPokemon.setIvHp(ivHp);
+        foundPokemon.setIvAttack(ivAttack);
+        foundPokemon.setIvDefense(ivDefense);
+        foundPokemon.setIvSpecialAttack(ivSpAttack);
+        foundPokemon.setIvSpecialDefense(ivSpDefense);
+        foundPokemon.setIvSpeed(ivSpeed);
+        foundPokemon.setCurrentHP(currentHp);
+        foundPokemon.setEvHp(evHp);
+        foundPokemon.setEvAttack(evAttack);
+        foundPokemon.setEvDefense(evDefense);
+        foundPokemon.setEvSpecialAttack(evSpAttack);
+        foundPokemon.setEvSpecialDefense(evSpDefense);
+        foundPokemon.setEvSpeed(evSpeed);
+        foundPokemon.setCurrentExp(currentExp);
+        foundPokemon.setIsFainted(isFainted);
+
+        return foundPokemon; // Return the Pokémon object
+    }
 }
 

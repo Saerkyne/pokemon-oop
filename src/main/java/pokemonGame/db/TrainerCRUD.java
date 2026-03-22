@@ -57,4 +57,49 @@ public class TrainerCRUD {
             return null; // Return null to indicate an error occurred
         }
     }
+
+    public int deleteTrainerByDiscordId(long discordID) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "DELETE FROM trainers WHERE discord_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setLong(1, discordID);
+                int affectedRows = pstmt.executeUpdate();
+                if (affectedRows > 0) {
+                    System.out.println("Trainer with Discord ID: " + discordID + " deleted successfully.");
+                    return affectedRows; // Return the number of affected rows
+                } else {
+                    System.out.println("No trainer found with Discord ID: " + discordID);
+                    return 0; // Return 0 to indicate no trainer was deleted
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error deleting trainer: " + e.getMessage());
+            e.printStackTrace();
+            return -1; // Return -1 to indicate an error occurred
+        }
+    }
+
+    public int updateTrainerNameByDiscordId(long discordID, String newName) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "UPDATE trainers SET name = ? WHERE discord_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, newName);
+                pstmt.setLong(2, discordID);
+                int affectedRows = pstmt.executeUpdate();
+                if (affectedRows > 0) {
+                    System.out.println("Trainer with Discord ID: " + discordID + " updated successfully to name: " + newName);
+                    return affectedRows; // Return the number of affected rows
+                } else {
+                    System.out.println("No trainer found with Discord ID: " + discordID);
+                    return 0; // Return 0 to indicate no trainer was updated
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating trainer: " + e.getMessage());
+            e.printStackTrace();
+            return -1; // Return -1 to indicate an error occurred
+        }
+    }
 }

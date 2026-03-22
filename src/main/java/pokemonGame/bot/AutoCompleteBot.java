@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 
 public class AutoCompleteBot extends ListenerAdapter {
-    private String[] words = new String[]{"say", "ping"};
+    private String[] words = new String[]{"say", "ping", "battlestate", "createtrainer"};
 
     @Override
     public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {

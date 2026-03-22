@@ -1,4 +1,5 @@
 package pokemonGame.bot;
+import pokemonGame.App;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import java.util.logging.Logger;
@@ -32,6 +33,18 @@ public class SlashExample extends ListenerAdapter{
                 LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
                 event.reply("The battle is currently in progress!").queue();
                 break;
+
+            case "createtrainer":
+                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
+                int createAttempt = App.createTrainer(event.getOption("name").getAsString(), userId, user);
+
+                if (createAttempt == -1) {
+                    event.reply("You are already a trainer!").setEphemeral(true).queue();
+                    break;
+                } else {
+                    event.reply("Trainer created successfully!").queue();
+                    break;
+                }
             
             default:
                 event.reply("I can't handle that command right now :(")

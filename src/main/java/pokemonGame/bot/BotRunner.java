@@ -14,7 +14,6 @@ public class BotRunner {
 
         JDA api = JDABuilder.createDefault(token)
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
-                .addEventListeners(new PingPong())
                 .addEventListeners(new SlashExample())
                 .build();
 
@@ -30,6 +29,10 @@ public class BotRunner {
                 .addCommands(Commands.slash("battlestate", "Shows the current state of a battle")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL))
+                .addCommands(Commands.slash("createtrainer", "Creates a new trainer")
+                    .setContexts(InteractionContextType.ALL)
+                    .setIntegrationTypes(IntegrationType.ALL)
+                    .addOption(OptionType.STRING, "name", "The name of the trainer", true, true))
                 .queue();
 
     }

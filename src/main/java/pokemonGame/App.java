@@ -28,15 +28,16 @@ public class App {
         // pokemon_instances table if the team size check fails, to avoid having Pokemon in the database that are not on any team.
 
 
-        long discordID = 123456789012345678L; // Placeholder Discord ID
-        String discordUsername = "TestUserDiscord"; // Placeholder Discord username
-        String trainerName = "TestUser"; // Placeholder trainer name
+        // long discordID = 123456789012345678L; // Placeholder Discord ID
+        // String discordUsername = "TestUserDiscord"; // Placeholder Discord username
+        // String trainerName = "TestUser"; // Placeholder trainer name
 
-        Trainer trainer = createTrainer(trainerName, discordID, discordUsername);
+        // createTrainer(trainerName, discordID, discordUsername);
         
-        PokemonCRUD pokemonCRUD = new PokemonCRUD();
+        // PokemonCRUD pokemonCRUD = new PokemonCRUD();
 
         // Example of getting a specific Pokemon for the trainer by its instance ID (replace 1 with the actual instance ID you want to retrieve)
+        /*
         int pokemonInstanceIdToRetrieve = 2; // Placeholder instance ID
         Pokemon retrievedPokemon = pokemonCRUD.getSpecificDBPokemonForTrainer(trainer, pokemonInstanceIdToRetrieve);
         if (retrievedPokemon != null) {
@@ -46,8 +47,10 @@ public class App {
         }
 
         System.out.println(retrievedPokemon.getName() + " has this many hit points: " + retrievedPokemon.getCurrentHP());
+        */
 
         // Example of updating a Pokemon's current HP and fainted status in the database
+        /*
         if (retrievedPokemon != null) {
             retrievedPokemon.setCurrentHP(100); // Set current HP to 0 to indicate the Pokemon has fainted
             retrievedPokemon.setIsFainted(false); // Set isFainted to true to indicate the Pokemon has fainted
@@ -58,6 +61,7 @@ public class App {
                 System.out.println("Failed to update Pokemon '" + retrievedPokemon.getName() + "' (" + retrievedPokemon.getSpecies() + ") in the database.");
             }
         }
+            
 
         // Retrieve the same Pokemon again to verify the update
         Pokemon updatedPokemon = pokemonCRUD.getSpecificDBPokemonForTrainer(trainer, pokemonInstanceIdToRetrieve);
@@ -96,6 +100,7 @@ public class App {
         for (Pokemon p : teamFromDB) {
             System.out.println("- " + p.getName() + " (" + p.getSpecies() + ")");
         } 
+        */
 
 
 
@@ -181,7 +186,7 @@ public class App {
 
     }
 
-    public static Trainer createTrainer(String name, long discordID, String discordUsername) {
+    public static int createTrainer(String name, long discordID, String discordUsername) {
         // This method can be used to create a trainer and set up their team
         // Create a Trainer and ask for their name
         TrainerCRUD trainerCRUDSearch = new TrainerCRUD();
@@ -189,7 +194,7 @@ public class App {
         
         if (trainerSearch != null) {
             System.out.println("Welcome back, " + trainerSearch.getName() + "!");
-            return trainerSearch;
+            return -1; // Return -1 to indicate that a new trainer was not created
         } else {
             System.out.println("No existing trainer found with Discord ID: " + discordID);
             System.out.println("Creating a new trainer profile for " + name + "...");
@@ -209,80 +214,10 @@ public class App {
 
             System.out.println("You can have up to 6 Pokemon on your team. Let's start by choosing your first Pokemon!");
 
-            return trainer;
+            return 1; // Return 1 to indicate that a new trainer was created
         }
     }
 
-    public static Pokemon selectFromAvailablePokemon(Trainer trainer) {
-        // This method can be used to list available Pokémon species for the player to choose from, 
-        // and allow them to select one by name.  It can return a new instance of the chosen Pokémon.
-        // Allow the player to choose a Pokémon by name from the generated list of available Pokémon.  
-        // This can be done using a simple text input prompt.
-       /*  String[] pokemonOptions = { "Bulbasaur", "Ivysaur","Venusaur", "Charmander",
-        "Charmeleon","Charizard","Squirtle","Wartortle","Blastoise","Caterpie",
-        "Metapod","Butterfree","Weedle","Kakuna","Beedrill","Pidgey","Pidgeotto",
-        "Pidgeot","Rattata","Raticate","Spearow","Fearow","Ekans","Arbok","Pikachu",
-        "Raichu","Sandshrew","Sandslash","Nidoran♀","Nidorina","Nidoqueen","Nidoran♂",
-        "Nidorino","Nidoking","Clefairy","Clefable","Vulpix","Ninetales","Jigglypuff",
-        "Wigglytuff","Zubat","Golbat","Oddish","Gloom","Vileplume","Paras","Parasect",
-        "Venonat","Venomoth","Diglett","Dugtrio","Meowth","Persian","Psyduck",
-        "Golduck","Mankey","Primeape","Growlithe","Arcanine","Poliwag","Poliwhirl",
-        "Poliwrath","Abra","Kadabra","Alakazam","Machop","Machoke","Machamp",
-        "Bellsprout","Weepinbell","Victreebel","Tentacool","Tentacruel","Geodude",
-        "Graveler","Golem","Ponyta","Rapidash","Slowpoke","Slowbro","Magnemite",
-        "Magneton","Farfetch'd","Doduo","Dodrio","Seel","Dewgong","Grimer","Muk",
-        "Shellder","Cloyster","Gastly","Haunter","Gengar","Onix","Drowzee","Hypno",
-        "Krabby","Kingler","Voltorb","Electrode","Exeggcute","Exeggutor","Cubone",
-        "Marowak","Hitmonlee","Hitmonchan","Lickitung","Koffing","Weezing","Rhyhorn",
-        "Rhydon","Chansey","Tangela","Kangaskhan","Horsea","Seadra","Goldeen","Seaking",
-        "Staryu","Starmie","Mr. Mime","Scyther","Jynx","Electabuzz","Magmar","Pinsir",
-        "Tauros","Magikarp","Gyarados","Lapras","Ditto","Eevee","Vaporeon","Jolteon",
-        "Flareon","Porygon","Omanyte","Omastar","Kabuto","Kabutops","Aerodactyl",
-        "Snorlax","Articuno","Zapdos","Moltres","Dratini","Dragonair","Dragonite",
-        "Mewtwo","Mew"
-        };*/
-        
-        //ArrayList<Pokemon> availablePokemon = new ArrayList<>();
-
-        /*for (String pokemon : pokemonOptions) {
-            switch (pokemon) {
-                case "Bulbasaur":
-                    availablePokemon.add(new Bulbasaur());
-                    break;
-                case "Ivysaur":
-                    availablePokemon.add(new Ivysaur());
-                    break;
-                case "Venusaur":
-                    availablePokemon.add(new Venusaur());
-                    break;
-                case "Charmander":
-                    availablePokemon.add(new Charmander());
-                    break;
-                case "Charmeleon":
-                    availablePokemon.add(new Charmeleon());
-                    break;
-                case "Charizard":
-                    availablePokemon.add(new Charizard());
-                    break;
-                case "Squirtle":
-                    availablePokemon.add(new Squirtle());
-                    break;
-                case "Wartortle":
-                    availablePokemon.add(new Wartortle());
-                    break;
-                case "Blastoise":
-                    availablePokemon.add(new Blastoise());
-                    break;
-                case "Caterpie":
-                    availablePokemon.add(new Caterpie());
-                    break;
-            }
-        }*/
-
-        
-
-        return null; // Placeholder return value
-    }
 
     /**
      * Present a Pokémon's eligible learnset and let the player pick a move

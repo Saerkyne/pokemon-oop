@@ -74,7 +74,7 @@ public class App {
         Pokemon pokemonToDelete = pokemonCRUD.getSpecificDBPokemonForTrainer(trainer, pokemonInstanceIdToDelete);
         if (pokemonToDelete != null) {
             TeamCRUD teamCRUD = new TeamCRUD();
-            boolean removedFromTeam = teamCRUD.removePokemonFromDBTeam(trainer.getId(), pokemonInstanceIdToDelete);
+            boolean removedFromTeam = teamCRUD.removePokemonFromDBTeam(trainer.getDBId(), pokemonInstanceIdToDelete);
             if (removedFromTeam) {
                 boolean deleteSuccess = pokemonCRUD.deleteDBPokemon(pokemonToDelete);
                 if (deleteSuccess) {
@@ -199,7 +199,7 @@ public class App {
 
             TrainerCRUD trainerCRUDCreate = new TrainerCRUD();
             int trainerId = trainerCRUDCreate.createDBTrainer(discordID, discordUsername, name);
-            trainer.setId(trainerId);
+            trainer.setDBId(trainerId);
 
             System.out.println(trainer.getName() + ", welcome to the world of Pokemon!");
 

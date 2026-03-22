@@ -41,7 +41,7 @@ public class TrainerCRUD {
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         Trainer trainer = new Trainer(rs.getString("name"));
-                        trainer.setId(rs.getInt("trainer_id")); // Set the trainer's ID from the database
+                        trainer.setDBId(rs.getInt("trainer_id")); // Set the trainer's ID from the database
                         trainer.setName(rs.getString("name")); // Set the trainer's name from the database
                         System.out.println("Trainer '" + trainer.getName() + "' retrieved successfully.");
                         return trainer; // Return the retrieved trainer

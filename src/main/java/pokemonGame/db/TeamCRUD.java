@@ -97,7 +97,7 @@ public class TeamCRUD {
                     + "WHERE tt.trainer_id = ? ORDER BY tt.slot_index";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, trainer.getId());
+                pstmt.setInt(1, trainer.getDBId());
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
@@ -107,7 +107,7 @@ public class TeamCRUD {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error retrieving team for trainer ID " + trainer.getId() + ": " + e.getMessage());
+            System.err.println("Error retrieving team for trainer ID " + trainer.getDBId() + ": " + e.getMessage());
             e.printStackTrace();
         }
         return team;

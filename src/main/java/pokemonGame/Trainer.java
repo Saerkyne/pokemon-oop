@@ -1,26 +1,34 @@
 package pokemonGame;
 import java.util.ArrayList;
 
+// Creates a Trainer object in memory based on information entered from a user
+// or data pulled from the database.
 
-
-// Create a Trainer class to represent a Pokémon trainer.  This can hold information 
-// about the trainer's name, their team of Pokémon, and any other relevant details.
 public class Trainer {
     private String name;
     private ArrayList<Pokemon> team;
-    private int id; // This can be used to link the trainer to the database record
+    private int DBid; // this is unused until the database creates it; we have set/get for it
+    private long discordId; // this is unused until we add the discord bot; we have set/get for it
 
     public Trainer(String name) {
         this.name = name;
         this.team = new ArrayList<Pokemon>();
     }
 
-    public int getId() {
-        return id;
+    public int getDBId() {
+        return DBid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setDBId(int DBid) {
+        this.DBid = DBid;
+    }
+
+    public long getDiscordId() {
+        return discordId;
+    }
+
+    public void setDiscordId(long discordId) {
+        this.discordId = discordId;
     }
 
     public String getName() {
@@ -35,6 +43,8 @@ public class Trainer {
     public void setName(String name) {
         this.name = name;
     }
+
+    
 
     // Add single pokemon to team
     public void addPokemonToTeam(Pokemon pokemon) {

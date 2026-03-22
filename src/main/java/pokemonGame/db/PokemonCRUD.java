@@ -29,7 +29,7 @@ public class PokemonCRUD {
                     + "current_hp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                pstmt.setInt(1, pokemon.getTrainer().getId());
+                pstmt.setInt(1, pokemon.getTrainer().getDBId());
                 pstmt.setString(2, pokemon.getSpecies());
                 pstmt.setString(3, pokemon.getName());
                 pstmt.setInt(4, pokemon.getLevel());
@@ -44,7 +44,7 @@ public class PokemonCRUD {
 
                 pstmt.executeUpdate();
                 System.out.println("Pokemon '" + pokemon.getName() + "' (" + pokemon.getSpecies()
-                 + ") created successfully for trainer ID " + pokemon.getTrainer().getId() + ".");
+                 + ") created successfully for trainer ID " + pokemon.getTrainer().getDBId() + ".");
 
                 try (ResultSet pkmnSet = pstmt.getGeneratedKeys()) {
                     if (pkmnSet.next()) {
@@ -66,7 +66,7 @@ public class PokemonCRUD {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND instance_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                pstmt.setInt(1, trainer.getId());
+                pstmt.setInt(1, trainer.getDBId());
                 pstmt.setInt(2, pokemonId);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
@@ -112,7 +112,7 @@ public class PokemonCRUD {
                         foundPokemon.setIsFainted(isFainted);
                         return foundPokemon; // Return the Pokémon object
                     } else {
-                        System.out.println("No Pokemon found for trainer ID: " + trainer.getId());
+                        System.out.println("No Pokemon found for trainer ID: " + trainer.getDBId());
                         return null; // Return null to indicate no Pokemon found
                     }
                 }
@@ -154,15 +154,15 @@ public class PokemonCRUD {
                 pstmt.setInt(18, pokemon.getCurrentExp());
                 pstmt.setBoolean(19, pokemon.getIsFainted());
                 pstmt.setInt(20, pokemon.getId());
-                pstmt.setInt(21, pokemon.getTrainer().getId());
+                pstmt.setInt(21, pokemon.getTrainer().getDBId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
                     System.out.println("Pokemon '" + pokemon.getName() + "' (" + pokemon.getSpecies()
-                     + ") updated successfully for trainer ID " + pokemon.getTrainer().getId() + ".");
+                     + ") updated successfully for trainer ID " + pokemon.getTrainer().getDBId() + ".");
                     return true; // Return true to indicate successful update
                 } else {
-                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainer().getId());
+                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainer().getDBId());
                     return false; // Return false to indicate no Pokemon found to update
                 }
             }
@@ -178,15 +178,15 @@ public class PokemonCRUD {
             String sql = "DELETE FROM pokemon_instances WHERE instance_id = ? AND trainer_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setInt(1, pokemon.getId());
-                pstmt.setInt(2, pokemon.getTrainer().getId());
+                pstmt.setInt(2, pokemon.getTrainer().getDBId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
                     System.out.println("Pokemon '" + pokemon.getName() + "' (" + pokemon.getSpecies()
-                     + ") deleted successfully for trainer ID " + pokemon.getTrainer().getId() + ".");
+                     + ") deleted successfully for trainer ID " + pokemon.getTrainer().getDBId() + ".");
                     return true; // Return true to indicate successful deletion
                 } else {
-                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainer().getId());
+                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainer().getDBId());
                     return false; // Return false to indicate no Pokemon found to delete
                 }
             }

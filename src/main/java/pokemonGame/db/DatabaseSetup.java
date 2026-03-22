@@ -14,7 +14,6 @@ package pokemonGame.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,7 @@ public class DatabaseSetup {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    public static void deleteAllData(List<String> tableNames) {
+    public static void deleteAllData() {
 
         try (Connection conn = getConnection()) {
 
@@ -46,18 +45,22 @@ public class DatabaseSetup {
                 disable.execute();
             }
 
-            for (String tableName : tableNames) {
-                logger.info("Connected to database. Preparing to clear data from table '{}'", tableName);
-                String sql = "TRUNCATE TABLE " + tableName;
-                try (var stmt = conn.prepareStatement(sql)) {
-                    stmt.execute();
-                    logger.info("Truncated table '{}'", tableName);
+            try (var getTables = conn.prepareStatement("SHOW TABLES")) {
+                var rs = getTables.executeQuery();
+                while (rs.next()) {
+                    String tableName = rs.getString(1);
+                    try (var delete = conn.prepareStatement("TRUNCATE TABLE " + tableName)) {
+                        delete.execute();
+                        logger.info("Deleted data from table: {}", tableName);
+                    } catch (SQLException e) {
+                        logger.error("Error deleting data from table {}: {}", tableName, e.getMessage(), e);
+                    }
                 }
-
             }
             
-            try (var stmt = conn.prepareStatement(sqlEnableFKChecks)) {
-                stmt.execute();
+            
+            try (var enable = conn.prepareStatement(sqlEnableFKChecks)) {
+                enable.execute();
             }
             logger.info("All data deleted successfully.");
         } catch (SQLException e) {

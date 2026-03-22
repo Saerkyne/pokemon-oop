@@ -123,8 +123,8 @@ class PokemonTest {
      */
     @Test
     void setNameUpdatesName() {
-        abra.setName("Kadabra");
-        assertEquals("Kadabra", abra.getName());
+        abra.setNickname("Kadabra");
+        assertEquals("Kadabra", abra.getNickname());
     }
 
     /*
@@ -138,7 +138,7 @@ class PokemonTest {
     @Test
     void defaultNameMatchesSpecies() {
         Pokemon fresh = new Abra("Abra");
-        assertEquals("Abra", fresh.getName());
+        assertEquals("Abra", fresh.getNickname());
     }
 
     // --- Moveset management ---

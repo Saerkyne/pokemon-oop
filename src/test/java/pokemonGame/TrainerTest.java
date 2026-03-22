@@ -151,8 +151,8 @@ class TrainerTest {
         trainer.addPokemonToTeam(new Abra("Abra"));
         trainer.addPokemonToTeam(new Bulbasaur("Bulbasaur"));
         assertEquals(2, trainer.getTeam().size());
-        assertEquals("Abra", trainer.getTeam().get(0).getName());
-        assertEquals("Bulbasaur", trainer.getTeam().get(1).getName());
+        assertEquals("Abra", trainer.getTeam().get(0).getNickname());
+        assertEquals("Bulbasaur", trainer.getTeam().get(1).getNickname());
     }
 
     /*
@@ -172,7 +172,7 @@ class TrainerTest {
 
         assertEquals(1, trainer.getTeam().size());
         assertEquals(1, other.getTeam().size());
-        assertEquals("Ash's Abra", trainer.getTeam().get(0).getName());
-        assertEquals("Gary's Bulbasaur", other.getTeam().get(0).getName());
+        assertEquals("Ash's Abra", trainer.getTeam().get(0).getNickname());
+        assertEquals("Gary's Bulbasaur", other.getTeam().get(0).getNickname());
     }
 }

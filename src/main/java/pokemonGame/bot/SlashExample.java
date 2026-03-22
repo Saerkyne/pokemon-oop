@@ -117,9 +117,9 @@ public class SlashExample extends ListenerAdapter{
                 LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' with confirmation: '" + event.getOption("confirm").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
                 String confirmation = event.getOption("confirm").getAsString();
                 if (confirmation.equalsIgnoreCase("CONFIRM")) {
-                    String dbName = event.getOption("pokemon_db").getAsString();
+                    
 
-                    DatabaseSetup.deleteAllData(null);
+                    DatabaseSetup.deleteAllData();
                     
                     event.reply("Database cleared successfully!").queue();
                 } else {

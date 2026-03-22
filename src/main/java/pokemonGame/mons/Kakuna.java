@@ -14,7 +14,7 @@ public class Kakuna extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new StringShot(), LearnsetEntry.Source.PRE_EVOLUTION, 0));
     }
 
-    public Kakuna(String name) {
+    public Kakuna(String nickname) {
         super(
             "Kakuna",
             14,
@@ -29,7 +29,7 @@ public class Kakuna extends Pokemon {
             35
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 2, 0, 0, 0}; // Kakuna yields 2 EV points in Defense when defeated
         this.setEvYield(evYield);

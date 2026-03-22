@@ -33,7 +33,7 @@ public class Diglett extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Diglett(String name) {
+    public Diglett(String nickname) {
         super(
             "Diglett",
             50,
@@ -48,7 +48,7 @@ public class Diglett extends Pokemon {
             95
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 1}; // Diglett yields 1 EV point in Speed when defeated
         this.setEvYield(evYield);

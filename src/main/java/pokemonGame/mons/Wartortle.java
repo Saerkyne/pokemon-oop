@@ -14,7 +14,7 @@ public class Wartortle extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Swift(), LearnsetEntry.Source.LEVEL, 23));
     }
 
-    public Wartortle(String name) {
+    public Wartortle(String nickname) {
         super(
             "Wartortle",
             8,
@@ -29,7 +29,7 @@ public class Wartortle extends Pokemon {
             58
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 1, 0, 1, 0}; // Wartortle yields 1 EV point in Defense and 1 EV point in Special Defense when defeated
         this.setEvYield(evYield);

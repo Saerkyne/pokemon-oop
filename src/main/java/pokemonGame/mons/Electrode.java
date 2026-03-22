@@ -42,7 +42,7 @@ public class Electrode extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Electrode(String name) {
+    public Electrode(String nickname) {
         super(
             "Electrode",
             101,
@@ -57,7 +57,7 @@ public class Electrode extends Pokemon {
             150
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Electrode yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

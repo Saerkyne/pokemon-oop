@@ -43,7 +43,7 @@ public class Flareon extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Flareon(String name) {
+    public Flareon(String nickname) {
         super(
             "Flareon",
             136,
@@ -58,12 +58,13 @@ public class Flareon extends Pokemon {
             65
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Flareon yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

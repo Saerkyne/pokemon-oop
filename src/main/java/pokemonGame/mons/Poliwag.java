@@ -37,7 +37,7 @@ public class Poliwag extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Poliwag(String name) {
+    public Poliwag(String nickname) {
         super(
             "Poliwag",
             60,
@@ -52,7 +52,7 @@ public class Poliwag extends Pokemon {
             90
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 1}; // Poliwag yields 1 EV point in Speed when defeated
         this.setEvYield(evYield);

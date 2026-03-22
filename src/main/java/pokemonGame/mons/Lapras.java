@@ -49,7 +49,7 @@ public class Lapras extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Lapras(String name) {
+    public Lapras(String nickname) {
         super(
             "Lapras",
             131,
@@ -64,7 +64,7 @@ public class Lapras extends Pokemon {
             60
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {2, 0, 0, 0, 0, 0}; // Lapras yields 2 EV points in HP when defeated
         this.setEvYield(evYield);

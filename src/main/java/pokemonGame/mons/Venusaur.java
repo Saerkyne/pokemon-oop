@@ -15,7 +15,7 @@ public class Venusaur extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Psychic(), LearnsetEntry.Source.LEVEL, 32));
     }
 
-    public Venusaur(String name) {
+    public Venusaur(String nickname) {
         super(
             "Venusaur",
             3,
@@ -30,7 +30,7 @@ public class Venusaur extends Pokemon {
             80
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 2, 1, 0}; // Venusaur yields 2 EV points in Special Attack and 1 EV point in Special Defense when defeated
         this.setEvYield(evYield);

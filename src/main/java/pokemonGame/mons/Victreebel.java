@@ -39,7 +39,7 @@ public class Victreebel extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Victreebel(String name) {
+    public Victreebel(String nickname) {
         super(
             "Victreebel",
             71,
@@ -54,7 +54,7 @@ public class Victreebel extends Pokemon {
             70
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 3, 0, 0, 0, 0}; // Victreebel yields 3 EV points in Attack when defeated
         this.setEvYield(evYield);

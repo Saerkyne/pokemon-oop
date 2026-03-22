@@ -49,7 +49,7 @@ public class Kadabra extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Kadabra(String name) {
+    public Kadabra(String nickname) {
         super(
             "Kadabra",
             64,
@@ -64,7 +64,7 @@ public class Kadabra extends Pokemon {
             105
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 2, 0, 0}; // Kadabra yields 2 EV points in Special Attack when defeated
         this.setEvYield(evYield);

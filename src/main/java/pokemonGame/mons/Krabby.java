@@ -40,7 +40,7 @@ public class Krabby extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Krabby(String name) {
+    public Krabby(String nickname) {
         super(
             "Krabby",
             98,
@@ -55,7 +55,7 @@ public class Krabby extends Pokemon {
             50
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Krabby yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

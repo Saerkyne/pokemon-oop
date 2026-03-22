@@ -37,7 +37,7 @@ public class Aerodactyl extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Aerodactyl(String name) {
+    public Aerodactyl(String nickname) {
         super(
             "Aerodactyl",
             142,
@@ -52,12 +52,13 @@ public class Aerodactyl extends Pokemon {
             130
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Aerodactyl yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

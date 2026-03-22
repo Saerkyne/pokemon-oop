@@ -49,7 +49,7 @@ public class Slowpoke extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Slowpoke(String name) {
+    public Slowpoke(String nickname) {
         super(
             "Slowpoke",
             79,
@@ -64,7 +64,7 @@ public class Slowpoke extends Pokemon {
             15
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {1, 0, 0, 0, 0, 0}; // Slowpoke yields 1 EV point in HP when defeated
         this.setEvYield(evYield);

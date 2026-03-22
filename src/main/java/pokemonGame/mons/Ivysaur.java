@@ -40,7 +40,7 @@ public class Ivysaur extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Ivysaur(String name) {
+    public Ivysaur(String nickname) {
         super(
             "Ivysaur",
             2,
@@ -55,7 +55,7 @@ public class Ivysaur extends Pokemon {
             60
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 1, 1, 0}; // Ivysaur yields 1 EV point in Special Attack and 1 EV point in Special Defense when defeated
         this.setEvYield(evYield);

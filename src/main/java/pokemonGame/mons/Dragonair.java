@@ -47,7 +47,7 @@ public class Dragonair extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Dragonair(String name) {
+    public Dragonair(String nickname) {
         super(
             "Dragonair",
             148,
@@ -62,7 +62,7 @@ public class Dragonair extends Pokemon {
             70
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Dragonair yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);

@@ -33,7 +33,7 @@ public class Venonat extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Venonat(String name) {
+    public Venonat(String nickname) {
         super(
             "Venonat",
             48,
@@ -48,7 +48,7 @@ public class Venonat extends Pokemon {
             45
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 1, 0}; // Venonat yields 1 EV point in Special Defense when defeated
         this.setEvYield(evYield);

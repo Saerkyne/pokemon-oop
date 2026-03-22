@@ -45,7 +45,7 @@ public class Kabutops extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Kabutops(String name) {
+    public Kabutops(String nickname) {
         super(
             "Kabutops",
             141,
@@ -60,7 +60,7 @@ public class Kabutops extends Pokemon {
             80
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Kabutops yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);

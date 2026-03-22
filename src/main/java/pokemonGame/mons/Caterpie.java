@@ -13,7 +13,7 @@ public class Caterpie extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new StringShot(), LearnsetEntry.Source.LEVEL, 1));
     }
 
-    public Caterpie(String name) {
+    public Caterpie(String nickname) {
         super(
             "Caterpie",
             10,
@@ -28,12 +28,13 @@ public class Caterpie extends Pokemon {
             45
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {1, 0, 0, 0, 0, 0}; // Caterpie yields 1 EV point in HP when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

@@ -40,7 +40,7 @@ public class Articuno extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));    
     }
 
-    public Articuno(String name) {
+    public Articuno(String nickname) {
         super(
             "Articuno",
             144,
@@ -55,12 +55,13 @@ public class Articuno extends Pokemon {
             85
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 3, 0}; // Articuno yields 3 EV points in Special Defense when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

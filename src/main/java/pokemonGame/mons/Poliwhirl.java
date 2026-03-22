@@ -48,7 +48,7 @@ public class Poliwhirl extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Poliwhirl(String name) {
+    public Poliwhirl(String nickname) {
         super(
             "Poliwhirl",
             61,
@@ -63,7 +63,7 @@ public class Poliwhirl extends Pokemon {
             90
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Poliwhirl yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

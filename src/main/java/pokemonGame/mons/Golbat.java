@@ -35,7 +35,7 @@ public class Golbat extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Golbat(String name) {
+    public Golbat(String nickname) {
         super(
             "Golbat",
             42,
@@ -50,7 +50,7 @@ public class Golbat extends Pokemon {
             90
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Golbat yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

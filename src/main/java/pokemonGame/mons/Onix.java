@@ -37,7 +37,7 @@ public class Onix extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Onix(String name) {
+    public Onix(String nickname) {
         super(
             "Onix",
             95,
@@ -52,7 +52,7 @@ public class Onix extends Pokemon {
             70
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 1, 0, 0, 0}; // Onix yields 1 EV point in Defense when defeated
         this.setEvYield(evYield);

@@ -50,7 +50,7 @@ public class Poliwrath extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Poliwrath(String name) {
+    public Poliwrath(String nickname) {
         super(
             "Poliwrath",
             62,
@@ -65,12 +65,13 @@ public class Poliwrath extends Pokemon {
             70
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 3, 0, 0, 0}; // Poliwrath yields 3 EV points in Defense when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

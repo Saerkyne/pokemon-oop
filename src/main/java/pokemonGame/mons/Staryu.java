@@ -45,7 +45,7 @@ public class Staryu extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Staryu(String name) {
+    public Staryu(String nickname) {
         super(
             "Staryu",
             120,
@@ -60,7 +60,7 @@ public class Staryu extends Pokemon {
             85
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 1}; // Staryu yields 1 EV point in Speed when defeated
         this.setEvYield(evYield);

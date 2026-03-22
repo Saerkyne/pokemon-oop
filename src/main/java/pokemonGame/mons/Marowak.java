@@ -50,7 +50,7 @@ public class Marowak extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Marowak(String name) {
+    public Marowak(String nickname) {
         super(
             "Marowak",
             105,
@@ -65,7 +65,7 @@ public class Marowak extends Pokemon {
             45
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 2, 0, 0, 0}; // Marowak yields 2 EV points in Defense when defeated
         this.setEvYield(evYield);

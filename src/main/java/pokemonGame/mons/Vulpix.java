@@ -33,7 +33,7 @@ public class Vulpix extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Vulpix(String name) {
+    public Vulpix(String nickname) {
         super(
             "Vulpix",
             37,
@@ -48,7 +48,7 @@ public class Vulpix extends Pokemon {
             65
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 1}; // Vulpix yields 1 EV point in Speed when defeated
         this.setEvYield(evYield);

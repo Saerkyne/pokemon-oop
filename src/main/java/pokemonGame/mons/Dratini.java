@@ -45,7 +45,7 @@ public class Dratini extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Dratini(String name) {
+    public Dratini(String nickname) {
         super(
             "Dratini",
             147,
@@ -60,7 +60,7 @@ public class Dratini extends Pokemon {
             50
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Dratini yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

@@ -32,7 +32,7 @@ public class Weezing extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Weezing(String name) {
+    public Weezing(String nickname) {
         super(
             "Weezing",
             110,
@@ -47,7 +47,7 @@ public class Weezing extends Pokemon {
             60
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 2, 0, 0, 0}; // Weezing yields 2 EV points in Defense when defeated
         this.setEvYield(evYield);

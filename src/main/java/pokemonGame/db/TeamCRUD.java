@@ -23,9 +23,10 @@ public class TeamCRUD {
                 pstmt.setInt(1, trainerId);
                 pstmt.setInt(2, pokemonId);
                 pstmt.setInt(3, slotIndex);
+                System.out.println("Attempting to add Pokemon with ID " + pokemonId + " to trainer ID " + trainerId + "'s team in slot " + slotIndex + "...");
 
                 pstmt.executeUpdate();
-                System.out.println("Pokémon with ID " + pokemonId + " added to trainer ID " + trainerId + "'s team in slot " + slotIndex + ".");
+                System.out.println("Pokemon with ID " + pokemonId + " added to trainer ID " + trainerId + "'s team in slot " + slotIndex + ".");
 
                 try (ResultSet teamSet = pstmt.getGeneratedKeys()) {
                     if (teamSet.next()) {
@@ -36,7 +37,7 @@ public class TeamCRUD {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error adding Pokémon to team: " + e.getMessage());
+            System.err.println("Error adding Pokemon to team: " + e.getMessage());
             e.printStackTrace();
             return -1; // Return -1 to indicate an error occurred
         }

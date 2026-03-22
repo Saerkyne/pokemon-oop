@@ -33,7 +33,7 @@ public class Oddish extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Oddish(String name) {
+    public Oddish(String nickname) {
         super(
             "Oddish",
             43,
@@ -48,7 +48,7 @@ public class Oddish extends Pokemon {
             30
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 1, 0, 0}; // Oddish yields 1 EV point in Special Attack when defeated
         this.setEvYield(evYield);

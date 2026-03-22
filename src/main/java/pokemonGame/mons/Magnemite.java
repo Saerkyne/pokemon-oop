@@ -38,7 +38,7 @@ public class Magnemite extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Magnemite(String name) {
+    public Magnemite(String nickname) {
         super(
             "Magnemite",
             81,
@@ -53,12 +53,13 @@ public class Magnemite extends Pokemon {
             45
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 1, 0, 0}; // Magnemite yields 1 EV point in Special Attack when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

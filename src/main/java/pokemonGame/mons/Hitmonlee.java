@@ -41,7 +41,7 @@ public class Hitmonlee extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Hitmonlee(String name) {
+    public Hitmonlee(String nickname) {
         super(
             "Hitmonlee",
             106,
@@ -56,7 +56,7 @@ public class Hitmonlee extends Pokemon {
             87
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Hitmonlee yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);

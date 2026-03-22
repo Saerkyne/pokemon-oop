@@ -39,7 +39,7 @@ public class Shellder extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Shellder(String name) {
+    public Shellder(String nickname) {
         super(
             "Shellder",
             90,
@@ -54,7 +54,7 @@ public class Shellder extends Pokemon {
             40
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 1, 0, 0, 0}; // Shellder yields 1 EV point in Defense when defeated
         this.setEvYield(evYield);

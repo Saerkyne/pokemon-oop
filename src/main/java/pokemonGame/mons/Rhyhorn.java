@@ -39,7 +39,7 @@ public class Rhyhorn extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Rhyhorn(String name) {
+    public Rhyhorn(String nickname) {
         super(
             "Rhyhorn",
             111,
@@ -54,7 +54,7 @@ public class Rhyhorn extends Pokemon {
             25
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 1, 0, 0, 0}; // Rhyhorn yields 1 EV point in Defense when defeated
         this.setEvYield(evYield);

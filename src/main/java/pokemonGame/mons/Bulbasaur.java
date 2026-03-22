@@ -41,7 +41,7 @@ public class Bulbasaur extends Pokemon {
     }
 
     // Constructor
-    public Bulbasaur(String name) {
+    public Bulbasaur(String nickname) {
         super(
             "Bulbasaur",
             1,
@@ -56,12 +56,13 @@ public class Bulbasaur extends Pokemon {
             45
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 1, 0, 0}; // Bulbasaur yields 1 EV point in Special Attack when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     // instance accessor used in polymorphic contexts

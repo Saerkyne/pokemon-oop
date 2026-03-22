@@ -38,7 +38,7 @@ public class Parasect extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Parasect(String name) {
+    public Parasect(String nickname) {
         super(
             "Parasect",
             47,
@@ -53,7 +53,7 @@ public class Parasect extends Pokemon {
             30
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 1, 0, 0, 0}; // Parasect yields 2 EV points in Attack and 1 EV point in Defense when defeated
         this.setEvYield(evYield);

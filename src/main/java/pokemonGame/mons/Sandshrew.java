@@ -39,7 +39,7 @@ public class Sandshrew extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Sandshrew(String name) {
+    public Sandshrew(String nickname) {
         super(
             "Sandshrew",
             27,
@@ -54,7 +54,7 @@ public class Sandshrew extends Pokemon {
             40
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 1, 0, 0, 0}; // Sandshrew yields 1 EV point in Defense when defeated
         this.setEvYield(evYield);

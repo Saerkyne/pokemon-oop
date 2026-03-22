@@ -36,7 +36,7 @@ public class Seadra extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Seadra(String name) {
+    public Seadra(String nickname) {
         super(
             "Seadra",
             117,
@@ -51,7 +51,7 @@ public class Seadra extends Pokemon {
             85
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 1, 1, 0, 0}; // Seadra yields 1 EV point in Defense and 1 EV point in Special Attack when defeated
         this.setEvYield(evYield);

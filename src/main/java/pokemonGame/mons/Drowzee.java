@@ -48,7 +48,7 @@ public class Drowzee extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Drowzee(String name) {
+    public Drowzee(String nickname) {
         super(
             "Drowzee",
             96,
@@ -63,7 +63,7 @@ public class Drowzee extends Pokemon {
             42
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 1, 0}; // Drowzee yields 1 EV point in Special Defense when defeated
         this.setEvYield(evYield);

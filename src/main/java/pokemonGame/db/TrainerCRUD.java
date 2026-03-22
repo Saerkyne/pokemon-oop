@@ -43,6 +43,8 @@ public class TrainerCRUD {
                         Trainer trainer = new Trainer(rs.getString("name"));
                         trainer.setDBId(rs.getInt("trainer_id")); // Set the trainer's ID from the database
                         trainer.setName(rs.getString("name")); // Set the trainer's name from the database
+                        trainer.setDiscordId(rs.getLong("discord_id")); // Set the trainer's Discord ID from the database
+
                         System.out.println("Trainer '" + trainer.getName() + "' retrieved successfully.");
                         return trainer; // Return the retrieved trainer
                     } else {

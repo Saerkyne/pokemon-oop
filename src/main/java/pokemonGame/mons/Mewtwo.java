@@ -60,7 +60,7 @@ public class Mewtwo extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Mewtwo(String name) {
+    public Mewtwo(String nickname) {
         super(
             "Mewtwo",
             150,
@@ -75,7 +75,7 @@ public class Mewtwo extends Pokemon {
             130
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 3, 0, 0}; // Mewtwo yields 3 EV points in Special Attack when defeated
         this.setEvYield(evYield);

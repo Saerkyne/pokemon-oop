@@ -39,7 +39,7 @@ public class Nidorino extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Nidorino(String name) {
+    public Nidorino(String nickname) {
         super(
             "Nidorino",
             33,
@@ -54,7 +54,7 @@ public class Nidorino extends Pokemon {
             65
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Nidorino yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);

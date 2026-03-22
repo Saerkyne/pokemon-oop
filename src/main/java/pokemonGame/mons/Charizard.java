@@ -52,7 +52,7 @@ public class Charizard extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Charizard(String name) {
+    public Charizard(String nickname) {
         super(
             "Charizard",
             6,
@@ -67,7 +67,7 @@ public class Charizard extends Pokemon {
             100
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 3, 0, 0}; // Charizard yields 3 EV points in Special Attack when defeated
         this.setEvYield(evYield);

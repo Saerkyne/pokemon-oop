@@ -57,7 +57,7 @@ public class Nidoking extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Nidoking(String name) {
+    public Nidoking(String nickname) {
         super(
             "Nidoking",
             34,
@@ -72,7 +72,7 @@ public class Nidoking extends Pokemon {
             85
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 3, 0, 0, 0, 0}; // Nidoking yields 3 EV points in Attack when defeated
         this.setEvYield(evYield);

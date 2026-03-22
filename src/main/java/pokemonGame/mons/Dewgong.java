@@ -43,7 +43,7 @@ public class Dewgong extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Dewgong(String name) {
+    public Dewgong(String nickname) {
         super(
             "Dewgong",
             87,
@@ -58,7 +58,7 @@ public class Dewgong extends Pokemon {
             70
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 2, 0}; // Dewgong yields 2 EV points in Special Defense when defeated
         this.setEvYield(evYield);

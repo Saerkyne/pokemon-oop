@@ -41,7 +41,7 @@ public class Pikachu extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Pikachu(String name) {
+    public Pikachu(String nickname) {
         super(
             "Pikachu",
             25,
@@ -55,7 +55,7 @@ public class Pikachu extends Pokemon {
             50,
             90
         );
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Pikachu yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

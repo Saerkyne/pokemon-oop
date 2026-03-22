@@ -52,7 +52,7 @@ public class Lickitung extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Lickitung(String name) {
+    public Lickitung(String nickname) {
         super(
             "Lickitung",
             108,
@@ -67,7 +67,7 @@ public class Lickitung extends Pokemon {
             30
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {2, 0, 0, 0, 0, 0}; // Lickitung yields 2 EV points in HP when defeated
         this.setEvYield(evYield);

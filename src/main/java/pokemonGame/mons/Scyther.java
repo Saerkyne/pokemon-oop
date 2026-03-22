@@ -33,7 +33,7 @@ public class Scyther extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Scyther(String name) {
+    public Scyther(String nickname) {
         super(
             "Scyther",
             123,
@@ -48,7 +48,7 @@ public class Scyther extends Pokemon {
             105
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Scyther yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

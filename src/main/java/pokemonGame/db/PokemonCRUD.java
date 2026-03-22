@@ -15,8 +15,8 @@
 
 package pokemonGame.db;
 import pokemonGame.Pokemon;
-import pokemonGame.Trainer;
 import pokemonGame.Natures;
+import pokemonGame.Trainer;
 import java.sql.*;
 
 public class PokemonCRUD {
@@ -29,9 +29,9 @@ public class PokemonCRUD {
                     + "current_hp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                pstmt.setInt(1, pokemon.getTrainer().getDBId());
+                pstmt.setInt(1, pokemon.getTrainerDBId());
                 pstmt.setString(2, pokemon.getSpecies());
-                pstmt.setString(3, pokemon.getName());
+                pstmt.setString(3, pokemon.getNickname());
                 pstmt.setInt(4, pokemon.getLevel());
                 pstmt.setString(5, pokemon.getNature().getDisplayName());
                 pstmt.setInt(6, pokemon.getIvHp());
@@ -43,8 +43,8 @@ public class PokemonCRUD {
                 pstmt.setInt(12, pokemon.getCurrentHP());
 
                 pstmt.executeUpdate();
-                System.out.println("Pokemon '" + pokemon.getName() + "' (" + pokemon.getSpecies()
-                 + ") created successfully for trainer ID " + pokemon.getTrainer().getDBId() + ".");
+                System.out.println("Pokemon '" + pokemon.getNickname() + "' (" + pokemon.getSpecies()
+                 + ") created successfully for trainer ID " + pokemon.getTrainerDBId() + ".");
 
                 try (ResultSet pkmnSet = pstmt.getGeneratedKeys()) {
                     if (pkmnSet.next()) {
@@ -72,7 +72,7 @@ public class PokemonCRUD {
                     
                     if (rs.next()) {
                         Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
-                        System.out.println("Pokemon '" + foundPokemon.getName() + "' (" + foundPokemon.getSpecies()
+                        System.out.println("Pokemon '" + foundPokemon.getNickname() + "' (" + foundPokemon.getSpecies()
                          + ") retrieved successfully for trainer ID " + trainer.getDBId() + ".");
                         return foundPokemon; // Return the retrieved Pokémon
                     } else {
@@ -99,7 +99,7 @@ public class PokemonCRUD {
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setString(1, pokemon.getSpecies());
-                pstmt.setString(2, pokemon.getName());
+                pstmt.setString(2, pokemon.getNickname());
                 pstmt.setInt(3, pokemon.getLevel());
                 pstmt.setString(4, pokemon.getNature().getDisplayName());
                 pstmt.setInt(5, pokemon.getIvHp());
@@ -118,15 +118,15 @@ public class PokemonCRUD {
                 pstmt.setInt(18, pokemon.getCurrentExp());
                 pstmt.setBoolean(19, pokemon.getIsFainted());
                 pstmt.setInt(20, pokemon.getId());
-                pstmt.setInt(21, pokemon.getTrainer().getDBId());
+                pstmt.setLong(21, pokemon.getTrainerDiscordId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
-                    System.out.println("Pokemon '" + pokemon.getName() + "' (" + pokemon.getSpecies()
-                     + ") updated successfully for trainer ID " + pokemon.getTrainer().getDBId() + ".");
+                    System.out.println("Pokemon '" + pokemon.getNickname() + "' (" + pokemon.getSpecies()
+                     + ") updated successfully for trainer ID " + pokemon.getTrainerDiscordId() + ".");
                     return true; // Return true to indicate successful update
                 } else {
-                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainer().getDBId());
+                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainerDiscordId());
                     return false; // Return false to indicate no Pokemon found to update
                 }
             }
@@ -142,15 +142,15 @@ public class PokemonCRUD {
             String sql = "DELETE FROM pokemon_instances WHERE instance_id = ? AND trainer_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setInt(1, pokemon.getId());
-                pstmt.setInt(2, pokemon.getTrainer().getDBId());
+                pstmt.setLong(2, pokemon.getTrainerDiscordId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
-                    System.out.println("Pokemon '" + pokemon.getName() + "' (" + pokemon.getSpecies()
-                     + ") deleted successfully for trainer ID " + pokemon.getTrainer().getDBId() + ".");
+                    System.out.println("Pokemon '" + pokemon.getNickname() + "' (" + pokemon.getSpecies()
+                     + ") deleted successfully for trainer ID " + pokemon.getTrainerDiscordId() + ".");
                     return true; // Return true to indicate successful deletion
                 } else {
-                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainer().getDBId());
+                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainerDiscordId());
                     return false; // Return false to indicate no Pokemon found to delete
                 }
             }
@@ -184,7 +184,7 @@ public class PokemonCRUD {
         Boolean isFainted = rs.getBoolean("is_fainted");
 
         // Create a new Pokemon object and populate its fields from the ResultSet
-        Pokemon foundPokemon = Pokemon.createPokemon(species, name, trainer);
+        Pokemon foundPokemon = Pokemon.createPokemon(species, name, trainer); 
         foundPokemon.setId(foundPokemonId);
         foundPokemon.setLevel(level);
         foundPokemon.setNature(Natures.valueOf(nature.toUpperCase()));

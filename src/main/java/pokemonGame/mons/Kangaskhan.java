@@ -51,7 +51,7 @@ public class Kangaskhan extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Kangaskhan(String name) {
+    public Kangaskhan(String nickname) {
         super(
             "Kangaskhan",
             115,
@@ -66,7 +66,7 @@ public class Kangaskhan extends Pokemon {
             90
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {2, 0, 0, 0, 0, 0}; // Kangaskhan yields 2 EV points in HP when defeated
         this.setEvYield(evYield);

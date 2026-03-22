@@ -41,7 +41,7 @@ public class Magneton extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Magneton(String name) {
+    public Magneton(String nickname) {
         super(
             "Magneton",
             82,
@@ -56,7 +56,7 @@ public class Magneton extends Pokemon {
             70
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 2, 0, 0}; // Magneton yields 2 EV points in Special Attack when defeated
         this.setEvYield(evYield);

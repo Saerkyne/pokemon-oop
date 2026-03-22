@@ -35,7 +35,7 @@ public class Pidgeotto extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Pidgeotto(String name) {
+    public Pidgeotto(String nickname) {
         super(
             "Pidgeotto",
             17,
@@ -50,7 +50,7 @@ public class Pidgeotto extends Pokemon {
             71
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Pidgeotto yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

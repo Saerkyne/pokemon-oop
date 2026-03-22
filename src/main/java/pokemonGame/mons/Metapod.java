@@ -16,7 +16,7 @@ public class Metapod extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Tackle(), LearnsetEntry.Source.PRE_EVOLUTION, 0));
     }
 
-    public Metapod(String name) {
+    public Metapod(String nickname) {
         super(
             "Metapod",
             11,
@@ -31,7 +31,7 @@ public class Metapod extends Pokemon {
             30
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 2, 0, 0, 0}; // Metapod yields 2 EV points in Defense when defeated
         this.setEvYield(evYield);

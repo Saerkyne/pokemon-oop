@@ -47,7 +47,7 @@ public class Gengar extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Gengar(String name) {
+    public Gengar(String nickname) {
         super(
             "Gengar",
             94,
@@ -62,7 +62,7 @@ public class Gengar extends Pokemon {
             110
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 3, 0, 0}; // Gengar yields 3 EV points in Special Attack when defeated
         this.setEvYield(evYield);

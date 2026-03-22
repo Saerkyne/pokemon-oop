@@ -1,7 +1,14 @@
 package pokemonGame.bot;
 import pokemonGame.App;
+import pokemonGame.Pokemon;
+import pokemonGame.Trainer;
+import pokemonGame.db.DatabaseSetup;
+import pokemonGame.db.PokemonCRUD;
+import pokemonGame.db.TeamCRUD;
+import pokemonGame.db.TrainerCRUD;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class SlashExample extends ListenerAdapter{
@@ -15,6 +22,9 @@ public class SlashExample extends ListenerAdapter{
         }
         String user = event.getUser().getName();
         long userId = event.getUser().getIdLong();
+        TrainerCRUD trainerCRUD = new TrainerCRUD();
+        PokemonCRUD pokemonCRUD = new PokemonCRUD();
+        TeamCRUD teamCRUD = new TeamCRUD();
 
 
 
@@ -45,6 +55,77 @@ public class SlashExample extends ListenerAdapter{
                     event.reply("Trainer created successfully!").queue();
                     break;
                 }
+            
+            case "checkteam":
+                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
+                
+                
+                Trainer trainer = trainerCRUD.getTrainerByDiscordId(userId);
+
+                List<Pokemon> teamInfo = teamCRUD.getDBTeamForTrainer(trainer);
+
+                if (teamInfo.isEmpty()) {
+                    event.reply("Your team is currently empty!").queue();
+                } else {
+                    StringBuilder teamMessage = new StringBuilder("Your current team:\n");
+                    for (Pokemon p : teamInfo) {
+                        teamMessage.append("- ").append(p.getNickname()).append("\n");
+                        teamMessage.append("  Species: ").append(p.getSpecies()).append("\n");
+                        teamMessage.append("  Level: ").append(p.getLevel()).append("\n");
+                        teamMessage.append("  HP: ").append(p.getCurrentHP()).append("/").append(p.getMaxHP()).append("\n");
+                        teamMessage.append("  Attack: ").append(p.getCurrentAttack()).append("\n");
+                        teamMessage.append("  Defense: ").append(p.getCurrentDefense()).append("\n");
+                        teamMessage.append("  Speed: ").append(p.getCurrentSpeed()).append("\n");
+                    }
+                    event.reply(teamMessage.toString()).queue();
+                }
+                break;
+
+            case "addpokemon":
+                // Needs to create a pokemon and add it to the trainers team in the database, then reply with success or failure message
+                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' with Pokemon name: '" + event.getOption("pokemon").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
+                String species = event.getOption("pokemon").getAsString();
+                String nickname = event.getOption("nickname") != null ? event.getOption("nickname").getAsString() : null;
+                
+                
+                Trainer currentTrainer = trainerCRUD.getTrainerByDiscordId(userId);
+                if (currentTrainer == null) {
+                    event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
+                    break;
+                } else {
+
+
+                    Pokemon newPokemon = Pokemon.createPokemon(species, nickname, currentTrainer);
+                    if (newPokemon == null) {
+                        event.reply("Sorry, I couldn't find a Pokémon with that name!").setEphemeral(true).queue();
+                        break;
+                    } else {
+                        newPokemon.setTrainer(currentTrainer);
+                        int pokemonId = pokemonCRUD.createDBPokemon(newPokemon);
+                        if (pokemonId == -1) {
+                            event.reply("Sorry, there was an error adding that Pokémon to your team!").setEphemeral(true).queue();
+                            break;
+                        } else {
+                            teamCRUD.addPokemonToDBTeam(currentTrainer.getDBId(), pokemonId);
+                            event.reply("Successfully added " + newPokemon.getNickname() + " to your team!").queue();
+                            break;
+                        }
+                    }
+                }
+
+            case "cleardatabase":
+                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' with confirmation: '" + event.getOption("confirm").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
+                String confirmation = event.getOption("confirm").getAsString();
+                if (confirmation.equalsIgnoreCase("CONFIRM")) {
+                    String dbName = event.getOption("pokemon_db").getAsString();
+
+                    DatabaseSetup.deleteAllData(null);
+                    
+                    event.reply("Database cleared successfully!").queue();
+                } else {
+                    event.reply("Database clear cancelled. To clear the database, you must type 'CONFIRM' in the confirmation option.").setEphemeral(true).queue();
+                }
+                break;
             
             default:
                 event.reply("I can't handle that command right now :(")

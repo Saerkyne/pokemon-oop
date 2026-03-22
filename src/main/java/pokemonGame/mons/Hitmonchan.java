@@ -41,7 +41,7 @@ public class Hitmonchan extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Hitmonchan(String name) {
+    public Hitmonchan(String nickname) {
         super(
             "Hitmonchan",
             107,
@@ -56,7 +56,7 @@ public class Hitmonchan extends Pokemon {
             76
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 2, 0}; // Hitmonchan yields 2 EV points in Special Defense when defeated
         this.setEvYield(evYield);

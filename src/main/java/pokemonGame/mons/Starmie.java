@@ -47,7 +47,7 @@ public class Starmie extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Starmie(String name) {
+    public Starmie(String nickname) {
         super(
             "Starmie",
             121,
@@ -62,7 +62,7 @@ public class Starmie extends Pokemon {
             115
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Starmie yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

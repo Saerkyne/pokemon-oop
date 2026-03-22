@@ -59,7 +59,7 @@ public class Clefable extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Clefable(String name) {
+    public Clefable(String nickname) {
         super(
             "Clefable",
             36,
@@ -74,7 +74,7 @@ public class Clefable extends Pokemon {
             60
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {3, 0, 0, 0, 0, 0}; // Clefable yields 3 EV points in HP when defeated
         this.setEvYield(evYield);

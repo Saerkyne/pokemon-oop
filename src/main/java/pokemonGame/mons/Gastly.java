@@ -33,7 +33,7 @@ public class Gastly extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Gastly(String name) {
+    public Gastly(String nickname) {
         super(
             "Gastly",
             92,
@@ -48,7 +48,7 @@ public class Gastly extends Pokemon {
             80
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 1, 0, 0}; // Gastly yields 1 EV point in Special Attack when defeated
         this.setEvYield(evYield);

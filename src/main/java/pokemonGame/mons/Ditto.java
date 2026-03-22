@@ -12,7 +12,7 @@ public class Ditto extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Transform(), LearnsetEntry.Source.LEVEL, 1));
     }
 
-    public Ditto(String name) {
+    public Ditto(String nickname) {
         super(
             "Ditto",
             132,
@@ -27,7 +27,7 @@ public class Ditto extends Pokemon {
             48
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {1, 0, 0, 0, 0, 0}; // Ditto yields 1 EV point in HP when defeated
         this.setEvYield(evYield);

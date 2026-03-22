@@ -52,7 +52,7 @@ public class Blastoise extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Blastoise(String name) {
+    public Blastoise(String nickname) {
         super(
             "Blastoise",
             9,
@@ -67,12 +67,13 @@ public class Blastoise extends Pokemon {
             78
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 3, 0}; // Blastoise yields 3 EV points in Special Defense when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

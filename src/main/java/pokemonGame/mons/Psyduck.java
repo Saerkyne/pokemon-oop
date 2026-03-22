@@ -43,7 +43,7 @@ public class Psyduck extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Psyduck(String name) {
+    public Psyduck(String nickname) {
         super(
             "Psyduck",
             54,
@@ -58,7 +58,7 @@ public class Psyduck extends Pokemon {
             55
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 1, 0, 0}; // Psyduck yields 1 EV point in Special Attack when defeated
         this.setEvYield(evYield);

@@ -35,7 +35,7 @@ public class Ninetales extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Ninetales(String name) {
+    public Ninetales(String nickname) {
         super(
             "Ninetales",
             38,
@@ -50,7 +50,7 @@ public class Ninetales extends Pokemon {
             100
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 1, 1}; // Ninetales yields 1 EV point in Special Defense and 1 EV point in Speed when defeated
         this.setEvYield(evYield);

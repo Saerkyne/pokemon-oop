@@ -38,7 +38,7 @@ public class Fearow extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Fearow(String name) {
+    public Fearow(String nickname) {
         super(
             "Fearow",
             22,
@@ -53,7 +53,7 @@ public class Fearow extends Pokemon {
             100
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Fearow yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

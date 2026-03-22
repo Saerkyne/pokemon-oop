@@ -38,7 +38,7 @@ public class Vileplume extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Vileplume(String name) {
+    public Vileplume(String nickname) {
         super(
             "Vileplume",
             45,
@@ -53,7 +53,7 @@ public class Vileplume extends Pokemon {
             50
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 3, 0, 0}; // Vileplume yields 3 EV points in Special Attack when defeated
         this.setEvYield(evYield);

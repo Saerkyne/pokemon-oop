@@ -12,7 +12,7 @@ public class Weedle extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new StringShot(), LearnsetEntry.Source.LEVEL, 1));
     }
 
-    public Weedle(String name) {
+    public Weedle(String nickname) {
         super(
             "Weedle",
             13,
@@ -27,7 +27,7 @@ public class Weedle extends Pokemon {
             50
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 1}; // Weedle yields 1 EV point in Speed when defeated
         this.setEvYield(evYield);

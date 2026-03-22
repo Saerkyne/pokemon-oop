@@ -59,7 +59,7 @@ public class Chansey extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Chansey(String name) {
+    public Chansey(String nickname) {
         super(
             "Chansey",
             113,
@@ -74,12 +74,13 @@ public class Chansey extends Pokemon {
             50
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {2, 0, 0, 0, 0, 0}; // Chansey yields 2 EV points in HP when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

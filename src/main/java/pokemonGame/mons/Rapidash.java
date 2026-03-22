@@ -37,7 +37,7 @@ public class Rapidash extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Rapidash(String name) {
+    public Rapidash(String nickname) {
         super(
             "Rapidash",
             78,
@@ -52,7 +52,7 @@ public class Rapidash extends Pokemon {
             105
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Rapidash yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

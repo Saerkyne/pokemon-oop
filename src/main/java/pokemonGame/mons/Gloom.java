@@ -38,7 +38,7 @@ public class Gloom extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Gloom(String name) {
+    public Gloom(String nickname) {
         super(
             "Gloom",
             44,
@@ -53,7 +53,7 @@ public class Gloom extends Pokemon {
             40
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 2, 0, 0}; // Gloom yields 2 EV points in Special Attack when defeated
         this.setEvYield(evYield);

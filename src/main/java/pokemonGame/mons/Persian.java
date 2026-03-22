@@ -38,7 +38,7 @@ public class Persian extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Persian(String name) {
+    public Persian(String nickname) {
         super(
             "Persian",
             53,
@@ -53,7 +53,7 @@ public class Persian extends Pokemon {
             115
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Persian yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

@@ -38,7 +38,7 @@ public class Raticate extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Raticate(String name) {
+    public Raticate(String nickname) {
         super(
             "Raticate",
             20,
@@ -53,7 +53,7 @@ public class Raticate extends Pokemon {
             97
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Raticate yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

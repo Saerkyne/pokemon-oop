@@ -33,7 +33,7 @@ public class Spearow extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Spearow(String name) {
+    public Spearow(String nickname) {
         super(
             "Spearow",
             21,
@@ -48,7 +48,7 @@ public class Spearow extends Pokemon {
             70
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 1}; // Spearow yields 1 EV point in Speed when defeated
         this.setEvYield(evYield);

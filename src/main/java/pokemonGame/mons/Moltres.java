@@ -37,7 +37,7 @@ public class Moltres extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Moltres(String name) {
+    public Moltres(String nickname) {
         super(
             "Moltres",
             146,
@@ -52,7 +52,7 @@ public class Moltres extends Pokemon {
             90
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 3, 0, 0}; // Moltres yields 3 EV points in Special Attack when defeated
         this.setEvYield(evYield);

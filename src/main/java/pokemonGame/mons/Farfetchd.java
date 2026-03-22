@@ -40,7 +40,7 @@ public class Farfetchd extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Farfetchd(String name) {
+    public Farfetchd(String nickname) {
         super(
             "Farfetch'd",
             83,
@@ -55,7 +55,7 @@ public class Farfetchd extends Pokemon {
             60
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Farfetch'd yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

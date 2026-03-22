@@ -56,7 +56,7 @@ public class Clefairy extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Clefairy(String name) {
+    public Clefairy(String nickname) {
         super(
             "Clefairy",
             35,
@@ -71,7 +71,7 @@ public class Clefairy extends Pokemon {
             35
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {2, 0, 0, 0, 0, 0}; // Clefairy yields 2 EV points in HP when defeated
         this.setEvYield(evYield);

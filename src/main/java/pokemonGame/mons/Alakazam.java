@@ -119,14 +119,28 @@ public class Alakazam extends Pokemon {
         );
     }
 
-    public Alakazam(String name) {
-        super("Alakazam", 65, "Psychic", null, 5, 55, 50, 45, 135, 95, 120);
-        this.setName(name);
+    public Alakazam(String nickname) {
+        super(
+            "Alakazam",
+            65,
+            "Psychic",
+            null,
+            5,
+            55,
+            50,
+            45,
+            135,
+            95,
+            120
+        );
 
-        int[] evYield = { 0, 0, 0, 3, 0, 0 }; // Alakazam yields 3 EV points in Special Attack when defeated
+        this.setNickname(nickname);
+
+        int[] evYield = {0, 0, 0, 3, 0, 0}; // Alakazam yields 3 EV points in Special Attack when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

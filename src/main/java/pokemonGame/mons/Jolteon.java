@@ -49,7 +49,7 @@ public class Jolteon extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Jolteon(String name) {
+    public Jolteon(String nickname) {
         super(
             "Jolteon",
             135,
@@ -64,7 +64,7 @@ public class Jolteon extends Pokemon {
             130
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Jolteon yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

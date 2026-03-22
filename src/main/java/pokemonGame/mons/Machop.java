@@ -44,7 +44,7 @@ public class Machop extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Machop(String name) {
+    public Machop(String nickname) {
         super(
             "Machop",
             66,
@@ -59,7 +59,7 @@ public class Machop extends Pokemon {
             35
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Machop yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

@@ -58,7 +58,7 @@ public class Slowbro extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Slowbro(String name) {
+    public Slowbro(String nickname) {
         super(
             "Slowbro",
             80,
@@ -73,7 +73,7 @@ public class Slowbro extends Pokemon {
             30
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 2, 0, 0, 0}; // Slowbro yields 2 EV points in Defense when defeated
         this.setEvYield(evYield);

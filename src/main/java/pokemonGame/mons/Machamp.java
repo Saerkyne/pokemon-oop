@@ -47,7 +47,7 @@ public class Machamp extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Machamp(String name) {
+    public Machamp(String nickname) {
         super(
             "Machamp",
             68,
@@ -62,7 +62,7 @@ public class Machamp extends Pokemon {
             55
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 3, 0, 0, 0, 0}; // Machamp yields 3 EV points in Attack when defeated
         this.setEvYield(evYield);

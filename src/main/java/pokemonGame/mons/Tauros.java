@@ -39,7 +39,7 @@ public class Tauros extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Tauros(String name) {
+    public Tauros(String nickname) {
         super(
             "Tauros",
             128,
@@ -54,7 +54,7 @@ public class Tauros extends Pokemon {
             110
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 1}; // Tauros yields 1 EV point in Attack and 1 EV point in Speed when defeated
         this.setEvYield(evYield);

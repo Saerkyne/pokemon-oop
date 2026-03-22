@@ -45,7 +45,7 @@ public class Vaporeon extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Vaporeon(String name) {
+    public Vaporeon(String nickname) {
         super(
             "Vaporeon",
             134,
@@ -60,7 +60,7 @@ public class Vaporeon extends Pokemon {
             65
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {2, 0, 0, 0, 0, 0}; // Vaporeon yields 2 EV points in HP when defeated
         this.setEvYield(evYield);

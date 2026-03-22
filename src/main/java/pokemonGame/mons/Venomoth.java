@@ -40,7 +40,7 @@ public class Venomoth extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Venomoth(String name) {
+    public Venomoth(String nickname) {
         super(
             "Venomoth",
             49,
@@ -55,7 +55,7 @@ public class Venomoth extends Pokemon {
             90
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 1, 0, 1}; // Venomoth yields 1 EV point in Special Attack and 1 EV point in Speed when defeated
         this.setEvYield(evYield);

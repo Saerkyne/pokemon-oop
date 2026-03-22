@@ -40,7 +40,7 @@ public class Tentacool extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Tentacool(String name) {
+    public Tentacool(String nickname) {
         super(
             "Tentacool",
             72,
@@ -55,7 +55,7 @@ public class Tentacool extends Pokemon {
             70
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 1, 0}; // Tentacool yields 1 EV point in Special Defense when defeated
         this.setEvYield(evYield);

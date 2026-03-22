@@ -48,7 +48,7 @@ public class Charmeleon extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Charmeleon(String name) {
+    public Charmeleon(String nickname) {
         super(
             "Charmeleon",
             5,
@@ -63,7 +63,7 @@ public class Charmeleon extends Pokemon {
             80
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 1, 0, 1}; // Charmeleon yields 1 EV point in Special Attack and 1 EV point in Speed when defeated
         this.setEvYield(evYield);

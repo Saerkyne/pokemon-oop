@@ -39,7 +39,7 @@ public class Bellsprout extends Pokemon {
 
     }
 
-    public Bellsprout(String name) {
+    public Bellsprout(String nickname) {
         super(
             "Bellsprout",
             69,
@@ -54,12 +54,13 @@ public class Bellsprout extends Pokemon {
             40
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Bellsprout yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

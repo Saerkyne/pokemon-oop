@@ -47,7 +47,7 @@ public class Cubone extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Cubone(String name) {
+    public Cubone(String nickname) {
         super(
             "Cubone",
             104,
@@ -62,7 +62,7 @@ public class Cubone extends Pokemon {
             35
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 1, 0, 0, 0}; // Cubone yields 1 EV point in Defense when defeated
         this.setEvYield(evYield);

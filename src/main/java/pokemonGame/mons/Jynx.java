@@ -47,7 +47,7 @@ public class Jynx extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Jynx(String name) {
+    public Jynx(String nickname) {
         super(
             "Jynx",
             124,
@@ -62,7 +62,7 @@ public class Jynx extends Pokemon {
             95
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 2, 0, 0}; // Jynx yields 2 EV points in Special Attack when defeated
         this.setEvYield(evYield);

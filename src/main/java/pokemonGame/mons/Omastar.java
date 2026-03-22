@@ -40,7 +40,7 @@ public class Omastar extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Omastar(String name) {
+    public Omastar(String nickname) {
         super(
             "Omastar",
             139,
@@ -55,7 +55,7 @@ public class Omastar extends Pokemon {
             55
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 2, 0, 0, 0}; // Omastar yields 2 EV points in Defense when defeated
         this.setEvYield(evYield);

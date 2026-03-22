@@ -38,7 +38,7 @@ public class Abra extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Abra(String name) {
+    public Abra(String nickname) {
         super(
             "Abra",
             63,
@@ -53,7 +53,7 @@ public class Abra extends Pokemon {
             90
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 1, 0, 0}; // Abra yields 1 EV point in Special Attack when defeated
         this.setEvYield(evYield);

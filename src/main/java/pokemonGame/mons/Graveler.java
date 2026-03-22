@@ -46,7 +46,7 @@ public class Graveler extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Graveler(String name) {
+    public Graveler(String nickname) {
         super(
             "Graveler",
             75,
@@ -61,7 +61,7 @@ public class Graveler extends Pokemon {
             35
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 2, 0, 0, 0}; // Graveler yields 2 EV points in Defense when defeated
         this.setEvYield(evYield);

@@ -37,7 +37,7 @@ public class Zapdos extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Zapdos(String name) {
+    public Zapdos(String nickname) {
         super(
             "Zapdos",
             145,
@@ -52,7 +52,7 @@ public class Zapdos extends Pokemon {
             100
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 3, 0, 0}; // Zapdos yields 3 EV points in Special Attack when defeated
         this.setEvYield(evYield);

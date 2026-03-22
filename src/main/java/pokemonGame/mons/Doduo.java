@@ -38,7 +38,7 @@ public class Doduo extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Doduo(String name) {
+    public Doduo(String nickname) {
         super(
             "Doduo",
             84,
@@ -53,7 +53,7 @@ public class Doduo extends Pokemon {
             75
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Doduo yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

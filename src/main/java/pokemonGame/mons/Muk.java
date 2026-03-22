@@ -37,7 +37,7 @@ public class Muk extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Muk(String name) {
+    public Muk(String nickname) {
         super(
             "Muk",
             89,
@@ -52,7 +52,7 @@ public class Muk extends Pokemon {
             50
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {1, 1, 0, 0, 0, 0}; // Muk yields 1 EV point in HP and 1 EV point in Attack when defeated
         this.setEvYield(evYield);

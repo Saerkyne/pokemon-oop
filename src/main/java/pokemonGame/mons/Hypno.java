@@ -51,7 +51,7 @@ public class Hypno extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Hypno(String name) {
+    public Hypno(String nickname) {
         super(
             "Hypno",
             97,
@@ -66,7 +66,7 @@ public class Hypno extends Pokemon {
             67
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 2, 0}; // Hypno yields 2 EV points in Special Defense when defeated
         this.setEvYield(evYield);

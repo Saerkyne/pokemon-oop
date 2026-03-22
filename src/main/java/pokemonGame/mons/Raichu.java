@@ -43,7 +43,7 @@ public class Raichu extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Raichu(String name) {
+    public Raichu(String nickname) {
         super(
             "Raichu",
             26,
@@ -58,7 +58,7 @@ public class Raichu extends Pokemon {
             110
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 3}; // Raichu yields 3 EV points in Speed when defeated
         this.setEvYield(evYield);

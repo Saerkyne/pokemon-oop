@@ -92,14 +92,28 @@ public class Arbok extends Pokemon {
         );
     }
 
-    public Arbok(String name) {
-        super("Arbok", 24, "Poison", null, 5, 60, 95, 69, 65, 79, 80);
-        this.setName(name);
+    public Arbok(String nickname) {
+        super(
+            "Arbok",
+            24,
+            "Poison",
+            null,
+            5,
+            60,
+            95,
+            69,
+            65,
+            79,
+            80
+        );
 
-        int[] evYield = { 0, 2, 0, 0, 0, 0 }; // Arbok yields 2 EV points in Attack when defeated
+        this.setNickname(nickname);
+
+        int[] evYield = {0, 2, 0, 0, 0, 0}; // Arbok yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

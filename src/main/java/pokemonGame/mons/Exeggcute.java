@@ -37,7 +37,7 @@ public class Exeggcute extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Exeggcute(String name) {
+    public Exeggcute(String nickname) {
         super(
             "Exeggcute",
             102,
@@ -52,7 +52,7 @@ public class Exeggcute extends Pokemon {
             40
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 1, 0, 0, 0}; // Exeggcute yields 1 EV point in Defense when defeated
         this.setEvYield(evYield);

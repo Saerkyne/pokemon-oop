@@ -35,7 +35,7 @@ public class Paras extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Paras(String name) {
+    public Paras(String nickname) {
         super(
             "Paras",
             46,
@@ -50,7 +50,7 @@ public class Paras extends Pokemon {
             25
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Paras yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

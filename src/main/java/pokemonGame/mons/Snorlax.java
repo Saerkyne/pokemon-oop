@@ -55,7 +55,7 @@ public class Snorlax extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Snorlax(String name) {
+    public Snorlax(String nickname) {
         super(
             "Snorlax",
             143,
@@ -70,7 +70,7 @@ public class Snorlax extends Pokemon {
             30
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {2, 0, 0, 0, 0, 0}; // Snorlax yields 2 EV points in HP when defeated
         this.setEvYield(evYield);

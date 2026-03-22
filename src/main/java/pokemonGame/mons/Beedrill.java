@@ -108,14 +108,28 @@ public class Beedrill extends Pokemon {
         );
     }
 
-    public Beedrill(String name) {
-        super("Beedrill", 15, "Bug", "Poison", 5, 65, 90, 40, 45, 80, 75);
-        this.setName(name);
+    public Beedrill(String nickname) {
+        super(
+            "Beedrill",
+            15,
+            "Bug",
+            "Poison",
+            5,
+            65,
+            90,
+            40,
+            45,
+            80,
+            75
+        );
 
-        int[] evYield = { 0, 2, 0, 0, 1, 0 }; // Beedrill yields 2 EV points in Attack and 1 EV point in Special Defense when defeated
+        this.setNickname(nickname);
+
+        int[] evYield = {0, 2, 0, 0, 1, 0}; // Beedrill yields 2 EV points in Attack and 1 EV point in Special Defense when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

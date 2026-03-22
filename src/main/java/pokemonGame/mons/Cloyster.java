@@ -46,7 +46,7 @@ public class Cloyster extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Cloyster(String name) {
+    public Cloyster(String nickname) {
         super(
             "Cloyster",
             91,
@@ -61,7 +61,7 @@ public class Cloyster extends Pokemon {
             70
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 2, 0, 0, 0}; // Cloyster yields 2 EV points in Defense when defeated
         this.setEvYield(evYield);

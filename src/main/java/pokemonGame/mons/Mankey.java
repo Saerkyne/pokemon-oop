@@ -46,7 +46,7 @@ public class Mankey extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Mankey(String name) {
+    public Mankey(String nickname) {
         super(
             "Mankey",
             56,
@@ -61,7 +61,7 @@ public class Mankey extends Pokemon {
             70
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Mankey yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

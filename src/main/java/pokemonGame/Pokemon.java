@@ -3,15 +3,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import pokemonGame.mons.*;
+import java.util.regex.Pattern;
 
 
 public class Pokemon {
 
     // Initialize attributes for all Pokemon
-    private Trainer trainer; // This attribute will be set when the Pokémon is added to a trainer's team
+    private Trainer trainer; // This is the trainer that this Pokemon belongs to; it is set when the Pokemon is added to a trainer's team
     private int id; // This can be used to link the Pokémon to the database record
     private String species;
-    private String name;
+    private String nickname;
     private int DexIndex;
     private String typePrimary;
     private String typeSecondary;
@@ -60,7 +61,7 @@ public class Pokemon {
     
     protected Pokemon(String species, int index, String typePrimary, String typeSecondary) {
         this.species = species;
-        this.name = species; // Default name is the same as species
+        this.nickname = species; // Default name is the same as species
         this.DexIndex = index;
         this.typePrimary = typePrimary;
         this.typeSecondary = typeSecondary;
@@ -84,7 +85,7 @@ public class Pokemon {
 
     protected Pokemon(String species, int index, String typePrimary, String typeSecondary, int level, int hp, int attack, int defense, int specialAttack, int specialDefense, int speed) {
         this.species = species;
-        this.name = species; // Default name is the same as species
+        this.nickname = species; // Default name is the same as species
         this.DexIndex = index;
         this.typePrimary = typePrimary;
         this.typeSecondary = typeSecondary;
@@ -156,8 +157,8 @@ public class Pokemon {
         return typeSecondary;
     }
 
-    public String getName() {
-        return name;
+    public String getNickname() {
+        return nickname;
     }
 
     public String getSpecies() {
@@ -300,8 +301,12 @@ public class Pokemon {
         return evTotal;
     }
 
-    public Trainer getTrainer() {
-        return trainer;
+    public long getTrainerDiscordId() {
+        return trainer.getDiscordId();
+    }
+
+    public int getTrainerDBId() {
+        return trainer.getDBId();
     }
 
     public String[] getEvYield() {
@@ -353,8 +358,8 @@ public class Pokemon {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public void setNature(Natures nature) {
@@ -609,6 +614,10 @@ public class Pokemon {
         if (species == null) {
             System.out.println("No species selected. Please choose a valid Pokémon species.");
             return null;
+        }
+
+        if (name == null || name.isEmpty()) {
+            name = Pattern.compile("^.").matcher(species).replaceFirst(m -> m.group().toUpperCase()); // Default name is the same as species if no nickname provided
         }
 
         switch (species.toLowerCase()) {

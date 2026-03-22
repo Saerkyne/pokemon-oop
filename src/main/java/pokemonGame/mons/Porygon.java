@@ -42,7 +42,7 @@ public class Porygon extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Porygon(String name) {
+    public Porygon(String nickname) {
         super(
             "Porygon",
             137,
@@ -57,7 +57,7 @@ public class Porygon extends Pokemon {
             40
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 1, 0, 0}; // Porygon yields 1 EV point in Special Attack when defeated
         this.setEvYield(evYield);

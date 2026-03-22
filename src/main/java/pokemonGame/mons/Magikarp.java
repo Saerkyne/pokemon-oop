@@ -13,7 +13,7 @@ public class Magikarp extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Tackle(), LearnsetEntry.Source.LEVEL, 15));
     }
 
-    public Magikarp(String name) {
+    public Magikarp(String nickname) {
         super(
             "Magikarp",
             129,
@@ -28,7 +28,7 @@ public class Magikarp extends Pokemon {
             80
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 1}; // Magikarp yields 1 EV point in Speed when defeated
         this.setEvYield(evYield);

@@ -46,7 +46,7 @@ public class Machoke extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Machoke(String name) {
+    public Machoke(String nickname) {
         super(
             "Machoke",
             67,
@@ -61,7 +61,7 @@ public class Machoke extends Pokemon {
             45
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Machoke yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);

@@ -39,7 +39,7 @@ public class Seaking extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Seaking(String name) {
+    public Seaking(String nickname) {
         super(
             "Seaking",
             119,
@@ -54,7 +54,7 @@ public class Seaking extends Pokemon {
             68
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Seaking yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);

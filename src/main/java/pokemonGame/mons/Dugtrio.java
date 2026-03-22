@@ -36,7 +36,7 @@ public class Dugtrio extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Dugtrio(String name) {
+    public Dugtrio(String nickname) {
         super(
             "Dugtrio",
             51,
@@ -51,7 +51,7 @@ public class Dugtrio extends Pokemon {
             120
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 2}; // Dugtrio yields 2 EV points in Speed when defeated
         this.setEvYield(evYield);

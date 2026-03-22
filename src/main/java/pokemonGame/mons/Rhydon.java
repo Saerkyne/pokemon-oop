@@ -54,7 +54,7 @@ public class Rhydon extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Rhydon(String name) {
+    public Rhydon(String nickname) {
         super(
             "Rhydon",
             112,
@@ -69,7 +69,7 @@ public class Rhydon extends Pokemon {
             40
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Rhydon yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);

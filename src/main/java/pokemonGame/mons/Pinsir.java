@@ -35,7 +35,7 @@ public class Pinsir extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Pinsir(String name) {
+    public Pinsir(String nickname) {
         super(
             "Pinsir",
             127,
@@ -50,7 +50,7 @@ public class Pinsir extends Pokemon {
             85
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Pinsir yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);

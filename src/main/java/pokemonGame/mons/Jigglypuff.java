@@ -55,7 +55,7 @@ public class Jigglypuff extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Jigglypuff(String name) {
+    public Jigglypuff(String nickname) {
         super(
             "Jigglypuff",
             39,
@@ -70,7 +70,7 @@ public class Jigglypuff extends Pokemon {
             20
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {2, 0, 0, 0, 0, 0}; // Jigglypuff yields 2 EV points in HP when defeated
         this.setEvYield(evYield);

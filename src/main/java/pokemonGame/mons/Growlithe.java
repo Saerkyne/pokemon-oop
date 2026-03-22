@@ -36,7 +36,7 @@ public class Growlithe extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Growlithe(String name) {
+    public Growlithe(String nickname) {
         super(
             "Growlithe",
             58,
@@ -51,7 +51,7 @@ public class Growlithe extends Pokemon {
             60
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Growlithe yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

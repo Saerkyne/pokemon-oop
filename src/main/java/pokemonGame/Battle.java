@@ -25,12 +25,12 @@ public class Battle {
         defender.setCurrentHP(defender.getCurrentHP() - damage);
 
         // Print out the result of the attack
-        System.out.println(attacker.getName() + " used " + move.getMoveName() + "!");
+        System.out.println(attacker.getNickname() + " used " + move.getMoveName() + "!");
 
         if (!checkFainted(defender)) {
-            System.out.println(defender.getName() + " took " + damage + " damage and has " + defender.getCurrentHP() + " HP left.");
+            System.out.println(defender.getNickname() + " took " + damage + " damage and has " + defender.getCurrentHP() + " HP left.");
         } else {
-            System.out.println(defender.getName() + " took " + damage + " damage and has fainted!");
+            System.out.println(defender.getNickname() + " took " + damage + " damage and has fainted!");
 
         }
 
@@ -52,9 +52,9 @@ public class Battle {
             Boolean checkFainted = checkFainted(pokemon);
         
             if (checkFainted) {
-                System.out.println(pokemon.getName() + " has fainted and cannot battle!");
+                System.out.println(pokemon.getNickname() + " has fainted and cannot battle!");
             } else {
-                System.out.println(pokemon.getName() + " is ready to battle!");
+                System.out.println(pokemon.getNickname() + " is ready to battle!");
             }          
         }
         

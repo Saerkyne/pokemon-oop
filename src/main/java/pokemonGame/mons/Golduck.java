@@ -49,7 +49,7 @@ public class Golduck extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Golduck(String name) {
+    public Golduck(String nickname) {
         super(
             "Golduck",
             55,
@@ -64,7 +64,7 @@ public class Golduck extends Pokemon {
             85
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 2, 0, 0}; // Golduck yields 2 EV points in Special Attack when defeated
         this.setEvYield(evYield);

@@ -75,7 +75,7 @@ public class Mew extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Mew(String name) {
+    public Mew(String nickname) {
         super(
             "Mew",
             151,
@@ -90,7 +90,7 @@ public class Mew extends Pokemon {
             100
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {3, 0, 0, 0, 0, 0}; // Mew yields 3 EV points in HP when defeated
         this.setEvYield(evYield);

@@ -46,7 +46,7 @@ public class Primeape extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Primeape(String name) {
+    public Primeape(String nickname) {
         super(
             "Primeape",
             57,
@@ -61,7 +61,7 @@ public class Primeape extends Pokemon {
             95
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Primeape yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);

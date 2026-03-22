@@ -56,7 +56,7 @@ public class Nidoqueen extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Nidoqueen(String name) {
+    public Nidoqueen(String nickname) {
         super(
             "Nidoqueen",
             31,
@@ -71,7 +71,7 @@ public class Nidoqueen extends Pokemon {
             76
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {3, 0, 0, 0, 0, 0}; // Nidoqueen yields 3 EV points in HP when defeated
         this.setEvYield(evYield);

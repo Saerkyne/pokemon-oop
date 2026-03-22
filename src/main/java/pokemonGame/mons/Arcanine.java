@@ -38,7 +38,7 @@ public class Arcanine extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Arcanine(String name) {
+    public Arcanine(String nickname) {
         super(
             "Arcanine",
             59,
@@ -53,12 +53,13 @@ public class Arcanine extends Pokemon {
             95
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Arcanine yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
+        this.setCurrentHP(getMaxHP());
     }
 
     @Override

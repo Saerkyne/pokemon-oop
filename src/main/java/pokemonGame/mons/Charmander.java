@@ -47,7 +47,7 @@ public class Charmander extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Charmander(String name) {
+    public Charmander(String nickname) {
         super(
             "Charmander",
             4,
@@ -62,7 +62,7 @@ public class Charmander extends Pokemon {
             65
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 1}; // Charmander yields 1 EV point in Speed when defeated
         this.setEvYield(evYield);

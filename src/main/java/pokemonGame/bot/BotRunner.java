@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 
 
 public class BotRunner {
@@ -33,6 +34,19 @@ public class BotRunner {
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
                     .addOption(OptionType.STRING, "name", "The name of the trainer", true, true))
+                .addCommands(Commands.slash("checkteam", "Checks the trainer's current team")
+                    .setContexts(InteractionContextType.ALL)
+                    .setIntegrationTypes(IntegrationType.ALL))
+                .addCommands(Commands.slash("addpokemon", "Adds a Pokémon to your team")
+                    .setContexts(InteractionContextType.ALL)
+                    .setIntegrationTypes(IntegrationType.ALL)
+                    .addOption(OptionType.STRING, "pokemon", "The name of the Pokémon to add (Gen 1 only currently)", true, true)
+                    .addOption(OptionType.STRING, "nickname", "The nickname for the Pokémon (optional)", false, true))
+                .addCommands(Commands.slash("cleardatabase", "Clears all data from the database (trainers, teams, and Pokémon)")
+                    .setContexts(InteractionContextType.ALL)
+                    .setIntegrationTypes(IntegrationType.ALL)
+                    .setDefaultPermissions(DefaultMemberPermissions.DISABLED)
+                    .addOption(OptionType.STRING, "confirm", "Type 'CONFIRM' to clear the database", true, true))
                 .queue();
 
     }

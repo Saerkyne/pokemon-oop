@@ -39,7 +39,7 @@ public class Ekans extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Ekans(String name) {
+    public Ekans(String nickname) {
         super(
             "Ekans",
             23,
@@ -54,7 +54,7 @@ public class Ekans extends Pokemon {
             55
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Ekans yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

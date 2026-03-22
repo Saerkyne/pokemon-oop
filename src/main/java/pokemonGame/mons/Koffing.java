@@ -32,7 +32,7 @@ public class Koffing extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Koffing(String name) {
+    public Koffing(String nickname) {
         super(
             "Koffing",
             109,
@@ -47,7 +47,7 @@ public class Koffing extends Pokemon {
             35
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 1, 0, 0, 0}; // Koffing yields 1 EV point in Defense when defeated
         this.setEvYield(evYield);

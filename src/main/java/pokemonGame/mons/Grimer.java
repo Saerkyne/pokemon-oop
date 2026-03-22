@@ -35,7 +35,7 @@ public class Grimer extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Grimer(String name) {
+    public Grimer(String nickname) {
         super(
             "Grimer",
             88,
@@ -50,7 +50,7 @@ public class Grimer extends Pokemon {
             25
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {1, 0, 0, 0, 0, 0}; // Grimer yields 1 EV point in HP when defeated
         this.setEvYield(evYield);

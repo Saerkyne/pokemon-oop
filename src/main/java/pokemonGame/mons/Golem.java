@@ -48,7 +48,7 @@ public class Golem extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Golem(String name) {
+    public Golem(String nickname) {
         super(
             "Golem",
             76,
@@ -63,7 +63,7 @@ public class Golem extends Pokemon {
             45
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 3, 0, 0, 0}; // Golem yields 3 EV points in Defense when defeated
         this.setEvYield(evYield);

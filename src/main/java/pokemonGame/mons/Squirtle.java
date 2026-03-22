@@ -44,7 +44,7 @@ public class Squirtle extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Squirtle(String name) {
+    public Squirtle(String nickname) {
         super(
             "Squirtle",
             7,
@@ -59,7 +59,7 @@ public class Squirtle extends Pokemon {
             43
         );
         
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 1, 0, 0, 0}; // Squirtle yields 1 EV point in Defense when defeated
         this.setEvYield(evYield);

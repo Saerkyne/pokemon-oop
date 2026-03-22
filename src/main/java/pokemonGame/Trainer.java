@@ -51,7 +51,7 @@ public class Trainer {
 
         if (team.size() < 6) {
             team.add(pokemon);
-            System.out.println("Added " + pokemon.getName() + " (" + pokemon.getSpecies() + ") to " + this.name + "'s team.");
+            System.out.println("Added " + pokemon.getNickname() + " (" + pokemon.getSpecies() + ") to " + this.name + "'s team.");
             
         } else {
             System.out.println("Team is full! Cannot add more Pokémon.");

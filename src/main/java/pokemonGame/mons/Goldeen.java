@@ -40,7 +40,7 @@ public class Goldeen extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Goldeen(String name) {
+    public Goldeen(String nickname) {
         super(
             "Goldeen",
             118,
@@ -55,7 +55,7 @@ public class Goldeen extends Pokemon {
             63
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 1, 0, 0, 0, 0}; // Goldeen yields 1 EV point in Attack when defeated
         this.setEvYield(evYield);

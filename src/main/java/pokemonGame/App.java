@@ -3,6 +3,7 @@ import java.util.List;
 import java.io.Console;
 import pokemonGame.db.*;
 // For testing only: 
+import pokemonGame.mons.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -101,6 +102,49 @@ public class App {
             System.out.println("- " + p.getName() + " (" + p.getSpecies() + ")");
         } 
         */
+
+        // setup some test data for the bot to pull from the database and display when commands are used
+        TrainerCRUD trainerCRUD = new TrainerCRUD();
+        TeamCRUD teamCRUD = new TeamCRUD();
+        PokemonCRUD pokemonCRUD = new PokemonCRUD();
+
+        // Create a trainer 
+        Trainer tallas = trainerCRUD.getTrainerByDiscordId(143562769591959552L);
+        System.out.println("Trainer '" + tallas.getName() + "' retrieved successfully with Discord ID: " + tallas.getDiscordId() + ". Trainer DB ID is: " + tallas.getDBId());
+
+        // Create a Pokemon for that trainer
+        Pokemon tallasCharizard = new Charizard("Charizard");
+
+        tallasCharizard.setTrainer(tallas);
+        
+        int charID = pokemonCRUD.createDBPokemon(tallasCharizard);
+        
+        
+        tallas.addPokemonToTeam(tallasCharizard);
+        teamCRUD.addPokemonToDBTeam(tallas.getDBId(), charID);
+
+    
+        // Create another trainer
+        Trainer ian = trainerCRUD.getTrainerByDiscordId(1276823949652529204L);
+        System.out.println("Trainer '" + ian.getName() + "' retrieved successfully with Discord ID: " + ian.getDiscordId() + ". Trainer DB ID is: " + ian.getDBId());
+
+
+        Pokemon ianAlakazam = new Alakazam("Alakazam");
+        ianAlakazam.setTrainer(ian);
+        
+        int alakazamID = pokemonCRUD.createDBPokemon(ianAlakazam);
+        
+        
+        ian.addPokemonToTeam(ianAlakazam);
+        teamCRUD.addPokemonToDBTeam(ian.getDBId(), alakazamID);
+
+        Trainer cal = trainerCRUD.getTrainerByDiscordId(202621039392325632L);
+
+        Pokemon calGengar = new Gengar("Gengar");
+        calGengar.setTrainer(cal);
+        int gengarID = pokemonCRUD.createDBPokemon(calGengar);
+        cal.addPokemonToTeam(calGengar);
+        teamCRUD.addPokemonToDBTeam(cal.getDBId(), gengarID);
 
 
 
@@ -233,11 +277,11 @@ public class App {
         List<LearnsetEntry> eligible = LearnsetEntry.getEligibleMoves(p);
 
         if (eligible.isEmpty()) {
-            System.out.println(p.getName() + " has no new moves to learn right now.");
+            System.out.println(p.getNickname() + " has no new moves to learn right now.");
             return;
         }
 
-        System.out.println("Pick a move for " + p.getName() + " to learn:");
+        System.out.println("Pick a move for " + p.getNickname() + " to learn:");
         for (int i = 0; i < eligible.size(); i++) {
             LearnsetEntry e = eligible.get(i);
             System.out.printf("  %d: %s (%s %d)%n",
@@ -257,16 +301,16 @@ public class App {
 
         // If the moveset isn't full, just add it directly
         if (p.addMove(picked)) {
-            System.out.println(p.getName() + " learned " + picked.getMoveName() + "!");
+            System.out.println(p.getNickname() + " learned " + picked.getMoveName() + "!");
             return;
         }
 
         // Moveset is full — ask which move to replace
-        System.out.println(p.getName() + " already knows 4 moves.");
+        System.out.println(p.getNickname() + " already knows 4 moves.");
         System.out.println("Replace a move with " + picked.getMoveName() + "? (yes/no)");
         String response = console.readLine();
         if (!response.equalsIgnoreCase("yes")) {
-            System.out.println(p.getName() + " did not learn " + picked.getMoveName() + ".");
+            System.out.println(p.getNickname() + " did not learn " + picked.getMoveName() + ".");
             return;
         }
 
@@ -277,7 +321,7 @@ public class App {
         System.out.print("Choice (1-4): ");
         int slot = Integer.parseInt(console.readLine());
         if (p.replaceMove(slot - 1, picked)) {
-            System.out.println(p.getName() + " forgot a move and learned " + picked.getMoveName() + "!");
+            System.out.println(p.getNickname() + " forgot a move and learned " + picked.getMoveName() + "!");
         } else {
             System.out.println("Invalid slot. Move not learned.");
         }

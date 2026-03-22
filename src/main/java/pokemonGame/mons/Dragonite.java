@@ -51,7 +51,7 @@ public class Dragonite extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Dragonite(String name) {
+    public Dragonite(String nickname) {
         super(
             "Dragonite",
             149,
@@ -66,7 +66,7 @@ public class Dragonite extends Pokemon {
             80
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 3, 0, 0, 0, 0}; // Dragonite yields 3 EV points in Attack when defeated
         this.setEvYield(evYield);

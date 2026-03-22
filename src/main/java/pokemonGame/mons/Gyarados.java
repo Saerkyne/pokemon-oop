@@ -51,7 +51,7 @@ public class Gyarados extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Gyarados(String name) {
+    public Gyarados(String nickname) {
         super(
             "Gyarados",
             130,
@@ -66,7 +66,7 @@ public class Gyarados extends Pokemon {
             81
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 2, 0, 0, 0, 0}; // Gyarados yields 2 EV points in Attack when defeated
         this.setEvYield(evYield);

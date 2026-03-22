@@ -36,7 +36,7 @@ public class Voltorb extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
-    public Voltorb(String name) {
+    public Voltorb(String nickname) {
         super(
             "Voltorb",
             100,
@@ -51,7 +51,7 @@ public class Voltorb extends Pokemon {
             100
         );
 
-        this.setName(name);
+        this.setNickname(nickname);
 
         int[] evYield = {0, 0, 0, 0, 0, 1}; // Voltorb yields 1 EV point in Speed when defeated
         this.setEvYield(evYield);

@@ -27,6 +27,9 @@ public class BotRunner {
                 .addCommands(Commands.slash("ping", "Pings the bot")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL))
+                .addCommands(Commands.slash("battlestate", "Shows the current state of a battle")
+                    .setContexts(InteractionContextType.ALL)
+                    .setIntegrationTypes(IntegrationType.ALL))
                 .queue();
 
     }

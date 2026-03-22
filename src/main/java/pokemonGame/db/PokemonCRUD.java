@@ -69,51 +69,15 @@ public class PokemonCRUD {
                 pstmt.setInt(1, trainer.getDBId());
                 pstmt.setInt(2, pokemonId);
                 try (ResultSet rs = pstmt.executeQuery()) {
+                    
                     if (rs.next()) {
-                        int foundPokemonId = rs.getInt("instance_id");
-                        String species = rs.getString("species");
-                        String name = rs.getString("nickname");
-                        int level = rs.getInt("level");
-                        String nature = rs.getString("nature");
-                        int ivHp = rs.getInt("iv_hp");
-                        int ivAttack = rs.getInt("iv_attack");
-                        int ivDefense = rs.getInt("iv_defense");
-                        int ivSpAttack = rs.getInt("iv_sp_attack");
-                        int ivSpDefense = rs.getInt("iv_sp_defense");
-                        int ivSpeed = rs.getInt("iv_speed");
-                        int currentHp = rs.getInt("current_hp");
-                        int evHp = rs.getInt("ev_hp");
-                        int evAttack = rs.getInt("ev_attack");
-                        int evDefense = rs.getInt("ev_defense");
-                        int evSpAttack = rs.getInt("ev_sp_attack");
-                        int evSpDefense = rs.getInt("ev_sp_defense");
-                        int evSpeed = rs.getInt("ev_speed");
-                        int currentExp = rs.getInt("current_exp");
-                        Boolean isFainted = rs.getBoolean("is_fainted");
-                        // Create a new Pokemon object and populate its fields from the ResultSet
-                        Pokemon foundPokemon = Pokemon.createPokemon(species, name, trainer);
-                        foundPokemon.setId(foundPokemonId);
-                        foundPokemon.setLevel(level);
-                        foundPokemon.setNature(Natures.valueOf(nature.toUpperCase()));
-                        foundPokemon.setIvHp(ivHp);
-                        foundPokemon.setIvAttack(ivAttack);
-                        foundPokemon.setIvDefense(ivDefense);
-                        foundPokemon.setIvSpecialAttack(ivSpAttack);
-                        foundPokemon.setIvSpecialDefense(ivSpDefense);
-                        foundPokemon.setIvSpeed(ivSpeed);
-                        foundPokemon.setCurrentHP(currentHp);
-                        foundPokemon.setEvHp(evHp);
-                        foundPokemon.setEvAttack(evAttack);
-                        foundPokemon.setEvDefense(evDefense);
-                        foundPokemon.setEvSpecialAttack(evSpAttack);
-                        foundPokemon.setEvSpecialDefense(evSpDefense);
-                        foundPokemon.setEvSpeed(evSpeed);
-                        foundPokemon.setCurrentExp(currentExp);
-                        foundPokemon.setIsFainted(isFainted);
-                        return foundPokemon; // Return the Pokémon object
+                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
+                        System.out.println("Pokemon '" + foundPokemon.getName() + "' (" + foundPokemon.getSpecies()
+                         + ") retrieved successfully for trainer ID " + trainer.getDBId() + ".");
+                        return foundPokemon; // Return the retrieved Pokémon
                     } else {
-                        System.out.println("No Pokemon found for trainer ID: " + trainer.getDBId());
-                        return null; // Return null to indicate no Pokemon found
+                        System.out.println("No Pokemon found with ID: " + pokemonId + " for trainer ID: " + trainer.getDBId());
+                        return null; // Return null if no Pokémon is found
                     }
                 }
             }

@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 
-public class App {
+public class BotRunner {
     public static void main( String[] args ) {
         String token = System.getenv("MOKEPONS_API_KEY");
 

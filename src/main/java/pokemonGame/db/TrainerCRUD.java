@@ -27,7 +27,7 @@ public class TrainerCRUD {
             System.err.println("Error creating trainer: " + e.getMessage());
             e.printStackTrace();
             return -1; // Return -1 to indicate an error occurred
-        }
+        } 
         return -1; // Return -1 if trainer creation failed
     }
 

@@ -99,10 +99,14 @@ public class SlashExample extends ListenerAdapter{
                     break;
                 } else {
 
+                    if (teamCRUD.checkSlotIndex(currentTrainer.getDBId()) >= 6) {
+                        event.reply("Your team is full! Cannot add more Pokémon.").setEphemeral(true).queue();
+                        break;
+                    }
 
                     Pokemon newPokemon = Pokemon.createPokemon(species, nickname, currentTrainer);
                     if (newPokemon == null) {
-                        event.reply("Sorry, I couldn't find a Pokémon with that name!").setEphemeral(true).queue();
+                        event.reply("Sorry, that Pokemon hasn't been discovered yet!").setEphemeral(true).queue();
                         break;
                     } else {
                         newPokemon.setTrainer(currentTrainer);
@@ -122,7 +126,7 @@ public class SlashExample extends ListenerAdapter{
                                 event.reply("Your team is full! Cannot add more Pokémon.").setEphemeral(true).queue();
                                 break;
                             } else {
-                                event.reply("Successfully added " + newPokemon.getNickname() + " to your team in slot " + slotIndex + "!").queue();
+                                event.reply("Successfully added " + newPokemon.getNickname() + " to your team in slot " + (slotIndex + 1) + "!").queue();
                                 break;
                             }
                         }
@@ -142,6 +146,7 @@ public class SlashExample extends ListenerAdapter{
                     boolean releaseSuccess = teamCRUD.removePokemonFromDBTeam(releasingTrainer.getDBId(), slotToRelease);
                     if (releaseSuccess) {
                         event.reply("Successfully released " + pokemonInSlot.getNickname() + " from slot " + (slotToRelease + 1) + " of your team!").queue();
+                        teamCRUD.reorderTeamAfterRelease(releasingTrainer.getDBId());
                         break;
                     } else {
                         event.reply("Sorry, there was an error releasing that Pokémon from your team! Make sure you entered a valid slot index.").setEphemeral(true).queue();

@@ -25,15 +25,15 @@ public class TeamCRUD {
                 pstmt.setInt(3, slotIndex);
                 System.out.println("Attempting to add Pokemon with ID " + pokemonId + " to trainer ID " + trainerId + "'s team in slot " + slotIndex + "...");
 
-                pstmt.executeUpdate();
-                System.out.println("Pokemon with ID " + pokemonId + " added to trainer ID " + trainerId + "'s team in slot " + slotIndex + ".");
-
-                try (ResultSet teamSet = pstmt.getGeneratedKeys()) {
-                    if (teamSet.next()) {
-                        int teamEntryId = teamSet.getInt(1);
-                        System.out.println("New Team Entry ID: " + teamEntryId);
-                        return slotIndex; // Return the slot index where the Pokémon was added
-                    }
+                int rowsAffected = pstmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    System.out.println("Pokemon with ID " + pokemonId + " added to trainer ID " + trainerId + "'s team in slot " + slotIndex + ".");
+                    // Some DB schemas for trainer_teams may not use an auto-generated primary key, so generated keys can be empty.
+                    // We already know the insertion slot index, so return it.
+                    return slotIndex;
+                } else {
+                    System.err.println("Failed to insert team entry for trainer ID " + trainerId + " and pokemon ID " + pokemonId + ".");
+                    return -1;
                 }
             }
         } catch (SQLException e) {
@@ -41,7 +41,6 @@ public class TeamCRUD {
             e.printStackTrace();
             return -1; // Return -1 to indicate an error occurred
         }
-        return -1; // Return -1 if adding Pokémon to team failed
     }
 
     public int checkSlotIndex(int trainerId) {
@@ -147,24 +146,24 @@ public class TeamCRUD {
 
     public int reorderTeamAfterRelease(int trainerId) {
         try (Connection conn = DatabaseSetup.getConnection()) {
-            String sql = "SELECT team_id FROM trainer_teams WHERE trainer_id = ? ORDER BY slot_index";
-            List<Integer> teamIds = new ArrayList<>();
+            String sql = "SELECT instance_id FROM trainer_teams WHERE trainer_id = ? ORDER BY slot_index";
+            List<Integer> instanceIds = new ArrayList<>();
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, trainerId);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        teamIds.add(rs.getInt("team_id"));
+                        instanceIds.add(rs.getInt("instance_id"));
                     }
                 }
             }
 
-            for (int i = 0; i < teamIds.size(); i++) {
-                String updateSql = "UPDATE trainer_teams SET slot_index = ? WHERE team_id = ?";
+            for (int i = 0; i < instanceIds.size(); i++) {
+                String updateSql = "UPDATE trainer_teams SET slot_index = ? WHERE instance_id = ?";
                 try (PreparedStatement updatePstmt = conn.prepareStatement(updateSql)) {
                     updatePstmt.setInt(1, i);
-                    updatePstmt.setInt(2, teamIds.get(i));
+                    updatePstmt.setInt(2, instanceIds.get(i));
                     updatePstmt.executeUpdate();
                 }
             }

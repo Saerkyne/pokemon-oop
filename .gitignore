@@ -8,6 +8,9 @@ target/
 # Zed
 .zed/
 
+# SpecStory - this is only needed to let Copilot export. We don't need to sync to GitHub.
+.specstory/
+
 # IDE files
 *.class
 *.jar

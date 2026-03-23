@@ -75,7 +75,9 @@ public class SlashExample extends ListenerAdapter{
                         teamMessage.append("  HP: ").append(p.getCurrentHP()).append("/").append(p.getMaxHP()).append("\n");
                         teamMessage.append("  Attack: ").append(p.getCurrentAttack()).append("\n");
                         teamMessage.append("  Defense: ").append(p.getCurrentDefense()).append("\n");
-                        teamMessage.append("  Speed: ").append(p.getCurrentSpeed()).append("\n");
+                        teamMessage.append("  Special Attack: ").append(p.getCurrentSpecialAttack()).append("\n");
+                        teamMessage.append("  Special Defense: ").append(p.getCurrentSpecialDefense()).append("\n");
+                        teamMessage.append("  Speed: ").append(p.getCurrentSpeed()).append("\n\n");
                     }
                     event.reply(teamMessage.toString()).queue();
                 }

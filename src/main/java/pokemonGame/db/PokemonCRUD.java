@@ -203,6 +203,7 @@ public class PokemonCRUD {
         foundPokemon.setEvSpeed(evSpeed);
         foundPokemon.setCurrentExp(currentExp);
         foundPokemon.setIsFainted(isFainted);
+        foundPokemon.calculateCurrentStats(); // Recalculate stats based on IVs, EVs, and level
 
         return foundPokemon; // Return the Pokémon object
     }

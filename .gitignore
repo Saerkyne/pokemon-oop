@@ -19,6 +19,3 @@ Thumbs.db
 
 # Backup files
 *.bak
-
-# Prompts
-.github/prompts/

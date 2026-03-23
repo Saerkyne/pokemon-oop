@@ -103,6 +103,9 @@ public class SlashExample extends ListenerAdapter{
                         break;
                     } else {
                         newPokemon.setTrainer(currentTrainer);
+                        newPokemon.setLevel(50); // Set the Pokémon's level to 50 for testing purposes
+                        newPokemon.calculateCurrentStats(); // Recalculate stats based on IVs, EVs, and level
+
                         int pokemonId = pokemonCRUD.createDBPokemon(newPokemon);
                         if (pokemonId == -1) {
                             event.reply("Sorry, there was an error adding that Pokémon to your team!").setEphemeral(true).queue();

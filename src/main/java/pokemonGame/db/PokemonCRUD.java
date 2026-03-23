@@ -142,12 +142,12 @@ public class PokemonCRUD {
             String sql = "DELETE FROM pokemon_instances WHERE instance_id = ? AND trainer_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setInt(1, pokemon.getId());
-                pstmt.setLong(2, pokemon.getTrainerDiscordId());
+                pstmt.setInt(2, pokemon.getTrainerDBId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
                     System.out.println("Pokemon '" + pokemon.getNickname() + "' (" + pokemon.getSpecies()
-                     + ") deleted successfully for trainer ID " + pokemon.getTrainerDiscordId() + ".");
+                     + ") deleted successfully for trainer ID " + pokemon.getTrainerDBId() + ".");
                     return true; // Return true to indicate successful deletion
                 } else {
                     System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainerDiscordId());

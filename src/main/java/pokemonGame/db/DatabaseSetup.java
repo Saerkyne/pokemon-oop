@@ -14,6 +14,7 @@ package pokemonGame.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,18 @@ public class DatabaseSetup {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseSetup.class);
 
+    // Whitelist of tables that deleteAllData() is allowed to truncate.
+    // Because prepared-statement parameters (?) can only substitute VALUES,
+    // not identifiers (table names, column names, keywords), we cannot write
+    // "TRUNCATE TABLE ?" — the DB needs the table name at query-planning time.
+    // Instead we validate dynamically-discovered names against this whitelist
+    // so only known application tables are ever placed into the SQL string.
+    private static final Set<String> ALLOWED_TABLES = Set.of(
+        "trainer_teams",
+        "pokemon_movesets",
+        "pokemon_instances",
+        "trainers"
+    );
 
     private static final String URL = "jdbc:mariadb://192.168.1.212:3306/pokemon_db";
     private static final String USER = "pokemon_db_user";
@@ -49,6 +62,12 @@ public class DatabaseSetup {
                 var rs = getTables.executeQuery();
                 while (rs.next()) {
                     String tableName = rs.getString(1);
+                    if (!ALLOWED_TABLES.contains(tableName)) {
+                        logger.warn("Skipping unknown table '{}' — not in whitelist", tableName);
+                        continue;
+                    }
+                    // Table name is safe to use here because it was validated
+                    // against ALLOWED_TABLES (a hardcoded Set of known names).
                     try (var delete = conn.prepareStatement("TRUNCATE TABLE " + tableName)) {
                         delete.execute();
                         logger.info("Deleted data from table: {}", tableName);

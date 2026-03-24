@@ -12,12 +12,7 @@ public class Battle {
         int damage = attack.calculateDamage(attacker, defender, move);
 
         // Check for damage amount, clamp to 0 if it would go negative
-        try {
-            if ((defender.getCurrentHP() - damage) < 0) {
-                throw new IllegalArgumentException("Damage cannot send HP negative. Setting defender HP to 0.");
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+        if (damage > defender.getCurrentHP()) {
             damage = defender.getCurrentHP();
         }
         

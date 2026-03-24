@@ -3,7 +3,6 @@ import java.util.Random;
 
 public class Attack {
 
-    private static final TypeChart TYPE_CHART = new TypeChart();
     private static final Random RNG = new Random();
 
     
@@ -15,7 +14,7 @@ public class Attack {
         if (defenderType == null || defenderType.equals("None")) {
             effectiveness = 1.0f; // Neutral effectiveness if no secondary type
         } else {
-            effectiveness = TYPE_CHART.getEffectiveness(moveType, defenderType);
+            effectiveness = TypeChart.getEffectiveness(moveType, defenderType);
         }
 
         return effectiveness;

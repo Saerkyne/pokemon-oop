@@ -7,6 +7,7 @@ import pokemonGame.db.PokemonCRUD;
 import pokemonGame.db.TeamCRUD;
 import pokemonGame.db.TrainerCRUD;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import java.util.List;
 import java.util.logging.Logger;
@@ -158,6 +159,10 @@ public class SlashExample extends ListenerAdapter{
                 LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' with confirmation: '" + event.getOption("confirm").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
                 String confirmation = event.getOption("confirm").getAsString();
                 if (confirmation.equalsIgnoreCase("CONFIRM")) {
+                    if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                        event.reply("You do not have permission to clear the database!").setEphemeral(true).queue();
+                        return;
+                    }
                     
 
                     DatabaseSetup.deleteAllData();

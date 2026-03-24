@@ -118,12 +118,12 @@ public class PokemonCRUD {
                 pstmt.setInt(18, pokemon.getCurrentExp());
                 pstmt.setBoolean(19, pokemon.getIsFainted());
                 pstmt.setInt(20, pokemon.getId());
-                pstmt.setLong(21, pokemon.getTrainerDiscordId());
+                pstmt.setLong(21, pokemon.getTrainerDBId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
                     System.out.println("Pokemon '" + pokemon.getNickname() + "' (" + pokemon.getSpecies()
-                     + ") updated successfully for trainer ID " + pokemon.getTrainerDiscordId() + ".");
+                     + ") updated successfully for trainer ID " + pokemon.getTrainerDBId() + ".");
                     return true; // Return true to indicate successful update
                 } else {
                     System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainerDiscordId());

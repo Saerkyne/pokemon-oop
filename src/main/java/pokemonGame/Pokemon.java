@@ -108,41 +108,9 @@ public class Pokemon {
     }
 
 
-    // --- Moveset management (no I/O — callers handle user interaction) ---
-
-    /**
-     * Returns true when the moveset already has 4 moves and any new move
-     * would require replacing an existing one.
-     */
-    public boolean isMovesetFull() {
-        return moveset.size() >= 4;
-    }
-
-    /**
-     * Add a move to the moveset.  Only succeeds when there is an open slot
-     * (fewer than 4 moves).  Returns true if the move was added, false if
-     * the moveset is full (caller should use {@link #replaceMove} instead).
-     */
-    public boolean addMove(Move move) {
-        if (moveset.size() >= 4) {
-            return false; // Moveset full — caller must decide which slot to replace
-        }
-        moveset.add(new MoveSlot(move));
-        return true;
-    }
-
-    /**
-     * Replace the move in the given slot (0-based index) with a new move.
-     * Returns true on success, false if the slot index is out of range.
-     */
-    public boolean replaceMove(int slot, Move newMove) {
-        if (slot < 0 || slot >= moveset.size()) {
-            return false;
-        }
-        moveset.set(slot, new MoveSlot(newMove));
-        return true;
-    }
-
+    // ========================
+    // ===     GETTERS      ===
+    // ========================
 
     // Getters for attributes
     public ArrayList<MoveSlot> getMoveset() {
@@ -344,6 +312,22 @@ public class Pokemon {
         }
     }
 
+    /**
+     * Return the learnset associated with this Pokémon instance.  Species classes should
+     * override this method (typically returning a static list) so that calling
+     * <code>somePokemon.getLearnset()</code> yields the correct catalog for that
+     * species.  The default implementation returns an (initially empty) instance
+     * list, which allows subclasses that do not define learnsets to compile.
+     */
+    public List<LearnsetEntry> getLearnset() {
+        return learnset;
+    }
+
+
+    // ========================
+    // ===     SETTERS      ===
+    // ========================
+
     // Direct Setters for attributes
     public void setLevel(int level) {
         this.level = level;
@@ -524,13 +508,50 @@ public class Pokemon {
         this.evYield = evYield;
     }
 
-    // Modifiers for attributes
-    public void levelUp() {
-        this.level++;
-        this.calculateCurrentStats();
-        // Placeholder for actual stat increases on level up
+
+    // ====================================
+    // ===     MOVESET MANAGEMENT       ===
+    // ====================================
+
+    // --- Moveset management (no I/O — callers handle user interaction) ---
+
+    /**
+     * Returns true when the moveset already has 4 moves and any new move
+     * would require replacing an existing one.
+     */
+    public boolean isMovesetFull() {
+        return moveset.size() >= 4;
     }
 
+    /**
+     * Add a move to the moveset.  Only succeeds when there is an open slot
+     * (fewer than 4 moves).  Returns true if the move was added, false if
+     * the moveset is full (caller should use {@link #replaceMove} instead).
+     */
+    public boolean addMove(Move move) {
+        if (moveset.size() >= 4) {
+            return false; // Moveset full — caller must decide which slot to replace
+        }
+        moveset.add(new MoveSlot(move));
+        return true;
+    }
+
+    /**
+     * Replace the move in the given slot (0-based index) with a new move.
+     * Returns true on success, false if the slot index is out of range.
+     */
+    public boolean replaceMove(int slot, Move newMove) {
+        if (slot < 0 || slot >= moveset.size()) {
+            return false;
+        }
+        moveset.set(slot, new MoveSlot(newMove));
+        return true;
+    }
+
+
+    // ====================================
+    // ===     STAT CALCULATIONS        ===
+    // ====================================
 
     // Methods for calculations
     public int calcMaxHP(int hpBase, int level, int ivHp, int ev) {
@@ -587,6 +608,18 @@ public class Pokemon {
         // I know that this may cause issues, review the best place for this later on. 
     }
 
+
+    // ====================================
+    // ===   GAME LOGIC / MODIFIERS     ===
+    // ====================================
+
+    // Modifiers for attributes
+    public void levelUp() {
+        this.level++;
+        this.calculateCurrentStats();
+        // Placeholder for actual stat increases on level up
+    }
+
     /**
      * Apply a random nature to this Pokémon.  This is just a convenience wrapper
      * around {@link Natures#assignRandom} so callers can write
@@ -596,16 +629,10 @@ public class Pokemon {
         Natures.assignRandom(this);
     }
 
-    /**
-     * Return the learnset associated with this Pokémon instance.  Species classes should
-     * override this method (typically returning a static list) so that calling
-     * <code>somePokemon.getLearnset()</code> yields the correct catalog for that
-     * species.  The default implementation returns an (initially empty) instance
-     * list, which allows subclasses that do not define learnsets to compile.
-     */
-    public List<LearnsetEntry> getLearnset() {
-        return learnset;
-    }
+
+    // ====================================
+    // ===     STATIC FACTORY METHOD    ===
+    // ====================================
 
     // This method can be used to create a new Pokémon instance based on user input for species, level, and other attributes.  
     // It can return the newly created Pokémon instance.

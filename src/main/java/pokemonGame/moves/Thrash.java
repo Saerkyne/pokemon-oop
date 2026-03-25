@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Thrash extends Move {
+    public static final Thrash INSTANCE = new Thrash();
+
     public Thrash() {
         super("Thrash", 120, "Normal", "Physical", 100, 10);
         // == Special Effect (Not Yet Implemented) ==

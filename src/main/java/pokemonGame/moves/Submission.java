@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Submission extends Move {
+    public static final Submission INSTANCE = new Submission();
+
     public Submission() {
         super("Submission", 80, "Fighting", "Physical", 80, 20);
         // == Special Effect (Not Yet Implemented) ==

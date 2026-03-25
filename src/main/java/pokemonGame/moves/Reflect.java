@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Reflect extends Move {
+    public static final Reflect INSTANCE = new Reflect();
+
     public Reflect() {
         super("Reflect", 0, "Psychic", "Status", 0, 20);
         // == Special Effect (Not Yet Implemented) ==

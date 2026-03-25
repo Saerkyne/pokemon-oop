@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Rest extends Move {
+    public static final Rest INSTANCE = new Rest();
+
     public Rest() {
         super("Rest", 0, "Psychic", "Status", 0, 10);
         // == Special Effect (Not Yet Implemented) ==

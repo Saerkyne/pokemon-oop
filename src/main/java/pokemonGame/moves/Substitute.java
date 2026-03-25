@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Substitute extends Move {
+    public static final Substitute INSTANCE = new Substitute();
+
     public Substitute() {
         super("Substitute", 0, "Normal", "Status", 0, 10);
         // == Special Effect (Not Yet Implemented) ==

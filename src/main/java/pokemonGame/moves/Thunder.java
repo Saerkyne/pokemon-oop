@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Thunder extends Move {
+    public static final Thunder INSTANCE = new Thunder();
+
     public Thunder() {
         super("Thunder", 120, "Electric", "Special", 70, 10);
         // == Special Effect (Not Yet Implemented) ==

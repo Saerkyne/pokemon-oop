@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Clamp extends Move {
+    public static final Clamp INSTANCE = new Clamp();
+
     public Clamp() {
         super("Clamp", 35, "Water",
         "Physical", 85, 15);

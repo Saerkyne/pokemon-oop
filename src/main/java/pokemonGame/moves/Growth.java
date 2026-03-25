@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Growth extends Move {
+    public static final Growth INSTANCE = new Growth();
+
     public Growth() {
         super("Growth", 0, "Normal", "Status", 0, 20);
         // == Special Effect (Not Yet Implemented) ==

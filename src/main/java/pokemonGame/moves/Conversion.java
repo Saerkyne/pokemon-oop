@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Conversion extends Move {
+    public static final Conversion INSTANCE = new Conversion();
+
     public Conversion() {
         super("Conversion", 0, "Normal",
         "Status", 0, 30);

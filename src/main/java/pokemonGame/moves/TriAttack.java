@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class TriAttack extends Move {
+    public static final TriAttack INSTANCE = new TriAttack();
+
     public TriAttack() {
         super("Tri Attack", 80, "Normal", "Special", 100, 10);
         // == Special Effect (Not Yet Implemented) ==

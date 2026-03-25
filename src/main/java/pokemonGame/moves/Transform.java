@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Transform extends Move {
+    public static final Transform INSTANCE = new Transform();
+
     public Transform() {
         super("Transform", 0, "Normal", "Status", 0, 10);
         // == Special Effect (Not Yet Implemented) ==

@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class SwordsDance extends Move {
+    public static final SwordsDance INSTANCE = new SwordsDance();
+
     public SwordsDance() {
         super("Swords Dance", 0, "Normal", "Status", 0, 20);
         // == Special Effect (Not Yet Implemented) ==

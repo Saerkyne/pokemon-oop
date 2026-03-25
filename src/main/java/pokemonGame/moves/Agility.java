@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Agility extends Move {
+    public static final Agility INSTANCE = new Agility();
+
     public Agility() {
         super("Agility", 0, "Psychic",
         "Status", 0, 30);

@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Sharpen extends Move {
+    public static final Sharpen INSTANCE = new Sharpen();
+
     public Sharpen() {
         super("Sharpen", 0, "Normal", "Status", 0, 30);
         // == Special Effect (Not Yet Implemented) ==

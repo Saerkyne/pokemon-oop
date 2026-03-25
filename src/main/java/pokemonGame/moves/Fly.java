@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Fly extends Move {
+    public static final Fly INSTANCE = new Fly();
+
     public Fly() {
         super("Fly", 90, "Flying", "Physical", 95, 15);
         // == Special Effect (Not Yet Implemented) ==

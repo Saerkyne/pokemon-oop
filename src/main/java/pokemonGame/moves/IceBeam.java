@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class IceBeam extends Move {
+    public static final IceBeam INSTANCE = new IceBeam();
+
     public IceBeam() {
         super("Ice Beam", 90, "Ice", "Special", 100, 10);
         // == Special Effect (Not Yet Implemented) ==

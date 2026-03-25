@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Flash extends Move {
+    public static final Flash INSTANCE = new Flash();
+
     public Flash() {
         super("Flash", 0, "Normal", "Status", 100, 20);
         // == Special Effect (Not Yet Implemented) ==

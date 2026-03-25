@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class DragonRage extends Move {
+    public static final DragonRage INSTANCE = new DragonRage();
+
     public DragonRage() {
         super("Dragon Rage", 0, "Dragon", "Special", 100, 10);
         // == Special Effect (Not Yet Implemented) ==

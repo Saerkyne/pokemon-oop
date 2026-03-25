@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class PetalDance extends Move {
+    public static final PetalDance INSTANCE = new PetalDance();
+
     public PetalDance() {
         super("Petal Dance", 120, "Grass", "Special", 100, 10);
         // == Special Effect (Not Yet Implemented) ==

@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Fissure extends Move {
+    public static final Fissure INSTANCE = new Fissure();
+
     public Fissure() {
         super("Fissure", 0, "Ground", "Physical", 30, 5);
         // == Special Effect (Not Yet Implemented) ==

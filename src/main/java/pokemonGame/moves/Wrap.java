@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Wrap extends Move {
+    public static final Wrap INSTANCE = new Wrap();
+
     public Wrap() {
         super("Wrap", 15, "Normal", "Physical", 90, 20);
         // == Special Effect (Not Yet Implemented) ==

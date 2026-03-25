@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Acid extends Move {
+    public static final Acid INSTANCE = new Acid();
+
     public Acid() {
         super("Acid", 40, "Poison",
         "Special", 100, 30);

@@ -9,8 +9,8 @@ public class Caterpie extends Pokemon {
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
         // Level up moves
-        LEARNSET.add(new LearnsetEntry(new Tackle(), LearnsetEntry.Source.LEVEL, 1));
-        LEARNSET.add(new LearnsetEntry(new StringShot(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(Tackle.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(StringShot.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
     }
 
     public Caterpie(String nickname) {

@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class FireSpin extends Move {
+    public static final FireSpin INSTANCE = new FireSpin();
+
     public FireSpin() {
         super("Fire Spin", 35, "Fire", "Special", 85, 15);
         // == Special Effect (Not Yet Implemented) ==

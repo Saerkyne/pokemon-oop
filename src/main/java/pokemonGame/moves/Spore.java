@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Spore extends Move {
+    public static final Spore INSTANCE = new Spore();
+
     public Spore() {
         super("Spore", 0, "Grass", "Status", 100, 15);
         // == Special Effect (Not Yet Implemented) ==

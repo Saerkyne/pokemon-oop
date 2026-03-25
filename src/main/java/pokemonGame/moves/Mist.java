@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Mist extends Move {
+    public static final Mist INSTANCE = new Mist();
+
     public Mist() {
         super("Mist", 0, "Ice", "Status", 0, 30);
         // == Special Effect (Not Yet Implemented) ==

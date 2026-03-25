@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class DefenseCurl extends Move {
+    public static final DefenseCurl INSTANCE = new DefenseCurl();
+
     public DefenseCurl() {
         super("Defense Curl", 0, "Normal", "Status", 0, 40);
         // == Special Effect (Not Yet Implemented) ==

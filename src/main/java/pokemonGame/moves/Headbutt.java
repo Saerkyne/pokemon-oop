@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Headbutt extends Move {
+    public static final Headbutt INSTANCE = new Headbutt();
+
     public Headbutt() {
         super("Headbutt", 70, "Normal", "Physical", 100, 15);
         // == Special Effect (Not Yet Implemented) ==

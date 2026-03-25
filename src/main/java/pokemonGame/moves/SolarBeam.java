@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class SolarBeam extends Move {
+    public static final SolarBeam INSTANCE = new SolarBeam();
+
     public SolarBeam() {
         super("Solar Beam", 120, "Grass", "Special", 100, 10);
         // == Special Effect (Not Yet Implemented) ==

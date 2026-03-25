@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class MirrorMove extends Move {
+    public static final MirrorMove INSTANCE = new MirrorMove();
+
     public MirrorMove() {
         super("Mirror Move", 0, "Flying", "Status", 0, 20);
         // == Special Effect (Not Yet Implemented) ==

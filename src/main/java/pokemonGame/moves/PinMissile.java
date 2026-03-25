@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class PinMissile extends Move {
+    public static final PinMissile INSTANCE = new PinMissile();
+
     public PinMissile() {
         super("Pin Missile", 25, "Bug", "Physical", 95, 20);
         // == Special Effect (Not Yet Implemented) ==

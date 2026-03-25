@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Counter extends Move {
+    public static final Counter INSTANCE = new Counter();
+
     public Counter() {
         super("Counter", 0, "Fighting",
         "Physical", 100, 20);

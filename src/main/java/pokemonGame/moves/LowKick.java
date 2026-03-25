@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class LowKick extends Move {
+    public static final LowKick INSTANCE = new LowKick();
+
     public LowKick() {
         super("Low Kick", 0, "Fighting", "Physical", 100, 20);
         // == Special Effect (Not Yet Implemented) ==

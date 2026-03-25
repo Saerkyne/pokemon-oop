@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Roar extends Move {
+    public static final Roar INSTANCE = new Roar();
+
     public Roar() {
         super("Roar", 0, "Normal", "Status", 0, 20);
         // == Special Effect (Not Yet Implemented) ==

@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Guillotine extends Move {
+    public static final Guillotine INSTANCE = new Guillotine();
+
     public Guillotine() {
         super("Guillotine", 0, "Normal", "Physical", 30, 5);
         // == Special Effect (Not Yet Implemented) ==

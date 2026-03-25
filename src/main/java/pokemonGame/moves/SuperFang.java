@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class SuperFang extends Move {
+    public static final SuperFang INSTANCE = new SuperFang();
+
     public SuperFang() {
         super("Super Fang", 0, "Normal", "Physical", 90, 10);
         // == Special Effect (Not Yet Implemented) ==

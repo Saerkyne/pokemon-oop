@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class ThunderWave extends Move {
+    public static final ThunderWave INSTANCE = new ThunderWave();
+
     public ThunderWave() {
         super("ThunderWave", 0, "Electric", "Status", 0, 20);
         // == Special Effect (Not Yet Implemented) ==

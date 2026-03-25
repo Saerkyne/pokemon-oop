@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Minimize extends Move {
+    public static final Minimize INSTANCE = new Minimize();
+
     public Minimize() {
         super("Minimize", 0, "Normal", "Status", 0, 10);
         // == Special Effect (Not Yet Implemented) ==

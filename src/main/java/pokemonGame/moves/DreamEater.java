@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class DreamEater extends Move {
+    public static final DreamEater INSTANCE = new DreamEater();
+
     public DreamEater() {
         super("Dream Eater", 100, "Psychic", "Special", 100, 15);
         // == Special Effect (Not Yet Implemented) ==

@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class BubbleBeam extends Move {
+    public static final BubbleBeam INSTANCE = new BubbleBeam();
+
     public BubbleBeam() {
         super("Bubble Beam", 65, "Water",
         "Special", 100, 20);

@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Struggle extends Move {
+    public static final Struggle INSTANCE = new Struggle();
+
     public Struggle() {
         super("Struggle", 50, "Normal", "Physical", 0, 1);
         // == Special Effect (Not Yet Implemented) ==

@@ -9,7 +9,7 @@ public class Ditto extends Pokemon {
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
         // Level up moves
-        LEARNSET.add(new LearnsetEntry(new Transform(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(Transform.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
     }
 
     public Ditto(String nickname) {

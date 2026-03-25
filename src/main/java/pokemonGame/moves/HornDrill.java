@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class HornDrill extends Move {
+    public static final HornDrill INSTANCE = new HornDrill();
+
     public HornDrill() {
         super("Horn Drill", 0, "Normal", "Physical", 30, 5);
         // == Special Effect (Not Yet Implemented) ==

@@ -8,10 +8,10 @@ public class Wartortle extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
-        LEARNSET.add(new LearnsetEntry(new Tackle(), LearnsetEntry.Source.LEVEL, 1));
-        LEARNSET.add(new LearnsetEntry(new Growl(), LearnsetEntry.Source.LEVEL, 1));
-        LEARNSET.add(new LearnsetEntry(new Strength(), LearnsetEntry.Source.LEVEL, 8));
-        LEARNSET.add(new LearnsetEntry(new Swift(), LearnsetEntry.Source.LEVEL, 23));
+        LEARNSET.add(new LearnsetEntry(Tackle.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(Growl.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(Strength.INSTANCE, LearnsetEntry.Source.LEVEL, 8));
+        LEARNSET.add(new LearnsetEntry(Swift.INSTANCE, LearnsetEntry.Source.LEVEL, 23));
     }
 
     public Wartortle(String nickname) {

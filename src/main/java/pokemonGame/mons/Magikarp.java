@@ -9,8 +9,8 @@ public class Magikarp extends Pokemon {
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
         // Level up moves
-        LEARNSET.add(new LearnsetEntry(new Splash(), LearnsetEntry.Source.LEVEL, 1));
-        LEARNSET.add(new LearnsetEntry(new Tackle(), LearnsetEntry.Source.LEVEL, 15));
+        LEARNSET.add(new LearnsetEntry(Splash.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(Tackle.INSTANCE, LearnsetEntry.Source.LEVEL, 15));
     }
 
     public Magikarp(String nickname) {

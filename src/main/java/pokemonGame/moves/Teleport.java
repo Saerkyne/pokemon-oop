@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Teleport extends Move {
+    public static final Teleport INSTANCE = new Teleport();
+
     public Teleport() {
         super("Teleport", 0, "Psychic", "Status", 0, 20);
         // == Special Effect (Not Yet Implemented) ==

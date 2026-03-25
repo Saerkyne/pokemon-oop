@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Psywave extends Move {
+    public static final Psywave INSTANCE = new Psywave();
+
     public Psywave() {
         super("Psywave", 0, "Psychic", "Special", 100, 15);
         // == Special Effect (Not Yet Implemented) ==

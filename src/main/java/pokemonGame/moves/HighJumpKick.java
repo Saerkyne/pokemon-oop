@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class HighJumpKick extends Move {
+    public static final HighJumpKick INSTANCE = new HighJumpKick();
+
     public HighJumpKick() {
         super("High Jump Kick", 130, "Fighting", "Physical", 90, 10);
         // == Special Effect (Not Yet Implemented) ==

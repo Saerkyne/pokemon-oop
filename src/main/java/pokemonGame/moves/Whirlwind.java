@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Whirlwind extends Move {
+    public static final Whirlwind INSTANCE = new Whirlwind();
+
     public Whirlwind() {
         super("Whirlwind", 0, "Normal", "Status", 0, 20);
         // == Special Effect (Not Yet Implemented) ==

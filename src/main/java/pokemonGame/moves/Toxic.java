@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Toxic extends Move {
+    public static final Toxic INSTANCE = new Toxic();
+
     public Toxic() {
         super("Toxic", 0, "Poison", "Status", 90, 10);
         // == Special Effect (Not Yet Implemented) ==

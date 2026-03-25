@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Stomp extends Move {
+    public static final Stomp INSTANCE = new Stomp();
+
     public Stomp() {
         super("Stomp", 65, "Normal", "Physical", 100, 20);
         // == Special Effect (Not Yet Implemented) ==

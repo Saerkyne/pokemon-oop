@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class SkullBash extends Move {
+    public static final SkullBash INSTANCE = new SkullBash();
+
     public SkullBash() {
         super("Skull Bash", 130, "Normal", "Physical", 100, 10);
         // == Special Effect (Not Yet Implemented) ==

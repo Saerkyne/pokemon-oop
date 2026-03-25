@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Twineedle extends Move {
+    public static final Twineedle INSTANCE = new Twineedle();
+
     public Twineedle() {
         super("Twineedle", 25, "Bug", "Physical", 100, 20);
         // == Special Effect (Not Yet Implemented) ==

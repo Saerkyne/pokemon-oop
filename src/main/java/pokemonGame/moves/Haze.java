@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Haze extends Move {
+    public static final Haze INSTANCE = new Haze();
+
     public Haze() {
         super("Haze", 0, "Ice", "Status", 0, 30);
         // == Special Effect (Not Yet Implemented) ==

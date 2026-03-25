@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Bide extends Move {
+    public static final Bide INSTANCE = new Bide();
+
     public Bide() {
         super("Bide", 0, "Normal",
         "Physical", 0, 10);

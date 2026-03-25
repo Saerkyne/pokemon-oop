@@ -8,10 +8,10 @@ public class Kakuna extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
-        LEARNSET.add(new LearnsetEntry(new Harden(), LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(new LearnsetEntry(Harden.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
 
-        LEARNSET.add(new LearnsetEntry(new PoisonSting(), LearnsetEntry.Source.PRE_EVOLUTION, 0));
-        LEARNSET.add(new LearnsetEntry(new StringShot(), LearnsetEntry.Source.PRE_EVOLUTION, 0));
+        LEARNSET.add(new LearnsetEntry(PoisonSting.INSTANCE, LearnsetEntry.Source.PRE_EVOLUTION, 0));
+        LEARNSET.add(new LearnsetEntry(StringShot.INSTANCE, LearnsetEntry.Source.PRE_EVOLUTION, 0));
     }
 
     public Kakuna(String nickname) {

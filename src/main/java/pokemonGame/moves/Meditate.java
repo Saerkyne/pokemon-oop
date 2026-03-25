@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Meditate extends Move {
+    public static final Meditate INSTANCE = new Meditate();
+
     public Meditate() {
         super("Meditate", 0, "Psychic", "Status", 0, 40);
         // == Special Effect (Not Yet Implemented) ==

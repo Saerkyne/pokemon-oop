@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class LightScreen extends Move {
+    public static final LightScreen INSTANCE = new LightScreen();
+
     public LightScreen() {
         super("Light Screen", 0, "Psychic", "Status", 0, 30);
         // == Special Effect (Not Yet Implemented) ==

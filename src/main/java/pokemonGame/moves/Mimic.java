@@ -2,6 +2,8 @@ package pokemonGame.moves;
 import pokemonGame.Move;
 
 public class Mimic extends Move {
+    public static final Mimic INSTANCE = new Mimic();
+
     public Mimic() {
         super("Mimic", 0, "Normal", "Status", 0, 10);
         // == Special Effect (Not Yet Implemented) ==

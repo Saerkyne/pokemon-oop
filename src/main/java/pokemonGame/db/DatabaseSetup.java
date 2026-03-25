@@ -12,9 +12,9 @@
 package pokemonGame.db;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Set;
+import com.zaxxer.hikari.HikariDataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +39,16 @@ public class DatabaseSetup {
     private static final String URL = System.getenv("DB_URL");
     private static final String USER = System.getenv("DB_USER");
     private static final String PASSWORD = System.getenv("DB_USER_PASSWORD");
+    private static final HikariDataSource DataSource = new HikariDataSource();
+    static {
+        DataSource.setJdbcUrl(URL);
+        DataSource.setUsername(USER);
+        DataSource.setPassword(PASSWORD);
+    }
 
     public static Connection getConnection() throws SQLException {
         logger.info("Attempting to connect to database at {}", URL);
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        return DataSource.getConnection();
     }
 
     public static void deleteAllData() {

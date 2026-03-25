@@ -13,6 +13,10 @@
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <slf4j.version>2.0.7</slf4j.version>
+        <logback.version>1.5.6</logback.version>
+
+             
     </properties>
 
     <dependencies>
@@ -36,9 +40,19 @@
             <version>3.3.3</version>
         </dependency>
 
+        <!-- SUGGESTION (Code-Review.md §Build Configuration, Issue #1 — Missing slf4j-api version):
+             This dependency has no <version> tag — it silently inherits 2.0.7 from the
+             <dependencyManagement> section at the bottom of this file. That works, but it's
+             fragile: if someone removes or reorganizes <dependencyManagement>, this dependency
+             breaks with a confusing "no version" error. For a small project like this, the
+             simplest fix is to add an explicit <version> here (or use a ${slf4j.version}
+             property as suggested above). The <dependencyManagement> section can then be
+             removed entirely since no other module inherits from this POM.
+        -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
@@ -50,7 +64,13 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.6</version>
+            <version>${logback.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
         </dependency>
 
         <dependency>
@@ -87,30 +107,26 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals><goal>enforce</goal></goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[21,)</version>
+                                </requireJavaVersion>
+                                <dependencyConvergence/>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
-
-    <dependencyManagement>
-    
-
-        <dependencies>
-
-            <dependency>
-                <groupId>org.checkerframework</groupId>
-                <artifactId>checker-qual</artifactId>
-                <version>3.19.0</version>
-            </dependency>
-
-        
-
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>2.0.7</version>
-            </dependency>
-
-        </dependencies>
-
-    </dependencyManagement>
 </project>

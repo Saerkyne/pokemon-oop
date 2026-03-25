@@ -11,6 +11,7 @@
 This is a well-structured learning project that demonstrates solid understanding of OOP fundamentals: inheritance hierarchies, encapsulation via private fields with getters/setters, polymorphism through abstract classes and overrides, and layered architecture separating domain logic from I/O. The test suite is thoughtful and well-commented with improvement suggestions built directly into the test documentation.
 
 Key strengths:
+
 - Clean separation of concerns across domain, persistence, and bot layers
 - Correct implementation of Pokémon stat formulas (IVs, EVs, natures)
 - Comprehensive type chart covering all 18 types
@@ -18,6 +19,7 @@ Key strengths:
 - Thorough, well-documented test suite
 
 Key areas for improvement:
+
 - **🔴 Critical: Hardcoded database credentials in source code**
 - **🔴 Critical: SQL injection vulnerability in `deleteAllData()`**
 - Several design issues around error handling patterns
@@ -30,12 +32,9 @@ Key areas for improvement:
 
 These must be addressed before any production or shared deployment.
 
-
-
 ## 🟡 Important Issues
 
 These should be addressed to improve reliability, maintainability, and correctness.
-
 
 ### 9. `Battle` Methods Are All Static — Not Object-Oriented
 
@@ -56,8 +55,6 @@ public class Battle {
 }
 ```
 
-
-
 ### 13. New Connection Per Query — No Connection Pooling
 
 **File:** `src/main/java/pokemonGame/db/DatabaseSetup.java`
@@ -66,14 +63,11 @@ Every CRUD method calls `DatabaseSetup.getConnection()`, which opens a new JDBC 
 
 💡 **[suggestion]** For development this works, but consider switching to HikariCP for connection pooling before scaling. The change is minimal — replace `DriverManager.getConnection()` with `dataSource.getConnection()` from a `HikariDataSource`.
 
-
 ---
 
 ## 🟢 Nit / Style Issues
 
 These are non-blocking suggestions for cleaner, more idiomatic Java.
-
-
 
 ### 18. `getMoveset()` Exposes Internal Mutable List
 
@@ -278,7 +272,7 @@ Creating a new `Random` each time is wasteful and could reduce randomness qualit
 ### Gaps
 
 | Area | Coverage | Notes |
-|------|----------|-------|
+| ------ | ---------- | ------- |
 | Domain classes | ✅ Good | Core mechanics well-tested |
 | `Move` / `MoveSlot` | ⚠️ Partial | `MoveSlot.use()` and PP management untested |
 | `TypeChart` | ✅ Good | Both individual tests and parameterized tests |
@@ -321,7 +315,7 @@ Creating a new `Random` each time is wasteful and could reduce randomness qualit
 
 ## Architecture Summary
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │     Bot / Controller Layer              │  SlashExample, AutoCompleteBot, BotRunner
 │     (JDA event handlers)                │  
@@ -341,7 +335,7 @@ Creating a new `Random` each time is wasteful and could reduce randomness qualit
 ## Summary Table
 
 | # | Severity | Category | Title |
-|---|----------|----------|-------|
+| --- | ---------- | ---------- | ------- |
 | 1 | 🔴 Blocking | Security | Hardcoded database credentials |
 | 2 | 🔴 Blocking | Security | SQL injection in `deleteAllData()` |
 | 3 | 🔴 Blocking | Security | `cleardatabase` lacks server-side auth check |

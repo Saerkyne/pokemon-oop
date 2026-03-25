@@ -8,6 +8,8 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Collections;
+import java.util.Set;
 
 public class PokemonFactory {
 
@@ -71,4 +73,8 @@ public class PokemonFactory {
 
     }
 
+    // Getter for all registered species names (for autocomplete)
+    public static Set<String> getSpeciesNames() {
+        return Collections.unmodifiableSet(REGISTRY.keySet());
+    }
 }

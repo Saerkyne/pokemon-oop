@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Collections;
 
 
 public class Pokemon {
@@ -115,8 +116,8 @@ public class Pokemon {
     // ========================
 
     // Getters for attributes
-    public ArrayList<MoveSlot> getMoveset() {
-        return moveset;
+    public List<MoveSlot> getMoveset() {
+        return Collections.unmodifiableList(moveset);
     }
 
     public String getTypePrimary() {
@@ -148,7 +149,7 @@ public class Pokemon {
     }
 
     public String[] getStatusConditions() {
-        return statusConditions;
+        return statusConditions.clone();
     }
 
     public int getLevel() {
@@ -322,7 +323,7 @@ public class Pokemon {
      * list, which allows subclasses that do not define learnsets to compile.
      */
     public List<LearnsetEntry> getLearnset() {
-        return learnset;
+        return Collections.unmodifiableList(learnset);
     }
 
 

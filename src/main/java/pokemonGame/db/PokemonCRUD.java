@@ -205,5 +205,28 @@ public class PokemonCRUD {
 
         return foundPokemon; // Return the Pokémon object
     }
+
+    public static Pokemon getPokemonByNicknameAndTrainer(String nickname, Trainer trainer) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND nickname = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainer.getDbId());
+                pstmt.setString(2, nickname);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
+                        LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies(), trainer.getDbId());
+                        return foundPokemon; // Return the retrieved Pokémon
+                    } else {
+                        LOGGER.warn("No Pokemon found with nickname: '{}' for trainer ID: {}", nickname, trainer.getDbId());
+                        return null; // Return null if no Pokémon is found
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving Pokemon by nickname: {}", e.getMessage(), e);
+            return null; // Return null to indicate an error occurred
+        }
+    }
 }
 

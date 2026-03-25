@@ -1,6 +1,10 @@
 package pokemonGame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MoveSlot {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoveSlot.class);
     private final Move move; // Immutable reference to the move assigned to this slot
     private int currentPP; // Mutable current PP for the move
 
@@ -9,11 +13,13 @@ public class MoveSlot {
         this.currentPP = move.getMaxPp(); // Initialize current PP to max PP of the move
     }
 
-    public void use() {
+    public boolean use() {
         if (currentPP > 0) {
             currentPP--; // Decrease PP by 1 when the move is used
+            return true;
         } else {
-            throw new IllegalStateException("No PP left for this move!");
+            LOGGER.info("No PP left for move: " + move.getMoveName());
+            return false;
         }
     }
 

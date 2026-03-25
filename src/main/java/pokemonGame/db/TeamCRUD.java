@@ -182,4 +182,29 @@ public class TeamCRUD {
             return -1; // Return -1 to indicate an error occurred
         }
     }
+
+    public int getSlotIndexForPokemon(int dbId, int id) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT slot_index FROM trainer_teams WHERE trainer_id = ? AND instance_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, dbId);
+                pstmt.setInt(2, id);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        int slotIndex = rs.getInt("slot_index");
+                        LOGGER.info("Found Pokemon with instance_id {} in slot {} for trainer ID {}.", id, slotIndex, dbId);
+                        return slotIndex; // Return the slot index of the Pokémon
+                    } else {
+                        LOGGER.warn("No Pokemon with instance_id {} found for trainer ID {}.", id, dbId);
+                        return -1; // Return -1 to indicate no Pokémon found
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving slot index for Pokemon with instance_id {} and trainer ID {}: {}", id, dbId, e.getMessage(), e);
+            return -1; // Return -1 to indicate an error occurred
+        }
+    }
 }

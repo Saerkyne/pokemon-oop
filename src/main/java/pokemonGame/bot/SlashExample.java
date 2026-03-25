@@ -99,20 +99,20 @@ public class SlashExample extends ListenerAdapter{
                 Trainer currentTrainer = trainerCRUD.getTrainerByDiscordId(userId);
                 if (currentTrainer == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
-                    break;
+                    return;
                 } else {
 
                     if (teamCRUD.checkSlotIndex(currentTrainer.getDbId()) >= 6) {
                         if (teamCRUD.checkSlotIndex(currentTrainer.getDbId()) >= 6) {
                         event.reply("Your team is full! Cannot add more Pokémon.").setEphemeral(true).queue();
-                        break;
+                        return;
                         }
                     }
 
                     Pokemon newPokemon = PokemonFactory.createPokemonFromRegistry(species, nickname);
                     if (newPokemon == null) {
                         event.reply("Sorry, that Pokemon hasn't been discovered yet!").setEphemeral(true).queue();
-                        break;
+                        return;
                     } else {
                         newPokemon.setTrainer(currentTrainer);
                         newPokemon.setLevel(50); // Set the Pokémon's level to 50 for testing purposes
@@ -121,41 +121,44 @@ public class SlashExample extends ListenerAdapter{
                         int pokemonId = pokemonCRUD.createDBPokemon(newPokemon);
                         if (pokemonId == -1) {
                             event.reply("Sorry, there was an error adding that Pokémon to your team!").setEphemeral(true).queue();
-                            break;
+                            return;
                         } else {
                             int slotIndex = teamCRUD.addPokemonToDBTeam(currentTrainer.getDbId(), pokemonId);
                             if (slotIndex == -1) {
                                 event.reply("Sorry, there was an error adding that Pokémon to your team!").setEphemeral(true).queue();
-                                break;
+                                return;
                             } else if (slotIndex == -3) {
                                 event.reply("Your team is full! Cannot add more Pokémon.").setEphemeral(true).queue();
-                                break;
+                                return;
                             } else {
                                 event.reply("Successfully added " + newPokemon.getNickname() + " to your team in slot " + (slotIndex + 1) + "!").queue();
-                                break;
+                                return;
                             }
                         }
                     }
                 }
 
             case "releasepokemon":
-                LOGGER.info("Received slash command: '" + event.getName() + "' with slot index: '" + event.getOption("slot").getAsInt() + "' from user: " + user + " (ID: " + userId + ")");
-                int slotToRelease = event.getOption("slot").getAsInt();
-                slotToRelease = slotToRelease - 1; // Adjust for 0-based index in database
+                LOGGER.info("Received slash command: '" + event.getName() + "' with (nick)name: '" + event.getOption("pokemon").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
+                String releasedPokemon = event.getOption("pokemon").getAsString();
                 Trainer releasingTrainer = trainerCRUD.getTrainerByDiscordId(userId);
-                Pokemon pokemonInSlot = teamCRUD.getPokemonInSlotForTrainer(releasingTrainer, slotToRelease);
+                
+
                 if (releasingTrainer == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
-                    break;
+                    return;
                 } else {
+
+                    Pokemon pokemonToRelease = PokemonCRUD.getPokemonByNicknameAndTrainer(releasedPokemon, releasingTrainer);
+                    int slotToRelease = teamCRUD.getSlotIndexForPokemon(releasingTrainer.getDbId(), pokemonToRelease.getId());
                     boolean releaseSuccess = teamCRUD.removePokemonFromDBTeam(releasingTrainer.getDbId(), slotToRelease);
                     if (releaseSuccess) {
-                        event.reply("Successfully released " + pokemonInSlot.getNickname() + " from slot " + (slotToRelease + 1) + " of your team!").queue();
+                        event.reply("Successfully released " + pokemonToRelease.getNickname() + " from slot " + (slotToRelease + 1) + " of your team!").queue();
                         teamCRUD.reorderTeamAfterRelease(releasingTrainer.getDbId());
-                        break;
+                        return;
                     } else {
                         event.reply("Sorry, there was an error releasing that Pokémon from your team! Make sure you entered a valid slot index.").setEphemeral(true).queue();
-                        break;
+                        return;
                     }
                 }
                 

@@ -56,19 +56,7 @@ public class Battle {
 }
 ```
 
-### 12. `PokemonCRUD.mapResultSetToPokemon()` — EV Setters Are Additive, Causing Double-Counting
 
-**File:** `src/main/java/pokemonGame/db/PokemonCRUD.java` (lines 140-155)
-
-```java
-foundPokemon.setEvHp(evHp);
-foundPokemon.setEvAttack(evAttack);
-// ...
-```
-
-The EV "setters" on `Pokemon` are actually **additive** — they add to the current value and track the total. Since `createPokemon()` initializes all EVs to 0, this works on the first call. But if `mapResultSetToPokemon()` were called twice on the same object, or if a species constructor ever set non-zero EVs, the EVs would be wrong. The naming convention `setEvHp` implies assignment, but the implementation is `this.evHp += actual`.
-
-**Fix:** Either rename the methods to `addEvHp()` to reflect their behavior, or add true setters that assign the value directly. For database reconstruction, direct assignment setters are needed.
 
 ### 13. New Connection Per Query — No Connection Pooling
 
@@ -95,9 +83,53 @@ These are non-blocking suggestions for cleaner, more idiomatic Java.
 public ArrayList<MoveSlot> getMoveset() {
     return moveset;
 }
-``` m
+```
 
 Returning the internal `ArrayList` directly allows external code to bypass the 4-move limit by calling `getMoveset().add(...)` directly. Consider returning `Collections.unmodifiableList(moveset)` or using `List<MoveSlot>` as the return type.
+
+<!--
+EXPLANATION FOR FUTURE REFERENCE (Issue 18):
+
+The Problem — "Exposing Internal Mutable State"
+================================================
+In OOP, a class's fields are usually `private` so that only the class itself can control
+how its data changes. This is called *encapsulation*. The `Pokemon` class enforces a rule
+that a Pokémon can have at most 4 moves — the `addMove()` method checks this limit before
+adding anything.
+
+But `getMoveset()` returns a *direct reference* to the same `ArrayList` object that
+`Pokemon` stores internally. That means any code that calls `getMoveset()` gets full
+control over that list. For example:
+
+    pokemon.getMoveset().add(fifthMove);   // Bypasses the 4-move limit!
+    pokemon.getMoveset().clear();          // Wipes all moves with no validation!
+
+This defeats the purpose of making `moveset` private in the first place. It's like
+locking your front door but handing out copies of the key to anyone who asks.
+
+The Fix — Return an Unmodifiable View
+=====================================
+The simplest solution is to wrap the returned list so callers can read it but not change it:
+
+    public List<MoveSlot> getMoveset() {
+        return Collections.unmodifiableList(moveset);
+    }
+
+Now if someone tries `getMoveset().add(...)`, Java throws an
+`UnsupportedOperationException` at runtime — the list is read-only. The class keeps full
+control over modifications through its own methods like `addMove()`.
+
+Notice two changes:
+1. `Collections.unmodifiableList(moveset)` — wraps the list in a read-only view.
+2. Return type changed from `ArrayList<MoveSlot>` to `List<MoveSlot>` — this is a best
+   practice called "programming to the interface." Callers don't need to know it's an
+   ArrayList specifically; they just need to know it's a List. This gives you freedom to
+   change the internal implementation later without breaking any code that uses the getter.
+
+This is a common OOP pattern called a "defensive copy" (or in this case, a defensive
+*view*). Any time a getter returns a collection or mutable object, ask yourself: "Should
+the caller be able to modify my internal state through this reference?" If not, protect it.
+-->
 
 ### 19. `Attack.calculateDamage()` — Status Moves Would Cause Division by Zero
 

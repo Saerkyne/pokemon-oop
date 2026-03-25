@@ -18,6 +18,7 @@ public class BotRunner {
         JDA api = JDABuilder.createDefault(token)
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(new SlashExample())
+                .addEventListeners(new AutoCompleteBot())
                 .build();
 
             // Register the say slash command with Discord
@@ -26,33 +27,41 @@ public class BotRunner {
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
                     .addOption(OptionType.STRING, "content", "What the bot should say", true, true))
+                
                 .addCommands(Commands.slash("ping", "Pings the bot")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL))
+                
                 .addCommands(Commands.slash("battlestate", "Shows the current state of a battle")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL))
+                
                 .addCommands(Commands.slash("createtrainer", "Creates a new trainer")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
                     .addOption(OptionType.STRING, "name", "The name of the trainer", true, true))
+                
                 .addCommands(Commands.slash("checkteam", "Checks the trainer's current team")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL))
+            
                 .addCommands(Commands.slash("addpokemon", "Adds a Pokémon to your team")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.STRING, "pokemon", "The name of the Pokémon to add (Gen 1 only currently)", true, true)
-                    .addOption(OptionType.STRING, "nickname", "The nickname for the Pokémon (optional)", false, true))
+                    .addOption(OptionType.STRING, "species", "The name of the Pokémon to add (Gen 1 only currently)", true, true)
+                    .addOption(OptionType.STRING, "nickname", "The nickname for the Pokémon (optional)", false))
+        
                 .addCommands(Commands.slash("releasepokemon", "Releases a Pokémon from your team")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.INTEGER, "slot", "The slot number of the Pokémon to release (1-6)", true, true))
+                    .addOption(OptionType.STRING, "pokemon", "The nickname (or species, if not nicknamed) of the Pokémon to release", true, true))
+    
                 .addCommands(Commands.slash("cleardatabase", "Clears all data from the database (trainers, teams, and Pokémon)")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
                     .setDefaultPermissions(DefaultMemberPermissions.DISABLED)
-                    .addOption(OptionType.STRING, "confirm", "Type 'CONFIRM' to clear the database", true, true))
+                    .addOption(OptionType.STRING, "confirm", "Type 'CONFIRM' to clear the database", true))
+                    
                 .queue();
 
     }

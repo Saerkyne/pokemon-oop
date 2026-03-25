@@ -51,6 +51,10 @@ public class Attack {
     public int calculateDamage(Pokemon attacker, Pokemon defender, Move move) {
         // Placeholder for damage calculation logic
         int damage = 0;
+        if ("Status".equals(move.getMoveCategory())) {
+            LOGGER.info("Move '{}' is a status move and does not deal damage.", move.getMoveName());
+            return damage; // Status moves do not deal damage
+        }
         boolean stab = false; // Placeholder for Same Type Attack Bonus calculation
 
         int randomFactor = randomInt(217, 255); // Random factor between 217/255 and 255/255

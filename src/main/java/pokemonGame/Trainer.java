@@ -2,6 +2,8 @@ package pokemonGame;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Collections;
+import java.util.List;
 
 // Creates a Trainer object in memory based on information entered from a user
 // or data pulled from the database.
@@ -9,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class Trainer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Trainer.class);
     private String name;
-    private ArrayList<Pokemon> team;
+    private List<Pokemon> team;
     private int dbId; // this is unused until the database creates it; we have set/get for it
     private long discordId; // this is unused until we add the discord bot; we have set/get for it
 
@@ -38,9 +40,9 @@ public class Trainer {
         return name;
     }
 
-    public ArrayList<Pokemon> getTeam() {
+    public List<Pokemon> getTeam() {
         
-        return team;
+        return Collections.unmodifiableList(team);
     }
 
     public void setName(String name) {

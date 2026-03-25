@@ -45,8 +45,20 @@ public class PokemonFactoryExample {
     // WHY THIS IS BETTER THAN A SWITCH:
     //   Adding a new species only requires one line: REGISTRY.put("newspecies", NewSpecies::new);
     //   The factory method itself (createWithRegistry) never changes.
-    //   Species could even register themselves from their own static blocks,
-    //   meaning the factory class wouldn't need to know about them at all.
+    //
+    // SELF-REGISTRATION CAVEAT:
+    //   In theory, each species could register itself from its own static block:
+    //       static { REGISTRY.put("abra", Abra::new); }
+    //   However, Java loads classes LAZILY — a class's static block only runs
+    //   when that class is first referenced by running code. In a plain Java app
+    //   (no framework scanning), if nothing mentions Abra before the factory is
+    //   called, Abra.class is never loaded and its static block never runs.
+    //   The registry would be empty.
+    //
+    //   Self-registration works in frameworks like Spring that scan and load
+    //   classes automatically at startup. In plain Java, you either need a
+    //   central list (the static block below), classpath scanning (ClassGraph),
+    //   or ServiceLoader (Approach 2) to discover species.
 
     /**
      * The registry: a map from lowercase species name to a constructor function.

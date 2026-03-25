@@ -394,25 +394,27 @@ class PokemonTest {
      *          additive behavior is intentional (accumulate) vs a setter (replace).
      */
     @Test
-    void evSetterAddsToCurrentValue() {
+    void evSetterOnlySetsCurrentValue() {
         abra.setEvHp(100);
         abra.setEvHp(50);
-        // Additive: should now be 150
-        assertEquals(150, abra.getEvTotal());
+        // NOT Additive: should now be 50
+        assertEquals(50, abra.getEvHp());
+        assertEquals(50, abra.getEvTotal());
     }
 
     /*
      * CHECKS:  A single stat's EVs cannot exceed 252; attempts to add beyond that cap
      *          are silently ignored.
-     * HOW:     Calls setEvHp(252) then setEvHp(10), and asserts getEvTotal() equals 252
+     * HOW:     Calls addEvHp(252) then addEvHp(10), and asserts getEvTotal() equals 252
      *          (not 262).
      * IMPROVE: Also assert getEvHp() == 252 to confirm the cap is applied per-stat.
      *          Verify that the rejected 10 EVs were not silently redirected to another stat.
      */
     @Test
     void evCapsAtPerStatMax252() {
-        abra.setEvHp(252);
-        abra.setEvHp(10); // Should not exceed 252
+        abra.addEvHp(252);
+        abra.addEvHp(10); // Should not exceed 252
+        assertEquals(252, abra.getEvHp());
         assertEquals(252, abra.getEvTotal());
     }
 

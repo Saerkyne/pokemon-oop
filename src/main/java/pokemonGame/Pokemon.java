@@ -448,29 +448,89 @@ public class Pokemon {
         this.ivSpeed = ivSpeed;
     }
 
+    // EV setters - do not add, these overwrite values directly.  
+    // The addEv methods below handle the logic of ensuring that EVs
+    //  do not exceed the per-stat or total limits, so these setters 
+    // should be used when you want to directly set a specific EV value 
+    // (e.g. when loading from the database) and you are sure that the 
+    // value being set is valid. These will check evTotal to ensure rule compliance,
+    // but they will not modify existing EVs.
     public void setEvHp(int evHp) {
-        this.evHp = evHp;
+        // Subtract the old HP EV from the total, since we're replacing it
+        int totalWithoutThis = this.evTotal - this.evHp;
+        int roomTotal = 510 - totalWithoutThis;
+
+        // Cap the new value at the per-stat max (252) and remaining total room
+        int capped = Math.max(0, Math.min(evHp, Math.min(252, roomTotal)));
+
+        // Apply the new value and recalculate the total
+        this.evHp = capped;
+        this.evTotal = totalWithoutThis + capped;
     }
 
     public void setEvAttack(int evAttack) {
-        this.evAttack = evAttack;
+        // Subtract the old Attack EV from the total, since we're replacing it
+        int totalWithoutThis = this.evTotal - this.evAttack;
+        int roomTotal = 510 - totalWithoutThis;
 
+        // Cap the new value at the per-stat max (252) and remaining total room
+        int capped = Math.max(0, Math.min(evAttack, Math.min(252, roomTotal)));
+
+        // Apply the new value and recalculate the total
+        this.evAttack = capped;
+        this.evTotal = totalWithoutThis + capped;
     }
 
     public void setEvDefense(int evDefense) {
-        this.evDefense = evDefense;
+        // Subtract the old Defense EV from the total, since we're replacing it
+        int totalWithoutThis = this.evTotal - this.evDefense;
+        int roomTotal = 510 - totalWithoutThis;
+
+        // Cap the new value at the per-stat max (252) and remaining total room
+        int capped = Math.max(0, Math.min(evDefense, Math.min(252, roomTotal)));
+
+        // Apply the new value and recalculate the total
+        this.evDefense = capped;
+        this.evTotal = totalWithoutThis + capped;
     }
 
     public void setEvSpecialAttack(int evSpecialAttack) {
-        this.evSpecialAttack = evSpecialAttack;
+        // Subtract the old Special Attack EV from the total, since we're replacing it
+        int totalWithoutThis = this.evTotal - this.evSpecialAttack;
+        int roomTotal = 510 - totalWithoutThis;
+
+        // Cap the new value at the per-stat max (252) and remaining total room
+        int capped = Math.max(0, Math.min(evSpecialAttack, Math.min(252, roomTotal)));
+
+        // Apply the new value and recalculate the total
+        this.evSpecialAttack = capped;
+        this.evTotal = totalWithoutThis + capped;
     }
 
     public void setEvSpecialDefense(int evSpecialDefense) {
-        this.evSpecialDefense = evSpecialDefense;
+        // Subtract the old Special Defense EV from the total, since we're replacing it
+        int totalWithoutThis = this.evTotal - this.evSpecialDefense;
+        int roomTotal = 510 - totalWithoutThis;
+
+        // Cap the new value at the per-stat max (252) and remaining total room
+        int capped = Math.max(0, Math.min(evSpecialDefense, Math.min(252, roomTotal)));
+
+        // Apply the new value and recalculate the total
+        this.evSpecialDefense = capped;
+        this.evTotal = totalWithoutThis + capped;
     }
 
     public void setEvSpeed(int evSpeed) {
-        this.evSpeed = evSpeed;
+        // Subtract the old Speed EV from the total, since we're replacing it
+        int totalWithoutThis = this.evTotal - this.evSpeed;
+        int roomTotal = 510 - totalWithoutThis;
+
+        // Cap the new value at the per-stat max (252) and remaining total room
+        int capped = Math.max(0, Math.min(evSpeed, Math.min(252, roomTotal)));
+
+        // Apply the new value and recalculate the total
+        this.evSpeed = capped;
+        this.evTotal = totalWithoutThis + capped;
     }
 
     public void setEvYield(int[] evYield) {
@@ -864,5 +924,7 @@ public class Pokemon {
         createdMon.setTrainer(trainer); // Set the trainer for the created Pokémon
         return createdMon;
     }
+
+    
       
 }

@@ -1,10 +1,13 @@
 package pokemonGame.mons;
 import pokemonGame.Pokemon;
+import pokemonGame.SpeciesAliases;
 import pokemonGame.LearnsetEntry;
 import pokemonGame.moves.*;
 import java.util.List;
 
 public class MrMime extends Pokemon {
+
+    @SpeciesAliases({"mrmime", "mr. mime", "mr mime"}) // Handle common variations in naming
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {

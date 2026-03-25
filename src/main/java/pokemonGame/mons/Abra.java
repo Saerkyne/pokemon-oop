@@ -38,6 +38,7 @@ public class Abra extends Pokemon {
         LEARNSET.add(new LearnsetEntry(new Substitute(), LearnsetEntry.Source.TM, 50));
     }
 
+
     public Abra(String nickname) {
         super(
             "Abra",

@@ -13,11 +13,46 @@
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>2.0.7</slf4j.version>
-        <logback.version>1.5.6</logback.version>
+        <slf4j.version>2.0.17</slf4j.version>
+        <logback.version>1.5.16</logback.version>
 
              
     </properties>
+
+    <!-- Pin transitive dependency versions so the dependencyConvergence enforcer rule passes.
+         Without this, different libraries pull in different versions of the same artifact
+         (e.g., JDA wants slf4j 2.0.17 but HikariCP wants 1.7.36), and Maven cannot resolve
+         the conflict automatically. <dependencyManagement> tells Maven: "whenever ANY
+         dependency (direct or transitive) asks for this artifact, use THIS version." -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna</artifactId>
+                <version>5.13.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>error_prone_annotations</artifactId>
+                <version>2.22.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>2.2.21</version>
+            </dependency>
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-qual</artifactId>
+                <version>3.32.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -40,15 +75,6 @@
             <version>3.3.3</version>
         </dependency>
 
-        <!-- SUGGESTION (Code-Review.md §Build Configuration, Issue #1 — Missing slf4j-api version):
-             This dependency has no <version> tag — it silently inherits 2.0.7 from the
-             <dependencyManagement> section at the bottom of this file. That works, but it's
-             fragile: if someone removes or reorganizes <dependencyManagement>, this dependency
-             breaks with a confusing "no version" error. For a small project like this, the
-             simplest fix is to add an explicit <version> here (or use a ${slf4j.version}
-             property as suggested above). The <dependencyManagement> section can then be
-             removed entirely since no other module inherits from this POM.
-        -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

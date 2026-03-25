@@ -54,9 +54,14 @@ public class SlashExample extends ListenerAdapter{
                 LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
                 
                 
-                Trainer trainer = trainerCRUD.getTrainerByDiscordId(userId);
+                if (trainerCRUD.getTrainerByDiscordId(userId) == null) {
+                    event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
+                    return;
+                }
 
+                Trainer trainer = trainerCRUD.getTrainerByDiscordId(userId);
                 List<Pokemon> teamInfo = teamCRUD.getDBTeamForTrainer(trainer);
+                
 
                 if (teamInfo.isEmpty()) {
                     event.reply("Your team is currently empty!").queue();
@@ -82,8 +87,8 @@ public class SlashExample extends ListenerAdapter{
 
             case "addpokemon":
                 // Needs to create a pokemon and add it to the trainers team in the database, then reply with success or failure message
-                LOGGER.info("Received slash command: '" + event.getName() + "' with Pokemon name: '" + event.getOption("pokemon").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
-                String species = event.getOption("pokemon").getAsString();
+                LOGGER.info("Received slash command: '" + event.getName() + "' with Pokemon name: '" + event.getOption("species").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
+                String species = event.getOption("species").getAsString();
                 String nickname = event.getOption("nickname") != null ? event.getOption("nickname").getAsString() : null;
                 
                 

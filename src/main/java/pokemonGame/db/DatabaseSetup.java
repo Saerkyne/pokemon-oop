@@ -36,11 +36,9 @@ public class DatabaseSetup {
         "trainers"
     );
 
-    private static final String URL = "jdbc:mariadb://192.168.1.212:3306/pokemon_db";
-    private static final String USER = "pokemon_db_user";
-    // This is temporary for testing purposes, in production this should be stored 
-    // securely and not hardcoded
-    private static final String PASSWORD = "fdr3invoices3MUY3wyatt";
+    private static final String URL = System.getenv("DB_URL");
+    private static final String USER = System.getenv("DB_USER");
+    private static final String PASSWORD = System.getenv("DB_USER_PASSWORD");
 
     public static Connection getConnection() throws SQLException {
         logger.info("Attempting to connect to database at {}", URL);

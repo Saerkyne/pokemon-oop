@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 
+// mvn compile exec:java -Dexec.mainClass="pokemonGame.bot.BotRunner"
+
 
 public class BotRunner {
     public static void main( String[] args ) {

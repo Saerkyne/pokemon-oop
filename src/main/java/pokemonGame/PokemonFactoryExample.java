@@ -223,6 +223,9 @@ public class PokemonFactoryExample {
         }
 
         Pokemon unknown = createWithRegistry("missingno", "Glitch");
+        if (unknown != null) {
+            System.out.println("Created: " + unknown.getNickname() + " (" + unknown.getSpecies() + ")");
+        }
         // Prints "Unknown species: missingno"
 
         // --- Approach 2: ServiceLoader ---

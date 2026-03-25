@@ -4,6 +4,13 @@
 
 This is a **learning project** for Java and Object-Oriented Programming concepts. It is a modified, text-based re-implementation of Pokémon Red, delivered as a **Discord bot** using **JDA (Java Discord API)**. Only **Gen 1 Pokémon and moves** (original 151 + their moves) are in scope, but several mechanics are modernized: the Special stat is split into Sp.Atk/Sp.Def, IVs and EVs use the modern 0-31 / 0-252 system, natures exist, and the critical-hit formula is custom (speed-differential-based, see `Attack.calculateCriticalHit`). When suggesting changes, **explain the reasoning** in an informative but not condescending way — this is an educational codebase.
 
+## Requested Conventions
+- Follow Java best practices for naming, encapsulation, and code organization.
+- Maintain the layered architecture (domain/model, persistence/DAO, controller/bot) to keep concerns separated.
+- Use JDA's event system for all user interactions — no direct console input.
+- When making suggestions, explain the rationale behind them, especially if they involve design patterns or architectural principles. The goal is to learn and understand, not just to get a working implementation. 
+- **Make suggestions inside comments in the code** rather than just describing them in messages. This way, the reasoning is directly tied to the relevant code sections for better learning.
+
 ## Technology Stack
 
 - **Java 21** — core language. The project uses **Maven** as its build tool (`pom.xml` at the project root), following the standard Maven directory layout (`src/main/java/`, `src/test/java/`, `src/main/resources/`). Maven manages all dependencies, compilation, testing, and packaging.

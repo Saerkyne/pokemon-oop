@@ -10,11 +10,12 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SlashExample extends ListenerAdapter{
 
-    private static final Logger LOGGER = Logger.getLogger(SlashExample.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SlashExample.class);
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -31,22 +32,22 @@ public class SlashExample extends ListenerAdapter{
 
         switch (event.getName()) {
             case "say":
-                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' with content: '" + event.getOption("content").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command: '" + event.getName() + "' with content: '" + event.getOption("content").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
                 say(event, event.getOption("content").getAsString());
                 break;
 
             case "ping":
-                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
                 event.reply("Pong!").queue();
                 break;
             
             case "battlestate":
-                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
                 event.reply("The battle is currently in progress!").queue();
                 break;
 
             case "createtrainer":
-                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
                 int createAttempt = App.createTrainer(event.getOption("name").getAsString(), userId, user);
 
                 if (createAttempt == -1) {
@@ -58,7 +59,7 @@ public class SlashExample extends ListenerAdapter{
                 }
             
             case "checkteam":
-                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
                 
                 
                 Trainer trainer = trainerCRUD.getTrainerByDiscordId(userId);
@@ -89,7 +90,7 @@ public class SlashExample extends ListenerAdapter{
 
             case "addpokemon":
                 // Needs to create a pokemon and add it to the trainers team in the database, then reply with success or failure message
-                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' with Pokemon name: '" + event.getOption("pokemon").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command: '" + event.getName() + "' with Pokemon name: '" + event.getOption("pokemon").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
                 String species = event.getOption("pokemon").getAsString();
                 String nickname = event.getOption("nickname") != null ? event.getOption("nickname").getAsString() : null;
                 
@@ -100,9 +101,11 @@ public class SlashExample extends ListenerAdapter{
                     break;
                 } else {
 
-                    if (teamCRUD.checkSlotIndex(currentTrainer.getDBId()) >= 6) {
+                    if (teamCRUD.checkSlotIndex(currentTrainer.getDbId()) >= 6) {
+                        if (teamCRUD.checkSlotIndex(currentTrainer.getDbId()) >= 6) {
                         event.reply("Your team is full! Cannot add more Pokémon.").setEphemeral(true).queue();
                         break;
+                        }
                     }
 
                     Pokemon newPokemon = Pokemon.createPokemon(species, nickname, currentTrainer);
@@ -119,7 +122,7 @@ public class SlashExample extends ListenerAdapter{
                             event.reply("Sorry, there was an error adding that Pokémon to your team!").setEphemeral(true).queue();
                             break;
                         } else {
-                            int slotIndex = teamCRUD.addPokemonToDBTeam(currentTrainer.getDBId(), pokemonId);
+                            int slotIndex = teamCRUD.addPokemonToDBTeam(currentTrainer.getDbId(), pokemonId);
                             if (slotIndex == -1) {
                                 event.reply("Sorry, there was an error adding that Pokémon to your team!").setEphemeral(true).queue();
                                 break;
@@ -135,7 +138,7 @@ public class SlashExample extends ListenerAdapter{
                 }
 
             case "releasepokemon":
-                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' with slot index: '" + event.getOption("slot").getAsInt() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command: '" + event.getName() + "' with slot index: '" + event.getOption("slot").getAsInt() + "' from user: " + user + " (ID: " + userId + ")");
                 int slotToRelease = event.getOption("slot").getAsInt();
                 slotToRelease = slotToRelease - 1; // Adjust for 0-based index in database
                 Trainer releasingTrainer = trainerCRUD.getTrainerByDiscordId(userId);
@@ -144,10 +147,10 @@ public class SlashExample extends ListenerAdapter{
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     break;
                 } else {
-                    boolean releaseSuccess = teamCRUD.removePokemonFromDBTeam(releasingTrainer.getDBId(), slotToRelease);
+                    boolean releaseSuccess = teamCRUD.removePokemonFromDBTeam(releasingTrainer.getDbId(), slotToRelease);
                     if (releaseSuccess) {
                         event.reply("Successfully released " + pokemonInSlot.getNickname() + " from slot " + (slotToRelease + 1) + " of your team!").queue();
-                        teamCRUD.reorderTeamAfterRelease(releasingTrainer.getDBId());
+                        teamCRUD.reorderTeamAfterRelease(releasingTrainer.getDbId());
                         break;
                     } else {
                         event.reply("Sorry, there was an error releasing that Pokémon from your team! Make sure you entered a valid slot index.").setEphemeral(true).queue();
@@ -156,7 +159,7 @@ public class SlashExample extends ListenerAdapter{
                 }
                 
             case "cleardatabase":
-                LOGGER.log(java.util.logging.Level.INFO, "Received slash command: '" + event.getName() + "' with confirmation: '" + event.getOption("confirm").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command: '" + event.getName() + "' with confirmation: '" + event.getOption("confirm").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
                 String confirmation = event.getOption("confirm").getAsString();
                 if (confirmation.equalsIgnoreCase("CONFIRM")) {
                     if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {

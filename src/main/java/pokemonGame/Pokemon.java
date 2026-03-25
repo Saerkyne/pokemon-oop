@@ -4,16 +4,20 @@ import java.util.List;
 import java.util.Random;
 import pokemonGame.mons.*;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Pokemon {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Pokemon.class);
 
     // Initialize attributes for all Pokemon
     private Trainer trainer; // This is the trainer that this Pokemon belongs to; it is set when the Pokemon is added to a trainer's team
     private int id; // This can be used to link the Pokémon to the database record
     private String species;
     private String nickname;
-    private int DexIndex;
+    private int dexIndex;
     private String typePrimary;
     private String typeSecondary;
     private int level;
@@ -23,7 +27,7 @@ public class Pokemon {
     private int specialAttackBase; 
     private int specialDefenseBase;
     private int speedBase;
-    private int MaxHP;
+    private int maxHP;
     private int currentHP;
     private int currentAttack;
     private int currentDefense;
@@ -62,7 +66,7 @@ public class Pokemon {
     protected Pokemon(String species, int index, String typePrimary, String typeSecondary) {
         this.species = species;
         this.nickname = species; // Default name is the same as species
-        this.DexIndex = index;
+        this.dexIndex = index;
         this.typePrimary = typePrimary;
         this.typeSecondary = typeSecondary;
         this.level = 5;
@@ -86,7 +90,7 @@ public class Pokemon {
     protected Pokemon(String species, int index, String typePrimary, String typeSecondary, int level, int hp, int attack, int defense, int specialAttack, int specialDefense, int speed) {
         this.species = species;
         this.nickname = species; // Default name is the same as species
-        this.DexIndex = index;
+        this.dexIndex = index;
         this.typePrimary = typePrimary;
         this.typeSecondary = typeSecondary;
         this.level = level;
@@ -133,12 +137,12 @@ public class Pokemon {
         return species;
     }
 
-    public Boolean getIsFainted() {
+    public boolean getIsFainted() {
         return isFainted;
     }
 
     public int getDexIndex() {
-        return DexIndex;
+        return dexIndex;
     }
 
     public int getId() {
@@ -190,7 +194,7 @@ public class Pokemon {
     }
 
     public int getMaxHP() {
-        return MaxHP;
+        return maxHP;
     }
 
     public int getCurrentHP() {
@@ -273,8 +277,8 @@ public class Pokemon {
         return trainer.getDiscordId();
     }
 
-    public int getTrainerDBId() {
-        return trainer.getDBId();
+    public int getTrainerDbId() {
+        return trainer.getDbId();
     }
 
     public String[] getEvYield() {
@@ -388,8 +392,8 @@ public class Pokemon {
         calculateCurrentStats();
     }
 
-    public void setMaxHP(int MaxHP) {
-        this.MaxHP = MaxHP;
+    public void setMaxHP(int maxHP) {
+        this.maxHP = maxHP;
     }
 
     public void setCurrentHP(int currentHP) {
@@ -444,7 +448,45 @@ public class Pokemon {
         this.ivSpeed = ivSpeed;
     }
 
-    public void setEvHp(int addedEvHp) {
+    public void setEvHp(int evHp) {
+        this.evHp = evHp;
+    }
+
+    public void setEvAttack(int evAttack) {
+        this.evAttack = evAttack;
+
+    }
+
+    public void setEvDefense(int evDefense) {
+        this.evDefense = evDefense;
+    }
+
+    public void setEvSpecialAttack(int evSpecialAttack) {
+        this.evSpecialAttack = evSpecialAttack;
+    }
+
+    public void setEvSpecialDefense(int evSpecialDefense) {
+        this.evSpecialDefense = evSpecialDefense;
+    }
+
+    public void setEvSpeed(int evSpeed) {
+        this.evSpeed = evSpeed;
+    }
+
+    public void setEvYield(int[] evYield) {
+        this.evYield = evYield;
+    }
+
+    // ==================
+    // ===   ADDERS   ===
+    // ==================
+
+    public void addExp(int exp) {
+        this.currentExp += exp;
+        // Placeholder for level up logic when currentExp exceeds the threshold for the next level
+    }
+
+    public void addEvHp(int addedEvHp) {
         if (evTotal >= 510) return;
         int roomTotal = 510 - evTotal;
         int roomStat = 252 - evHp;
@@ -452,9 +494,10 @@ public class Pokemon {
         if (actual <= 0) return;
         this.evHp += actual;
         this.evTotal += actual;
+        calculateCurrentStats();
     }
 
-    public void setEvAttack(int addedEvAttack) {
+    public void addEvAttack(int addedEvAttack) {
         if (evTotal >= 510) return;
         int roomTotal = 510 - evTotal;
         int roomStat = 252 - evAttack;
@@ -462,9 +505,10 @@ public class Pokemon {
         if (actual <= 0) return;
         this.evAttack += actual;
         this.evTotal += actual;
+        calculateCurrentStats();
     }
 
-    public void setEvDefense(int addedEvDefense) {
+    public void addEvDefense(int addedEvDefense) {
         if (evTotal >= 510) return;
         int roomTotal = 510 - evTotal;
         int roomStat = 252 - evDefense;
@@ -472,9 +516,10 @@ public class Pokemon {
         if (actual <= 0) return;
         this.evDefense += actual;
         this.evTotal += actual;
+        calculateCurrentStats();
     }
 
-    public void setEvSpecialAttack(int addedEvSpecialAttack) {
+    public void addEvSpecialAttack(int addedEvSpecialAttack) {
         if (evTotal >= 510) return;
         int roomTotal = 510 - evTotal;
         int roomStat = 252 - evSpecialAttack;
@@ -482,9 +527,10 @@ public class Pokemon {
         if (actual <= 0) return;
         this.evSpecialAttack += actual;
         this.evTotal += actual;
+        calculateCurrentStats();
     }
 
-    public void setEvSpecialDefense(int addedEvSpecialDefense) {
+    public void addEvSpecialDefense(int addedEvSpecialDefense) {
         if (evTotal >= 510) return;
         int roomTotal = 510 - evTotal;
         int roomStat = 252 - evSpecialDefense;
@@ -492,9 +538,10 @@ public class Pokemon {
         if (actual <= 0) return;
         this.evSpecialDefense += actual;
         this.evTotal += actual;
+        calculateCurrentStats();
     }
 
-    public void setEvSpeed(int addedEvSpeed) {
+    public void addEvSpeed(int addedEvSpeed) {
         if (evTotal >= 510) return;
         int roomTotal = 510 - evTotal;
         int roomStat = 252 - evSpeed;
@@ -502,10 +549,7 @@ public class Pokemon {
         if (actual <= 0) return;
         this.evSpeed += actual;
         this.evTotal += actual;
-    }
-
-    public void setEvYield(int[] evYield) {
-        this.evYield = evYield;
+        calculateCurrentStats();
     }
 
 
@@ -598,14 +642,27 @@ public class Pokemon {
 
     // Wrapper method for stat calculation
     public void calculateCurrentStats() {
-        this.MaxHP = calcMaxHP(getHpBaseStat(), getLevel(), getIvHp(), getEvHp());
+        this.maxHP = calcMaxHP(getHpBaseStat(), getLevel(), getIvHp(), getEvHp());
         this.currentAttack = calcCurrentStat(getAttackBaseStat(), getLevel(), getIvAttack(), getEvAttack(), getNature().modifierFor(Stat.ATTACK));
         this.currentDefense = calcCurrentStat(getDefenseBaseStat(), getLevel(), getIvDefense(), getEvDefense(), getNature().modifierFor(Stat.DEFENSE));
         this.currentSpecialAttack = calcCurrentStat(getSpecialAttackBaseStat(), getLevel(), getIvSpecialAttack(), getEvSpecialAttack(), getNature().modifierFor(Stat.SPECIAL_ATTACK));
         this.currentSpecialDefense = calcCurrentStat(getSpecialDefenseBaseStat(), getLevel(), getIvSpecialDefense(), getEvSpecialDefense(), getNature().modifierFor(Stat.SPECIAL_DEFENSE));
         this.currentSpeed = calcCurrentStat(getSpeedBaseStat(), getLevel(), getIvSpeed(), getEvSpeed(), getNature().modifierFor(Stat.SPEED));
-        this.currentHP = this.MaxHP; // Heal to full HP whenever stats are recalculated (e.g. on level up)
+        this.currentHP = this.maxHP; // Heal to full HP whenever stats are recalculated (e.g. on level up)
         // I know that this may cause issues, review the best place for this later on. 
+    }
+
+    public boolean checkEvTotals() {
+        int total = evHp + evAttack + evDefense + evSpecialAttack + evSpecialDefense + evSpeed;
+        if (total > 510) {
+            LOGGER.warn("Total EVs exceed the maximum of 510. Current total: " + total);
+            return false;
+        }
+        if (evHp > 252 || evAttack > 252 || evDefense > 252 || evSpecialAttack > 252 || evSpecialDefense > 252 || evSpeed > 252) {
+            LOGGER.warn("One or more EV stats exceed the maximum of 252. Current EVs - HP: " + evHp + ", Attack: " + evAttack + ", Defense: " + evDefense + ", Special Attack: " + evSpecialAttack + ", Special Defense: " + evSpecialDefense + ", Speed: " + evSpeed);
+            return false;
+        }
+        return true;
     }
 
 
@@ -639,7 +696,7 @@ public class Pokemon {
     public static Pokemon createPokemon(String species, String name, Trainer trainer) {
         Pokemon createdMon = null;
         if (species == null) {
-            System.out.println("No species selected. Please choose a valid Pokémon species.");
+            LOGGER.error("No species selected. Please choose a valid Pokémon species.");
             return null;
         }
 
@@ -800,7 +857,7 @@ public class Pokemon {
             case "mewtwo": createdMon = new Mewtwo(name); break;
             case "mew": createdMon = new Mew(name); break;
             default:
-                System.out.println("Species not recognized. Please choose a valid Pokémon species.");
+                LOGGER.warn("Species not recognized. Please choose a valid Pokémon species.");
                 return null;
         }
 

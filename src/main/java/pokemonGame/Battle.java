@@ -1,6 +1,10 @@
 package pokemonGame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Battle {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Battle.class);
+
     public static void main(String[] args) {
         
     }
@@ -20,12 +24,12 @@ public class Battle {
         defender.setCurrentHP(defender.getCurrentHP() - damage);
 
         // Print out the result of the attack
-        System.out.println(attacker.getNickname() + " used " + move.getMoveName() + "!");
+        LOGGER.info("{} used {}!", attacker.getNickname(), move.getMoveName());
 
         if (!checkFainted(defender)) {
-            System.out.println(defender.getNickname() + " took " + damage + " damage and has " + defender.getCurrentHP() + " HP left.");
+            LOGGER.info("{} took {} damage and has {} HP left.", defender.getNickname(), damage, defender.getCurrentHP());
         } else {
-            System.out.println(defender.getNickname() + " took " + damage + " damage and has fainted!");
+            LOGGER.info("{} took {} damage and has fainted!", defender.getNickname(), damage);
 
         }
 
@@ -40,16 +44,16 @@ public class Battle {
         // Additional battle logic would go here, such as handling turns, 
         // checking for fainted Pokemon, etc.
 
-        System.out.println("Battle has started between " + player.getName() + " and " + opponent.getName() + "!");
-        System.out.println(speedCheck.getName() + " will go first!");
+        LOGGER.info("Battle has started between {} and {}!", player.getName(), opponent.getName());
+        LOGGER.info("{} will go first!", speedCheck.getName());
 
         for (Pokemon pokemon : player.getTeam()) {
             Boolean checkFainted = checkFainted(pokemon);
         
             if (checkFainted) {
-                System.out.println(pokemon.getNickname() + " has fainted and cannot battle!");
+                LOGGER.info("{} has fainted and cannot battle!", pokemon.getNickname());
             } else {
-                System.out.println(pokemon.getNickname() + " is ready to battle!");
+                LOGGER.info("{} is ready to battle!", pokemon.getNickname());
             }          
         }
         

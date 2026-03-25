@@ -18,8 +18,12 @@ import pokemonGame.Pokemon;
 import pokemonGame.Natures;
 import pokemonGame.Trainer;
 import java.sql.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PokemonCRUD {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PokemonCRUD.class);
 
     public int createDBPokemon(Pokemon pokemon) {
         try (Connection conn = DatabaseSetup.getConnection()) {
@@ -29,7 +33,7 @@ public class PokemonCRUD {
                     + "current_hp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                pstmt.setInt(1, pokemon.getTrainerDBId());
+                pstmt.setInt(1, pokemon.getTrainerDbId());
                 pstmt.setString(2, pokemon.getSpecies());
                 pstmt.setString(3, pokemon.getNickname());
                 pstmt.setInt(4, pokemon.getLevel());
@@ -43,20 +47,18 @@ public class PokemonCRUD {
                 pstmt.setInt(12, pokemon.getCurrentHP());
 
                 pstmt.executeUpdate();
-                System.out.println("Pokemon '" + pokemon.getNickname() + "' (" + pokemon.getSpecies()
-                 + ") created successfully for trainer ID " + pokemon.getTrainerDBId() + ".");
+                LOGGER.info("Pokemon '{}' ({}) created successfully for trainer ID {}.", pokemon.getNickname(), pokemon.getSpecies(), pokemon.getTrainerDbId());
 
                 try (ResultSet pkmnSet = pstmt.getGeneratedKeys()) {
                     if (pkmnSet.next()) {
                         int pokemonId = pkmnSet.getInt(1);
-                        System.out.println("New Pokemon ID: " + pokemonId);
+                        LOGGER.info("New Pokemon ID: {}", pokemonId);
                         return pokemonId; // Return the generated Pokémon ID
                     }
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error creating Pokemon: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.error("Error creating Pokemon: {}", e.getMessage(), e);
             return -1; // Return -1 to indicate an error occurred
         }
         return -1; // Return -1 if Pokemon creation failed
@@ -65,25 +67,23 @@ public class PokemonCRUD {
     public Pokemon getSpecificDBPokemonForTrainer(Trainer trainer, int pokemonId) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND instance_id = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                pstmt.setInt(1, trainer.getDBId());
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainer.getDbId());
                 pstmt.setInt(2, pokemonId);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     
                     if (rs.next()) {
                         Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
-                        System.out.println("Pokemon '" + foundPokemon.getNickname() + "' (" + foundPokemon.getSpecies()
-                         + ") retrieved successfully for trainer ID " + trainer.getDBId() + ".");
+                        LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies(), trainer.getDbId());
                         return foundPokemon; // Return the retrieved Pokémon
                     } else {
-                        System.out.println("No Pokemon found with ID: " + pokemonId + " for trainer ID: " + trainer.getDBId());
+                        LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemonId, trainer.getDbId());
                         return null; // Return null if no Pokémon is found
                     }
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error retrieving Pokemon: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.error("Error retrieving Pokemon: {}", e.getMessage(), e);
             return null; // Return null to indicate an error occurred
         }
     }
@@ -97,7 +97,7 @@ public class PokemonCRUD {
                     + "current_exp = ?, is_fainted = ? "
                     + "WHERE instance_id = ? AND trainer_id = ?";
 
-            try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, pokemon.getSpecies());
                 pstmt.setString(2, pokemon.getNickname());
                 pstmt.setInt(3, pokemon.getLevel());
@@ -118,21 +118,19 @@ public class PokemonCRUD {
                 pstmt.setInt(18, pokemon.getCurrentExp());
                 pstmt.setBoolean(19, pokemon.getIsFainted());
                 pstmt.setInt(20, pokemon.getId());
-                pstmt.setLong(21, pokemon.getTrainerDBId());
+                pstmt.setLong(21, pokemon.getTrainerDbId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
-                    System.out.println("Pokemon '" + pokemon.getNickname() + "' (" + pokemon.getSpecies()
-                     + ") updated successfully for trainer ID " + pokemon.getTrainerDBId() + ".");
+                    LOGGER.info("Pokemon '{}' ({}) updated successfully for trainer ID {}.", pokemon.getNickname(), pokemon.getSpecies(), pokemon.getTrainerDbId());
                     return true; // Return true to indicate successful update
                 } else {
-                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainerDiscordId());
+                    LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemon.getId(), pokemon.getTrainerDbId());
                     return false; // Return false to indicate no Pokemon found to update
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error updating Pokemon: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.error("Error updating Pokemon: {}", e.getMessage(), e);
             return false; // Return false to indicate an error occurred
         }
     }
@@ -140,23 +138,21 @@ public class PokemonCRUD {
     public boolean deleteDBPokemon(Pokemon pokemon) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "DELETE FROM pokemon_instances WHERE instance_id = ? AND trainer_id = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, pokemon.getId());
-                pstmt.setInt(2, pokemon.getTrainerDBId());
+                pstmt.setInt(2, pokemon.getTrainerDbId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
-                    System.out.println("Pokemon '" + pokemon.getNickname() + "' (" + pokemon.getSpecies()
-                     + ") deleted successfully for trainer ID " + pokemon.getTrainerDBId() + ".");
+                    LOGGER.info("Pokemon '{}' ({}) deleted successfully for trainer ID {}.", pokemon.getNickname(), pokemon.getSpecies(), pokemon.getTrainerDbId());
                     return true; // Return true to indicate successful deletion
                 } else {
-                    System.out.println("No Pokemon found with ID: " + pokemon.getId() + " for trainer ID: " + pokemon.getTrainerDiscordId());
+                    LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemon.getId(), pokemon.getTrainerDiscordId());
                     return false; // Return false to indicate no Pokemon found to delete
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error deleting Pokemon: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.error("Error deleting Pokemon: {}", e.getMessage(), e);
             return false; // Return false to indicate an error occurred
         }
     }

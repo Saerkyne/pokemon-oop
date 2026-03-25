@@ -1,8 +1,11 @@
 package pokemonGame;
 import java.util.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Attack {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Attack.class);
     private static final Random RNG = new Random();
 
     
@@ -17,6 +20,7 @@ public class Attack {
             effectiveness = TypeChart.getEffectiveness(moveType, defenderType);
         }
 
+        LOGGER.info("Effectiveness of move '{}' against type '{}': {}", moveType, defenderType, effectiveness);
         return effectiveness;
     }
 
@@ -38,7 +42,9 @@ public class Attack {
         critChance = 417 + (attackerSpeed - defenderSpeed) * 83; // Increase crit chance by 0.83% for each point of speed difference
         critChance = Math.min(1500, Math.max(417, critChance)); // Cap crit chance between 4.17% and 15%
         int randomValue = randomInt(1, 10000); // Random value between 1 and 10000
-        return randomValue <= critChance; // Crit occurs if random value is less than or equal to crit chance
+        boolean isCritical = randomValue <= critChance; // Crit occurs if random value is less than or equal to crit chance
+        LOGGER.info("Critical hit calculation: attackerSpeed={}, defenderSpeed={}, critChance={}, randomValue={}, isCritical={}", attackerSpeed, defenderSpeed, critChance, randomValue, isCritical);
+        return isCritical;
         
     }
 
@@ -50,21 +56,21 @@ public class Attack {
         int randomFactor = randomInt(217, 255); // Random factor between 217/255 and 255/255
 
         float effectivenessPrimary = calculateEffectiveness(defender.getTypePrimary(), move);
-        // System.out.println("Effectiveness against primary type (" + defender.getTypePrimary() + "): " + effectivenessPrimary);
+        
         float effectivenessSecondary = calculateEffectiveness(defender.getTypeSecondary(), move);
-        // System.out.println("Effectiveness against secondary type (" + defender.getTypeSecondary() + "): " + effectivenessSecondary);
-
+        
         float combinedEffectiveness = effectivenessPrimary * effectivenessSecondary;
-        // System.out.println("Combined effectiveness: " + combinedEffectiveness);
+        LOGGER.info("Combined effectiveness: {}", combinedEffectiveness);
 
         if (move.getType().equals(attacker.getTypePrimary()) || move.getType().equals(attacker.getTypeSecondary())) {
             stab = true;
-            System.out.println("STAB applied!");
+            LOGGER.info("STAB applied for move '{}' used by '{}'", move.getMoveName(), attacker.getNickname());
+            
         } else {
-            System.out.println("No STAB.");
+            LOGGER.info("No STAB for move '{}' used by '{}'", move.getMoveName(), attacker.getNickname());
         }
 
-        System.out.println("It" + (combinedEffectiveness == 0.0 ? " had no effect..." : combinedEffectiveness < 1 ? "'s not very effective..." : combinedEffectiveness > 1 ? "'s super effective!" : "'s effective."));
+        LOGGER.info("Effectiveness message: {}", "It" + (combinedEffectiveness == 0.0 ? " had no effect..." : combinedEffectiveness < 1 ? "'s not very effective..." : combinedEffectiveness > 1 ? "'s super effective!" : "'s effective."));
 
 
         int level = attacker.getLevel();
@@ -72,10 +78,10 @@ public class Attack {
         int attackStat = attacker.getAttackStatForMove(move);
         int defenseStat = defender.getDefenseStatForMove(move);
 
-        System.out.println("Attacker level: " + level);
-        System.out.println("Move power: " + power);
-        System.out.println("Attacker attack stat: " + attackStat);
-        System.out.println("Defender defense stat: " + defenseStat);
+        LOGGER.info("Attacker level: {}", level);
+        LOGGER.info("Move power: {}", power);
+        LOGGER.info("Attacker attack stat: {}", attackStat);
+        LOGGER.info("Defender defense stat: {}", defenseStat);
    
       
         // Damage calculation, step by step
@@ -111,7 +117,7 @@ public class Attack {
         damage = (finalDamage * randomFactor) / 255;
         int minDamage = (int)(finalDamage * 217) / 255;
         int maxDamage = (int)(finalDamage * 255) / 255;
-        System.out.println("Damage range: " + minDamage + " - " + maxDamage);
+        LOGGER.info("Damage range: " + minDamage + " - " + maxDamage);
 
         return damage;
 

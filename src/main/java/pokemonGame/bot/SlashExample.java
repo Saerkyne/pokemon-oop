@@ -32,20 +32,11 @@ public class SlashExample extends ListenerAdapter{
 
 
         switch (event.getName()) {
-            case "say":
-                LOGGER.info("Received slash command: '" + event.getName() + "' with content: '" + event.getOption("content").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
-                say(event, event.getOption("content").getAsString());
-                break;
-
-            case "ping":
-                LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
-                event.reply("Pong!").queue();
-                break;
             
             case "battlestate":
                 LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
                 event.reply("The battle is currently in progress!").queue();
-                break;
+                return;
 
             case "createtrainer":
                 LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
@@ -53,10 +44,10 @@ public class SlashExample extends ListenerAdapter{
 
                 if (createAttempt == -1) {
                     event.reply("You are already a trainer!").setEphemeral(true).queue();
-                    break;
+                    return;
                 } else {
                     event.reply("Trainer created successfully!").queue();
-                    break;
+                    return;
                 }
             
             case "checkteam":
@@ -87,7 +78,7 @@ public class SlashExample extends ListenerAdapter{
                     }
                     event.reply(teamMessage.toString()).queue();
                 }
-                break;
+                return;
 
             case "addpokemon":
                 // Needs to create a pokemon and add it to the trainers team in the database, then reply with success or failure message
@@ -178,17 +169,12 @@ public class SlashExample extends ListenerAdapter{
                 } else {
                     event.reply("Database clear cancelled. To clear the database, you must type 'CONFIRM' in the confirmation option.").setEphemeral(true).queue();
                 }
-                break;
+                return;
             
             default:
                 event.reply("I can't handle that command right now :(")
                     .setEphemeral(true)
                     .queue();  
         }
-    }
-
-
-    public void say(SlashCommandInteractionEvent event, String content) {
-        event.reply(content).queue();
     }
 }

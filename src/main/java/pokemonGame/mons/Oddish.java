@@ -8,7 +8,9 @@ public class Oddish extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
-        LEARNSET.add(new LearnsetEntry(new Absorb(), LearnsetEntry.Source.LEVEL, 1));
+        // Using the shared singleton — Absorb is immutable, so all species can safely share it.
+        // MoveSlot (created when a Pokémon actually learns the move) holds per-instance PP state.
+        LEARNSET.add(new LearnsetEntry(Absorb.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
         LEARNSET.add(new LearnsetEntry(new PoisonPowder(), LearnsetEntry.Source.LEVEL, 15));
         LEARNSET.add(new LearnsetEntry(new StunSpore(), LearnsetEntry.Source.LEVEL, 17));
         LEARNSET.add(new LearnsetEntry(new SleepPowder(), LearnsetEntry.Source.LEVEL, 19));

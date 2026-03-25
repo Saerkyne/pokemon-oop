@@ -71,7 +71,6 @@ public class Poliwrath extends Pokemon {
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
-        this.setCurrentHP(getMaxHP());
     }
 
     @Override

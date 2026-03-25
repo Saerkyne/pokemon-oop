@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 public class Battle {
     private static final Logger LOGGER = LoggerFactory.getLogger(Battle.class);
 
-    public static void main(String[] args) {
-        
+    public Battle() {
+        // Constructor for Battle class, if needed
     }
 
     public static void dealDamage(Pokemon attacker, Pokemon defender, Move move) {

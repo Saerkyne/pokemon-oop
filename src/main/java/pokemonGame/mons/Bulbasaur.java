@@ -62,7 +62,6 @@ public class Bulbasaur extends Pokemon {
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
-        this.setCurrentHP(getMaxHP());
     }
 
     // instance accessor used in polymorphic contexts

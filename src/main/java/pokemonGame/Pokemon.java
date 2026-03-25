@@ -110,6 +110,9 @@ public class Pokemon {
         Natures.assignRandom(this);
     }
 
+    // Set static randomizer
+    private static final Random random = new Random();
+
 
     // ========================
     // ===     GETTERS      ===
@@ -689,13 +692,12 @@ public class Pokemon {
     // Method for generating a random IV value between 0 and 31 for each stat
     public void generateRandomIVs() {
 
-        Random rand = new Random();
-        this.ivHp = rand.nextInt(32);
-        this.ivAttack = rand.nextInt(32);
-        this.ivDefense = rand.nextInt(32);
-        this.ivSpecialAttack = rand.nextInt(32);
-        this.ivSpecialDefense = rand.nextInt(32);
-        this.ivSpeed = rand.nextInt(32);
+        this.ivHp = random.nextInt(32);
+        this.ivAttack = random.nextInt(32);
+        this.ivDefense = random.nextInt(32);
+        this.ivSpecialAttack = random.nextInt(32);
+        this.ivSpecialDefense = random.nextInt(32);
+        this.ivSpeed = random.nextInt(32);
     }
 
 

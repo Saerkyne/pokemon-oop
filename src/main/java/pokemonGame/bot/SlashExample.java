@@ -62,7 +62,7 @@ public class SlashExample extends ListenerAdapter{
                     event.reply("Your team is currently empty!").queue();
                 } else {
                     StringBuilder teamMessage = new StringBuilder("Your current team:\n");
-                    int slotNumber = teamInfo.size() - teamInfo.size() + 1; // Calculate the slot number based on the size of the team
+                    int slotNumber =  1;
                     for (Pokemon p : teamInfo) {
                         teamMessage.append("Slot ").append(slotNumber).append(":\n");
                         teamMessage.append("- ").append(p.getNickname()).append("\n");

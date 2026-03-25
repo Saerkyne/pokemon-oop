@@ -129,7 +129,6 @@ public class Beedrill extends Pokemon {
         this.setEvYield(evYield);
         this.generateRandomIVs();
         this.calculateCurrentStats();
-        this.setCurrentHP(getMaxHP());
     }
 
     @Override

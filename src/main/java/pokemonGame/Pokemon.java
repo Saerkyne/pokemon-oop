@@ -2,8 +2,6 @@ package pokemonGame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import pokemonGame.mons.*;
-import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -753,6 +751,7 @@ public class Pokemon {
 
     // This method can be used to create a new Pokémon instance based on user input for species, level, and other attributes.  
     // It can return the newly created Pokémon instance.
+    /*
     public static Pokemon createPokemon(String species, String name, Trainer trainer) {
         Pokemon createdMon = null;
         if (species == null) {
@@ -923,7 +922,7 @@ public class Pokemon {
 
         createdMon.setTrainer(trainer); // Set the trainer for the created Pokémon
         return createdMon;
-    }
+    }*/
 
     
       

@@ -15,6 +15,7 @@
 
 package pokemonGame.db;
 import pokemonGame.Pokemon;
+import pokemonGame.PokemonFactory;
 import pokemonGame.Natures;
 import pokemonGame.Trainer;
 import java.sql.*;
@@ -180,7 +181,8 @@ public class PokemonCRUD {
         Boolean isFainted = rs.getBoolean("is_fainted");
 
         // Create a new Pokemon object and populate its fields from the ResultSet
-        Pokemon foundPokemon = Pokemon.createPokemon(species, name, trainer); 
+        Pokemon foundPokemon = PokemonFactory.createPokemonFromRegistry(species, name);
+        foundPokemon.setTrainer(trainer);
         foundPokemon.setId(foundPokemonId);
         foundPokemon.setLevel(level);
         foundPokemon.setNature(Natures.valueOf(nature.toUpperCase()));

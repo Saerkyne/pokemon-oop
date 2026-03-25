@@ -1,6 +1,7 @@
 package pokemonGame.bot;
 import pokemonGame.App;
 import pokemonGame.Pokemon;
+import pokemonGame.PokemonFactory;
 import pokemonGame.Trainer;
 import pokemonGame.db.DatabaseSetup;
 import pokemonGame.db.PokemonCRUD;
@@ -108,7 +109,7 @@ public class SlashExample extends ListenerAdapter{
                         }
                     }
 
-                    Pokemon newPokemon = Pokemon.createPokemon(species, nickname, currentTrainer);
+                    Pokemon newPokemon = PokemonFactory.createPokemonFromRegistry(species, nickname);
                     if (newPokemon == null) {
                         event.reply("Sorry, that Pokemon hasn't been discovered yet!").setEphemeral(true).queue();
                         break;

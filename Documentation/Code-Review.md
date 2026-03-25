@@ -30,29 +30,7 @@ Key areas for improvement:
 
 These must be addressed before any production or shared deployment.
 
-### 1. Hardcoded Database Credentials (Security — OWASP: Cryptographic Failures) WILL BE FIXED
 
-**File:** `src/main/java/pokemonGame/db/DatabaseSetup.java` (lines 25-29)
-
-```java
-private static final String URL = "jdbc:mariadb://192.168.1.212:3306/pokemon_db";
-private static final String USER = "pokemon_db_user";
-private static final String PASSWORD = "fdr3invoices3MUY3wyatt";
-```
-
-The database password is committed to version control in plaintext. Even on a learning project, this is a critical security habit to fix. Anyone with access to the repository can see these credentials.
-
-**Fix:** Read credentials from environment variables, matching the pattern already used for the bot token (`MOKEPONS_API_KEY`):
-
-```java
-private static final String URL = System.getenv("POKEMON_DB_URL");
-private static final String USER = System.getenv("POKEMON_DB_USER");
-private static final String PASSWORD = System.getenv("POKEMON_DB_PASSWORD");
-```
-
-Also add a `.env.example` file documenting the required variables, and ensure `.env` is in `.gitignore`. Consider rotating the exposed password since it's already in git history.
-
----
 
 ## 🟡 Important Issues
 
@@ -77,15 +55,6 @@ public class Battle {
     public void dealDamage(Pokemon attacker, Pokemon defender, Move move) { ... }
 }
 ```
-
-### 10. `Pokemon.createPokemon()` — Giant Switch Statement (OCP Violation)
-
-**File:** `src/main/java/pokemonGame/Pokemon.java` (lines ~630-810)
-
-The factory method contains a 151-case `switch` statement. Adding any new species requires modifying this core class — a violation of the Open/Closed Principle.
-
-💡 **[suggestion]** For a learning project, the switch statement is perfectly functional and easy to understand. But as an educational note: the scalable approach would be a `Map<String, Function<String, Pokemon>>` registry that species register themselves into, or using `ServiceLoader`. This way, adding a new species would only require creating the new class file — the factory wouldn't need modification.
-
 
 ### 12. `PokemonCRUD.mapResultSetToPokemon()` — EV Setters Are Additive, Causing Double-Counting
 

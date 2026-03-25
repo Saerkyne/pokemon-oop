@@ -113,8 +113,8 @@ public class TeamCRUD {
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species_id={}, level={}", 
-                                trainer.getDbId(), rs.getInt("instance_id"), rs.getInt("species_id"), rs.getInt("level"));
+                        LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
+                                trainer.getDbId(), rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
                         Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainer);
                         team.add(pokemon);
                     }
@@ -138,8 +138,8 @@ public class TeamCRUD {
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
-                        LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species_id={}, level={}", 
-                                trainer.getDbId(), rs.getInt("instance_id"), rs.getInt("species_id"), rs.getInt("level"));
+                        LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
+                                trainer.getDbId(), rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
                         return PokemonCRUD.mapResultSetToPokemon(rs, trainer);
                     }
                 }

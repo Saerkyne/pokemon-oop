@@ -2,6 +2,8 @@ package pokemonGame;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pokemonGame.TypeChart.Type;
+import pokemonGame.TypeChart.Category;
 
 public final class Attack {
 
@@ -15,11 +17,11 @@ public final class Attack {
 
     
     
-    public float calculateEffectiveness(String defenderType, Move move) {
-        String moveType = move.getType();
+    public float calculateEffectiveness(Type defenderType, Move move) {
+        Type moveType = move.getMoveType();
         float effectiveness;
 
-        if (defenderType == null || defenderType.equals("None")) {
+        if (defenderType == null || defenderType.equals(Type.NONE)) {
             effectiveness = 1.0f; // Neutral effectiveness if no secondary type
         } else {
             effectiveness = TypeChart.getEffectiveness(moveType, defenderType);
@@ -57,7 +59,7 @@ public final class Attack {
     public int calculateDamage(Pokemon attacker, Pokemon defender, Move move) {
         // Placeholder for damage calculation logic
         int damage = 0;
-        if ("Status".equals(move.getMoveCategory())) {
+        if (move.getMoveCategory() == Category.STATUS) {
             LOGGER.info("Move '{}' is a status move and does not deal damage.", move.getMoveName());
             return damage; // Status moves do not deal damage
         }
@@ -72,7 +74,7 @@ public final class Attack {
         float combinedEffectiveness = effectivenessPrimary * effectivenessSecondary;
         LOGGER.info("Combined effectiveness: {}", combinedEffectiveness);
 
-        if (move.getType().equals(attacker.getTypePrimary()) || move.getType().equals(attacker.getTypeSecondary())) {
+        if (move.getMoveType().equals(attacker.getTypePrimary()) || move.getMoveType().equals(attacker.getTypeSecondary())) {
             stab = true;
             LOGGER.info("STAB applied for move '{}' used by '{}'", move.getMoveName(), attacker.getNickname());
             

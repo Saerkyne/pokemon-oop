@@ -28,31 +28,41 @@ public final class TypeChart {
         {1, .5f,   1,   1,   1,   1,   2, .5f,   1,   1,   1,   1,   1,   1,   2,   2, .5f,   1}  //Fairy Attack
     };
 
+    public static enum Type {
+        NORMAL, FIRE, WATER, ELECTRIC, GRASS, ICE, FIGHTING, POISON, GROUND, FLYING, PSYCHIC, BUG, ROCK, GHOST, DRAGON, DARK, STEEL, FAIRY, NONE
+    }
 
-    private static final Map<String, Integer> TYPE_INDICES = new HashMap<>();
+    public static enum Category {
+        PHYSICAL, SPECIAL, STATUS
+    }
+
+
+    private static final Map<Type, Integer> TYPE_INDICES = new HashMap<>();
         static {
-        TYPE_INDICES.put("Normal", 0);
-        TYPE_INDICES.put("Fire", 1);
-        TYPE_INDICES.put("Water", 2);
-        TYPE_INDICES.put("Electric", 3);
-        TYPE_INDICES.put("Grass", 4);
-        TYPE_INDICES.put("Ice", 5);
-        TYPE_INDICES.put("Fighting", 6);
-        TYPE_INDICES.put("Poison", 7);
-        TYPE_INDICES.put("Ground", 8);
-        TYPE_INDICES.put("Flying", 9);
-        TYPE_INDICES.put("Psychic", 10);
-        TYPE_INDICES.put("Bug", 11);
-        TYPE_INDICES.put("Rock", 12);
-        TYPE_INDICES.put("Ghost", 13);
-        TYPE_INDICES.put("Dragon", 14);
-        TYPE_INDICES.put("Dark", 15);
-        TYPE_INDICES.put("Steel", 16);
-        TYPE_INDICES.put("Fairy", 17);
+        TYPE_INDICES.put(Type.NORMAL, 0);
+        TYPE_INDICES.put(Type.FIRE, 1);
+        TYPE_INDICES.put(Type.WATER, 2);
+        TYPE_INDICES.put(Type.ELECTRIC, 3);
+        TYPE_INDICES.put(Type.GRASS, 4);
+        TYPE_INDICES.put(Type.ICE, 5);
+        TYPE_INDICES.put(Type.FIGHTING, 6);
+        TYPE_INDICES.put(Type.POISON, 7);
+        TYPE_INDICES.put(Type.GROUND, 8);
+        TYPE_INDICES.put(Type.FLYING, 9);
+        TYPE_INDICES.put(Type.PSYCHIC, 10);
+        TYPE_INDICES.put(Type.BUG, 11);
+        TYPE_INDICES.put(Type.ROCK, 12);
+        TYPE_INDICES.put(Type.GHOST, 13);
+        TYPE_INDICES.put(Type.DRAGON, 14);
+        TYPE_INDICES.put(Type.DARK, 15);
+        TYPE_INDICES.put(Type.STEEL, 16);
+        TYPE_INDICES.put(Type.FAIRY, 17);
         }
 
+    
 
-    public static float getEffectiveness(String moveType, String pokemonType) {
+
+    public static float getEffectiveness(Type moveType, Type pokemonType) {
 
         Integer moveIndex = TYPE_INDICES.get(moveType);
         Integer pokemonIndex = TYPE_INDICES.get(pokemonType);

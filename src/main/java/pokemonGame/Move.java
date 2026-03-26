@@ -1,15 +1,16 @@
 package pokemonGame;
+import pokemonGame.TypeChart.Type;
+import pokemonGame.TypeChart.Category;
+
 public abstract class Move {
     private String moveName;
     private int movePower;
-    //moveTypes are the elemental types of the move, such as fire, water, grass, etc.
-    private String moveType;
-    //moveCategory can be physical, special, or status
-    private String moveCategory;
+    private Type moveType;
+    private Category moveCategory;
     private int accuracy;
     private int maxPp;
 
-    protected Move(String moveName, int movePower, String moveType, String moveCategory, int accuracy, int maxPp) {
+    protected Move(String moveName, int movePower, Type moveType, Category moveCategory, int accuracy, int maxPp) {
         this.moveName = moveName;
         this.movePower = movePower;
         this.moveType = moveType;
@@ -26,11 +27,11 @@ public abstract class Move {
         return movePower;
     }
 
-    public String getType() {
+    public Type getMoveType() {
         return moveType;
     }
 
-    public String getMoveCategory() {
+    public Category getMoveCategory() {
         return moveCategory;
     }
 

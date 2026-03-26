@@ -1,9 +1,13 @@
 package pokemonGame.mons;
 
-import java.util.List;
-import pokemonGame.LearnsetEntry;
 import pokemonGame.Pokemon;
 import pokemonGame.moves.*;
+import pokemonGame.PokeSpecies;
+import pokemonGame.LearnsetEntry;
+import pokemonGame.LearnsetEntry.Source;
+import pokemonGame.TypeChart.Type;
+import pokemonGame.Stat;
+import java.util.List;
 
 public class Arbok extends Pokemon {
 
@@ -13,91 +17,197 @@ public class Arbok extends Pokemon {
     static {
         // Level Up Moves
         LEARNSET.add(
-            new LearnsetEntry(Leer.INSTANCE, LearnsetEntry.Source.LEVEL, 1)
+            new LearnsetEntry(
+                Leer.INSTANCE,
+                Source.LEVEL,
+                1
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(PoisonSting.INSTANCE, LearnsetEntry.Source.LEVEL, 1)
+            new LearnsetEntry(
+                PoisonSting.INSTANCE,
+                Source.LEVEL,
+                1
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Wrap.INSTANCE, LearnsetEntry.Source.LEVEL, 1)
+            new LearnsetEntry(
+                Wrap.INSTANCE,
+                Source.LEVEL,
+                1
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(PoisonSting.INSTANCE, LearnsetEntry.Source.LEVEL, 10)
+            new LearnsetEntry(
+                PoisonSting.INSTANCE,
+                Source.LEVEL,
+                10
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Bite.INSTANCE, LearnsetEntry.Source.LEVEL, 17)
+            new LearnsetEntry(
+                Bite.INSTANCE,
+                Source.LEVEL,
+                17
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Glare.INSTANCE, LearnsetEntry.Source.LEVEL, 27)
+            new LearnsetEntry(
+                Glare.INSTANCE,
+                Source.LEVEL,
+                27
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Screech.INSTANCE, LearnsetEntry.Source.LEVEL, 36)
+            new LearnsetEntry(
+                Screech.INSTANCE,
+                Source.LEVEL,
+                36
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Acid.INSTANCE, LearnsetEntry.Source.LEVEL, 47)
+            new LearnsetEntry(
+                Acid.INSTANCE,
+                Source.LEVEL,
+                47
+            )
         );
         // HM Moves
         LEARNSET.add(
-            new LearnsetEntry(Strength.INSTANCE, LearnsetEntry.Source.HM, 4)
+            new LearnsetEntry(
+                Strength.INSTANCE,
+                Source.HM,
+                4
+            )
         );
         // TM Moves
         LEARNSET.add(
-            new LearnsetEntry(Toxic.INSTANCE, LearnsetEntry.Source.TM, 6)
+            new LearnsetEntry(
+                Toxic.INSTANCE,
+                Source.TM,
+                6
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(BodySlam.INSTANCE, LearnsetEntry.Source.TM, 8)
+            new LearnsetEntry(
+                BodySlam.INSTANCE,
+                Source.TM,
+                8
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(TakeDown.INSTANCE, LearnsetEntry.Source.TM, 9)
+            new LearnsetEntry(
+                TakeDown.INSTANCE,
+                Source.TM,
+                9
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(DoubleEdge.INSTANCE, LearnsetEntry.Source.TM, 10)
+            new LearnsetEntry(
+                DoubleEdge.INSTANCE,
+                Source.TM,
+                10
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(HyperBeam.INSTANCE, LearnsetEntry.Source.TM, 15)
+            new LearnsetEntry(
+                HyperBeam.INSTANCE,
+                Source.TM,
+                15
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Rage.INSTANCE, LearnsetEntry.Source.TM, 20)
+            new LearnsetEntry(
+                Rage.INSTANCE,
+                Source.TM,
+                20
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(MegaDrain.INSTANCE, LearnsetEntry.Source.TM, 21)
+            new LearnsetEntry(
+                MegaDrain.INSTANCE,
+                Source.TM,
+                21
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Earthquake.INSTANCE, LearnsetEntry.Source.TM, 26)
+            new LearnsetEntry(
+                Earthquake.INSTANCE,
+                Source.TM,
+                26
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Fissure.INSTANCE, LearnsetEntry.Source.TM, 27)
-        );
-        LEARNSET.add(new LearnsetEntry(Dig.INSTANCE, LearnsetEntry.Source.TM, 28));
-        LEARNSET.add(
-            new LearnsetEntry(Mimic.INSTANCE, LearnsetEntry.Source.TM, 31)
-        );
-        LEARNSET.add(
-            new LearnsetEntry(DoubleTeam.INSTANCE, LearnsetEntry.Source.TM, 32)
+            new LearnsetEntry(
+                Fissure.INSTANCE,
+                Source.TM,
+                27
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Bide.INSTANCE, LearnsetEntry.Source.TM, 34)
+            new LearnsetEntry(
+                Dig.INSTANCE,
+                Source.TM,
+                28
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(SkullBash.INSTANCE, LearnsetEntry.Source.TM, 40)
+            new LearnsetEntry(
+                Mimic.INSTANCE,
+                Source.TM,
+                31
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Rest.INSTANCE, LearnsetEntry.Source.TM, 44)
+            new LearnsetEntry(
+                DoubleTeam.INSTANCE,
+                Source.TM,
+                32
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(RockSlide.INSTANCE, LearnsetEntry.Source.TM, 48)
+            new LearnsetEntry(
+                Bide.INSTANCE,
+                Source.TM,
+                34
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Substitute.INSTANCE, LearnsetEntry.Source.TM, 50)
+            new LearnsetEntry(
+                SkullBash.INSTANCE,
+                Source.TM,
+                40
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Rest.INSTANCE,
+                Source.TM,
+                44
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                RockSlide.INSTANCE,
+                Source.TM,
+                48
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Substitute.INSTANCE,
+                Source.TM,
+                50
+            )
         );
     }
 
     public Arbok(String nickname) {
         super(
-            "Arbok",
+            PokeSpecies.ARBOK,
             24,
-            "Poison",
-            null,
+            Type.POISON,
+            Type.NONE,
             5,
             60,
             95,
@@ -108,9 +218,7 @@ public class Arbok extends Pokemon {
         );
 
         this.setNickname(nickname);
-
-        int[] evYield = {0, 2, 0, 0, 0, 0}; // Arbok yields 2 EV points in Attack when defeated
-        this.setEvYield(evYield);
+        this.setEvYield(Stat.ATTACK, 2); // Arbok yields 2 EV points in Attack when defeated
         this.generateRandomIVs();
         this.calculateCurrentStats();
     }

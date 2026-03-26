@@ -1,11 +1,13 @@
 package pokemonGame.moves;
 import pokemonGame.Move;
+import pokemonGame.TypeChart.Type;
+import pokemonGame.TypeChart.Category;
 
 public class Fissure extends Move {
     public static final Fissure INSTANCE = new Fissure();
 
     public Fissure() {
-        super("Fissure", 0, "Ground", "Physical", 30, 5);
+        super("Fissure", 0, Type.GROUND, Category.PHYSICAL, 30, 5);
         // == Special Effect (Not Yet Implemented) ==
         // OHKO move. Instantly knocks out the target if it hits.
         // Accuracy = 30 + (user's level - target's level).

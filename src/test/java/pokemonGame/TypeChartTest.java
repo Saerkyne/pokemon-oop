@@ -2,6 +2,7 @@ package pokemonGame;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import pokemonGame.TypeChart.Type;
 
 /*
  * Unit tests for {@link TypeChart#getEffectiveness(String, String)}.
@@ -32,7 +33,7 @@ class TypeChartTest {
      */
     @Test
     void fireSuperEffectiveAgainstGrass() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Fire", "Grass"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.FIRE, Type.GRASS));
     }
 
     /*
@@ -43,7 +44,7 @@ class TypeChartTest {
      */
     @Test
     void waterSuperEffectiveAgainstFire() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Water", "Fire"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.WATER, Type.FIRE));
     }
 
     /*
@@ -54,7 +55,7 @@ class TypeChartTest {
      */
     @Test
     void electricSuperEffectiveAgainstWater() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Electric", "Water"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.ELECTRIC, Type.WATER));
     }
 
     /*
@@ -65,7 +66,7 @@ class TypeChartTest {
      */
     @Test
     void groundSuperEffectiveAgainstElectric() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Ground", "Electric"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.GROUND, Type.ELECTRIC));
     }
 
     /*
@@ -76,7 +77,7 @@ class TypeChartTest {
      */
     @Test
     void iceSuperEffectiveAgainstDragon() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Ice", "Dragon"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.ICE, Type.DRAGON));
     }
 
     /*
@@ -87,7 +88,7 @@ class TypeChartTest {
      */
     @Test
     void fightingSuperEffectiveAgainstNormal() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Fighting", "Normal"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.FIGHTING, Type.NORMAL));
     }
 
     /*
@@ -99,7 +100,7 @@ class TypeChartTest {
      */
     @Test
     void psychicSuperEffectiveAgainstPoison() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Psychic", "Poison"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.PSYCHIC, Type.POISON));
     }
 
     /*
@@ -109,7 +110,7 @@ class TypeChartTest {
      */
     @Test
     void grassSuperEffectiveAgainstWater() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Grass", "Water"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.GRASS, Type.WATER));
     }
 
     /*
@@ -120,7 +121,7 @@ class TypeChartTest {
      */
     @Test
     void fairySuperEffectiveAgainstDragon() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Fairy", "Dragon"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.FAIRY, Type.DRAGON));
     }
 
     /*
@@ -131,7 +132,7 @@ class TypeChartTest {
      */
     @Test
     void rockSuperEffectiveAgainstFire() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Rock", "Fire"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.ROCK, Type.FIRE));
     }
 
     /*
@@ -143,7 +144,7 @@ class TypeChartTest {
      */
     @Test
     void ghostSuperEffectiveAgainstGhost() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Ghost", "Ghost"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.GHOST, Type.GHOST));
     }
 
     // --- Not very effective (0.5) ---
@@ -157,7 +158,7 @@ class TypeChartTest {
      */
     @Test
     void waterNotVeryEffectiveAgainstWater() {
-        assertEquals(0.5f, TypeChart.getEffectiveness("Water", "Water"));
+        assertEquals(0.5f, TypeChart.getEffectiveness(Type.WATER, Type.WATER));
     }
 
     /*
@@ -168,7 +169,7 @@ class TypeChartTest {
      */
     @Test
     void fireNotVeryEffectiveAgainstWater() {
-        assertEquals(0.5f, TypeChart.getEffectiveness("Fire", "Water"));
+        assertEquals(0.5f, TypeChart.getEffectiveness(Type.FIRE, Type.WATER));
     }
 
     /*
@@ -179,7 +180,7 @@ class TypeChartTest {
      */
     @Test
     void grassNotVeryEffectiveAgainstFire() {
-        assertEquals(0.5f, TypeChart.getEffectiveness("Grass", "Fire"));
+        assertEquals(0.5f, TypeChart.getEffectiveness(Type.GRASS, Type.FIRE));
     }
 
     /*
@@ -190,7 +191,7 @@ class TypeChartTest {
      */
     @Test
     void normalNotVeryEffectiveAgainstRock() {
-        assertEquals(0.5f, TypeChart.getEffectiveness("Normal", "Rock"));
+        assertEquals(0.5f, TypeChart.getEffectiveness(Type.NORMAL, Type.ROCK));
     }
 
     /*
@@ -201,7 +202,7 @@ class TypeChartTest {
      */
     @Test
     void steelNotVeryEffectiveAgainstWater() {
-        assertEquals(0.5f, TypeChart.getEffectiveness("Steel", "Water"));
+        assertEquals(0.5f, TypeChart.getEffectiveness(Type.STEEL, Type.WATER));
     }
 
     /*
@@ -212,7 +213,7 @@ class TypeChartTest {
      */
     @Test
     void poisonNotVeryEffectiveAgainstGround() {
-        assertEquals(0.5f, TypeChart.getEffectiveness("Poison", "Ground"));
+        assertEquals(0.5f, TypeChart.getEffectiveness(Type.POISON, Type.GROUND));
     }
 
     // --- Immunities (0.0) ---
@@ -226,7 +227,7 @@ class TypeChartTest {
      */
     @Test
     void normalHasNoEffectOnGhost() {
-        assertEquals(0.0f, TypeChart.getEffectiveness("Normal", "Ghost"));
+        assertEquals(0.0f, TypeChart.getEffectiveness(Type.NORMAL, Type.GHOST));
     }
 
     /*
@@ -237,7 +238,7 @@ class TypeChartTest {
      */
     @Test
     void groundHasNoEffectOnFlying() {
-        assertEquals(0.0f, TypeChart.getEffectiveness("Ground", "Flying"));
+        assertEquals(0.0f, TypeChart.getEffectiveness(Type.GROUND, Type.FLYING));
     }
 
     /*
@@ -248,7 +249,7 @@ class TypeChartTest {
      */
     @Test
     void electricHasNoEffectOnGround() {
-        assertEquals(0.0f, TypeChart.getEffectiveness("Electric", "Ground"));
+        assertEquals(0.0f, TypeChart.getEffectiveness(Type.ELECTRIC, Type.GROUND));
     }
 
     /*
@@ -259,7 +260,7 @@ class TypeChartTest {
      */
     @Test
     void ghostHasNoEffectOnNormal() {
-        assertEquals(0.0f, TypeChart.getEffectiveness("Ghost", "Normal"));
+        assertEquals(0.0f, TypeChart.getEffectiveness(Type.GHOST, Type.NORMAL));
     }
 
     /*
@@ -271,7 +272,7 @@ class TypeChartTest {
      */
     @Test
     void psychicHasNoEffectOnDark() {
-        assertEquals(0.0f, TypeChart.getEffectiveness("Psychic", "Dark"));
+        assertEquals(0.0f, TypeChart.getEffectiveness(Type.PSYCHIC, Type.DARK));
     }
 
     /*
@@ -282,7 +283,7 @@ class TypeChartTest {
      */
     @Test
     void fightingHasNoEffectOnGhost() {
-        assertEquals(0.0f, TypeChart.getEffectiveness("Fighting", "Ghost"));
+        assertEquals(0.0f, TypeChart.getEffectiveness(Type.FIGHTING, Type.GHOST));
     }
 
     /*
@@ -294,7 +295,7 @@ class TypeChartTest {
      */
     @Test
     void dragonHasNoEffectOnFairy() {
-        assertEquals(0.0f, TypeChart.getEffectiveness("Dragon", "Fairy"));
+        assertEquals(0.0f, TypeChart.getEffectiveness(Type.DRAGON, Type.FAIRY));
     }
 
     /*
@@ -308,8 +309,8 @@ class TypeChartTest {
      */
     @Test
     void normalHasNoEffectOnGhostAndViceVersa() {
-        assertEquals(0.0f, TypeChart.getEffectiveness("Normal", "Ghost"));
-        assertEquals(0.0f, TypeChart.getEffectiveness("Ghost", "Normal"));
+        assertEquals(0.0f, TypeChart.getEffectiveness(Type.NORMAL, Type.GHOST));
+        assertEquals(0.0f, TypeChart.getEffectiveness(Type.GHOST, Type.NORMAL));
     }
 
     // --- Neutral (1.0) ---
@@ -323,7 +324,7 @@ class TypeChartTest {
      */
     @Test
     void normalNeutralAgainstWater() {
-        assertEquals(1.0f, TypeChart.getEffectiveness("Normal", "Water"));
+        assertEquals(1.0f, TypeChart.getEffectiveness(Type.NORMAL, Type.WATER));
     }
 
     /*
@@ -334,7 +335,7 @@ class TypeChartTest {
      */
     @Test
     void fireNeutralAgainstNormal() {
-        assertEquals(1.0f, TypeChart.getEffectiveness("Fire", "Normal"));
+        assertEquals(1.0f, TypeChart.getEffectiveness(Type.FIRE, Type.NORMAL));
     }
 
     /*
@@ -345,7 +346,7 @@ class TypeChartTest {
      */
     @Test
     void waterNeutralAgainstNormal() {
-        assertEquals(1.0f, TypeChart.getEffectiveness("Water", "Normal"));
+        assertEquals(1.0f, TypeChart.getEffectiveness(Type.WATER, Type.NORMAL));
     }
 
     /*
@@ -356,7 +357,7 @@ class TypeChartTest {
      */
     @Test
     void fightingNeutralAgainstWater() {
-        assertEquals(1.0f, TypeChart.getEffectiveness("Fighting", "Water"));
+        assertEquals(1.0f, TypeChart.getEffectiveness(Type.FIGHTING, Type.WATER));
     }
 
     // --- Same-type matchups ---
@@ -372,7 +373,7 @@ class TypeChartTest {
      */
     @Test
     void normalVsNormalIsNeutral() {
-        assertEquals(1.0f, TypeChart.getEffectiveness("Normal", "Normal"));
+        assertEquals(1.0f, TypeChart.getEffectiveness(Type.NORMAL, Type.NORMAL));
     }
 
     /*
@@ -384,7 +385,7 @@ class TypeChartTest {
      */
     @Test
     void fireVsFireIsNotVeryEffective() {
-        assertEquals(0.5f, TypeChart.getEffectiveness("Fire", "Fire"));
+        assertEquals(0.5f, TypeChart.getEffectiveness(Type.FIRE, Type.FIRE));
     }
 
     /*
@@ -397,6 +398,6 @@ class TypeChartTest {
      */
     @Test
     void dragonVsDragonIsSuperEffective() {
-        assertEquals(2.0f, TypeChart.getEffectiveness("Dragon", "Dragon"));
+        assertEquals(2.0f, TypeChart.getEffectiveness(Type.DRAGON, Type.DRAGON));
     }
 }

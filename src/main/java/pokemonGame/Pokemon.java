@@ -5,8 +5,74 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collections;
+import pokemonGame.TypeChart.Type;
 
 
+// =============================================================================================
+// CODE REVIEW NOTE — "God Class" Decomposition (2026-03-25 Review, Item #20)
+//
+// At ~950 lines, Pokemon.java handles too many distinct responsibilities:
+//   1. Identity & species data (species, nickname, dex index, types)
+//   2. Base stats, IVs, EVs, and current stats (storage + cap enforcement)
+//   3. Stat calculation formulas (calcMaxHP, calcCurrentStat, calculateCurrentStats)
+//   4. Moveset management (addMove, replaceMove, isMovesetFull)
+//   5. Game-logic modifiers (levelUp, healToFull, applyNature)
+//   6. The static createPokemon() factory (151-case switch — now commented out)
+//
+// The "God class" anti-pattern emerges when one class accumulates so many responsibilities
+// that it becomes the central hub everything depends on. The problem isn't just line count —
+// it's that changes to EV logic, stat formulas, moveset rules, or the factory can all
+// break each other because they share the same class scope and private state.
+//
+// PROPOSED DECOMPOSITION (three candidates, ordered by impact):
+//
+// ── Candidate 1: Extract a StatCalculator utility class ──
+//    Move calcMaxHP(), calcCurrentStat(), and calculateCurrentStats() into a new
+//    StatCalculator class with static methods. These are pure functions — they take
+//    numbers in and return numbers out, with no dependency on Pokemon's internal state
+//    beyond what's passed as arguments. Pokemon would call:
+//        this.maxHP = StatCalculator.calcMaxHP(hpBase, level, ivHp, evHp);
+//    WHY: Stat formulas are the most "extractable" piece because they're already
+//    stateless. Pulling them out makes them independently testable and reusable
+//    (e.g., a "what-if" damage preview could call StatCalculator without needing
+//    a full Pokemon instance). This is the Single Responsibility Principle in action:
+//    "a class should have only one reason to change," and stat formula tweaks
+//    shouldn't require editing the same file as moveset management.
+//
+// ── Candidate 2: Move the factory into PokemonFactory ──
+//    The createPokemon() switch statement (currently commented out) is a textbook
+//    case for the Factory pattern — and PokemonFactory.java already exists with a
+//    reflection-based approach. Whether you use the switch or reflection, the factory
+//    is a *creation* concern, not a *behavior* concern of Pokemon itself. Keeping it
+//    separate means adding/removing species never touches the core Pokemon class.
+//    This is already partially done — PokemonFactory exists and works. The commented-out
+//    switch in this file can be safely removed once PokemonFactory is the sole entry point.
+//
+// ── Candidate 3: Extract an EvManager value object ──
+//    The six evXxx fields, evTotal, the evCapper() helper, all six setEvXxx() methods,
+//    all six addEvXxx() methods, and checkEvTotals() form a self-contained subsystem
+//    with its own invariants (per-stat max 252, total max 510). Wrapping this in an
+//    EvManager class would encapsulate those rules in one place:
+//        public class EvManager {
+//            private int hp, attack, defense, spAttack, spDefense, speed;
+//            private int total;
+//            public void set(Stat stat, int value) { ... }
+//            public void add(Stat stat, int amount) { ... }
+//            public int get(Stat stat) { ... }
+//        }
+//    Pokemon would hold a single `private EvManager evs;` field.
+//    WHY: This eliminates the repetitive setter/adder methods (there are 12 near-identical
+//    methods right now) by using the Stat enum as a key, and it makes the 252/510 cap
+//    logic impossible to accidentally bypass — it's all behind EvManager's API.
+//    This pattern is called a "Value Object" — a small class whose identity is defined
+//    by its data rather than a database ID. It's a natural fit for EV bundles.
+//
+// WHAT TO DO NOW: Nothing urgent. At ~950 lines the class is manageable, and premature
+// extraction can hurt readability in a learning project. But as features grow (status
+// effects, abilities, held items), watch for the line count and responsibility list
+// expanding. When you next touch stat calculation *or* EV logic *or* moveset handling
+// for a feature, that's a natural time to extract that piece into its own class.
+// =============================================================================================
 public class Pokemon {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pokemon.class);
@@ -14,11 +80,11 @@ public class Pokemon {
     // Initialize attributes for all Pokemon
     private Trainer trainer; // This is the trainer that this Pokemon belongs to; it is set when the Pokemon is added to a trainer's team
     private int id; // This can be used to link the Pokémon to the database record
-    private String species;
+    private PokeSpecies species;
     private String nickname;
     private int dexIndex;
-    private String typePrimary;
-    private String typeSecondary;
+    private Type typePrimary;
+    private Type typeSecondary;
     private int level;
     private int hpBase;  
     private int attackBase; 
@@ -48,13 +114,12 @@ public class Pokemon {
     private int evTotal; // This must be 510 or lower for each Pokemon.
     private int expYield; // This is the amount of experience points a Pokemon yields when defeated in battle
     private int currentExp = 0; // This is the current amount of experience points a Pokemon has, which increases when it defeats other Pokemon in battle
-    private int[] evYield; // This array holds the EV yield for each stat when this Pokemon is defeated in battle, 
+    private int[] evYield = new int[]{0, 0, 0, 0, 0, 0}; // This array holds the EV yield for each stat when this Pokemon is defeated in battle, 
     // in the order of HP, Attack, Defense, Special Attack, Special Defense, Speed
     private Natures nature;
-    private String[] statusConditions; // This array holds any status conditions currently affecting the Pokemon (e.g. "Paralyzed", "Burned")
+    private String[] statusConditions = new String[0]; // This array holds any status conditions currently affecting the Pokemon (e.g. "Paralyzed", "Burned")
     private boolean isFainted = false; // This boolean indicates whether the Pokemon has fainted (current HP is 0 or less)
     private final ArrayList<MoveSlot> moveset;
-    private static final String[] STAT_NAMES = {"HP", "Attack", "Defense", "Special Attack", "Special Defense", "Speed"};
     
     // each individual Pokémon object keeps its own learnset reference; most species override
     // the accessor to return a shared static list, but the base class provides an empty list
@@ -62,9 +127,9 @@ public class Pokemon {
 
     // Constructors - One is a basic constructor with default stats, the other overloads to allow for custom stats
     
-    protected Pokemon(String species, int index, String typePrimary, String typeSecondary) {
+    protected Pokemon(PokeSpecies species, int index, Type typePrimary, Type typeSecondary) {
         this.species = species;
-        this.nickname = species; // Default name is the same as species
+        this.nickname = species.getDisplayName(); // Default name is the same as species
         this.dexIndex = index;
         this.typePrimary = typePrimary;
         this.typeSecondary = typeSecondary;
@@ -81,14 +146,15 @@ public class Pokemon {
         this.evSpecialAttack = 0;
         this.evSpecialDefense = 0;
         this.evSpeed = 0;
+        this.evYield = new int[]{0, 0, 0, 0, 0, 0}; // Default EV yield is 0 for all stats by default
         this.moveset = new ArrayList<MoveSlot>(4);
         // assign a random nature immediately
         Natures.assignRandom(this);
     }
 
-    protected Pokemon(String species, int index, String typePrimary, String typeSecondary, int level, int hp, int attack, int defense, int specialAttack, int specialDefense, int speed) {
+    protected Pokemon(PokeSpecies species, int index, Type typePrimary, Type typeSecondary, int level, int hp, int attack, int defense, int specialAttack, int specialDefense, int speed) {
         this.species = species;
-        this.nickname = species; // Default name is the same as species
+        this.nickname = species.getDisplayName(); // Default name is the same as species
         this.dexIndex = index;
         this.typePrimary = typePrimary;
         this.typeSecondary = typeSecondary;
@@ -105,6 +171,7 @@ public class Pokemon {
         this.evSpecialAttack = 0;
         this.evSpecialDefense = 0;
         this.evSpeed = 0;
+        this.evYield = new int[]{0, 0, 0, 0, 0, 0}; // Default EV yield is 0 for all stats by default
         this.moveset = new ArrayList<MoveSlot>(4);
         // random nature for custom‑stat constructor as well
         Natures.assignRandom(this);
@@ -123,11 +190,11 @@ public class Pokemon {
         return Collections.unmodifiableList(moveset);
     }
 
-    public String getTypePrimary() {
+    public Type getTypePrimary() {
         return typePrimary;
     }
 
-    public String getTypeSecondary() {
+    public Type getTypeSecondary() {
         return typeSecondary;
     }
 
@@ -135,7 +202,7 @@ public class Pokemon {
         return nickname;
     }
 
-    public String getSpecies() {
+    public PokeSpecies getSpecies() {
         return species;
     }
 
@@ -275,6 +342,10 @@ public class Pokemon {
         return evTotal;
     }
 
+    public int[] getEvYield() {
+        return evYield.clone();
+    }   
+
     public long getTrainerDiscordId() {
         if (trainer == null) {
             LOGGER.warn("Attempted to get trainer Discord ID for Pokémon with no trainer assigned. Throwing exception.");
@@ -289,15 +360,6 @@ public class Pokemon {
             throw new IllegalStateException("Trainer not assigned to this Pokemon yet.");
         }
         return trainer.getDbId();
-    }
-
-    public String[] getEvYield() {
-        String[] stringYield = new String[evYield.length];
-        for (int i = 0; i < evYield.length; i++) {
-            stringYield[i] = STAT_NAMES[i] + ": " + evYield[i];
-        }
-        
-        return stringYield;
     }
 
     // Special Methods to get the appropriate attack or defense stat based on the move's category (Physical, Special, or Status)
@@ -472,6 +534,16 @@ public class Pokemon {
     // (e.g. when loading from the database) and you are sure that the 
     // value being set is valid. These will check evTotal to ensure rule compliance,
     // but they will not modify existing EVs.
+
+    // CODE REVIEW NOTE — EV Extraction Candidate
+    // Everything from here through addEvSpeed() (and checkEvTotals below) is self-contained
+    // EV management with its own invariant (per-stat ≤252, total ≤510). Notice how every
+    // setter and adder repeats the same pattern — only the field name changes. An EvManager
+    // class could replace all 12+ methods with two generic ones:
+    //     evs.set(Stat.HP, value)   and   evs.add(Stat.HP, amount)
+    // using the Stat enum as a key into an internal array or EnumMap. This is a practical
+    // example of the DRY principle ("Don't Repeat Yourself") — when you see the same logic
+    // copied with only a variable name changed, that's a signal to generalize.
     
     private int evCapper(int oldEvValue, int newEvValue) {
         int totalWithoutThis = this.evTotal - oldEvValue;
@@ -523,8 +595,11 @@ public class Pokemon {
         this.evTotal = this.evTotal - this.evSpeed + cappedSpeed;
     }
 
-    public void setEvYield(int[] evYield) {
-        this.evYield = evYield;
+    // Sets a single stat's EV yield by index (0=HP, 1=Atk, 2=Def, 3=SpAtk, 4=SpDef, 5=Spd).
+    // This lets subclasses override only the non-zero yields without rebuilding the whole array,
+    // since the superclass constructor already initializes evYield to all zeros.
+    public void setEvYield(Stat stat, int value) {
+        this.evYield[stat.ordinal()] = value;
     }
 
     // ==================
@@ -603,6 +678,14 @@ public class Pokemon {
     // ===     MOVESET MANAGEMENT       ===
     // ====================================
 
+    // CODE REVIEW NOTE — Moveset Management
+    // This section is relatively small (3 methods, ~30 lines) and tightly coupled to
+    // Pokemon's moveset field. Extracting it now would be over-engineering. However,
+    // if the moveset system grows (e.g., move relearning, move tutors, PP-restoring
+    // items, TM/HM usage tracking), it could become a Moveset class that wraps the
+    // ArrayList<MoveSlot> and owns the 4-slot limit, PP management, and replacement logic.
+    // For now, keeping it here is the right call — extract when there's a concrete reason.
+
     // --- Moveset management (no I/O — callers handle user interaction) ---
 
     /**
@@ -642,6 +725,26 @@ public class Pokemon {
     // ====================================
     // ===     STAT CALCULATIONS        ===
     // ====================================
+
+    // CODE REVIEW NOTE — StatCalculator Extraction Candidate
+    // calcMaxHP() and calcCurrentStat() are pure functions — they only use their parameters,
+    // not any instance fields. This makes them ideal candidates for a static utility class:
+    //
+    //     public final class StatCalculator {
+    //         public static int calcMaxHP(int base, int level, int iv, int ev) { ... }
+    //         public static int calcStat(int base, int level, int iv, int ev, double nature) { ... }
+    //     }
+    //
+    // calculateCurrentStats() would stay here in Pokemon (it needs access to the fields),
+    // but it would delegate to StatCalculator for the math. Benefits:
+    //   - The formulas become independently unit-testable without constructing a Pokemon
+    //   - Other code (e.g., a damage preview, a "what stats would I have at level X?" command)
+    //     can call StatCalculator directly
+    //   - Pokemon.java shrinks by ~30 lines and loses one responsibility
+    //
+    // This is the "Extract Method Object" refactoring pattern — when a group of methods in a
+    // class are cohesive with each other but loosely coupled to the rest of the class, they
+    // form a natural extraction boundary.
 
     // Methods for calculations
     public int calcMaxHP(int hpBase, int level, int ivHp, int ev) {
@@ -692,12 +795,14 @@ public class Pokemon {
 
     // Wrapper method for stat calculation
     public void calculateCurrentStats() {
+        int oldMaxHp = this.maxHP;
         this.maxHP = calcMaxHP(getHpBaseStat(), getLevel(), getIvHp(), getEvHp());
         this.currentAttack = calcCurrentStat(getAttackBaseStat(), getLevel(), getIvAttack(), getEvAttack(), getNature().modifierFor(Stat.ATTACK));
         this.currentDefense = calcCurrentStat(getDefenseBaseStat(), getLevel(), getIvDefense(), getEvDefense(), getNature().modifierFor(Stat.DEFENSE));
         this.currentSpecialAttack = calcCurrentStat(getSpecialAttackBaseStat(), getLevel(), getIvSpecialAttack(), getEvSpecialAttack(), getNature().modifierFor(Stat.SPECIAL_ATTACK));
         this.currentSpecialDefense = calcCurrentStat(getSpecialDefenseBaseStat(), getLevel(), getIvSpecialDefense(), getEvSpecialDefense(), getNature().modifierFor(Stat.SPECIAL_DEFENSE));
         this.currentSpeed = calcCurrentStat(getSpeedBaseStat(), getLevel(), getIvSpeed(), getEvSpeed(), getNature().modifierFor(Stat.SPEED)); 
+        this.currentHP = this.currentHP + (this.maxHP - oldMaxHp); // Adjust current HP by the change in max HP to keep the same percentage of health
     }
 
     public boolean checkEvTotals() {
@@ -738,6 +843,17 @@ public class Pokemon {
     // ====================================
     // ===     STATIC FACTORY METHOD    ===
     // ====================================
+
+    // CODE REVIEW NOTE — Factory Already Extracted
+    // This 151-case switch statement is now commented out because PokemonFactory.java handles
+    // species creation via classpath scanning + reflection. This is the right move — the factory
+    // is a "creation" concern, not a "behavior" concern of Pokemon. Having it here meant that
+    // adding a new species required editing Pokemon.java, which violated the Open/Closed Principle
+    // ("open for extension, closed for modification"). With PokemonFactory, you add a new species
+    // subclass and it's auto-discovered — Pokemon.java never changes.
+    //
+    // Once PokemonFactory is confirmed as the sole creation path across the codebase (bot layer,
+    // persistence layer, tests), this commented-out block can be deleted entirely to reduce clutter.
 
     // This method can be used to create a new Pokémon instance based on user input for species, level, and other attributes.  
     // It can return the newly created Pokémon instance.

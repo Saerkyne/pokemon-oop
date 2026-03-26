@@ -1,9 +1,13 @@
 package pokemonGame.mons;
 
-import java.util.List;
-import pokemonGame.LearnsetEntry;
 import pokemonGame.Pokemon;
 import pokemonGame.moves.*;
+import pokemonGame.PokeSpecies;
+import pokemonGame.LearnsetEntry;
+import pokemonGame.LearnsetEntry.Source;
+import pokemonGame.TypeChart.Type;
+import pokemonGame.Stat;
+import java.util.List;
 
 public class Beedrill extends Pokemon {
 
@@ -13,107 +17,193 @@ public class Beedrill extends Pokemon {
     static {
         // Level up moves
         LEARNSET.add(
-            new LearnsetEntry(FuryAttack.INSTANCE, LearnsetEntry.Source.LEVEL, 1)
+            new LearnsetEntry(
+                FuryAttack.INSTANCE,
+                Source.LEVEL,
+                1)
         );
         LEARNSET.add(
-            new LearnsetEntry(FuryAttack.INSTANCE, LearnsetEntry.Source.LEVEL, 12)
+            new LearnsetEntry(
+                FuryAttack.INSTANCE,
+                Source.LEVEL,
+                12)
         );
         LEARNSET.add(
-            new LearnsetEntry(FocusEnergy.INSTANCE, LearnsetEntry.Source.LEVEL, 16)
+            new LearnsetEntry(
+                FocusEnergy.INSTANCE,
+                Source.LEVEL,
+                16)
         );
         LEARNSET.add(
-            new LearnsetEntry(Twineedle.INSTANCE, LearnsetEntry.Source.LEVEL, 20)
+            new LearnsetEntry(
+                Twineedle.INSTANCE,
+                Source.LEVEL,
+                20)
         );
         LEARNSET.add(
-            new LearnsetEntry(Rage.INSTANCE, LearnsetEntry.Source.LEVEL, 25)
+            new LearnsetEntry(
+                Rage.INSTANCE,
+                Source.LEVEL,
+                25)
         );
         LEARNSET.add(
-            new LearnsetEntry(PinMissile.INSTANCE, LearnsetEntry.Source.LEVEL, 30)
+            new LearnsetEntry(
+                PinMissile.INSTANCE,
+                Source.LEVEL,
+                30)
         );
         LEARNSET.add(
-            new LearnsetEntry(Agility.INSTANCE, LearnsetEntry.Source.LEVEL, 35)
+            new LearnsetEntry(
+                Agility.INSTANCE,
+                Source.LEVEL,
+                35)
         );
 
         // HM moves
-        LEARNSET.add(new LearnsetEntry(Cut.INSTANCE, LearnsetEntry.Source.HM, 1));
+        LEARNSET.add(
+            new LearnsetEntry(
+                Cut.INSTANCE,
+                Source.HM,
+                1)
+        );
 
         // Pre-evolution moves
         LEARNSET.add(
             new LearnsetEntry(
                 Harden.INSTANCE,
-                LearnsetEntry.Source.PRE_EVOLUTION,
+                Source.PRE_EVOLUTION,
                 1
             )
         );
         LEARNSET.add(
             new LearnsetEntry(
                 PoisonSting.INSTANCE,
-                LearnsetEntry.Source.PRE_EVOLUTION,
+                Source.PRE_EVOLUTION,
                 1
             )
         );
         LEARNSET.add(
             new LearnsetEntry(
                 StringShot.INSTANCE,
-                LearnsetEntry.Source.PRE_EVOLUTION,
+                Source.PRE_EVOLUTION,
                 1
             )
         );
 
         // TM moves
         LEARNSET.add(
-            new LearnsetEntry(SwordsDance.INSTANCE, LearnsetEntry.Source.TM, 3)
+            new LearnsetEntry(
+                SwordsDance.INSTANCE,
+                Source.TM,
+                3
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Toxic.INSTANCE, LearnsetEntry.Source.TM, 6)
+            new LearnsetEntry(
+                Toxic.INSTANCE,
+                Source.TM,
+                6
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(TakeDown.INSTANCE, LearnsetEntry.Source.TM, 9)
+            new LearnsetEntry(
+                TakeDown.INSTANCE,
+                Source.TM,
+                9
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(DoubleEdge.INSTANCE, LearnsetEntry.Source.TM, 10)
+            new LearnsetEntry(
+                DoubleEdge.INSTANCE,
+                Source.TM,
+                10
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(HyperBeam.INSTANCE, LearnsetEntry.Source.TM, 15)
+            new LearnsetEntry(
+                HyperBeam.INSTANCE,
+                Source.TM,
+                15
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Rage.INSTANCE, LearnsetEntry.Source.TM, 20)
+            new LearnsetEntry(
+                Rage.INSTANCE,
+                Source.TM,
+                20
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(MegaDrain.INSTANCE, LearnsetEntry.Source.TM, 21)
+            new LearnsetEntry(
+                MegaDrain.INSTANCE,
+                Source.TM,
+                21
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Mimic.INSTANCE, LearnsetEntry.Source.TM, 31)
+            new LearnsetEntry(
+                Mimic.INSTANCE,
+                Source.TM,
+                31
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(DoubleTeam.INSTANCE, LearnsetEntry.Source.TM, 32)
+            new LearnsetEntry(
+                DoubleTeam.INSTANCE,
+                Source.TM,
+                32
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Reflect.INSTANCE, LearnsetEntry.Source.TM, 33)
+            new LearnsetEntry(
+                Reflect.INSTANCE,
+                Source.TM,
+                33
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Bide.INSTANCE, LearnsetEntry.Source.TM, 34)
+            new LearnsetEntry(
+                Bide.INSTANCE,
+                Source.TM,
+                34
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Swift.INSTANCE, LearnsetEntry.Source.TM, 39)
+            new LearnsetEntry(
+                Swift.INSTANCE,
+                Source.TM,
+                39
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(SkullBash.INSTANCE, LearnsetEntry.Source.TM, 40)
+            new LearnsetEntry(
+                SkullBash.INSTANCE,
+                Source.TM,
+                40
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Rest.INSTANCE, LearnsetEntry.Source.TM, 44)
+            new LearnsetEntry(
+                Rest.INSTANCE,
+                Source.TM,
+                44
+            )
         );
         LEARNSET.add(
-            new LearnsetEntry(Substitute.INSTANCE, LearnsetEntry.Source.TM, 50)
+            new LearnsetEntry(
+                Substitute.INSTANCE,
+                Source.TM,
+                50
+            )
         );
     }
 
     public Beedrill(String nickname) {
         super(
-            "Beedrill",
+            PokeSpecies.BEEDRILL,
             15,
-            "Bug",
-            "Poison",
+            Type.BUG,
+            Type.POISON,
             5,
             65,
             90,
@@ -124,9 +214,8 @@ public class Beedrill extends Pokemon {
         );
 
         this.setNickname(nickname);
-
-        int[] evYield = {0, 2, 0, 0, 1, 0}; // Beedrill yields 2 EV points in Attack and 1 EV point in Special Defense when defeated
-        this.setEvYield(evYield);
+        this.setEvYield(Stat.ATTACK, 2); // Beedrill yields 2 EV points in Attack when defeated
+        this.setEvYield(Stat.SPECIAL_DEFENSE, 1); // Beedrill yields 1 EV point in Special Defense when defeated
         this.generateRandomIVs();
         this.calculateCurrentStats();
     }

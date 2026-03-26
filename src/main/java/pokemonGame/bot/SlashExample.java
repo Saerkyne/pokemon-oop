@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pokemonGame.PokeSpecies;
 
 public class SlashExample extends ListenerAdapter{
 
@@ -34,12 +35,12 @@ public class SlashExample extends ListenerAdapter{
         switch (event.getName()) {
             
             case "battlestate":
-                LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("content").getAsString(), user, userId);
                 event.reply("The battle is currently in progress!").queue();
                 return;
 
             case "createtrainer":
-                LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("name").getAsString(), user, userId);
                 int createAttempt = App.createTrainer(event.getOption("name").getAsString(), userId, user);
 
                 if (createAttempt == -1) {
@@ -51,7 +52,7 @@ public class SlashExample extends ListenerAdapter{
                 }
             
             case "checkteam":
-                LOGGER.info("Received slash command: '" + event.getName() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", event.getName(), user, userId);
                 
                 
                 if (trainerCRUD.getTrainerByDiscordId(userId) == null) {
@@ -87,8 +88,8 @@ public class SlashExample extends ListenerAdapter{
 
             case "addpokemon":
                 // Needs to create a pokemon and add it to the trainers team in the database, then reply with success or failure message
-                LOGGER.info("Received slash command: '" + event.getName() + "' with Pokemon name: '" + event.getOption("species").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
-                String species = event.getOption("species").getAsString();
+                LOGGER.info("Received slash command; '{}' with Pokemon name: '{}' from user: {} (ID: {})", event.getName(), event.getOption("species").getAsString(), user, userId);
+                PokeSpecies species = PokeSpecies.valueOf(event.getOption("species").getAsString().toUpperCase());
                 String nickname = event.getOption("nickname") != null ? event.getOption("nickname").getAsString() : null;
                 
                 if (trainerCRUD.getTrainerByDiscordId(userId) == null) {
@@ -132,7 +133,7 @@ public class SlashExample extends ListenerAdapter{
                 }
 
             case "releasepokemon":
-                LOGGER.info("Received slash command: '" + event.getName() + "' with (nick)name: '" + event.getOption("pokemon").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command; '{}' with (nick)name: '{}' from user: {} (ID: {})", event.getName(), event.getOption("pokemon").getAsString(), user, userId);
                 String releasedPokemon = event.getOption("pokemon").getAsString();
                 if (trainerCRUD.getTrainerByDiscordId(userId) == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
@@ -153,7 +154,7 @@ public class SlashExample extends ListenerAdapter{
                 }
                 
             case "cleardatabase":
-                LOGGER.info("Received slash command: '" + event.getName() + "' with confirmation: '" + event.getOption("confirm").getAsString() + "' from user: " + user + " (ID: " + userId + ")");
+                LOGGER.info("Received slash command; '{}' with confirmation: '{}' from user: {} (ID: {})", event.getName(), event.getOption("confirm").getAsString(), user, userId);
                 String confirmation = event.getOption("confirm").getAsString();
                 if (confirmation.equalsIgnoreCase("CONFIRM")) {
                     if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {

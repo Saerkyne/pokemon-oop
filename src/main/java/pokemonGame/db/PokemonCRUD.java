@@ -21,6 +21,7 @@ import pokemonGame.Trainer;
 import java.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pokemonGame.PokeSpecies;
 
 public class PokemonCRUD {
 
@@ -35,7 +36,7 @@ public class PokemonCRUD {
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setInt(1, pokemon.getTrainerDbId());
-                pstmt.setString(2, pokemon.getSpecies());
+                pstmt.setString(2, pokemon.getSpecies().getDisplayName());
                 pstmt.setString(3, pokemon.getNickname());
                 pstmt.setInt(4, pokemon.getLevel());
                 pstmt.setString(5, pokemon.getNature().getDisplayName());
@@ -99,7 +100,7 @@ public class PokemonCRUD {
                     + "WHERE instance_id = ? AND trainer_id = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, pokemon.getSpecies());
+                pstmt.setString(1, pokemon.getSpecies().getDisplayName());
                 pstmt.setString(2, pokemon.getNickname());
                 pstmt.setInt(3, pokemon.getLevel());
                 pstmt.setString(4, pokemon.getNature().getDisplayName());
@@ -123,7 +124,7 @@ public class PokemonCRUD {
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
-                    LOGGER.info("Pokemon '{}' ({}) updated successfully for trainer ID {}.", pokemon.getNickname(), pokemon.getSpecies(), pokemon.getTrainerDbId());
+                    LOGGER.info("Pokemon '{}' ({}) updated successfully for trainer ID {}.", pokemon.getNickname(), pokemon.getSpecies().getDisplayName(), pokemon.getTrainerDbId());
                     return true; // Return true to indicate successful update
                 } else {
                     LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemon.getId(), pokemon.getTrainerDbId());
@@ -145,7 +146,7 @@ public class PokemonCRUD {
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
-                    LOGGER.info("Pokemon '{}' ({}) deleted successfully for trainer ID {}.", pokemon.getNickname(), pokemon.getSpecies(), pokemon.getTrainerDbId());
+                    LOGGER.info("Pokemon '{}' ({}) deleted successfully for trainer ID {}.", pokemon.getNickname(), pokemon.getSpecies().getDisplayName(), pokemon.getTrainerDbId());
                     return true; // Return true to indicate successful deletion
                 } else {
                     LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemon.getId(), pokemon.getTrainerDbId());
@@ -162,7 +163,7 @@ public class PokemonCRUD {
 
         TrainerCRUD getById = new TrainerCRUD();
         int foundPokemonId = rs.getInt("instance_id");
-        String species = rs.getString("species");
+        PokeSpecies species = PokeSpecies.valueOf(rs.getString("species").toUpperCase());
         String name = rs.getString("nickname");
         int level = rs.getInt("level");
         String nature = rs.getString("nature");

@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.Set;
 
+// NEEDS TO BE UPDATE TO USE ENUM INSTEAD OF STRING FOR SPECIES.
+// NO LONGER NEEDS TO SCAN FOR CLASSES, JUST MAP ENUM VALUES TO CONSTRUCTORS IN A STATIC BLOCK.
+
 public class PokemonFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PokemonFactory.class);
@@ -62,8 +65,8 @@ public class PokemonFactory {
 
     
 
-    public static Pokemon createPokemonFromRegistry(String species, String nickname) {
-        Function<String, Pokemon> constructor = REGISTRY.get(species.toLowerCase());
+    public static Pokemon createPokemonFromRegistry(PokeSpecies species, String nickname) {
+        Function<String, Pokemon> constructor = REGISTRY.get(species.getDisplayName().toLowerCase());
         
         if (constructor == null) {
             LOGGER.warn("Species not recognized in registry. Please choose a valid Pokémon species.");

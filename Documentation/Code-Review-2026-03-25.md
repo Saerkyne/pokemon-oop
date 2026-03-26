@@ -12,6 +12,7 @@
 This educational project demonstrates strong OOP fundamentals: a clean inheritance hierarchy (`Pokemon` → species subclasses, `Move` → move subclasses), proper encapsulation, polymorphism, and a well-defined layered architecture. The codebase has matured since the prior review — the `deleteAllData()` SQL injection vector has been resolved with a whitelist approach, and the overall structure is sound.
 
 **Key Strengths:**
+
 - Well-layered separation of concerns (domain → persistence → bot)
 - All 151 Gen 1 species implemented with consistent constructor patterns
 - 165 Gen 1 moves with accurate stats
@@ -21,6 +22,7 @@ This educational project demonstrates strong OOP fundamentals: a clean inheritan
 - Nature system cleanly modeled as an enum with modifier logic
 
 **Key Areas for Improvement:**
+
 - 🔴 **Hardcoded database credentials** still committed to source (carried over from prior review)
 - 🔴 **`AutoCompleteBot` never registered** as a JDA event listener — autocomplete is silently broken
 - 🔴 **`PokemonCRUD.deleteDBPokemon()`** calls `getTrainerDiscordId()` instead of `getTrainerDbId()` — wrong column type in the WHERE clause
@@ -163,11 +165,14 @@ foundPokemon.calculateCurrentStats();       // This resets currentHP = maxHP!
 `calculateCurrentStats()` unconditionally sets `currentHP = maxHP` (as noted in `Pokemon.java` with a `// I know that this may cause issues` comment). This means every Pokémon loaded from the database is fully healed, defeating the purpose of persisting `current_hp`.
 
 **Fix options:**
+
 - **Option A:** Save and restore HP around stat recalculation:
+
   ```java
   foundPokemon.calculateCurrentStats();
   foundPokemon.setCurrentHP(currentHp); // Re-apply the DB value after recalc
   ```
+
 - **Option B (better long-term):** Separate stat recalculation from HP restoration — have `calculateCurrentStats()` only update the non-HP stats, and add a separate `healToFull()` method.
 
 ---
@@ -179,6 +184,7 @@ foundPokemon.calculateCurrentStats();       // This resets currentHP = maxHP!
 Several command paths retrieve a trainer then use it without null-checking:
 
 **`checkteam` command (line ~63):**
+
 ```java
 Trainer trainer = trainerCRUD.getTrainerByDiscordId(userId);
 List<Pokemon> teamInfo = teamCRUD.getDBTeamForTrainer(trainer); // NPE if trainer is null
@@ -187,6 +193,7 @@ List<Pokemon> teamInfo = teamCRUD.getDBTeamForTrainer(trainer); // NPE if traine
 If the user hasn't created a trainer yet, `getTrainerByDiscordId()` returns `null`, and the next line immediately NPEs.
 
 **`releasepokemon` command (lines ~114-117):**
+
 ```java
 Trainer releasingTrainer = trainerCRUD.getTrainerByDiscordId(userId);
 Pokemon pokemonInSlot = teamCRUD.getPokemonInSlotForTrainer(releasingTrainer, slotToRelease);
@@ -246,6 +253,7 @@ public int getTrainerDbId() {
 The `trainer` field is `null` between construction and the `setTrainer()` call. Any code that accesses these methods before setting a trainer will NPE. This is especially risky in the persistence layer where the trainer may not be set yet.
 
 **Fix:** Either:
+
 - Throw a descriptive exception: `if (trainer == null) throw new IllegalStateException("Trainer not assigned to this Pokémon");`
 - Return a sentinel value: `return trainer != null ? trainer.getDbId() : -1;`
 
@@ -497,7 +505,7 @@ public void calculateCurrentStats() {
 The three-layer separation is correctly maintained:
 
 | Layer | Package | Responsibility | I/O Dependency |
-|-------|---------|---------------|----------------|
+| ------- | --------- | --------------- | ---------------- |
 | **Domain** | `pokemonGame` | Game logic, stat formulas, type chart | None |
 | **Persistence** | `pokemonGame.db` | JDBC/MariaDB CRUD operations | Database |
 | **Bot/Controller** | `pokemonGame.bot` | Discord event handling, command routing | JDA/Discord API |
@@ -507,7 +515,7 @@ No domain class imports JDA. No persistence class imports JDA. This is good sepa
 ### Class Responsibility Distribution
 
 | Class | Lines | Responsibility | Assessment |
-|-------|-------|---------------|------------|
+| ------- | ------- | --------------- | ------------ |
 | `Pokemon.java` | ~950 | Stats, EVs, IVs, moveset, factory method, stat calculation | ⚠️ Too much — candidate for split |
 | `Attack.java` | ~120 | Damage calc, effectiveness, crit | ✅ Focused |
 | `Battle.java` | ~90 | Turn order, damage application, faint check | ⚠️ Mostly placeholder |
@@ -523,6 +531,7 @@ No domain class imports JDA. No persistence class imports JDA. This is good sepa
 ### `Pokemon.java` Size Concern
 
 At ~950 lines, `Pokemon` handles too many responsibilities for long-term maintainability:
+
 - Stat storage and calculation
 - EV/IV management with cap enforcement
 - Moveset management
@@ -530,6 +539,7 @@ At ~950 lines, `Pokemon` handles too many responsibilities for long-term maintai
 - Random IV generation
 
 This follows the "God class" anti-pattern. Consider extracting:
+
 - `StatCalculator` — formulas (`calcMaxHP`, `calcCurrentStat`, `calculateCurrentStats`)
 - Move the `createPokemon()` factory into `PokemonFactory` (which already exists as an alternative)
 - EV management into a value object if it grows more complex
@@ -543,7 +553,7 @@ Not urgent for a learning project at this stage, but good to be aware of.
 ### `Pokemon.java`
 
 | Aspect | Assessment |
-|--------|-----------|
+| -------- | ----------- |
 | Encapsulation | ✅ Private fields, public getters/setters |
 | Stat formulas | ✅ Correct mainline formulas |
 | EV cap enforcement | ✅ Both setters and adders enforce 252/510 |
@@ -557,7 +567,7 @@ Not urgent for a learning project at this stage, but good to be aware of.
 ### `Attack.java`
 
 | Aspect | Assessment |
-|--------|-----------|
+| -------- | ----------- |
 | Damage formula | ✅ Correct Gen III-style formula |
 | STAB calculation | ✅ Checks both primary and secondary types |
 | Type effectiveness | ✅ Dual-type multiplication |
@@ -570,7 +580,7 @@ Not urgent for a learning project at this stage, but good to be aware of.
 ### `Battle.java`
 
 | Aspect | Assessment |
-|--------|-----------|
+| -------- | ----------- |
 | `dealDamage()` | ✅ Works (except HP clamping — see issue #4) |
 | `checkSpeed()` | ✅ Correct with random tiebreaker |
 | `checkFainted()` | ✅ Correct |
@@ -607,7 +617,7 @@ for (Pokemon pokemon : player.getTeam()) {
 ### `DatabaseSetup.java`
 
 | Aspect | Assessment |
-|--------|-----------|
+| -------- | ----------- |
 | Prepared statements | ✅ Used throughout |
 | SQL injection protection | ✅ `deleteAllData()` now uses ALLOWED_TABLES whitelist |
 | Try-with-resources | ✅ Connections properly managed |
@@ -625,7 +635,7 @@ for (Pokemon pokemon : player.getTeam()) {
 ### `PokemonCRUD.java`
 
 | Aspect | Assessment |
-|--------|-----------|
+| -------- | ----------- |
 | `createDBPokemon()` | ✅ Correct, returns generated ID |
 | `getSpecificDBPokemonForTrainer()` | ✅ Correct |
 | `updateDBPokemon()` | ✅ Comprehensive — saves all mutable fields |
@@ -650,7 +660,7 @@ foundPokemon.setIsFainted(isFainted);
 ### `TeamCRUD.java`
 
 | Aspect | Assessment |
-|--------|-----------|
+| -------- | ----------- |
 | `addPokemonToDBTeam()` | ✅ Correct slot assignment |
 | `checkSlotIndex()` | ✅ Simple COUNT query |
 | `removePokemonFromDBTeam()` | ⚠️ Creates dummy Trainer (see issue #9) |
@@ -664,7 +674,7 @@ foundPokemon.setIsFainted(isFainted);
 ### `BotRunner.java`
 
 | Aspect | Assessment |
-|--------|-----------|
+| -------- | ----------- |
 | Token from env var | ✅ `System.getenv("MOKEPONS_API_KEY")` |
 | Slash command registration | ✅ Declarative, all 7 commands registered |
 | Permission control | ✅ `cleardatabase` uses `DefaultMemberPermissions.DISABLED` |
@@ -675,7 +685,7 @@ foundPokemon.setIsFainted(isFainted);
 ### `SlashExample.java`
 
 | Aspect | Assessment |
-|--------|-----------|
+| -------- | ----------- |
 | Command routing | ✅ Clean switch statement |
 | Ephemeral error replies | ✅ Error messages use `.setEphemeral(true)` |
 | Null safety | 🟡 Several paths miss null checks (see issue #6) |
@@ -707,7 +717,7 @@ The autocomplete implementation only provides suggestions for the `say` command'
 ### Overall Assessment
 
 | Test Class | Tests | Quality | Coverage |
-|------------|-------|---------|----------|
+| ------------ | ------- | --------- | ---------- |
 | `AttackTest` | ~15 | ⭐⭐⭐⭐ Excellent | Parameterized effectiveness, damage bounds, crit stats |
 | `BattleTest` | ~19 | ⭐⭐⭐ Good | 2 `@Disabled` tests, faint logic covered |
 | `EvAdderTest` | ~18 | ⭐⭐⭐⭐ Thorough | Both caps, negative inputs, setter/adder interaction |
@@ -739,6 +749,7 @@ void effectiveness(String attackType, String defType, float expected) {
 **`NaturesTest` — paramatize neutral natures:** Five structurally identical tests (`bashfulIsNeutralForAllStats`, `hardyIsNeutralForAllStats`, etc.) should be one `@ParameterizedTest`.
 
 **`@Disabled` tests (3 total):** These document known defects:
+
 1. `setCurrentHP_shouldClampAtZero` — HP clamping not implemented
 2. `dealDamage_hpShouldBeClampedAtZero` — depends on the above
 3. `enterBattleState_shouldRejectTrainerWithAllFaintedPokemon` — validation not implemented
@@ -760,7 +771,7 @@ Fixing issue #4 (HP clamping) would unblock two of these three tests.
 ### `pom.xml`
 
 | Aspect | Assessment |
-|--------|-----------|
+| -------- | ----------- |
 | Java version | ✅ Java 21 via `maven.compiler.release` |
 | Encoding | ✅ UTF-8 explicitly set |
 | Test framework | ✅ JUnit 5 with `<scope>test</scope>` |
@@ -786,6 +797,7 @@ Fixing issue #4 (HP clamping) would unblock two of these three tests.
 All 151 Gen 1 species are implemented. Spot-checking 8 species (Bulbasaur, Charmander, Squirtle, Pikachu, Eevee, Snorlax, Mewtwo, Mew) shows **consistent patterns:**
 
 ✅ Each class:
+
 - Extends `Pokemon`
 - Declares `private static final List<LearnsetEntry> LEARNSET` with a `static {}` initializer
 - Constructor calls `super()` with correct base stats
@@ -801,6 +813,7 @@ All 151 Gen 1 species are implemented. Spot-checking 8 species (Bulbasaur, Charm
 Spot-checking 10 moves across physical, special, and status categories shows **consistent patterns:**
 
 ✅ Each move:
+
 - Extends `Move`
 - Has a no-arg constructor calling `super(name, power, type, category, accuracy, pp)`
 - Includes `// == Special Effect ==` comments documenting unimplemented secondary effects
@@ -834,7 +847,7 @@ These are things the codebase does well that are worth calling out for reinforce
 ## Summary of Issues by Severity
 
 | # | Severity | Issue | File(s) |
-|---|----------|-------|---------|
+| --- | ---------- | ------- | --------- |
 | 1 | 🔴 Blocking | Hardcoded DB credentials | `DatabaseSetup.java` |
 | 2 | 🔴 Blocking | `AutoCompleteBot` not registered | `BotRunner.java` |
 | 3 | 🔴 Blocking | Wrong getter in delete log | `PokemonCRUD.java` |

@@ -86,7 +86,7 @@ public class AutoCompleteBot extends ListenerAdapter {
 
 
             
-            List<Command.Choice> options = teamCRUD.getDBTeamForTrainer(releasingTrainer).stream()
+            List<Command.Choice> options = teamCRUD.getDBTeamForTrainer(releasingTrainer.getDbId()).stream()
                 .filter(choice -> choice.getNickname().toLowerCase().startsWith(userInput))
                 .map(choice -> new Command.Choice(choice.getNickname(), choice.getNickname()))
                 .collect(Collectors.toList());

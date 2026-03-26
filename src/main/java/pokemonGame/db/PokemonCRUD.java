@@ -74,7 +74,7 @@ public class PokemonCRUD {
                 try (ResultSet rs = pstmt.executeQuery()) {
                     
                     if (rs.next()) {
-                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
+                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer.getDbId());
                         LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies(), trainer.getDbId());
                         return foundPokemon; // Return the retrieved Pokémon
                     } else {
@@ -148,7 +148,7 @@ public class PokemonCRUD {
                     LOGGER.info("Pokemon '{}' ({}) deleted successfully for trainer ID {}.", pokemon.getNickname(), pokemon.getSpecies(), pokemon.getTrainerDbId());
                     return true; // Return true to indicate successful deletion
                 } else {
-                    LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemon.getId(), pokemon.getTrainerDiscordId());
+                    LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemon.getId(), pokemon.getTrainerDbId());
                     return false; // Return false to indicate no Pokemon found to delete
                 }
             }
@@ -158,7 +158,9 @@ public class PokemonCRUD {
         }
     }
 
-    public static Pokemon mapResultSetToPokemon(ResultSet rs, Trainer trainer) throws SQLException {
+    public static Pokemon mapResultSetToPokemon(ResultSet rs, int trainerDbId) throws SQLException {
+
+        TrainerCRUD getById = new TrainerCRUD();
         int foundPokemonId = rs.getInt("instance_id");
         String species = rs.getString("species");
         String name = rs.getString("nickname");
@@ -182,7 +184,7 @@ public class PokemonCRUD {
 
         // Create a new Pokemon object and populate its fields from the ResultSet
         Pokemon foundPokemon = PokemonFactory.createPokemonFromRegistry(species, name);
-        foundPokemon.setTrainer(trainer);
+        foundPokemon.setTrainer(getById.getTrainerByDbId(trainerDbId)); // Set the trainer using the trainer's DB ID
         foundPokemon.setId(foundPokemonId);
         foundPokemon.setLevel(level);
         foundPokemon.setNature(Natures.valueOf(nature.toUpperCase()));
@@ -214,7 +216,7 @@ public class PokemonCRUD {
                 pstmt.setString(2, nickname);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
-                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
+                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer.getDbId());
                         LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies(), trainer.getDbId());
                         return foundPokemon; // Return the retrieved Pokémon
                     } else {

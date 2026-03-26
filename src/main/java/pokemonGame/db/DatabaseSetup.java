@@ -46,9 +46,20 @@ public class DatabaseSetup {
         DataSource.setPassword(PASSWORD);
     }
 
-    public static Connection getConnection() throws SQLException {
-        logger.info("Attempting to connect to database at {}", URL);
-        return DataSource.getConnection();
+    public static Connection getConnection() {
+
+        logger.info("Attempting to get database connection with URL: {}", URL);
+
+        if (URL == null || USER == null || PASSWORD == null) {
+            logger.error("Database credentials are not set in environment variables.");
+            throw new IllegalStateException("Database credentials are missing");
+        }
+        try {
+            return DataSource.getConnection();
+        } catch (SQLException e) {
+            logger.error("Error obtaining database connection: {}", e.getMessage(), e);
+            throw new IllegalStateException("Unable to obtain database connection", e);
+        }
     }
 
     public static void deleteAllData() {

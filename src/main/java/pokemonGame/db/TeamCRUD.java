@@ -3,7 +3,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import pokemonGame.Pokemon;
-import pokemonGame.Trainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,28 +69,26 @@ public class TeamCRUD {
         return -1; // Return -1 if checking slot index failed
     }
 
-    public Boolean removePokemonFromDBTeam(int trainerId, int slotIndex) {
+    public Boolean removePokemonFromDBTeam(int trainerDbId, int slotIndex) {
 
         PokemonCRUD pokemonCRUD = new PokemonCRUD();
-        Trainer trainer = new Trainer("empty");
-        trainer.setDbId(trainerId);
-        Pokemon pokemonToDelete = getPokemonInSlotForTrainer(trainer, slotIndex);
+        Pokemon pokemonToDelete = getPokemonInSlotForTrainer(trainerDbId, slotIndex);
 
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "DELETE FROM trainer_teams WHERE trainer_id = ? AND slot_index = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, trainerId);
+                pstmt.setInt(1, trainerDbId);
                 pstmt.setInt(2, slotIndex);
 
                 int affectedRows = pstmt.executeUpdate();
                 if (affectedRows > 0) {
-                    LOGGER.info("Pokemon in slot {} removed from trainer ID {}'s team.", slotIndex, trainerId);
+                    LOGGER.info("Pokemon in slot {} removed from trainer ID {}'s team.", slotIndex, trainerDbId);
 
                     pokemonCRUD.deleteDBPokemon(pokemonToDelete);
                     return true; // Return true to indicate successful removal
                 } else {
-                    LOGGER.warn("No Pokemon in slot {} found in trainer ID {}'s team.", slotIndex, trainerId);
+                    LOGGER.warn("No Pokemon in slot {} found in trainer ID {}'s team.", slotIndex, trainerDbId);
                     return false; // Return false to indicate no Pokemon found to remove
                 }
             }
@@ -101,7 +98,7 @@ public class TeamCRUD {
         }
     }
 
-    public List<Pokemon> getDBTeamForTrainer(Trainer trainer) {
+    public List<Pokemon> getDBTeamForTrainer(int trainerDbId) {
         List<Pokemon> team = new ArrayList<>();
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT p.* FROM pokemon_instances p "
@@ -109,43 +106,43 @@ public class TeamCRUD {
                     + "WHERE tt.trainer_id = ? ORDER BY tt.slot_index";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, trainer.getDbId());
+                pstmt.setInt(1, trainerDbId);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
                         LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
-                                trainer.getDbId(), rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
-                        Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainer);
+                                trainerDbId, rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
+                        Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainerDbId);
                         team.add(pokemon);
                     }
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Error retrieving team for trainer ID {}: {}", trainer.getDbId(), e.getMessage(), e);
+            LOGGER.error("Error retrieving team for trainer ID {}: {}", trainerDbId, e.getMessage(), e);
         }
         return team;
     }
 
-    public Pokemon getPokemonInSlotForTrainer(Trainer trainer, int slotIndex) {
+    public Pokemon getPokemonInSlotForTrainer(int trainerDbId, int slotIndex) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT p.* FROM pokemon_instances p "
                     + "JOIN trainer_teams tt ON p.instance_id = tt.instance_id "
                     + "WHERE tt.trainer_id = ? AND tt.slot_index = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, trainer.getDbId());
+                pstmt.setInt(1, trainerDbId);
                 pstmt.setInt(2, slotIndex);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
-                                trainer.getDbId(), rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
-                        return PokemonCRUD.mapResultSetToPokemon(rs, trainer);
+                                trainerDbId, rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
+                        return PokemonCRUD.mapResultSetToPokemon(rs, trainerDbId);
                     }
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Error retrieving Pokemon in slot {} for trainer ID {}: {}", slotIndex, trainer.getDbId(), e.getMessage(), e);
+            LOGGER.error("Error retrieving Pokemon in slot {} for trainer ID {}: {}", slotIndex, trainerDbId, e.getMessage(), e);
         }
         return null; // Return null if retrieving Pokemon failed
     }
@@ -166,15 +163,16 @@ public class TeamCRUD {
                 }
             }
 
-            for (int i = 0; i < instanceIds.size(); i++) {
-                String updateSql = "UPDATE trainer_teams SET slot_index = ? WHERE instance_id = ?";
-                try (PreparedStatement updatePstmt = conn.prepareStatement(updateSql)) {
-                    updatePstmt.setInt(1, i);
-                    updatePstmt.setInt(2, instanceIds.get(i));
-                    updatePstmt.executeUpdate();
-                    LOGGER.info("Updated slot_index for Pokemon instance_id {} to {} for trainer ID {}.", instanceIds.get(i), i, trainerId);
-
+            String updateSql = "UPDATE trainer_teams SET slot_index = ? WHERE instance_id = ? AND trainer_id = ?";
+            try (PreparedStatement updatePstmt = conn.prepareStatement(updateSql)) {
+                for (int i = 0; i < instanceIds.size(); i++) {
+                    updatePstmt.setInt(1, i); // Set the new slot index
+                    updatePstmt.setInt(2, instanceIds.get(i)); // Set the instance_id
+                    updatePstmt.setInt(3, trainerId); // Set the trainer_id
+                    updatePstmt.addBatch(); // Add to batch
+                    LOGGER.info("Prepared update for Pokemon instance_id {} to slot index {} for trainer ID {}.", instanceIds.get(i), i, trainerId);
                 }
+                updatePstmt.executeBatch(); // Execute the batch
             }
             return 0; // Return 0 to indicate successful reordering
         } catch (SQLException e) {

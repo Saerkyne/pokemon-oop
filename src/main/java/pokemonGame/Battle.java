@@ -1,6 +1,7 @@
 package pokemonGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pokemonGame.Attack;
 
 public class Battle {
     private static final Logger LOGGER = LoggerFactory.getLogger(Battle.class);
@@ -12,10 +13,12 @@ public class Battle {
     public static void dealDamage(Pokemon attacker, Pokemon defender, Move move) {
         // Calculate damage based on move power, attacker's stats, defender's stats, type effectiveness, etc.
         // This is a placeholder for the actual damage calculation logic.
-        Attack attack = new Attack();
-        int damage = attack.calculateDamage(attacker, defender, move);
+        
+        int damage = Attack.calculateDamage(attacker, defender, move);
 
         // Check for damage amount, clamp to 0 if it would go negative
+        // We clamp at the setter too, to also set fained status if damage exceeds current HP,
+        // but this is a safeguard against any future changes to the setter logic.
         if (damage > defender.getCurrentHP()) {
             damage = defender.getCurrentHP();
         }
@@ -48,7 +51,7 @@ public class Battle {
         LOGGER.info("{} will go first!", speedCheck.getName());
 
         for (Pokemon pokemon : player.getTeam()) {
-            Boolean checkFainted = checkFainted(pokemon);
+            boolean checkFainted = checkFainted(pokemon);
         
             if (checkFainted) {
                 LOGGER.info("{} has fainted and cannot battle!", pokemon.getNickname());

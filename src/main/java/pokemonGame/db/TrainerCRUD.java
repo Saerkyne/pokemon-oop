@@ -61,6 +61,34 @@ public class TrainerCRUD {
         }
     }
 
+    public Trainer getTrainerByDbId(int trainerDbId) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT * FROM trainers WHERE trainer_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainerDbId);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        Trainer trainer = new Trainer(rs.getString("name"));
+                        trainer.setDbId(rs.getInt("trainer_id")); // Set the trainer's ID from the database
+                        trainer.setName(rs.getString("name")); // Set the trainer's name from the database
+                        trainer.setDiscordId(rs.getLong("discord_id")); // Set the trainer's Discord ID from the database
+
+                        LOGGER.info("Trainer '{}' retrieved successfully by DB ID.", trainer.getName());
+                        return trainer; // Return the retrieved trainer
+                    } else {
+                        LOGGER.warn("No trainer found with DB ID: {}", trainerDbId);
+                        return null; // Return null if no trainer is found
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving trainer by DB ID: {}", e.getMessage(), e);
+            return null; // Return null to indicate an error occurred
+        }
+    }
+
     public int deleteTrainerByDiscordId(long discordID) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "DELETE FROM trainers WHERE discord_id = ?";

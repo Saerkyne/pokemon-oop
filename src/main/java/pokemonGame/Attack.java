@@ -3,10 +3,15 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Attack {
+public final class Attack {
+
+    private Attack() {}
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Attack.class);
     private static final Random RNG = new Random();
+    private static final int BASE_CRIT_CHANCE = 417; // Base crit chance of 4.17% (417/10000)
+        private static final int MAX_CRIT_CHANCE = 1500; // Maximum crit chance of 15% (1500/10000)
+        private static final int SPEED_CRIT_MULTIPLIER = 83; // Crit chance increases by 0.83% for each point of speed difference (83/10000)
 
     
     
@@ -36,11 +41,12 @@ public class Attack {
     // the linear formula is simpler and easier to understand and doesn't factor in
     // the defender's speed.
     public boolean calculateCriticalHit(Pokemon attacker, Pokemon defender) {
+        
         int attackerSpeed = attacker.getCurrentSpeed();
         int defenderSpeed = defender.getCurrentSpeed();
-        int critChance = 417; // Base crit chance of 4.17% (417/10000)
-        critChance = 417 + (attackerSpeed - defenderSpeed) * 83; // Increase crit chance by 0.83% for each point of speed difference
-        critChance = Math.min(1500, Math.max(417, critChance)); // Cap crit chance between 4.17% and 15%
+        int critChance = BASE_CRIT_CHANCE; // Base crit chance of 4.17% (417/10000)
+        critChance = BASE_CRIT_CHANCE + (attackerSpeed - defenderSpeed) * SPEED_CRIT_MULTIPLIER; // Increase crit chance by 0.83% for each point of speed difference
+        critChance = Math.min(MAX_CRIT_CHANCE, Math.max(BASE_CRIT_CHANCE, critChance)); // Cap crit chance between 4.17% and 15%
         int randomValue = randomInt(1, 10000); // Random value between 1 and 10000
         boolean isCritical = randomValue <= critChance; // Crit occurs if random value is less than or equal to crit chance
         LOGGER.info("Critical hit calculation: attackerSpeed={}, defenderSpeed={}, critChance={}, randomValue={}, isCritical={}", attackerSpeed, defenderSpeed, critChance, randomValue, isCritical);

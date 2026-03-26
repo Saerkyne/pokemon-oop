@@ -52,7 +52,7 @@ public class Pokemon {
     // in the order of HP, Attack, Defense, Special Attack, Special Defense, Speed
     private Natures nature;
     private String[] statusConditions; // This array holds any status conditions currently affecting the Pokemon (e.g. "Paralyzed", "Burned")
-    private Boolean isFainted = false; // This boolean indicates whether the Pokemon has fainted (current HP is 0 or less)
+    private boolean isFainted = false; // This boolean indicates whether the Pokemon has fainted (current HP is 0 or less)
     private final ArrayList<MoveSlot> moveset;
     private static final String[] STAT_NAMES = {"HP", "Attack", "Defense", "Special Attack", "Special Defense", "Speed"};
     
@@ -276,10 +276,18 @@ public class Pokemon {
     }
 
     public long getTrainerDiscordId() {
+        if (trainer == null) {
+            LOGGER.warn("Attempted to get trainer Discord ID for Pokémon with no trainer assigned. Throwing exception.");
+            throw new IllegalStateException("Trainer not assigned to this Pokemon yet.");
+        }
         return trainer.getDiscordId();
     }
 
     public int getTrainerDbId() {
+        if (trainer == null) {
+            LOGGER.warn("Attempted to get trainer DB ID for Pokémon with no trainer assigned. Throwing exception.");
+            throw new IllegalStateException("Trainer not assigned to this Pokemon yet.");
+        }
         return trainer.getDbId();
     }
 
@@ -399,7 +407,14 @@ public class Pokemon {
     }
 
     public void setCurrentHP(int currentHP) {
-        this.currentHP = currentHP;
+        if (currentHP < 0) {
+            this.currentHP = 0;
+            this.isFainted = true;
+        } else if (currentHP > maxHP) {
+            this.currentHP = maxHP;
+        } else {
+            this.currentHP = currentHP;
+        }
     }
 
     public void setCurrentAttack(int currentAttack) {
@@ -457,82 +472,55 @@ public class Pokemon {
     // (e.g. when loading from the database) and you are sure that the 
     // value being set is valid. These will check evTotal to ensure rule compliance,
     // but they will not modify existing EVs.
-    public void setEvHp(int evHp) {
-        // Subtract the old HP EV from the total, since we're replacing it
-        int totalWithoutThis = this.evTotal - this.evHp;
+    
+    private int evCapper(int oldEvValue, int newEvValue) {
+        int totalWithoutThis = this.evTotal - oldEvValue;
         int roomTotal = 510 - totalWithoutThis;
-
-        // Cap the new value at the per-stat max (252) and remaining total room
-        int capped = Math.max(0, Math.min(evHp, Math.min(252, roomTotal)));
+        int capped = Math.max(0, Math.min(newEvValue, Math.min(252, roomTotal)));
+        return capped;
+    }
+    
+    public void setEvHp(int evHp) {
+        int cappedHp = evCapper(this.evHp, evHp);
 
         // Apply the new value and recalculate the total
-        this.evHp = capped;
-        this.evTotal = totalWithoutThis + capped;
+        this.evHp = cappedHp;
+        this.evTotal = this.evTotal - this.evHp + cappedHp;
     }
 
     public void setEvAttack(int evAttack) {
-        // Subtract the old Attack EV from the total, since we're replacing it
-        int totalWithoutThis = this.evTotal - this.evAttack;
-        int roomTotal = 510 - totalWithoutThis;
-
-        // Cap the new value at the per-stat max (252) and remaining total room
-        int capped = Math.max(0, Math.min(evAttack, Math.min(252, roomTotal)));
-
+        int cappedAttack = evCapper(this.evAttack, evAttack);
         // Apply the new value and recalculate the total
-        this.evAttack = capped;
-        this.evTotal = totalWithoutThis + capped;
+        this.evAttack = cappedAttack;
+        this.evTotal = this.evTotal - this.evAttack + cappedAttack;
     }
 
     public void setEvDefense(int evDefense) {
-        // Subtract the old Defense EV from the total, since we're replacing it
-        int totalWithoutThis = this.evTotal - this.evDefense;
-        int roomTotal = 510 - totalWithoutThis;
-
-        // Cap the new value at the per-stat max (252) and remaining total room
-        int capped = Math.max(0, Math.min(evDefense, Math.min(252, roomTotal)));
-
+        int cappedDefense = evCapper(this.evDefense, evDefense);
         // Apply the new value and recalculate the total
-        this.evDefense = capped;
-        this.evTotal = totalWithoutThis + capped;
+        this.evDefense = cappedDefense;
+        this.evTotal = this.evTotal - this.evDefense + cappedDefense;
     }
 
     public void setEvSpecialAttack(int evSpecialAttack) {
-        // Subtract the old Special Attack EV from the total, since we're replacing it
-        int totalWithoutThis = this.evTotal - this.evSpecialAttack;
-        int roomTotal = 510 - totalWithoutThis;
-
-        // Cap the new value at the per-stat max (252) and remaining total room
-        int capped = Math.max(0, Math.min(evSpecialAttack, Math.min(252, roomTotal)));
-
+        int cappedSpecialAttack = evCapper(this.evSpecialAttack, evSpecialAttack);
         // Apply the new value and recalculate the total
-        this.evSpecialAttack = capped;
-        this.evTotal = totalWithoutThis + capped;
+        this.evSpecialAttack = cappedSpecialAttack;
+        this.evTotal = this.evTotal - this.evSpecialAttack + cappedSpecialAttack;
     }
 
     public void setEvSpecialDefense(int evSpecialDefense) {
-        // Subtract the old Special Defense EV from the total, since we're replacing it
-        int totalWithoutThis = this.evTotal - this.evSpecialDefense;
-        int roomTotal = 510 - totalWithoutThis;
-
-        // Cap the new value at the per-stat max (252) and remaining total room
-        int capped = Math.max(0, Math.min(evSpecialDefense, Math.min(252, roomTotal)));
-
+        int cappedSpecialDefense = evCapper(this.evSpecialDefense, evSpecialDefense);
         // Apply the new value and recalculate the total
-        this.evSpecialDefense = capped;
-        this.evTotal = totalWithoutThis + capped;
+        this.evSpecialDefense = cappedSpecialDefense;
+        this.evTotal = this.evTotal - this.evSpecialDefense + cappedSpecialDefense;
     }
 
     public void setEvSpeed(int evSpeed) {
-        // Subtract the old Speed EV from the total, since we're replacing it
-        int totalWithoutThis = this.evTotal - this.evSpeed;
-        int roomTotal = 510 - totalWithoutThis;
-
-        // Cap the new value at the per-stat max (252) and remaining total room
-        int capped = Math.max(0, Math.min(evSpeed, Math.min(252, roomTotal)));
-
+        int cappedSpeed = evCapper(this.evSpeed, evSpeed);
         // Apply the new value and recalculate the total
-        this.evSpeed = capped;
-        this.evTotal = totalWithoutThis + capped;
+        this.evSpeed = cappedSpeed;
+        this.evTotal = this.evTotal - this.evSpeed + cappedSpeed;
     }
 
     public void setEvYield(int[] evYield) {
@@ -548,11 +536,17 @@ public class Pokemon {
         // Placeholder for level up logic when currentExp exceeds the threshold for the next level
     }
 
+    private int evAdder(int oldEvValue, int addedEvValue) {
+        int totalWithoutThis = this.evTotal - oldEvValue;
+        int roomTotal = 510 - totalWithoutThis;
+        int roomStat = 252 - oldEvValue;
+        int actualAdd = Math.max(0, Math.min(addedEvValue, Math.min(roomStat, roomTotal)));
+        return actualAdd;
+    }
+    
     public void addEvHp(int addedEvHp) {
         if (evTotal >= 510) return;
-        int roomTotal = 510 - evTotal;
-        int roomStat = 252 - evHp;
-        int actual = Math.min(addedEvHp, Math.min(roomTotal, roomStat));
+        int actual = evAdder(this.evHp, addedEvHp);
         if (actual <= 0) return;
         this.evHp += actual;
         this.evTotal += actual;
@@ -561,9 +555,7 @@ public class Pokemon {
 
     public void addEvAttack(int addedEvAttack) {
         if (evTotal >= 510) return;
-        int roomTotal = 510 - evTotal;
-        int roomStat = 252 - evAttack;
-        int actual = Math.min(addedEvAttack, Math.min(roomTotal, roomStat));
+        int actual = evAdder(this.evAttack, addedEvAttack);
         if (actual <= 0) return;
         this.evAttack += actual;
         this.evTotal += actual;
@@ -572,9 +564,7 @@ public class Pokemon {
 
     public void addEvDefense(int addedEvDefense) {
         if (evTotal >= 510) return;
-        int roomTotal = 510 - evTotal;
-        int roomStat = 252 - evDefense;
-        int actual = Math.min(addedEvDefense, Math.min(roomTotal, roomStat));
+        int actual = evAdder(this.evDefense, addedEvDefense);
         if (actual <= 0) return;
         this.evDefense += actual;
         this.evTotal += actual;
@@ -583,9 +573,7 @@ public class Pokemon {
 
     public void addEvSpecialAttack(int addedEvSpecialAttack) {
         if (evTotal >= 510) return;
-        int roomTotal = 510 - evTotal;
-        int roomStat = 252 - evSpecialAttack;
-        int actual = Math.min(addedEvSpecialAttack, Math.min(roomTotal, roomStat));
+        int actual = evAdder(this.evSpecialAttack, addedEvSpecialAttack);
         if (actual <= 0) return;
         this.evSpecialAttack += actual;
         this.evTotal += actual;
@@ -594,9 +582,7 @@ public class Pokemon {
 
     public void addEvSpecialDefense(int addedEvSpecialDefense) {
         if (evTotal >= 510) return;
-        int roomTotal = 510 - evTotal;
-        int roomStat = 252 - evSpecialDefense;
-        int actual = Math.min(addedEvSpecialDefense, Math.min(roomTotal, roomStat));
+        int actual = evAdder(this.evSpecialDefense, addedEvSpecialDefense);
         if (actual <= 0) return;
         this.evSpecialDefense += actual;
         this.evTotal += actual;
@@ -605,9 +591,7 @@ public class Pokemon {
 
     public void addEvSpeed(int addedEvSpeed) {
         if (evTotal >= 510) return;
-        int roomTotal = 510 - evTotal;
-        int roomStat = 252 - evSpeed;
-        int actual = Math.min(addedEvSpeed, Math.min(roomTotal, roomStat));
+        int actual = evAdder(this.evSpeed, addedEvSpeed);
         if (actual <= 0) return;
         this.evSpeed += actual;
         this.evTotal += actual;
@@ -675,6 +659,11 @@ public class Pokemon {
         return calcHP;
     }
 
+    public boolean healToFull() {
+        this.currentHP = this.maxHP;
+        return true;
+    }   
+
     public int calcCurrentStat(int baseStat, int level, int iv, int ev, double natureModifier) {
         // The formula for calculating the current value of a non-HP stat is: 
         // Stat = (((((2 * baseStat) + IV + (EV/4)) * Level) / 100) + 5) * Nature
@@ -708,9 +697,7 @@ public class Pokemon {
         this.currentDefense = calcCurrentStat(getDefenseBaseStat(), getLevel(), getIvDefense(), getEvDefense(), getNature().modifierFor(Stat.DEFENSE));
         this.currentSpecialAttack = calcCurrentStat(getSpecialAttackBaseStat(), getLevel(), getIvSpecialAttack(), getEvSpecialAttack(), getNature().modifierFor(Stat.SPECIAL_ATTACK));
         this.currentSpecialDefense = calcCurrentStat(getSpecialDefenseBaseStat(), getLevel(), getIvSpecialDefense(), getEvSpecialDefense(), getNature().modifierFor(Stat.SPECIAL_DEFENSE));
-        this.currentSpeed = calcCurrentStat(getSpeedBaseStat(), getLevel(), getIvSpeed(), getEvSpeed(), getNature().modifierFor(Stat.SPEED));
-        this.currentHP = this.maxHP; // Heal to full HP whenever stats are recalculated (e.g. on level up)
-        // I know that this may cause issues, review the best place for this later on. 
+        this.currentSpeed = calcCurrentStat(getSpeedBaseStat(), getLevel(), getIvSpeed(), getEvSpeed(), getNature().modifierFor(Stat.SPEED)); 
     }
 
     public boolean checkEvTotals() {

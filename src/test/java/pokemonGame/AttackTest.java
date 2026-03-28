@@ -16,7 +16,7 @@ import pokemonGame.TypeChart.Type;
 
 class AttackTest {
 
-    private Attack attack;
+    
 
     // --- Effectiveness ---
 
@@ -106,7 +106,7 @@ class AttackTest {
     @ParameterizedTest
     @MethodSource("provideSuperEffectivePairs")
     void superEffectiveReturns2(Type defendingType, Move move) {
-        float eff = attack.calculateEffectiveness(defendingType, move);
+        float eff = Attack.calculateEffectiveness(defendingType, move);
         assertEquals(2.0f, eff);
     }
 
@@ -206,7 +206,7 @@ class AttackTest {
     @ParameterizedTest
     @MethodSource("provideNotVeryEffectivePairs")
     void notVeryEffectiveReturnsHalf(Type defenderType, Move move) {
-        float eff = attack.calculateEffectiveness(defenderType, move);
+        float eff = Attack.calculateEffectiveness(defenderType, move);
         assertEquals(0.5f, eff);
     }
 
@@ -241,7 +241,7 @@ class AttackTest {
     @ParameterizedTest
     @MethodSource("provideImmunePairs")
     void immunityReturnsZero(Type defenderType, Move move) {
-        float eff = attack.calculateEffectiveness(defenderType, move);
+        float eff = Attack.calculateEffectiveness(defenderType, move);
         assertEquals(0.0f, eff);
     }
 
@@ -484,7 +484,7 @@ class AttackTest {
     @ParameterizedTest
     @MethodSource("provideNeutralPairs")
     void neutralEffectivenessReturns1(Type defenderType, Move move) {
-        float eff = attack.calculateEffectiveness(defenderType, move);
+        float eff = Attack.calculateEffectiveness(defenderType, move);
         assertEquals(1.0f, eff);
     }
 
@@ -500,7 +500,7 @@ class AttackTest {
     @Test
     void nullDefenderTypeReturnsNeutral() {
         Move psychic = new Psychic();
-        float eff = attack.calculateEffectiveness(null, psychic);
+        float eff = Attack.calculateEffectiveness(null, psychic);
         assertEquals(1.0f, eff,
                 "Null defender type should be treated as neutral (1.0)");
     }
@@ -516,7 +516,7 @@ class AttackTest {
     @Test
     void noneDefenderTypeReturnsNeutral() {
         Move psychic = new Psychic();
-        float eff = attack.calculateEffectiveness(Type.NONE, psychic);
+        float eff = Attack.calculateEffectiveness(Type.NONE, psychic);
         assertEquals(1.0f, eff,
                 "\"None\" defender type should be treated as neutral (1.0)");
     }
@@ -540,7 +540,7 @@ class AttackTest {
         attacker.setLevel(50);
         defender.setLevel(50);
 
-        int damage = attack.calculateDamage(attacker, defender, new Psychic());
+        int damage = Attack.calculateDamage(attacker, defender, new Psychic());
         assertTrue(damage >= 0, "Damage should never be negative");
     }
 
@@ -570,8 +570,8 @@ class AttackTest {
         int highTotal = 0;
         int trials = 50;
         for (int i = 0; i < trials; i++) {
-            lowTotal += attack.calculateDamage(lowLevel, defender, psychic);
-            highTotal += attack.calculateDamage(highLevel, defender, psychic);
+            lowTotal += Attack.calculateDamage(lowLevel, defender, psychic);
+            highTotal += Attack.calculateDamage(highLevel, defender, psychic);
         }
         assertTrue(highTotal > lowTotal,
                 "Higher level Pokémon should deal more damage on average");
@@ -608,8 +608,8 @@ class AttackTest {
         int noStabTotal = 0;
         int trials = 100;
         for (int i = 0; i < trials; i++) {
-            stabTotal += attack.calculateDamage(abraAttacker, defender, psychic);
-            noStabTotal += attack.calculateDamage(bulbaAttacker, defender, psychic);
+            stabTotal += Attack.calculateDamage(abraAttacker, defender, psychic);
+            noStabTotal += Attack.calculateDamage(bulbaAttacker, defender, psychic);
         }
         assertTrue(stabTotal > noStabTotal,
                 "STAB should increase damage on average (STAB total=" + stabTotal
@@ -643,8 +643,8 @@ class AttackTest {
         int resistTotal = 0;
         int trials = 100;
         for (int i = 0; i < trials; i++) {
-            superEffTotal += attack.calculateDamage(attacker, weakDefender, psychic);
-            resistTotal += attack.calculateDamage(attacker, resistDefender, psychic);
+            superEffTotal += Attack.calculateDamage(attacker, weakDefender, psychic);
+            resistTotal += Attack.calculateDamage(attacker, resistDefender, psychic);
         }
         assertTrue(superEffTotal > resistTotal,
                 "Super-effective hits should deal more damage on average");
@@ -665,7 +665,7 @@ class AttackTest {
     @Test
     void randomIntWithinBounds() {
         for (int i = 0; i < 100; i++) {
-            int val = attack.randomInt(1, 10);
+            int val = Attack.randomInt(1, 10);
             assertTrue(val >= 1 && val <= 10,
                     "randomInt(1, 10) returned " + val + ", expected 1-10");
         }
@@ -683,7 +683,7 @@ class AttackTest {
     void randomIntSingleValueRange() {
         // When min == max, should always return that value
         for (int i = 0; i < 20; i++) {
-            assertEquals(5, attack.randomInt(5, 5));
+            assertEquals(5, Attack.randomInt(5, 5));
         }
     }
 
@@ -711,7 +711,7 @@ class AttackTest {
         Pokemon defender = new Abra("Defender");
         attacker.setLevel(50);
         defender.setLevel(50);
-        boolean crit = attack.calculateCriticalHit(attacker, defender);
+        boolean crit = Attack.calculateCriticalHit(attacker, defender);
         assertTrue(crit || !crit); // tautology — the real test is no exception above
     }
 
@@ -738,8 +738,8 @@ class AttackTest {
         int slowCrits = 0;
         int trials = 5000;
         for (int i = 0; i < trials; i++) {
-            if (attack.calculateCriticalHit(fast, slow)) fastCrits++;
-            if (attack.calculateCriticalHit(slow, fast)) slowCrits++;
+            if (Attack.calculateCriticalHit(fast, slow)) fastCrits++;
+            if (Attack.calculateCriticalHit(slow, fast)) slowCrits++;
         }
         assertTrue(fastCrits > slowCrits,
                 "Faster Pokémon should crit more often (fast=" + fastCrits
@@ -772,7 +772,7 @@ class AttackTest {
         int crits = 0;
         int trials = 10000;
         for (int i = 0; i < trials; i++) {
-            if (attack.calculateCriticalHit(fast, slow)) crits++;
+            if (Attack.calculateCriticalHit(fast, slow)) crits++;
         }
         double critRate = (double) crits / trials;
         assertTrue(critRate <= 0.17,

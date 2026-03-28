@@ -1,7 +1,12 @@
 package pokemonGame.mons;
+
 import pokemonGame.Pokemon;
-import pokemonGame.LearnsetEntry;
 import pokemonGame.moves.*;
+import pokemonGame.PokeSpecies;
+import pokemonGame.LearnsetEntry;
+import pokemonGame.LearnsetEntry.Source;
+import pokemonGame.TypeChart.Type;
+import pokemonGame.Stat;
 import java.util.List;
 
 public class Ditto extends Pokemon {
@@ -9,15 +14,21 @@ public class Ditto extends Pokemon {
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
         // Level up moves
-        LEARNSET.add(new LearnsetEntry(Transform.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
+        LEARNSET.add(
+            new LearnsetEntry(
+                Transform.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
     }
 
     public Ditto(String nickname) {
         super(
-            "Ditto",
+            PokeSpecies.DITTO,
             132,
-            "Normal",
-            null,
+            Type.NORMAL,
+            Type.NONE,
             5,
             48,
             48,
@@ -29,8 +40,7 @@ public class Ditto extends Pokemon {
 
         this.setNickname(nickname);
 
-        int[] evYield = {1, 0, 0, 0, 0, 0}; // Ditto yields 1 EV point in HP when defeated
-        this.setEvYield(evYield);
+        this.setEvYield(Stat.HP, 1);
         this.generateRandomIVs();
         this.calculateCurrentStats();
     }

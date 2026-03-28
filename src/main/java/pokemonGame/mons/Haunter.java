@@ -1,44 +1,169 @@
 package pokemonGame.mons;
+
 import pokemonGame.Pokemon;
-import pokemonGame.LearnsetEntry;
 import pokemonGame.moves.*;
+import pokemonGame.PokeSpecies;
+import pokemonGame.LearnsetEntry;
+import pokemonGame.LearnsetEntry.Source;
+import pokemonGame.TypeChart.Type;
+import pokemonGame.Stat;
 import java.util.List;
 
 public class Haunter extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
-        // Level up moves
-        LEARNSET.add(new LearnsetEntry(ConfuseRay.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
-        LEARNSET.add(new LearnsetEntry(Lick.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
-        LEARNSET.add(new LearnsetEntry(NightShade.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
-        LEARNSET.add(new LearnsetEntry(Hypnosis.INSTANCE, LearnsetEntry.Source.LEVEL, 29));
-        LEARNSET.add(new LearnsetEntry(DreamEater.INSTANCE, LearnsetEntry.Source.LEVEL, 38));
+        // Level Up Moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                ConfuseRay.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Lick.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                NightShade.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Hypnosis.INSTANCE,
+                Source.LEVEL,
+                29
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                DreamEater.INSTANCE,
+                Source.LEVEL,
+                38
+            )
+        );
 
-        // TM moves
-        LEARNSET.add(new LearnsetEntry(Toxic.INSTANCE, LearnsetEntry.Source.TM, 6));
-        LEARNSET.add(new LearnsetEntry(Rage.INSTANCE, LearnsetEntry.Source.TM, 20));
-        LEARNSET.add(new LearnsetEntry(MegaDrain.INSTANCE, LearnsetEntry.Source.TM, 21));
-        LEARNSET.add(new LearnsetEntry(Thunderbolt.INSTANCE, LearnsetEntry.Source.TM, 24));
-        LEARNSET.add(new LearnsetEntry(Thunder.INSTANCE, LearnsetEntry.Source.TM, 25));
-        LEARNSET.add(new LearnsetEntry(Psychic.INSTANCE, LearnsetEntry.Source.TM, 29));
-        LEARNSET.add(new LearnsetEntry(Mimic.INSTANCE, LearnsetEntry.Source.TM, 31));
-        LEARNSET.add(new LearnsetEntry(DoubleTeam.INSTANCE, LearnsetEntry.Source.TM, 32));
-        LEARNSET.add(new LearnsetEntry(Bide.INSTANCE, LearnsetEntry.Source.TM, 34));
-        LEARNSET.add(new LearnsetEntry(SelfDestruct.INSTANCE, LearnsetEntry.Source.TM, 36));
-        LEARNSET.add(new LearnsetEntry(DreamEater.INSTANCE, LearnsetEntry.Source.TM, 42));
-        LEARNSET.add(new LearnsetEntry(Rest.INSTANCE, LearnsetEntry.Source.TM, 44));
-        LEARNSET.add(new LearnsetEntry(Psywave.INSTANCE, LearnsetEntry.Source.TM, 46));
-        LEARNSET.add(new LearnsetEntry(Explosion.INSTANCE, LearnsetEntry.Source.TM, 47));
-        LEARNSET.add(new LearnsetEntry(Substitute.INSTANCE, LearnsetEntry.Source.TM, 50));
+        // TM Moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                Toxic.INSTANCE,
+                Source.TM,
+                6
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Rage.INSTANCE,
+                Source.TM,
+                20
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                MegaDrain.INSTANCE,
+                Source.TM,
+                21
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Thunderbolt.INSTANCE,
+                Source.TM,
+                24
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Thunder.INSTANCE,
+                Source.TM,
+                25
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Psychic.INSTANCE,
+                Source.TM,
+                29
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Mimic.INSTANCE,
+                Source.TM,
+                31
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                DoubleTeam.INSTANCE,
+                Source.TM,
+                32
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Bide.INSTANCE,
+                Source.TM,
+                34
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                SelfDestruct.INSTANCE,
+                Source.TM,
+                36
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                DreamEater.INSTANCE,
+                Source.TM,
+                42
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Rest.INSTANCE,
+                Source.TM,
+                44
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Psywave.INSTANCE,
+                Source.TM,
+                46
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Explosion.INSTANCE,
+                Source.TM,
+                47
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Substitute.INSTANCE,
+                Source.TM,
+                50
+            )
+        );
     }
 
     public Haunter(String nickname) {
         super(
-            "Haunter",
+            PokeSpecies.HAUNTER,
             93,
-            "Ghost",
-            "Poison",
+            Type.GHOST,
+            Type.POISON,
             5,
             45,
             50,
@@ -49,9 +174,7 @@ public class Haunter extends Pokemon {
         );
 
         this.setNickname(nickname);
-
-        int[] evYield = {0, 0, 0, 2, 0, 0}; // Haunter yields 2 EV points in Special Attack when defeated
-        this.setEvYield(evYield);
+        this.setEvYield(Stat.SPECIAL_ATTACK, 2); // Haunter yields 2 EV points in Special Attack when defeated
         this.generateRandomIVs();
         this.calculateCurrentStats();
     }

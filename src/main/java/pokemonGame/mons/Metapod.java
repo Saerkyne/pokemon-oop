@@ -1,27 +1,50 @@
 package pokemonGame.mons;
+
 import pokemonGame.Pokemon;
-import pokemonGame.LearnsetEntry;
 import pokemonGame.moves.*;
+import pokemonGame.PokeSpecies;
+import pokemonGame.LearnsetEntry;
+import pokemonGame.LearnsetEntry.Source;
+import pokemonGame.TypeChart.Type;
+import pokemonGame.Stat;
 import java.util.List;
 
 public class Metapod extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
-        // Level up moves
-        LEARNSET.add(new LearnsetEntry(Harden.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
+        // Level Up Moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                Harden.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
 
-        // Pre-evolution moves
-        LEARNSET.add(new LearnsetEntry(StringShot.INSTANCE, LearnsetEntry.Source.PRE_EVOLUTION, 0));
-        LEARNSET.add(new LearnsetEntry(Tackle.INSTANCE, LearnsetEntry.Source.PRE_EVOLUTION, 0));
+        // Pre-Evolution Moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                StringShot.INSTANCE,
+                Source.PRE_EVOLUTION,
+                0
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Tackle.INSTANCE,
+                Source.PRE_EVOLUTION,
+                0
+            )
+        );
     }
 
     public Metapod(String nickname) {
         super(
-            "Metapod",
+            PokeSpecies.METAPOD,
             11,
-            "Bug",
-            null,
+            Type.BUG,
+            Type.NONE,
             5,
             50,
             20,
@@ -32,9 +55,7 @@ public class Metapod extends Pokemon {
         );
 
         this.setNickname(nickname);
-
-        int[] evYield = {0, 0, 2, 0, 0, 0}; // Metapod yields 2 EV points in Defense when defeated
-        this.setEvYield(evYield);
+        this.setEvYield(Stat.DEFENSE, 2); // Metapod yields 2 EV points in Defense when defeated
         this.generateRandomIVs();
         this.calculateCurrentStats();
     }

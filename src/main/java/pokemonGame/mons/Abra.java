@@ -21,6 +21,7 @@ public class Abra extends Pokemon {
                 1
             )
         );
+
         // HM Moves
         LEARNSET.add(
             new LearnsetEntry(
@@ -29,6 +30,7 @@ public class Abra extends Pokemon {
                 5
             )
         );
+        
         // TM Moves
         LEARNSET.add(
             new LearnsetEntry(

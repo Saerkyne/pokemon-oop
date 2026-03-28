@@ -8,6 +8,7 @@ import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
 import java.util.List;
+
 public class Charmander extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();

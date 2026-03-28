@@ -12,12 +12,12 @@ public final class Attack {
     private static final Logger LOGGER = LoggerFactory.getLogger(Attack.class);
     private static final Random RNG = new Random();
     private static final int BASE_CRIT_CHANCE = 417; // Base crit chance of 4.17% (417/10000)
-        private static final int MAX_CRIT_CHANCE = 1500; // Maximum crit chance of 15% (1500/10000)
-        private static final int SPEED_CRIT_MULTIPLIER = 83; // Crit chance increases by 0.83% for each point of speed difference (83/10000)
+    private static final int MAX_CRIT_CHANCE = 1500; // Maximum crit chance of 15% (1500/10000)
+    private static final int SPEED_CRIT_MULTIPLIER = 83; // Crit chance increases by 0.83% for each point of speed difference (83/10000)
 
     
     
-    public float calculateEffectiveness(Type defenderType, Move move) {
+    public static float calculateEffectiveness(Type defenderType, Move move) {
         Type moveType = move.getMoveType();
         float effectiveness;
 
@@ -31,7 +31,7 @@ public final class Attack {
         return effectiveness;
     }
 
-    public int randomInt(int min, int max) {
+    public static int randomInt(int min, int max) {
         return RNG.nextInt((max - min) + 1) + min;
     }
 
@@ -42,7 +42,7 @@ public final class Attack {
     // which gives diminishing returns on crit chance as speed increases, but 
     // the linear formula is simpler and easier to understand and doesn't factor in
     // the defender's speed.
-    public boolean calculateCriticalHit(Pokemon attacker, Pokemon defender) {
+    public static boolean calculateCriticalHit(Pokemon attacker, Pokemon defender) {
         
         int attackerSpeed = attacker.getCurrentSpeed();
         int defenderSpeed = defender.getCurrentSpeed();
@@ -56,7 +56,7 @@ public final class Attack {
         
     }
 
-    public int calculateDamage(Pokemon attacker, Pokemon defender, Move move) {
+    public static int calculateDamage(Pokemon attacker, Pokemon defender, Move move) {
         // Placeholder for damage calculation logic
         int damage = 0;
         if (move.getMoveCategory() == Category.STATUS) {

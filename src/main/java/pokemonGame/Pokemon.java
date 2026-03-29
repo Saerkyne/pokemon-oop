@@ -557,43 +557,50 @@ public class Pokemon {
         int cappedHp = evCapper(this.evHp, evHp);
 
         // Apply the new value and recalculate the total
+
+        int oldEvHp = this.evHp; // Store the old value before updating
         this.evHp = cappedHp;
-        this.evTotal = this.evTotal - this.evHp + cappedHp;
+        this.evTotal = this.evTotal - oldEvHp + cappedHp;
     }
 
     public void setEvAttack(int evAttack) {
         int cappedAttack = evCapper(this.evAttack, evAttack);
         // Apply the new value and recalculate the total
+        int oldEvAttack = this.evAttack; // Store the old value before updating
         this.evAttack = cappedAttack;
-        this.evTotal = this.evTotal - this.evAttack + cappedAttack;
+        this.evTotal = this.evTotal - oldEvAttack + cappedAttack;
     }
 
     public void setEvDefense(int evDefense) {
         int cappedDefense = evCapper(this.evDefense, evDefense);
         // Apply the new value and recalculate the total
+        int oldEvDefense = this.evDefense; // Store the old value before updating
         this.evDefense = cappedDefense;
-        this.evTotal = this.evTotal - this.evDefense + cappedDefense;
+        this.evTotal = this.evTotal - oldEvDefense + cappedDefense;
     }
 
     public void setEvSpecialAttack(int evSpecialAttack) {
         int cappedSpecialAttack = evCapper(this.evSpecialAttack, evSpecialAttack);
         // Apply the new value and recalculate the total
+        int oldEvSpecialAttack = this.evSpecialAttack; // Store the old value before updating
         this.evSpecialAttack = cappedSpecialAttack;
-        this.evTotal = this.evTotal - this.evSpecialAttack + cappedSpecialAttack;
+        this.evTotal = this.evTotal - oldEvSpecialAttack + cappedSpecialAttack;
     }
 
     public void setEvSpecialDefense(int evSpecialDefense) {
         int cappedSpecialDefense = evCapper(this.evSpecialDefense, evSpecialDefense);
         // Apply the new value and recalculate the total
+        int oldEvSpecialDefense = this.evSpecialDefense; // Store the old value before updating
         this.evSpecialDefense = cappedSpecialDefense;
-        this.evTotal = this.evTotal - this.evSpecialDefense + cappedSpecialDefense;
+        this.evTotal = this.evTotal - oldEvSpecialDefense + cappedSpecialDefense;
     }
 
     public void setEvSpeed(int evSpeed) {
         int cappedSpeed = evCapper(this.evSpeed, evSpeed);
         // Apply the new value and recalculate the total
+        int oldEvSpeed = this.evSpeed; // Store the old value before updating
         this.evSpeed = cappedSpeed;
-        this.evTotal = this.evTotal - this.evSpeed + cappedSpeed;
+        this.evTotal = this.evTotal - oldEvSpeed + cappedSpeed;
     }
 
     // Sets a single stat's EV yield by index (0=HP, 1=Atk, 2=Def, 3=SpAtk, 4=SpDef, 5=Spd).

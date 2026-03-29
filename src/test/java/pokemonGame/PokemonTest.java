@@ -12,6 +12,9 @@ import pokemonGame.moves.Teleport;
 import pokemonGame.moves.MegaPunch;
 import pokemonGame.moves.MegaKick;
 import pokemonGame.moves.Toxic;
+import pokemonGame.TypeChart.Category;
+import pokemonGame.TypeChart.Type;
+import pokemonGame.PokeSpecies;
 
 class PokemonTest {
 
@@ -273,7 +276,7 @@ class PokemonTest {
     @Test
     void physicalMoveUsesAttackStat() {
         Move physical = new MegaPunch();
-        assertEquals("Physical", physical.getMoveCategory());
+        assertEquals(Category.PHYSICAL, physical.getMoveCategory());
         int attackStat = abra.getAttackStatForMove(physical);
         assertEquals(abra.getCurrentAttack(), attackStat);
     }
@@ -290,7 +293,7 @@ class PokemonTest {
     @Test
     void specialMoveUsesSpecialAttackStat() {
         Move special = new Psychic();
-        assertEquals("Special", special.getMoveCategory());
+        assertEquals(Category.SPECIAL, special.getMoveCategory());
         int spAtkStat = abra.getAttackStatForMove(special);
         assertEquals(abra.getCurrentSpecialAttack(), spAtkStat);
     }
@@ -307,7 +310,7 @@ class PokemonTest {
     @Test
     void statusMoveReturnsZeroAttack() {
         Move teleport = new Teleport();
-        assertEquals("Status", teleport.getMoveCategory());
+        assertEquals(Category.STATUS, teleport.getMoveCategory());
         assertEquals(0, abra.getAttackStatForMove(teleport));
     }
 
@@ -663,7 +666,7 @@ class PokemonTest {
      */
     @Test
     void speciesIsAbra() {
-        assertEquals("Abra", abra.getSpecies());
+        assertEquals(PokeSpecies.ABRA, abra.getSpecies());
     }
 
     /*
@@ -675,7 +678,7 @@ class PokemonTest {
      */
     @Test
     void primaryTypeIsPsychic() {
-        assertEquals("Psychic", abra.getTypePrimary());
+        assertEquals(Type.PSYCHIC, abra.getTypePrimary());
     }
 
     /*
@@ -685,9 +688,9 @@ class PokemonTest {
      *          dual-type contracts are documented as a matched set.
      */
     @Test
-    void secondaryTypeIsNull() {
-        assertNull(abra.getTypeSecondary(),
-                "Abra is a single-type Pokémon, secondary should be null");
+    void secondaryTypeIsNONE() {
+        assertEquals(Type.NONE, abra.getTypeSecondary(),
+                "Abra is a single-type Pokémon, secondary should be NONE");
     }
 
     /*
@@ -701,8 +704,8 @@ class PokemonTest {
     @Test
     void dualTypePokemonHasSecondaryType() {
         Pokemon bulba = new Bulbasaur("Bulba");
-        assertEquals("Grass", bulba.getTypePrimary());
-        assertEquals("Poison", bulba.getTypeSecondary());
+        assertEquals(Type.GRASS, bulba.getTypePrimary());
+        assertEquals(Type.POISON, bulba.getTypeSecondary());
     }
 
     // --- Learnset ---

@@ -195,6 +195,7 @@ public class PokemonCRUD {
         foundPokemon.setIvSpecialAttack(ivSpAttack);
         foundPokemon.setIvSpecialDefense(ivSpDefense);
         foundPokemon.setIvSpeed(ivSpeed);
+        LOGGER.info("set current HP to {}", currentHp);
         foundPokemon.setCurrentHP(currentHp);
         foundPokemon.setEvHp(evHp);
         foundPokemon.setEvAttack(evAttack);

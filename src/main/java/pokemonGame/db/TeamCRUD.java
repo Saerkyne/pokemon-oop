@@ -113,6 +113,9 @@ public class TeamCRUD {
                         LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
                                 trainerDbId, rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
                         Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainerDbId);
+                        LOGGER.info("Mapped Pokemon for trainer ID {}: instance_id={}, species={}, level={}", 
+                                trainerDbId, pokemon.getId(), pokemon.getSpecies().getDisplayName(), pokemon.getLevel());
+                        LOGGER.info("Current HP is {} for Pokemon with instance_id {} in trainer ID {}'s team.", pokemon.getCurrentHP(), pokemon.getId(), trainerDbId);
                         team.add(pokemon);
                     }
                 }

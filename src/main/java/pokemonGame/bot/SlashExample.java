@@ -74,6 +74,7 @@ public class SlashExample extends ListenerAdapter{
                         teamMessage.append("- ").append(p.getNickname()).append("\n");
                         teamMessage.append("  Species: ").append(p.getSpecies().getDisplayName()).append("\n");
                         teamMessage.append("  Level: ").append(p.getLevel()).append("\n");
+                        LOGGER.info("Current HP for Pokemon in slot {} is {} for Pokemon with instance_id {} in trainer ID {}'s team.", slotNumber, p.getCurrentHP(), p.getId(), trainer.getDbId());
                         teamMessage.append("  HP: ").append(p.getCurrentHP()).append("/").append(p.getMaxHP()).append("\n");
                         teamMessage.append("  Attack: ").append(p.getCurrentAttack()).append("\n");
                         teamMessage.append("  Defense: ").append(p.getCurrentDefense()).append("\n");

@@ -64,8 +64,6 @@ class BattleTest {
     // CURRENT BEHAVIOR: setCurrentHP accepts any int value, so HP goes negative.
     // WHY THIS MATTERS: Negative HP is meaningless in the game and can cause
     // confusing side effects (e.g., display bugs, incorrect damage-taken totals).
-    // TODO: Remove @Disabled when setCurrentHP or dealDamage clamps HP at 0.
-    // @Disabled("KNOWN LIMITATION: HP is not clamped — setCurrentHP allows negative values")
     @Test
     void dealDamage_hpShouldBeClampedAtZero() {
         Pokemon attacker = new Abra("Attacker");

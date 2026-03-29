@@ -2,7 +2,6 @@ package pokemonGame;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import static org.junit.jupiter.api.Assertions.*;
 
 import pokemonGame.mons.Abra;
@@ -14,7 +13,6 @@ import pokemonGame.moves.MegaKick;
 import pokemonGame.moves.Toxic;
 import pokemonGame.TypeChart.Category;
 import pokemonGame.TypeChart.Type;
-import pokemonGame.PokeSpecies;
 
 class PokemonTest {
 
@@ -578,8 +576,6 @@ class PokemonTest {
     // CURRENT BEHAVIOR: setCurrentHP stores whatever int it receives, including
     // negative values. This is the root cause of the HP-below-zero issues
     // documented in BattleTest.dealDamage_hpShouldBeClampedAtZero.
-    // TODO: Remove @Disabled when setCurrentHP clamps at 0.
-    @Disabled("KNOWN LIMITATION: setCurrentHP does not clamp — negative HP can be stored")
     @Test
     void setCurrentHP_shouldClampAtZero() {
         abra.setCurrentHP(-5);

@@ -195,8 +195,6 @@ public class PokemonCRUD {
         foundPokemon.setIvSpecialAttack(ivSpAttack);
         foundPokemon.setIvSpecialDefense(ivSpDefense);
         foundPokemon.setIvSpeed(ivSpeed);
-        LOGGER.info("set current HP to {}", currentHp);
-        foundPokemon.setCurrentHP(currentHp);
         foundPokemon.setEvHp(evHp);
         foundPokemon.setEvAttack(evAttack);
         foundPokemon.setEvDefense(evDefense);
@@ -206,6 +204,7 @@ public class PokemonCRUD {
         foundPokemon.setCurrentExp(currentExp);
         foundPokemon.setIsFainted(isFainted);
         foundPokemon.calculateCurrentStats(); // Recalculate stats based on IVs, EVs, and level
+        foundPokemon.setCurrentHP(currentHp); // Set the current HP after recalculating stats
 
         return foundPokemon; // Return the Pokémon object
     }

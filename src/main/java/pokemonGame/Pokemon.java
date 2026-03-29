@@ -408,7 +408,6 @@ public class Pokemon {
     // Direct Setters for attributes
     public void setLevel(int level) {
         this.level = level;
-        calculateCurrentStats();
     }
 
     public void setTrainer(Trainer trainer) {
@@ -804,13 +803,21 @@ public class Pokemon {
     // Wrapper method for stat calculation
     public void calculateCurrentStats() {
         int oldMaxHp = this.maxHP;
+        LOGGER.info("Calculating stats for " + getNickname() + " (Level " + getLevel() + ") with base stats HP: " + getHpBaseStat() + ", Atk: " + getAttackBaseStat() + ", Def: " + getDefenseBaseStat() + ", SpAtk: " + getSpecialAttackBaseStat() + ", SpDef: " + getSpecialDefenseBaseStat() + ", Spd: " + getSpeedBaseStat() + "; IVs HP: " + getIvHp() + ", Atk: " + getIvAttack() + ", Def: " + getIvDefense() + ", SpAtk: " + getIvSpecialAttack() + ", SpDef: " + getIvSpecialDefense() + ", Spd: " + getIvSpeed() + "; EVs HP: " + getEvHp() + ", Atk: " + getEvAttack() + ", Def: " + getEvDefense() + ", SpAtk: " + getEvSpecialAttack() + ", SpDef: " + getEvSpecialDefense() + ", Spd: " + getEvSpeed());  
+        LOGGER.info("Old Max HP: " + oldMaxHp);
         this.maxHP = calcMaxHP(getHpBaseStat(), getLevel(), getIvHp(), getEvHp());
+        LOGGER.info("New Max HP: " + this.maxHP);
+        LOGGER.info("old Attack: " + this.currentAttack + ", old Defense: " + this.currentDefense + ", old Sp. Attack: " + this.currentSpecialAttack + ", old Sp. Defense: " + this.currentSpecialDefense + ", old Speed: " + this.currentSpeed);
+        LOGGER.info("Nature modifier for Attack: " + getNature().modifierFor(Stat.ATTACK) + ", Nature modifier for Defense: " + getNature().modifierFor(Stat.DEFENSE) + ", Nature modifier for Sp. Attack: " + getNature().modifierFor(Stat.SPECIAL_ATTACK) + ", Nature modifier for Sp. Defense: " + getNature().modifierFor(Stat.SPECIAL_DEFENSE) + ", Nature modifier for Speed: " + getNature().modifierFor(Stat.SPEED));
         this.currentAttack = calcCurrentStat(getAttackBaseStat(), getLevel(), getIvAttack(), getEvAttack(), getNature().modifierFor(Stat.ATTACK));
         this.currentDefense = calcCurrentStat(getDefenseBaseStat(), getLevel(), getIvDefense(), getEvDefense(), getNature().modifierFor(Stat.DEFENSE));
         this.currentSpecialAttack = calcCurrentStat(getSpecialAttackBaseStat(), getLevel(), getIvSpecialAttack(), getEvSpecialAttack(), getNature().modifierFor(Stat.SPECIAL_ATTACK));
         this.currentSpecialDefense = calcCurrentStat(getSpecialDefenseBaseStat(), getLevel(), getIvSpecialDefense(), getEvSpecialDefense(), getNature().modifierFor(Stat.SPECIAL_DEFENSE));
         this.currentSpeed = calcCurrentStat(getSpeedBaseStat(), getLevel(), getIvSpeed(), getEvSpeed(), getNature().modifierFor(Stat.SPEED)); 
+        LOGGER.info("new Attack: " + this.currentAttack + ", new Defense: " + this.currentDefense + ", new Sp. Attack: " + this.currentSpecialAttack + ", new Sp. Defense: " + this.currentSpecialDefense + ", new Speed: " + this.currentSpeed);
+        LOGGER.info("Current HP before adjustment: " + this.currentHP);
         this.currentHP = this.currentHP + (this.maxHP - oldMaxHp); // Adjust current HP by the change in max HP to keep the same percentage of health
+        LOGGER.info("Current HP after adjustment: " + this.currentHP);
     }
 
     public boolean checkEvTotals() {

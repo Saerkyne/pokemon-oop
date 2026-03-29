@@ -10,9 +10,10 @@ import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
 import java.util.List;
 
+@SpeciesAliases({"farfetchd", "farfetch'd", "farfetch"}) // Handle common variations in naming
 public class Farfetchd extends Pokemon {
 
-    @SpeciesAliases({"farfetchd", "farfetch'd", "farfetch"}) // Handle common variations in naming
+    
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {

@@ -10,9 +10,10 @@ import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
 import java.util.List;
 
+@SpeciesAliases({"nidoranm", "nidoran♂", "nidoran m", "m nidoran", "mnidoran"}) // Handle common variations in naming
 public class NidoranM extends Pokemon {
 
-    @SpeciesAliases({"nidoranm", "nidoran♂", "nidoran m", "m nidoran", "mnidoran"}) // Handle common variations in naming
+    
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {

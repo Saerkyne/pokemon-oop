@@ -8,54 +8,6 @@ import java.util.Collections;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.TypeChart.Category;
 
-
-// =============================================================================================
-// CODE REVIEW NOTE — "God Class" Decomposition (2026-03-25 Review, Item #20)
-//
-// At ~950 lines, Pokemon.java handles too many distinct responsibilities:
-//   1. Identity & species data (species, nickname, dex index, types)
-//   2. Base stats, IVs, EVs, and current stats (storage + cap enforcement)
-//   3. Stat calculation formulas (calcMaxHP, calcCurrentStat, calculateCurrentStats)
-//   4. Moveset management (addMove, replaceMove, isMovesetFull)
-//   5. Game-logic modifiers (levelUp, healToFull, applyNature)
-//   6. The static createPokemon() factory (151-case switch — now commented out)
-//
-// The "God class" anti-pattern emerges when one class accumulates so many responsibilities
-// that it becomes the central hub everything depends on. The problem isn't just line count —
-// it's that changes to EV logic, stat formulas, moveset rules, or the factory can all
-// break each other because they share the same class scope and private state.
-//
-// PROPOSED DECOMPOSITION (three candidates, ordered by impact):
-//
-// 
-//
-
-//
-// ── Candidate 3: Extract an EvManager value object ──
-//    The six evXxx fields, evTotal, the evCapper() helper, all six setEvXxx() methods,
-//    all six addEvXxx() methods, and checkEvTotals() form a self-contained subsystem
-//    with its own invariants (per-stat max 252, total max 510). Wrapping this in an
-//    EvManager class would encapsulate those rules in one place:
-//        public class EvManager {
-//            private int hp, attack, defense, spAttack, spDefense, speed;
-//            private int total;
-//            public void set(Stat stat, int value) { ... }
-//            public void add(Stat stat, int amount) { ... }
-//            public int get(Stat stat) { ... }
-//        }
-//    Pokemon would hold a single `private EvManager evs;` field.
-//    WHY: This eliminates the repetitive setter/adder methods (there are 12 near-identical
-//    methods right now) by using the Stat enum as a key, and it makes the 252/510 cap
-//    logic impossible to accidentally bypass — it's all behind EvManager's API.
-//    This pattern is called a "Value Object" — a small class whose identity is defined
-//    by its data rather than a database ID. It's a natural fit for EV bundles.
-//
-// WHAT TO DO NOW: Nothing urgent. At ~950 lines the class is manageable, and premature
-// extraction can hurt readability in a learning project. But as features grow (status
-// effects, abilities, held items), watch for the line count and responsibility list
-// expanding. When you next touch stat calculation *or* EV logic *or* moveset handling
-// for a feature, that's a natural time to extract that piece into its own class.
-// =============================================================================================
 public class Pokemon {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pokemon.class);
@@ -536,22 +488,10 @@ public class Pokemon {
         return true;
     }
 
-    public boolean healToFull() {
-        this.currentHP = this.maxHP;
-        return true;
-    }   
+     
 
 
-    // Method for generating a random IV value between 0 and 31 for each stat
-    public void generateRandomIVs() {
-
-        this.ivHp = random.nextInt(32);
-        this.ivAttack = random.nextInt(32);
-        this.ivDefense = random.nextInt(32);
-        this.ivSpecialAttack = random.nextInt(32);
-        this.ivSpecialDefense = random.nextInt(32);
-        this.ivSpeed = random.nextInt(32);
-    }
+    
 
 
     // ====================================
@@ -572,6 +512,22 @@ public class Pokemon {
      */
     public void applyNature() {
         Natures.assignRandom(this);
+    }
+
+    public boolean healToFull() {
+        this.currentHP = this.maxHP;
+        return true;
+    }  
+
+    // Method for generating a random IV value between 0 and 31 for each stat
+    public void generateRandomIVs() {
+
+        this.ivHp = random.nextInt(32);
+        this.ivAttack = random.nextInt(32);
+        this.ivDefense = random.nextInt(32);
+        this.ivSpecialAttack = random.nextInt(32);
+        this.ivSpecialDefense = random.nextInt(32);
+        this.ivSpeed = random.nextInt(32);
     }
 
 

@@ -41,11 +41,11 @@ public class StatCalculator {
 
     // Wrapper method for calculating all stats at once
     public static void calculateAllStats(Pokemon pokemon) {
-        pokemon.setCurrentAttack(calcCurrentStat(pokemon.getAttackBaseStat(), pokemon.getLevel(), pokemon.getIvAttack(), pokemon.getEvAttack(), pokemon.getNature().modifierFor(Stat.ATTACK)));
-        pokemon.setCurrentDefense(calcCurrentStat(pokemon.getDefenseBaseStat(), pokemon.getLevel(), pokemon.getIvDefense(), pokemon.getEvDefense(), pokemon.getNature().modifierFor(Stat.DEFENSE)));
-        pokemon.setCurrentSpecialAttack(calcCurrentStat(pokemon.getSpecialAttackBaseStat(), pokemon.getLevel(), pokemon.getIvSpecialAttack(), pokemon.getEvSpecialAttack(), pokemon.getNature().modifierFor(Stat.SPECIAL_ATTACK)));
-        pokemon.setCurrentSpecialDefense(calcCurrentStat(pokemon.getSpecialDefenseBaseStat(), pokemon.getLevel(), pokemon.getIvSpecialDefense(), pokemon.getEvSpecialDefense(), pokemon.getNature().modifierFor(Stat.SPECIAL_DEFENSE)));
-        pokemon.setCurrentSpeed(calcCurrentStat(pokemon.getSpeedBaseStat(), pokemon.getLevel(), pokemon.getIvSpeed(), pokemon.getEvSpeed(), pokemon.getNature().modifierFor(Stat.SPEED)));
-        pokemon.setMaxHP(calcMaxHP(pokemon.getHpBaseStat(), pokemon.getLevel(), pokemon.getIvHp(), pokemon.getEvHp()));
+        pokemon.setCurrentAttack(calcCurrentStat(pokemon.getAttackBaseStat(), pokemon.getLevel(), pokemon.getIvAttack(), EvManager.getEv(pokemon, Stat.ATTACK), pokemon.getNature().modifierFor(Stat.ATTACK)));
+        pokemon.setCurrentDefense(calcCurrentStat(pokemon.getDefenseBaseStat(), pokemon.getLevel(), pokemon.getIvDefense(), EvManager.getEv(pokemon, Stat.DEFENSE), pokemon.getNature().modifierFor(Stat.DEFENSE)));
+        pokemon.setCurrentSpecialAttack(calcCurrentStat(pokemon.getSpecialAttackBaseStat(), pokemon.getLevel(), pokemon.getIvSpecialAttack(), EvManager.getEv(pokemon, Stat.SPECIAL_ATTACK), pokemon.getNature().modifierFor(Stat.SPECIAL_ATTACK)));
+        pokemon.setCurrentSpecialDefense(calcCurrentStat(pokemon.getSpecialDefenseBaseStat(), pokemon.getLevel(), pokemon.getIvSpecialDefense(), EvManager.getEv(pokemon, Stat.SPECIAL_DEFENSE), pokemon.getNature().modifierFor(Stat.SPECIAL_DEFENSE)));
+        pokemon.setCurrentSpeed(calcCurrentStat(pokemon.getSpeedBaseStat(), pokemon.getLevel(), pokemon.getIvSpeed(), EvManager.getEv(pokemon, Stat.SPEED), pokemon.getNature().modifierFor(Stat.SPEED)));
+        pokemon.setMaxHP(calcMaxHP(pokemon.getHpBaseStat(), pokemon.getLevel(), pokemon.getIvHp(), EvManager.getEv(pokemon, Stat.HP)));
     }
 }

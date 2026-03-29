@@ -69,7 +69,7 @@ public class EvManager {
     }
 
     // Getters for EV Values, based on Stat enum
-    public int getEv(Pokemon pokemon, Stat stat) {
+    public static int getEv(Pokemon pokemon, Stat stat) {
         switch (stat) {
             case HP:
                 return pokemon.evHp;
@@ -89,8 +89,22 @@ public class EvManager {
         }
     }
 
-    public int getTotalEv(Pokemon pokemon) {
+    public static int getTotalEv(Pokemon pokemon) {
         return pokemon.evTotal;
+    }
+
+    public static boolean checkEvTotals(Pokemon pokemon) {
+        int total = pokemon.evHp + pokemon.evAttack + pokemon.evDefense +
+                pokemon.evSpecialAttack + pokemon.evSpecialDefense + pokemon.evSpeed;
+        if (total > 510) {
+            LOGGER.warn("Total EVs exceed the maximum of 510. Current total: " + total);
+            return false;
+        }
+        if (pokemon.evHp > 252 || pokemon.evAttack > 252 || pokemon.evDefense > 252 || pokemon.evSpecialAttack > 252 || pokemon.evSpecialDefense > 252 || pokemon.evSpeed > 252) {
+            LOGGER.warn("One or more EV stats exceed the maximum of 252. Current EVs - HP: " + pokemon.evHp + ", Attack: " + pokemon.evAttack + ", Defense: " + pokemon.evDefense + ", Special Attack: " + pokemon.evSpecialAttack + ", Special Defense: " + pokemon.evSpecialDefense + ", Speed: " + pokemon.evSpeed);
+            return false;
+        }
+        return true;
     }
 
     // Adders

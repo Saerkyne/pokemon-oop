@@ -297,34 +297,6 @@ public class Pokemon {
         return ivSpeed;
     }
 
-    public int getEvHp() {
-        return evHp;
-    }
-
-    public int getEvAttack() {
-        return evAttack;
-    }
-
-    public int getEvDefense() {
-        return evDefense;
-    }
-
-    public int getEvSpecialAttack() {
-        return evSpecialAttack;
-    }
-
-    public int getEvSpecialDefense() {
-        return evSpecialDefense;
-    }
-
-    public int getEvSpeed() {
-        return evSpeed;
-    }
-
-    public int getEvTotal() {
-        return evTotal;
-    }
-
     public int[] getEvYield() {
         return evYield.clone();
     }   
@@ -579,19 +551,6 @@ public class Pokemon {
         this.ivSpecialAttack = random.nextInt(32);
         this.ivSpecialDefense = random.nextInt(32);
         this.ivSpeed = random.nextInt(32);
-    }
-
-    public boolean checkEvTotals() {
-        int total = evHp + evAttack + evDefense + evSpecialAttack + evSpecialDefense + evSpeed;
-        if (total > 510) {
-            LOGGER.warn("Total EVs exceed the maximum of 510. Current total: " + total);
-            return false;
-        }
-        if (evHp > 252 || evAttack > 252 || evDefense > 252 || evSpecialAttack > 252 || evSpecialDefense > 252 || evSpeed > 252) {
-            LOGGER.warn("One or more EV stats exceed the maximum of 252. Current EVs - HP: " + evHp + ", Attack: " + evAttack + ", Defense: " + evDefense + ", Special Attack: " + evSpecialAttack + ", Special Defense: " + evSpecialDefense + ", Speed: " + evSpeed);
-            return false;
-        }
-        return true;
     }
 
 

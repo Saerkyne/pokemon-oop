@@ -356,7 +356,7 @@ class PokemonTest {
      */
     @Test
     void newPokemonStartsWithZeroEvs() {
-        assertEquals(0, abra.getEvTotal());
+        assertEquals(0, EvManager.getTotalEv(abra));
     }
 
     /*
@@ -373,8 +373,8 @@ class PokemonTest {
         evManager.setEv(abra, Stat.HP, 100);
         evManager.setEv(abra, Stat.HP, 50);
         // NOT Additive: should now be 50
-        assertEquals(50, abra.getEvHp());
-        assertEquals(50, abra.getEvTotal());
+        assertEquals(50, EvManager.getEv(abra, Stat.HP));
+        assertEquals(50, EvManager.getTotalEv(abra));
     }
 
     /*
@@ -390,8 +390,8 @@ class PokemonTest {
         EvManager evManager = new EvManager();
         evManager.setEv(abra, Stat.HP, 252);
         evManager.addEv(abra, Stat.HP, 10); // Should not exceed 252
-        assertEquals(252, abra.getEvHp());
-        assertEquals(252, abra.getEvTotal());
+        assertEquals(252, EvManager.getEv(abra, Stat.HP));
+        assertEquals(252, EvManager.getTotalEv(abra));
     }
 
     /*
@@ -410,9 +410,9 @@ class PokemonTest {
         evManager.setEv(abra, Stat.SPEED, 252);
         // evTotal is now 504; only 6 more EVs can fit under the 510 cap
         evManager.setEv(abra, Stat.HP, 100); // Requests 100 but only 6 should be granted
-        assertEquals(510, abra.getEvTotal(),
+        assertEquals(510, EvManager.getTotalEv(abra),
                 "EV total should be capped at exactly 510");
-        assertEquals(6, abra.getEvHp(),
+        assertEquals(6, EvManager.getEv(abra, Stat.HP),
                 "Only 6 HP EVs should have been added (510 - 504 = 6 remaining room)");
     }
 
@@ -427,7 +427,7 @@ class PokemonTest {
     void individualEvsCappedAt252() {
         EvManager evManager = new EvManager();
         evManager.setEv(abra, Stat.DEFENSE, 252);
-        assertEquals(252, abra.getEvDefense());
+        assertEquals(252, EvManager.getEv(abra, Stat.DEFENSE));
     }
 
     // --- Nature ---

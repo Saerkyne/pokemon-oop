@@ -114,12 +114,12 @@ public class PokemonCRUD {
                 pstmt.setInt(9, pokemon.getIvSpecialDefense());
                 pstmt.setInt(10, pokemon.getIvSpeed());
                 pstmt.setInt(11, pokemon.getCurrentHP());
-                pstmt.setInt(12, pokemon.getEvHp());
-                pstmt.setInt(13, pokemon.getEvAttack());
-                pstmt.setInt(14, pokemon.getEvDefense());
-                pstmt.setInt(15, pokemon.getEvSpecialAttack());
-                pstmt.setInt(16, pokemon.getEvSpecialDefense());
-                pstmt.setInt(17, pokemon.getEvSpeed());
+                pstmt.setInt(12, EvManager.getEv(pokemon, Stat.HP));
+                pstmt.setInt(13, EvManager.getEv(pokemon, Stat.ATTACK));
+                pstmt.setInt(14, EvManager.getEv(pokemon, Stat.DEFENSE));
+                pstmt.setInt(15, EvManager.getEv(pokemon, Stat.SPECIAL_ATTACK));
+                pstmt.setInt(16, EvManager.getEv(pokemon, Stat.SPECIAL_DEFENSE));
+                pstmt.setInt(17, EvManager.getEv(pokemon, Stat.SPEED));
                 pstmt.setInt(18, pokemon.getCurrentExp());
                 pstmt.setBoolean(19, pokemon.getIsFainted());
                 pstmt.setInt(20, pokemon.getId());

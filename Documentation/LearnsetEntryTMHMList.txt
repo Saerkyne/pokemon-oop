@@ -6,59 +6,399 @@ LEARNSET.add(
         1
     )
 );
-LEARNSET.add(new LearnsetEntry(new Fly(), Source.HM, 2));
-LEARNSET.add(new LearnsetEntry(new Surf(), Source.HM, 3));
-LEARNSET.add(new LearnsetEntry(new Strength(), Source.HM, 4));
-LEARNSET.add(new LearnsetEntry(new Flash(), Source.HM, 5));
+LEARNSET.add(
+    new LearnsetEntry(
+        Fly.INSTANCE,
+        Source.HM,
+        2
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Surf.INSTANCE,
+        Source.HM,
+        3
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Strength.INSTANCE,
+        Source.HM,
+        4
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Flash.INSTANCE,
+        Source.HM,
+        5
+    )
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 TMs:
-LEARNSET.add(new LearnsetEntry(new MegaPunch(), Source.TM, 1));
-LEARNSET.add(new LearnsetEntry(new RazorWind(), Source.TM, 2));
-LEARNSET.add(new LearnsetEntry(new SwordsDance(), Source.TM, 3));
-LEARNSET.add(new LearnsetEntry(new Whirlwind(), Source.TM, 4));
-LEARNSET.add(new LearnsetEntry(new MegaKick(), Source.TM, 5));
-LEARNSET.add(new LearnsetEntry(new Toxic(), Source.TM, 6));
-LEARNSET.add(new LearnsetEntry(new HornDrill(), Source.TM, 7));
-LEARNSET.add(new LearnsetEntry(new BodySlam(), Source.TM, 8));
-LEARNSET.add(new LearnsetEntry(new TakeDown(), Source.TM, 9));
-LEARNSET.add(new LearnsetEntry(new DoubleEdge(), Source.TM, 10));
-LEARNSET.add(new LearnsetEntry(new BubbleBeam(), Source.TM, 11));
-LEARNSET.add(new LearnsetEntry(new WaterGun(), Source.TM, 12));
-LEARNSET.add(new LearnsetEntry(new IceBeam(), Source.TM, 13));
-LEARNSET.add(new LearnsetEntry(new Blizzard(), Source.TM, 14));
-LEARNSET.add(new LearnsetEntry(new HyperBeam(), Source.TM, 15));
-LEARNSET.add(new LearnsetEntry(new PayDay(), Source.TM, 16));
-LEARNSET.add(new LearnsetEntry(new Submission(), Source.TM, 17));
-LEARNSET.add(new LearnsetEntry(new Counter(), Source.TM, 18));
-LEARNSET.add(new LearnsetEntry(new SeismicToss(), Source.TM, 19));
-LEARNSET.add(new LearnsetEntry(new Rage(), Source.TM, 20));
-LEARNSET.add(new LearnsetEntry(new MegaDrain(), Source.TM, 21));
-LEARNSET.add(new LearnsetEntry(new SolarBeam(), Source.TM, 22));
-LEARNSET.add(new LearnsetEntry(new DragonRage(), Source.TM, 23));
-LEARNSET.add(new LearnsetEntry(new Thunderbolt(), Source.TM, 24));
-LEARNSET.add(new LearnsetEntry(new Thunder(), Source.TM, 25));
-LEARNSET.add(new LearnsetEntry(new Earthquake(), Source.TM, 26));
-LEARNSET.add(new LearnsetEntry(new Fissure(), Source.TM, 27));
-LEARNSET.add(new LearnsetEntry(new Dig(), Source.TM, 28));
-LEARNSET.add(new LearnsetEntry(new Psychic(), Source.TM, 29));
-LEARNSET.add(new LearnsetEntry(new Teleport(), Source.TM, 30));
-LEARNSET.add(new LearnsetEntry(new Mimic(), Source.TM, 31));
-LEARNSET.add(new LearnsetEntry(new DoubleTeam(), Source.TM, 32));
-LEARNSET.add(new LearnsetEntry(new Reflect(), Source.TM, 33));
-LEARNSET.add(new LearnsetEntry(new Bide(), Source.TM, 34));
-LEARNSET.add(new LearnsetEntry(new Metronome(), Source.TM, 35));
-LEARNSET.add(new LearnsetEntry(new SelfDestruct(), Source.TM, 36));
-LEARNSET.add(new LearnsetEntry(new EggBomb(), Source.TM, 37));
-LEARNSET.add(new LearnsetEntry(new FireBlast(), Source.TM, 38));
-LEARNSET.add(new LearnsetEntry(new Swift(), Source.TM, 39));
-LEARNSET.add(new LearnsetEntry(new SkullBash(), Source.TM, 40));
-LEARNSET.add(new LearnsetEntry(new SoftBoiled(), Source.TM, 41));
-LEARNSET.add(new LearnsetEntry(new DreamEater(), Source.TM, 42));
-LEARNSET.add(new LearnsetEntry(new SkyAttack(), Source.TM, 43));
-LEARNSET.add(new LearnsetEntry(new Rest(), Source.TM, 44));
-LEARNSET.add(new LearnsetEntry(new ThunderWave(), Source.TM, 45));
-LEARNSET.add(new LearnsetEntry(new Psywave(), Source.TM, 46));
-LEARNSET.add(new LearnsetEntry(new Explosion(), Source.TM, 47));
-LEARNSET.add(new LearnsetEntry(new RockSlide(), Source.TM, 48));
-LEARNSET.add(new LearnsetEntry(new TriAttack(), Source.TM, 49));
-LEARNSET.add(new LearnsetEntry(new Substitute(), Source.TM, 50));
+LEARNSET.add(
+    new LearnsetEntry(
+        MegaPunch.INSTANCE,
+        Source.TM,
+        1
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        RazorWind.INSTANCE,
+        Source.TM,
+        2
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        SwordsDance.INSTANCE,
+        Source.TM,
+        3
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Whirlwind.INSTANCE,
+        Source.TM,
+        4
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        MegaKick.INSTANCE,
+        Source.TM,
+        5
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Toxic.INSTANCE,
+        Source.TM,
+        6
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        HornDrill.INSTANCE,
+        Source.TM,
+        7
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        BodySlam.INSTANCE,
+        Source.TM,
+        8
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        TakeDown.INSTANCE,
+        Source.TM,
+        9
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        DoubleEdge.INSTANCE,
+        Source.TM,
+        10
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        BubbleBeam.INSTANCE,
+        Source.TM,
+        11
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        WaterGun.INSTANCE,
+        Source.TM,
+        12
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        IceBeam.INSTANCE,
+        Source.TM,
+        13
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Blizzard.INSTANCE,
+        Source.TM,
+        14
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        HyperBeam.INSTANCE,
+        Source.TM,
+        15
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        PayDay.INSTANCE,
+        Source.TM,
+        16
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Submission.INSTANCE,
+        Source.TM,
+        17
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Counter.INSTANCE,
+        Source.TM,
+        18
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        SeismicToss.INSTANCE,
+        Source.TM,
+        19
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Rage.INSTANCE,
+        Source.TM,
+        20
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        MegaDrain.INSTANCE,
+        Source.TM,
+        21
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        SolarBeam.INSTANCE,
+        Source.TM,
+        22
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        DragonRage.INSTANCE,
+        Source.TM,
+        23
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Thunderbolt.INSTANCE,
+        Source.TM,
+        24
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Thunder.INSTANCE,
+        Source.TM,
+        25
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Earthquake.INSTANCE,
+        Source.TM,
+        26
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Fissure.INSTANCE,
+        Source.TM,
+        27
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Dig.INSTANCE,
+        Source.TM,
+        28
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Psychic.INSTANCE,
+        Source.TM,
+        29
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Teleport.INSTANCE,
+        Source.TM,
+        30
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Mimic.INSTANCE,
+        Source.TM,
+        31
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        DoubleTeam.INSTANCE,
+        Source.TM,
+        32
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Reflect.INSTANCE,
+        Source.TM,
+        33
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Bide.INSTANCE,
+        Source.TM,
+        34
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Metronome.INSTANCE,
+        Source.TM,
+        35
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        SelfDestruct.INSTANCE,
+        Source.TM,
+        36
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        EggBomb.INSTANCE,
+        Source.TM,
+        37
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        FireBlast.INSTANCE,
+        Source.TM,
+        38
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Swift.INSTANCE,
+        Source.TM,
+        39
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        SkullBash.INSTANCE,
+        Source.TM,
+        40
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        SoftBoiled.INSTANCE,
+        Source.TM,
+        41
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        DreamEater.INSTANCE,
+        Source.TM,
+        42
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        SkyAttack.INSTANCE,
+        Source.TM,
+        43
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Rest.INSTANCE,
+        Source.TM,
+        44
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        ThunderWave.INSTANCE,
+        Source.TM,
+        45
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Psywave.INSTANCE,
+        Source.TM,
+        46
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Explosion.INSTANCE,
+        Source.TM,
+        47
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        RockSlide.INSTANCE,
+        Source.TM,
+        48
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        TriAttack.INSTANCE,
+        Source.TM,
+        49
+    )
+);
+LEARNSET.add(
+    new LearnsetEntry(
+        Substitute.INSTANCE,
+        Source.TM,
+        50
+    )
+);

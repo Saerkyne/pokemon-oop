@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import pokemonGame.TypeChart.Type;
+import pokemonGame.TypeChart.Category;
 
 
 // =============================================================================================
@@ -365,10 +366,10 @@ public class Pokemon {
     // Special Methods to get the appropriate attack or defense stat based on the move's category (Physical, Special, or Status)
     
     public int getAttackStatForMove(Move move) {
-        if ("Physical".equals(move.getMoveCategory())) {
+        if (Category.PHYSICAL.equals(move.getMoveCategory())) {
             int physAttack = getCurrentAttack();
             return physAttack; 
-        } else if ("Special".equals(move.getMoveCategory())) {
+        } else if (Category.SPECIAL.equals(move.getMoveCategory())) {
             int specAttack = getCurrentSpecialAttack();
             return specAttack; 
         } else {
@@ -377,10 +378,10 @@ public class Pokemon {
     }
 
     public int getDefenseStatForMove(Move move) {
-        if ("Physical".equals(move.getMoveCategory())) {
+        if (Category.PHYSICAL.equals(move.getMoveCategory())) {
             int physDefense = getCurrentDefense();
             return physDefense; 
-        } else if ("Special".equals(move.getMoveCategory())) {
+        } else if (Category.SPECIAL.equals(move.getMoveCategory())) {
             int specDefense = getCurrentSpecialDefense();
             return specDefense; 
         } else {

@@ -1,23 +1,41 @@
 package pokemonGame.mons;
+
 import pokemonGame.Pokemon;
-import pokemonGame.LearnsetEntry;
 import pokemonGame.moves.*;
+import pokemonGame.PokeSpecies;
+import pokemonGame.LearnsetEntry;
+import pokemonGame.LearnsetEntry.Source;
+import pokemonGame.TypeChart.Type;
+import pokemonGame.Stat;
 import java.util.List;
 
 public class Weedle extends Pokemon {
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {
-        LEARNSET.add(new LearnsetEntry(PoisonSting.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
-        LEARNSET.add(new LearnsetEntry(StringShot.INSTANCE, LearnsetEntry.Source.LEVEL, 1));
+        // Level-up moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                PoisonSting.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                StringShot.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
     }
 
     public Weedle(String nickname) {
         super(
-            "Weedle",
+            PokeSpecies.WEEDLE,
             13,
-            "Bug",
-            "Poison",
+            Type.BUG,
+            Type.POISON,
             5,
             40,
             35,
@@ -28,9 +46,7 @@ public class Weedle extends Pokemon {
         );
 
         this.setNickname(nickname);
-
-        int[] evYield = {0, 0, 0, 0, 0, 1}; // Weedle yields 1 EV point in Speed when defeated
-        this.setEvYield(evYield);
+        this.setEvYield(Stat.SPEED, 1);
         this.generateRandomIVs();
         this.calculateCurrentStats();
     }

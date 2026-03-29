@@ -90,7 +90,7 @@ public enum PokeSpecies {
     MEW("Mew", "Mew"),
     MEWTWO("Mewtwo", "Mewtwo"),
     MOLTRES("Moltres", "Moltres"),
-    MRMIME("Mr. Mime", "Mr Mime", new String[]{"Mrmime", "Mr. Mime"}),
+    MRMIME("Mr. Mime", "MrMime", new String[]{"Mrmime", "Mr. Mime", "Mr Mime"}),
     MUK("Muk", "Muk"),
     NIDOKING("Nidoking", "Nidoking"),
     NIDOQUEEN("Nidoqueen", "Nidoqueen"),

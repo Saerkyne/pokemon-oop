@@ -10,8 +10,12 @@ import pokemonGame.mons.Electrode;
 import pokemonGame.mons.Slowbro;
 import pokemonGame.moves.Psychic;
 import pokemonGame.moves.MegaPunch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class BattleTest {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(BattleTest.class);
 
     private Trainer player;
     private Trainer opponent;
@@ -44,10 +48,18 @@ class BattleTest {
         Pokemon defender = new Abra("Defender");
         attacker.setLevel(50);
         defender.setLevel(50);
+        StatCalculator.calculateAllStats(attacker);
+        StatCalculator.calculateAllStats(defender);
+        defender.setCurrentHP(StatCalculator.calcMaxHP(defender.getHpBaseStat(), defender.getLevel(), defender.getIvHp(), defender.getEvHp()));
+
 
         int hpBefore = defender.getCurrentHP();
+        LOGGER.info("Defender HP before damage: {}", hpBefore);
         Battle.dealDamage(attacker, defender, new Psychic());
-        assertTrue(defender.getCurrentHP() < hpBefore,
+
+        int hpAfter = defender.getCurrentHP();
+        LOGGER.info("Defender HP after damage: {}", hpAfter);
+        assertTrue(hpAfter < hpBefore,
                 "Defender's HP should decrease after taking damage");
     }
 
@@ -94,6 +106,7 @@ class BattleTest {
         Pokemon defender = new Abra("Defender");
         attacker.setLevel(50);
         defender.setLevel(50);
+        defender.setCurrentHP(StatCalculator.calcMaxHP(defender.getHpBaseStat(), defender.getLevel(), defender.getIvHp(), defender.getEvHp()));
 
         int hpBefore = defender.getCurrentHP();
         Battle.dealDamage(attacker, defender, new MegaPunch());
@@ -121,6 +134,9 @@ class BattleTest {
         Pokemon defender = new Abra("Defender");
         attacker.setLevel(50);
         defender.setLevel(50);
+        StatCalculator.calculateAllStats(attacker);
+        StatCalculator.calculateAllStats(defender);
+        defender.setCurrentHP(StatCalculator.calcMaxHP(defender.getHpBaseStat(), defender.getLevel(), defender.getIvHp(), defender.getEvHp()));
 
         int hpBefore = defender.getCurrentHP();
         Battle.dealDamage(attacker, defender, new Psychic());
@@ -266,6 +282,8 @@ class BattleTest {
     @Test
     void pokemonWithNegativeHPIsFainted() {
         Pokemon abra = new Abra("Faintee");
+        StatCalculator.calculateAllStats(abra);
+        abra.setCurrentHP(StatCalculator.calcMaxHP(abra.getHpBaseStat(), abra.getLevel(), abra.getIvHp(), abra.getEvHp()));
         abra.setCurrentHP(-5);
         assertTrue(Battle.checkFainted(abra),
                 "Pokémon with negative HP should be fainted");
@@ -282,6 +300,8 @@ class BattleTest {
     void pokemonWithPositiveHPIsNotFainted() {
         Pokemon abra = new Abra("Healthy");
         abra.setLevel(50);
+        StatCalculator.calculateAllStats(abra);
+        abra.setCurrentHP(StatCalculator.calcMaxHP(abra.getHpBaseStat(), abra.getLevel(), abra.getIvHp(), abra.getEvHp()));
         assertTrue(abra.getCurrentHP() > 0, "Precondition: HP should be positive");
         assertFalse(Battle.checkFainted(abra),
                 "Pokémon with positive HP should not be fainted");
@@ -316,6 +336,9 @@ class BattleTest {
     @Test
     void checkFaintedSetsIsFaintedFlag() {
         Pokemon abra = new Abra("Faintee");
+        StatCalculator.calculateAllStats(abra);
+        abra.setCurrentHP(StatCalculator.calcMaxHP(abra.getHpBaseStat(), abra.getLevel(), abra.getIvHp(), abra.getEvHp()));
+
         assertFalse(abra.getIsFainted(), "Precondition: isFainted should start false");
         abra.setCurrentHP(0);
         Battle.checkFainted(abra);
@@ -335,6 +358,8 @@ class BattleTest {
     void checkFaintedDoesNotSetFlagWhenAlive() {
         Pokemon abra = new Abra("Alive");
         abra.setLevel(50);
+        StatCalculator.calculateAllStats(abra);
+        abra.setCurrentHP(StatCalculator.calcMaxHP(abra.getHpBaseStat(), abra.getLevel(), abra.getIvHp(), abra.getEvHp()));
         Battle.checkFainted(abra);
         assertFalse(abra.getIsFainted(),
                 "checkFainted should not set isFainted when HP > 0");
@@ -501,7 +526,12 @@ class BattleTest {
         Pokemon attacker = new Abra("Attacker");
         Pokemon defender = new Abra("Defender");
         attacker.setLevel(100);
+        StatCalculator.calculateAllStats(attacker);
+        attacker.setCurrentHP(StatCalculator.calcMaxHP(attacker.getHpBaseStat(), attacker.getLevel(), attacker.getIvHp(), attacker.getEvHp()));
         defender.setLevel(5);
+        StatCalculator.calculateAllStats(defender);
+        defender.setCurrentHP(StatCalculator.calcMaxHP(defender.getHpBaseStat(), defender.getLevel(), defender.getIvHp(), defender.getEvHp()));
+
 
         Battle.dealDamage(attacker, defender, new Psychic());
         assertTrue(Battle.checkFainted(defender),
@@ -523,6 +553,8 @@ class BattleTest {
         // always return false and never corrupt state.
         Pokemon abra = new Abra("Healthy");
         abra.setLevel(50);
+        StatCalculator.calculateAllStats(abra);
+        abra.setCurrentHP(StatCalculator.calcMaxHP(abra.getHpBaseStat(), abra.getLevel(), abra.getIvHp(), abra.getEvHp()));
 
         for (int i = 0; i < 5; i++) {
             assertFalse(Battle.checkFainted(abra),

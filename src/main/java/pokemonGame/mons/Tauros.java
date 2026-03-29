@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Tauros extends Pokemon {
@@ -228,7 +229,7 @@ public class Tauros extends Pokemon {
         this.setEvYield(Stat.ATTACK, 1);
         this.setEvYield(Stat.SPEED, 1);
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

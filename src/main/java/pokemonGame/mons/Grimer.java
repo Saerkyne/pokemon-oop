@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Grimer extends Pokemon {
@@ -190,7 +191,7 @@ public class Grimer extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.HP, 1); // Grimer yields 1 EV point in HP when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

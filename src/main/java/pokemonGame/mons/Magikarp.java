@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Magikarp extends Pokemon {
@@ -48,7 +49,7 @@ public class Magikarp extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPEED, 1); // Magikarp yields 1 EV point in Speed when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

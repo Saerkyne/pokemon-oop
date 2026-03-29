@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Primeape extends Pokemon {
@@ -276,7 +277,7 @@ public class Primeape extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.ATTACK, 2);
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

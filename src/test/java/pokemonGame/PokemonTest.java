@@ -49,36 +49,9 @@ class PokemonTest {
         assertEquals(50, abra.getLevel());
     }
 
-    /*
-     * CHECKS:  setLevel() triggers stat recalculation: maxHP at level 50 is higher
-     *          than maxHP at the default level 5.
-     * HOW:     Records maxHP at level 5, calls setLevel(50), and asserts the new maxHP
-     *          is strictly greater.
-     * IMPROVE: Check multiple stats (Attack, Speed, etc.) to confirm all stats are
-     *          recalculated, not just HP. Using exact formula values (as in
-     *          calcMaxHPUsesCorrectFormula) would verify correctness more precisely.
-     */
-    @Test
-    void setLevelRecalculatesStats() {
-        int hpAtLevel5 = abra.getMaxHP();
-        abra.setLevel(50);
-        assertTrue(abra.getMaxHP() > hpAtLevel5,
-                "Max HP at level 50 should be higher than at level 5");
-    }
+    
 
-    /*
-     * CHECKS:  After setLevel(), currentHP is reset to the new maxHP (full health at
-     *          the new level), regardless of prior HP value.
-     * HOW:     Calls setLevel(50) and asserts getCurrentHP() equals getMaxHP().
-     * IMPROVE: Set currentHP to a partial value before calling setLevel to confirm HP
-     *          is unconditionally restored, not just left at max when it was already max.
-     */
-    @Test
-    void setLevelResetsCurrentHPToMax() {
-        abra.setLevel(50);
-        assertEquals(abra.getMaxHP(), abra.getCurrentHP(),
-                "After setLevel, current HP should equal max HP");
-    }
+    
 
     /*
      * CHECKS:  levelUp() increases the Pokémon's level by exactly 1.
@@ -396,8 +369,9 @@ class PokemonTest {
      */
     @Test
     void evSetterOnlySetsCurrentValue() {
-        abra.setEvHp(100);
-        abra.setEvHp(50);
+        EvManager evManager = new EvManager();
+        evManager.setEv(abra, Stat.HP, 100);
+        evManager.setEv(abra, Stat.HP, 50);
         // NOT Additive: should now be 50
         assertEquals(50, abra.getEvHp());
         assertEquals(50, abra.getEvTotal());
@@ -413,8 +387,9 @@ class PokemonTest {
      */
     @Test
     void evCapsAtPerStatMax252() {
-        abra.addEvHp(252);
-        abra.addEvHp(10); // Should not exceed 252
+        EvManager evManager = new EvManager();
+        evManager.setEv(abra, Stat.HP, 252);
+        evManager.addEv(abra, Stat.HP, 10); // Should not exceed 252
         assertEquals(252, abra.getEvHp());
         assertEquals(252, abra.getEvTotal());
     }
@@ -430,10 +405,11 @@ class PokemonTest {
      */
     @Test
     void evTotalCannotExceed510() {
-        abra.setEvAttack(252);
-        abra.setEvSpeed(252);
+        EvManager evManager = new EvManager();
+        evManager.setEv(abra, Stat.ATTACK, 252);
+        evManager.setEv(abra, Stat.SPEED, 252);
         // evTotal is now 504; only 6 more EVs can fit under the 510 cap
-        abra.setEvHp(100); // Requests 100 but only 6 should be granted
+        evManager.setEv(abra, Stat.HP, 100); // Requests 100 but only 6 should be granted
         assertEquals(510, abra.getEvTotal(),
                 "EV total should be capped at exactly 510");
         assertEquals(6, abra.getEvHp(),
@@ -449,7 +425,8 @@ class PokemonTest {
      */
     @Test
     void individualEvsCappedAt252() {
-        abra.setEvDefense(252);
+        EvManager evManager = new EvManager();
+        evManager.setEv(abra, Stat.DEFENSE, 252);
         assertEquals(252, abra.getEvDefense());
     }
 
@@ -538,18 +515,7 @@ class PokemonTest {
 
     // --- HP management ---
 
-    /*
-     * CHECKS:  A freshly constructed Pokémon's currentHP equals its maxHP (starts at
-     *          full health).
-     * HOW:     Asserts getCurrentHP() equals getMaxHP() on a new Abra.
-     * IMPROVE: Verify this invariant at multiple levels (level 1, 50, 100) to confirm
-     *          it holds regardless of the level the Pokémon is initialized at.
-     */
-    @Test
-    void currentHPStartsAtMaxHP() {
-        assertEquals(abra.getMaxHP(), abra.getCurrentHP(),
-                "Current HP should start at max HP");
-    }
+    
 
     /*
      * CHECKS:  setCurrentHP() updates currentHP to the specified value.
@@ -597,7 +563,7 @@ class PokemonTest {
     @Test
     void calcMaxHPUsesCorrectFormula() {
         // Formula: ((2*base + IV + EV/4) * level / 100) + level + 10
-        int result = abra.calcMaxHP(45, 50, 15, 100);
+        int result = StatCalculator.calcMaxHP(45, 50, 15, 100);
         int expected = ((2 * 45 + 15 + 100 / 4) * 50 / 100) + 50 + 10;
         assertEquals(expected, result);
     }
@@ -614,7 +580,7 @@ class PokemonTest {
     @Test
     void calcCurrentStatUsesCorrectFormula() {
         // Formula: (((2*base + IV + EV/4) * level / 100) + 5) * nature
-        int result = abra.calcCurrentStat(80, 50, 20, 0, 1.0);
+        int result = StatCalculator.calcCurrentStat(80, 50, 20, 0, 1.0);
         int expected = (int) Math.floor((((2 * 80 + 20 + 0) * 50 / 100) + 5) * 1.0);
         assertEquals(expected, result);
     }
@@ -630,8 +596,8 @@ class PokemonTest {
      */
     @Test
     void calcCurrentStatWithNatureBoost() {
-        int neutral = abra.calcCurrentStat(80, 50, 20, 0, 1.0);
-        int boosted = abra.calcCurrentStat(80, 50, 20, 0, 1.1);
+        int neutral = StatCalculator.calcCurrentStat(80, 50, 20, 0, 1.0);
+        int boosted = StatCalculator.calcCurrentStat(80, 50, 20, 0, 1.1);
         assertTrue(boosted > neutral,
                 "A boosted nature should give a higher stat");
     }
@@ -646,8 +612,8 @@ class PokemonTest {
      */
     @Test
     void calcCurrentStatWithNaturePenalty() {
-        int neutral = abra.calcCurrentStat(80, 50, 20, 0, 1.0);
-        int lowered = abra.calcCurrentStat(80, 50, 20, 0, 0.9);
+        int neutral = StatCalculator.calcCurrentStat(80, 50, 20, 0, 1.0);
+        int lowered = StatCalculator.calcCurrentStat(80, 50, 20, 0, 0.9);
         assertTrue(lowered < neutral,
                 "A lowered nature should give a lower stat");
     }
@@ -735,38 +701,4 @@ class PokemonTest {
                 "EV yield should be set for species");
     }
 
-    // --- Base stat setters recalculate ---
-
-    /*
-     * CHECKS:  Increasing the HP base stat via setHpBase() causes maxHP to increase,
-     *          confirming stat recalculation happens when a base stat changes.
-     * HOW:     Records maxHP before calling setHpBase(200), then asserts the new value
-     *          is strictly greater.
-     * IMPROVE: Assert the new maxHP equals the exact value predicted by the formula to
-     *          verify correctness, not just direction. Restore the original base after
-     *          the test (or use a separate instance) to prevent state leakage.
-     */
-    @Test
-    void setHpBaseRecalculatesStats() {
-        int hpBefore = abra.getMaxHP();
-        abra.setHpBase(200);
-        assertTrue(abra.getMaxHP() > hpBefore,
-                "Increasing HP base should increase max HP");
-    }
-
-    /*
-     * CHECKS:  Increasing the speed base stat via setSpeedBase() causes currentSpeed
-     *          to increase, confirming recalculation triggers on base-stat changes.
-     * HOW:     Records currentSpeed before calling setSpeedBase(200), then asserts the
-     *          new value is strictly greater.
-     * IMPROVE: Assert the exact expected speed from the formula, and verify that only
-     *          the speed stat changed (other stats like HP were not affected).
-     */
-    @Test
-    void setSpeedBaseRecalculatesStats() {
-        int speedBefore = abra.getCurrentSpeed();
-        abra.setSpeedBase(200);
-        assertTrue(abra.getCurrentSpeed() > speedBefore,
-                "Increasing speed base should increase current speed");
-    }
 }

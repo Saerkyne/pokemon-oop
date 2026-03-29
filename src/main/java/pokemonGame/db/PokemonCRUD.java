@@ -16,12 +16,15 @@
 package pokemonGame.db;
 import pokemonGame.Pokemon;
 import pokemonGame.PokemonFactory;
+import pokemonGame.StatCalculator;
+import pokemonGame.EvManager;
 import pokemonGame.Natures;
 import pokemonGame.Trainer;
 import java.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pokemonGame.PokeSpecies;
+import pokemonGame.Stat;
 
 public class PokemonCRUD {
 
@@ -195,15 +198,16 @@ public class PokemonCRUD {
         foundPokemon.setIvSpecialAttack(ivSpAttack);
         foundPokemon.setIvSpecialDefense(ivSpDefense);
         foundPokemon.setIvSpeed(ivSpeed);
-        foundPokemon.setEvHp(evHp);
-        foundPokemon.setEvAttack(evAttack);
-        foundPokemon.setEvDefense(evDefense);
-        foundPokemon.setEvSpecialAttack(evSpAttack);
-        foundPokemon.setEvSpecialDefense(evSpDefense);
-        foundPokemon.setEvSpeed(evSpeed);
+        EvManager evManager = new EvManager();
+        evManager.setEv(foundPokemon, Stat.HP, evHp);
+        evManager.setEv(foundPokemon, Stat.ATTACK, evAttack);
+        evManager.setEv(foundPokemon, Stat.DEFENSE, evDefense);
+        evManager.setEv(foundPokemon, Stat.SPECIAL_ATTACK, evSpAttack);
+        evManager.setEv(foundPokemon, Stat.SPECIAL_DEFENSE, evSpDefense);
+        evManager.setEv(foundPokemon, Stat.SPEED, evSpeed);
         foundPokemon.setCurrentExp(currentExp);
         foundPokemon.setIsFainted(isFainted);
-        foundPokemon.calculateCurrentStats(); // Recalculate stats based on IVs, EVs, and level
+        StatCalculator.calculateAllStats(foundPokemon); // Recalculate stats based on IVs, EVs, and level
         foundPokemon.setCurrentHP(currentHp); // Set the current HP after recalculating stats
 
         return foundPokemon; // Return the Pokémon object

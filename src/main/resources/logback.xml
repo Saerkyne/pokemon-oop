@@ -8,7 +8,7 @@
     <!-- Suppress noisy MariaDB driver debug logs -->
     <logger name="org.mariadb" level="WARN"/>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

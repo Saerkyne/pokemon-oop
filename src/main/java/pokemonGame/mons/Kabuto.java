@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Kabuto extends Pokemon {
@@ -192,7 +193,7 @@ public class Kabuto extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.DEFENSE, 1); // Kabuto yields 1 EV point in Defense when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

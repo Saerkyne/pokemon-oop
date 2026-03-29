@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Magmar extends Pokemon {
@@ -248,7 +249,7 @@ public class Magmar extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPECIAL_ATTACK, 2); // Magmar yields 2 EV points in Sp. Atk when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

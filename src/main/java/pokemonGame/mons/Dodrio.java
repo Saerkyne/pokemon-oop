@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Dodrio extends Pokemon {
@@ -220,7 +221,7 @@ public class Dodrio extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.ATTACK, 2); // Dodrio yields 2 Attack EVs when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

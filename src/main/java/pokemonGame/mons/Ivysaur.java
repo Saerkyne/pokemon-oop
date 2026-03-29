@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Ivysaur extends Pokemon {
@@ -214,7 +215,7 @@ public class Ivysaur extends Pokemon {
         this.setEvYield(Stat.SPECIAL_ATTACK, 1);  // Ivysaur yields 1 EV point in Special Attack when defeated
         this.setEvYield(Stat.SPECIAL_DEFENSE, 1); // ... and 1 EV point in Special Defense when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

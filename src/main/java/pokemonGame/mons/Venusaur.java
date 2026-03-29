@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Venusaur extends Pokemon {
@@ -228,7 +229,7 @@ public class Venusaur extends Pokemon {
         this.setEvYield(Stat.SPECIAL_ATTACK, 2);
         this.setEvYield(Stat.SPECIAL_DEFENSE, 1);
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Jynx extends Pokemon {
@@ -274,7 +275,7 @@ public class Jynx extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPECIAL_ATTACK, 2); // Jynx yields 2 EV points in Special Attack when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

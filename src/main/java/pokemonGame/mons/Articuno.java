@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Articuno extends Pokemon {
@@ -213,7 +214,7 @@ public class Articuno extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPECIAL_DEFENSE, 3); // Articuno yields 3 EV points in Special Defense when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

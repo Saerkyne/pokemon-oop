@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Jolteon extends Pokemon {
@@ -264,7 +265,7 @@ public class Jolteon extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPEED, 2); // Jolteon yields 2 EV points in Speed when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

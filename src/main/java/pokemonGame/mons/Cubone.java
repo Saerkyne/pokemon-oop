@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Cubone extends Pokemon {
@@ -261,7 +262,7 @@ public class Cubone extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.DEFENSE, 1); // Cubone yields 1 EV point in Defense when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

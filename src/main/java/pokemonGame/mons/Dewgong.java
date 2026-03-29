@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Dewgong extends Pokemon {
@@ -234,7 +235,7 @@ public class Dewgong extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPECIAL_DEFENSE, 2); // Dewgong yields 2 EV points in Special Defense when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

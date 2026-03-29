@@ -1,13 +1,14 @@
 package pokemonGame.mons;
 
-import java.util.List;
-import pokemonGame.LearnsetEntry;
-import pokemonGame.LearnsetEntry.Source;
-import pokemonGame.TypeChart.Type;
 import pokemonGame.Pokemon;
 import pokemonGame.moves.*;
 import pokemonGame.PokeSpecies;
+import pokemonGame.LearnsetEntry;
+import pokemonGame.LearnsetEntry.Source;
+import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
+import java.util.List;
 
 public class Alakazam extends Pokemon {
 
@@ -283,7 +284,7 @@ public class Alakazam extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPECIAL_ATTACK, 3); // Alakazam yields 3 EV points in Special Attack when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

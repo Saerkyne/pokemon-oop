@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Charmeleon extends Pokemon {
@@ -270,7 +271,7 @@ public class Charmeleon extends Pokemon {
         this.setEvYield(Stat.SPECIAL_ATTACK, 1); // Charmeleon yields 1 EV point in Special Attack when defeated
         this.setEvYield(Stat.SPEED, 1); // Charmeleon yields 1 EV point in Speed when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

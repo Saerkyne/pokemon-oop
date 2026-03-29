@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Golem extends Pokemon {
@@ -269,7 +270,7 @@ public class Golem extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.DEFENSE, 3); // Golem yields 3 EV points in Defense when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

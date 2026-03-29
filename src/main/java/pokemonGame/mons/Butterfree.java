@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Butterfree extends Pokemon {
@@ -249,7 +250,7 @@ public class Butterfree extends Pokemon {
         this.setEvYield(Stat.SPECIAL_ATTACK, 2); // Butterfree yields 2 EV points in Special Attack when defeated
         this.setEvYield(Stat.SPECIAL_DEFENSE, 1); // Butterfree yields 1 EV point in Special Defense when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

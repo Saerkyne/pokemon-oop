@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Muk extends Pokemon {
@@ -205,7 +206,7 @@ public class Muk extends Pokemon {
         this.setEvYield(Stat.HP, 1);     // Muk yields 1 EV point in HP when defeated
         this.setEvYield(Stat.ATTACK, 1); // and 1 EV point in Attack when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

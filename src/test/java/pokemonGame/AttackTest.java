@@ -600,7 +600,8 @@ class AttackTest {
         bulbaAttacker.setSpecialAttackBase(abraAttacker.getSpecialAttackBaseStat());
         // Use the same nature to be fair
         bulbaAttacker.setNature(abraAttacker.getNature());
-        bulbaAttacker.calculateCurrentStats();
+        StatCalculator.calculateAllStats(bulbaAttacker);
+        StatCalculator.calculateAllStats(abraAttacker);
         defender.setLevel(50);
 
         Move psychic = new Psychic();

@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Gengar extends Pokemon {
@@ -262,7 +263,7 @@ public class Gengar extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPECIAL_ATTACK, 3);
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

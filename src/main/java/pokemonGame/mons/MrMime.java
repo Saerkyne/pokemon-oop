@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class MrMime extends Pokemon {
@@ -276,7 +277,7 @@ public class MrMime extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPECIAL_DEFENSE, 2); // Mr. Mime yields 2 EV points in Sp. Def when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

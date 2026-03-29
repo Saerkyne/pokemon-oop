@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Goldeen extends Pokemon {
@@ -213,7 +214,7 @@ public class Goldeen extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.ATTACK, 1); // Goldeen yields 1 EV point in Attack when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

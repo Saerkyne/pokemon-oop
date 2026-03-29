@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Nidoqueen extends Pokemon {
@@ -341,7 +342,7 @@ public class Nidoqueen extends Pokemon {
         this.setNickname(nickname); 
         this.setEvYield(Stat.HP, 3); // Nidoqueen yields 3 EV points in HP when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

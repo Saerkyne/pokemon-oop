@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Graveler extends Pokemon {
@@ -255,7 +256,7 @@ public class Graveler extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.DEFENSE, 2); // Graveler yields 2 EV points in Defense when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

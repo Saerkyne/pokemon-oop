@@ -2,6 +2,7 @@ package pokemonGame.bot;
 import pokemonGame.App;
 import pokemonGame.Pokemon;
 import pokemonGame.PokemonFactory;
+import pokemonGame.StatCalculator;
 import pokemonGame.Trainer;
 import pokemonGame.db.DatabaseSetup;
 import pokemonGame.db.PokemonCRUD;
@@ -120,7 +121,7 @@ public class SlashExample extends ListenerAdapter{
                 } else {
                     newPokemon.setTrainer(currentTrainer);
                     newPokemon.setLevel(50); // Set the Pokémon's level to 50 for testing purposes
-                    newPokemon.calculateCurrentStats(); // Recalculate stats based on level 50 for testing purposes
+                    StatCalculator.calculateAllStats(newPokemon);; // Recalculate stats based on level 50 for testing purposes
                     newPokemon.setCurrentHP(newPokemon.getMaxHP());
 
                     int pokemonId = pokemonCRUD.createDBPokemon(newPokemon);

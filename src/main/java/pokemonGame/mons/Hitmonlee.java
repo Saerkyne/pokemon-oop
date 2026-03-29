@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Hitmonlee extends Pokemon {
@@ -220,7 +221,7 @@ public class Hitmonlee extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.ATTACK, 2); // Hitmonlee yields 2 EV points in Attack when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

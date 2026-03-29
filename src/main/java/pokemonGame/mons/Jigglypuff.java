@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Jigglypuff extends Pokemon {
@@ -318,7 +319,7 @@ public class Jigglypuff extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.HP, 2); // Jigglypuff yields 2 EV points in HP when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

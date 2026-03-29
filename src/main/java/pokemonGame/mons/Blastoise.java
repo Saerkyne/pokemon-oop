@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Blastoise extends Pokemon {
@@ -297,7 +298,7 @@ public class Blastoise extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPECIAL_DEFENSE, 3); // Blastoise yields 3 EV points in Special Defense when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

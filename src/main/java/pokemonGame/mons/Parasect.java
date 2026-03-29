@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Parasect extends Pokemon {
@@ -221,7 +222,7 @@ public class Parasect extends Pokemon {
         this.setEvYield(Stat.ATTACK, 2);
         this.setEvYield(Stat.DEFENSE, 1);
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

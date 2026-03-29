@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Bulbasaur extends Pokemon {
@@ -208,7 +209,7 @@ public class Bulbasaur extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPECIAL_ATTACK, 1); // Bulbasaur yields 1 EV point in Special Attack when defeated
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     // instance accessor used in polymorphic contexts

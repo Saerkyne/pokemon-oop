@@ -7,6 +7,7 @@ import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
+import pokemonGame.StatCalculator;
 import java.util.List;
 
 public class Tentacool extends Pokemon {
@@ -234,7 +235,7 @@ public class Tentacool extends Pokemon {
         this.setNickname(nickname);
         this.setEvYield(Stat.SPECIAL_DEFENSE, 1);
         this.generateRandomIVs();
-        this.calculateCurrentStats();
+        StatCalculator.calculateAllStats(this);
     }
 
     @Override

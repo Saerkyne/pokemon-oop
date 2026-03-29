@@ -36,7 +36,7 @@ public class PokemonCRUD {
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setInt(1, pokemon.getTrainerDbId());
-                pstmt.setString(2, pokemon.getSpecies().getDisplayName());
+                pstmt.setString(2, pokemon.getSpecies().toString());
                 pstmt.setString(3, pokemon.getNickname());
                 pstmt.setInt(4, pokemon.getLevel());
                 pstmt.setString(5, pokemon.getNature().getDisplayName());
@@ -100,7 +100,7 @@ public class PokemonCRUD {
                     + "WHERE instance_id = ? AND trainer_id = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, pokemon.getSpecies().getDisplayName());
+                pstmt.setString(1, pokemon.getSpecies().toString());
                 pstmt.setString(2, pokemon.getNickname());
                 pstmt.setInt(3, pokemon.getLevel());
                 pstmt.setString(4, pokemon.getNature().getDisplayName());
@@ -163,7 +163,7 @@ public class PokemonCRUD {
 
         TrainerCRUD getById = new TrainerCRUD();
         int foundPokemonId = rs.getInt("instance_id");
-        PokeSpecies species = PokeSpecies.valueOf(rs.getString("species").toUpperCase());
+        PokeSpecies species = PokeSpecies.valueOf(rs.getString("species").toUpperCase().replaceAll("[^a-zA-Z]", "")); // Assuming species is stored as display name, we need to convert it back to enum constant name format
         String name = rs.getString("nickname");
         int level = rs.getInt("level");
         String nature = rs.getString("nature");

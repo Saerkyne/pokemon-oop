@@ -3,9 +3,6 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ScanResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collections;
@@ -20,7 +17,7 @@ public class PokemonFactory {
     private static final Map<String, Function<String, Pokemon>> REGISTRY = new HashMap<>();
 
     static {
-        try (ScanResult scan = new ClassGraph()
+        /* try (ScanResult scan = new ClassGraph()
                 .acceptPackages("pokemonGame.mons")
                 .enableClassInfo()
                 .scan()) {
@@ -36,15 +33,6 @@ public class PokemonFactory {
                         catch (Exception e) { throw new RuntimeException(e); }
                     });
 
-                    SpeciesAliases aliases = species.getAnnotation(SpeciesAliases.class);
-                    if (aliases != null) {
-                        for (String alias : aliases.value()) {
-                            REGISTRY.put(alias.toLowerCase(), name -> {
-                                try { return ctor.newInstance(name); }
-                                catch (Exception e) { throw new RuntimeException(e); }
-                            });
-                        }
-                    }
                 } catch (NoSuchMethodException e) {
                     // This species lacks a (String) constructor — skip it, don't abort the whole scan
                     LOGGER.warn("Skipping {} — no (String) constructor found.", cls.getSimpleName(), e);
@@ -56,7 +44,47 @@ public class PokemonFactory {
             LOGGER.info("PokemonFactory registered {} species.", REGISTRY.size());
         } catch (Exception e) {
             LOGGER.error("ClassGraph scan failed — no species registered.", e);
+        } */
+
+
+        // Registration using enum values instead of classpath scanning
+        for (PokeSpecies species : PokeSpecies.values()) {
+            String key = species.getDisplayName().toLowerCase().trim();
+            String[] aliasKey = species.getAliases();
+
+            if (aliasKey != null && aliasKey.length > 0) {
+                for (String alias : aliasKey) {
+                    REGISTRY.put(alias.toLowerCase().trim(), name -> {
+                        try {
+                            String className = "pokemonGame.mons." + species.getClassName();
+                            Class<? extends Pokemon> pokemonClass = Class.forName(className).asSubclass(Pokemon.class);
+                            Constructor<? extends Pokemon> ctor = pokemonClass.getConstructor(String.class);
+                            LOGGER.info("Registered alias: {} for species: {} with class: {}", alias, species.getDisplayName(), className);
+                            return ctor.newInstance(name);
+                        } catch (Exception e) {
+                            LOGGER.error("Failed to create instance for alias: " + alias + " of species: " + species.getDisplayName(), e);
+                            return null;
+                        }
+                    });
+                }
+            }
+
+            REGISTRY.put(key, name -> {
+                try {
+                    // Assuming each Pokemon class is named exactly as the className in the enum
+                    String className = "pokemonGame.mons." + species.getClassName();
+                    Class<? extends Pokemon> pokemonClass = Class.forName(className).asSubclass(Pokemon.class);
+                    Constructor<? extends Pokemon> ctor = pokemonClass.getConstructor(String.class);
+                    LOGGER.info("Registered species: {} with class: {}", species.getDisplayName(), className);
+                    return ctor.newInstance(name);
+                } catch (Exception e) {
+                    LOGGER.error("Failed to create instance for species: " + species.getDisplayName(), e);
+                    return null;
+                }
+            });
         }
+
+
     }
 
     // ============================

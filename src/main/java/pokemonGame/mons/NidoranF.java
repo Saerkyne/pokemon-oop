@@ -3,17 +3,13 @@ package pokemonGame.mons;
 import pokemonGame.Pokemon;
 import pokemonGame.moves.*;
 import pokemonGame.PokeSpecies;
-import pokemonGame.SpeciesAliases;
 import pokemonGame.LearnsetEntry;
 import pokemonGame.LearnsetEntry.Source;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.Stat;
 import java.util.List;
 
-@SpeciesAliases({"nidoranf", "nidoran♀", "nidoran f", "f nidoran", "fnidoran"}) // Handle common variations in naming
-public class NidoranF extends Pokemon {
-
-    
+public class NidoranF extends Pokemon {    
 
     private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
     static {

@@ -72,7 +72,7 @@ public class SlashExample extends ListenerAdapter{
                     for (Pokemon p : teamInfo) {
                         teamMessage.append("Slot ").append(slotNumber).append(":\n");
                         teamMessage.append("- ").append(p.getNickname()).append("\n");
-                        teamMessage.append("  Species: ").append(p.getSpecies()).append("\n");
+                        teamMessage.append("  Species: ").append(p.getSpecies().getDisplayName()).append("\n");
                         teamMessage.append("  Level: ").append(p.getLevel()).append("\n");
                         teamMessage.append("  HP: ").append(p.getCurrentHP()).append("/").append(p.getMaxHP()).append("\n");
                         teamMessage.append("  Attack: ").append(p.getCurrentAttack()).append("\n");
@@ -89,8 +89,16 @@ public class SlashExample extends ListenerAdapter{
             case "addpokemon":
                 // Needs to create a pokemon and add it to the trainers team in the database, then reply with success or failure message
                 LOGGER.info("Received slash command; '{}' with Pokemon name: '{}' from user: {} (ID: {})", event.getName(), event.getOption("species").getAsString(), user, userId);
-                PokeSpecies species = PokeSpecies.valueOf(event.getOption("species").getAsString().toUpperCase());
-                String nickname = event.getOption("nickname") != null ? event.getOption("nickname").getAsString() : null;
+                // below doesn't work because of the new enum structure with display names and aliases, need to loop through the enum values and check if the input matches either the display name or any of the aliases for each species 
+                //PokeSpecies species = PokeSpecies.valueOf(event.getOption("species").getAsString().toUpperCase());
+
+                String inputSpecies = event.getOption("species").getAsString();
+                PokeSpecies species = PokeSpecies.getSpeciesByString(inputSpecies);
+                if (species == null) {
+                    event.reply("Sorry, that Pokemon hasn't been discovered yet!").setEphemeral(true).queue();
+                    return;
+                }
+                String nickname = event.getOption("nickname") != null ? event.getOption("nickname").getAsString() : species.getDisplayName();
                 
                 if (trainerCRUD.getTrainerByDiscordId(userId) == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();

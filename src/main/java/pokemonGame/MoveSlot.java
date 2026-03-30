@@ -18,7 +18,7 @@ public class MoveSlot {
             currentPP--; // Decrease PP by 1 when the move is used
             return true;
         } else {
-            LOGGER.info("No PP left for move: " + move.getMoveName());
+            LOGGER.info("No PP left for move: {}", move.getMoveName());
             return false;
         }
     }

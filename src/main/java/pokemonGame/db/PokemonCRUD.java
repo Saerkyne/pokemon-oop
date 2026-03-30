@@ -184,7 +184,7 @@ public class PokemonCRUD {
         int evSpDefense = rs.getInt("ev_sp_defense");
         int evSpeed = rs.getInt("ev_speed");
         int currentExp = rs.getInt("current_exp");
-        Boolean isFainted = rs.getBoolean("is_fainted");
+        boolean isFainted = rs.getBoolean("is_fainted");
 
         // Create a new Pokemon object and populate its fields from the ResultSet
         Pokemon foundPokemon = PokemonFactory.createPokemonFromRegistry(species, name);

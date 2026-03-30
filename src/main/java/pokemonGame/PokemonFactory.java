@@ -1,5 +1,4 @@
 package pokemonGame;
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -56,27 +55,22 @@ public class PokemonFactory {
                 for (String alias : aliasKey) {
                     REGISTRY.put(alias.toLowerCase().trim(), name -> {
                         try {
-                            String className = "pokemonGame.mons." + species.getClassName();
-                            Class<? extends Pokemon> pokemonClass = Class.forName(className).asSubclass(Pokemon.class);
-                            Constructor<? extends Pokemon> ctor = pokemonClass.getConstructor(String.class);
-                            LOGGER.info("Registered alias: {} for species: {} with class: {}", alias, species.getDisplayName(), className);
-                            return ctor.newInstance(name);
+                            LOGGER.info("Registered alias: {} for species: {}", alias, species.getDisplayName());
+                            return species.createPokemon(name);
                         } catch (Exception e) {
                             LOGGER.error("Failed to create instance for alias: " + alias + " of species: " + species.getDisplayName(), e);
                             return null;
                         }
-                    });
+                    }); 
+                        
                 }
             }
 
             REGISTRY.put(key, name -> {
                 try {
-                    // Assuming each Pokemon class is named exactly as the className in the enum
-                    String className = "pokemonGame.mons." + species.getClassName();
-                    Class<? extends Pokemon> pokemonClass = Class.forName(className).asSubclass(Pokemon.class);
-                    Constructor<? extends Pokemon> ctor = pokemonClass.getConstructor(String.class);
-                    LOGGER.info("Registered species: {} with class: {}", species.getDisplayName(), className);
-                    return ctor.newInstance(name);
+                    
+                    LOGGER.info("Registered species: {} with class: {}", species.getDisplayName(), species.getClassName());
+                    return species.createPokemon(name);
                 } catch (Exception e) {
                     LOGGER.error("Failed to create instance for species: " + species.getDisplayName(), e);
                     return null;

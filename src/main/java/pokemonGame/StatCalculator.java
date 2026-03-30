@@ -46,6 +46,21 @@ public class StatCalculator {
         pokemon.setCurrentSpecialAttack(calcCurrentStat(pokemon.getSpecialAttackBaseStat(), pokemon.getLevel(), pokemon.getIvSpecialAttack(), EvManager.getEv(pokemon, Stat.SPECIAL_ATTACK), pokemon.getNature().modifierFor(Stat.SPECIAL_ATTACK)));
         pokemon.setCurrentSpecialDefense(calcCurrentStat(pokemon.getSpecialDefenseBaseStat(), pokemon.getLevel(), pokemon.getIvSpecialDefense(), EvManager.getEv(pokemon, Stat.SPECIAL_DEFENSE), pokemon.getNature().modifierFor(Stat.SPECIAL_DEFENSE)));
         pokemon.setCurrentSpeed(calcCurrentStat(pokemon.getSpeedBaseStat(), pokemon.getLevel(), pokemon.getIvSpeed(), EvManager.getEv(pokemon, Stat.SPEED), pokemon.getNature().modifierFor(Stat.SPEED)));
+        
+        int oldMaxHP = pokemon.getMaxHP();
         pokemon.setMaxHP(calcMaxHP(pokemon.getHpBaseStat(), pokemon.getLevel(), pokemon.getIvHp(), EvManager.getEv(pokemon, Stat.HP)));
+
+        if (oldMaxHP == 0) {
+            // If this is the first time calculating stats, set current HP to max HP
+            pokemon.setCurrentHP(pokemon.getMaxHP());
+        } else {
+            // Otherwise, we might add logic here to adjust current HP proportionally, but for now we will just leave current HP as is when max HP changes.
+            // This means that if you change EVs or IVs in a way that changes max HP, your current HP will not automatically adjust to the new max HP. This is something that could
+            // be changed in the future if desired, but for now we will just keep it simple and not implement that logic.
+
+            LOGGER.info("Max HP changed from " + oldMaxHP + " to " + pokemon.getMaxHP() + ". Current HP remains at " + pokemon.getCurrentHP() + ".");
+        }
+
+
     }
 }

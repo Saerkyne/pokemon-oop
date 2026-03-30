@@ -36,7 +36,7 @@ public class SlashExample extends ListenerAdapter{
         switch (event.getName()) {
             
             case "battlestate":
-                LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("content").getAsString(), user, userId);
+                LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", event.getName(), user, userId);
                 event.reply("The battle is currently in progress!").queue();
                 return;
 
@@ -55,13 +55,12 @@ public class SlashExample extends ListenerAdapter{
             case "checkteam":
                 LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", event.getName(), user, userId);
                 
-                
-                if (trainerCRUD.getTrainerByDiscordId(userId) == null) {
+                Trainer trainer = trainerCRUD.getTrainerByDiscordId(userId);
+                if (trainer == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
                 }
 
-                Trainer trainer = trainerCRUD.getTrainerByDiscordId(userId);
                 List<Pokemon> teamInfo = teamCRUD.getDBTeamForTrainer(trainer.getDbId());
                 
 
@@ -122,7 +121,7 @@ public class SlashExample extends ListenerAdapter{
                     newPokemon.setTrainer(currentTrainer);
                     newPokemon.setLevel(50); // Set the Pokémon's level to 50 for testing purposes
                     StatCalculator.calculateAllStats(newPokemon);; // Recalculate stats based on level 50 for testing purposes
-                    newPokemon.setCurrentHP(newPokemon.getMaxHP());
+                    
 
                     int pokemonId = pokemonCRUD.createDBPokemon(newPokemon);
                     if (pokemonId == -1) {
@@ -153,6 +152,10 @@ public class SlashExample extends ListenerAdapter{
                 Trainer releasingTrainer = trainerCRUD.getTrainerByDiscordId(userId);
 
                 Pokemon pokemonToRelease = PokemonCRUD.getPokemonByNicknameAndTrainer(releasedPokemon, releasingTrainer);
+                if (pokemonToRelease == null) {
+                    event.reply("No Pokémon with that nickname found on your team! Make sure you entered the correct nickname.").setEphemeral(true).queue();
+                    return;
+                }
                 int slotToRelease = teamCRUD.getSlotIndexForPokemon(releasingTrainer.getDbId(), pokemonToRelease.getId());
                 boolean releaseSuccess = teamCRUD.removePokemonFromDBTeam(releasingTrainer.getDbId(), slotToRelease);
                 if (releaseSuccess) {

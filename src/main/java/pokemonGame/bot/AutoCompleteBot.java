@@ -6,6 +6,7 @@ import pokemonGame.PokemonFactory;
 import pokemonGame.db.TeamCRUD;
 import pokemonGame.db.TrainerCRUD;
 import pokemonGame.Trainer;
+import java.util.Collections;
 
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -83,6 +84,10 @@ public class AutoCompleteBot extends ListenerAdapter {
             TrainerCRUD trainerCRUD = new TrainerCRUD();
             TeamCRUD teamCRUD = new TeamCRUD();
             Trainer releasingTrainer = trainerCRUD.getTrainerByDiscordId(discordId);
+            if (releasingTrainer == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
+                return;
+            }
 
 
             

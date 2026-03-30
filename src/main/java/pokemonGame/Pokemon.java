@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.TypeChart.Category;
+import pokemonGame.TypeChart.StatusCondition;
 
 public class Pokemon {
 
@@ -52,7 +53,7 @@ public class Pokemon {
     private int[] evYield = new int[]{0, 0, 0, 0, 0, 0}; // This array holds the EV yield for each stat when this Pokemon is defeated in battle, 
     // in the order of HP, Attack, Defense, Special Attack, Special Defense, Speed
     private Natures nature;
-    private String[] statusConditions = new String[0]; // This array holds any status conditions currently affecting the Pokemon (e.g. "Paralyzed", "Burned")
+    private StatusCondition[] statusConditions = new StatusCondition[0]; // This array holds any status conditions currently affecting the Pokemon (e.g. "Paralyzed", "Burned")
     private boolean isFainted = false; // This boolean indicates whether the Pokemon has fainted (current HP is 0 or less)
     private final ArrayList<MoveSlot> moveset;
     
@@ -81,7 +82,6 @@ public class Pokemon {
         this.evSpecialAttack = 0;
         this.evSpecialDefense = 0;
         this.evSpeed = 0;
-        this.evYield = new int[]{0, 0, 0, 0, 0, 0}; // Default EV yield is 0 for all stats by default
         this.moveset = new ArrayList<MoveSlot>(4);
         // assign a random nature immediately
         Natures.assignRandom(this);
@@ -106,7 +106,6 @@ public class Pokemon {
         this.evSpecialAttack = 0;
         this.evSpecialDefense = 0;
         this.evSpeed = 0;
-        this.evYield = new int[]{0, 0, 0, 0, 0, 0}; // Default EV yield is 0 for all stats by default
         this.moveset = new ArrayList<MoveSlot>(4);
         // random nature for custom‑stat constructor as well
         Natures.assignRandom(this);
@@ -153,8 +152,8 @@ public class Pokemon {
         return id;
     }
 
-    public String[] getStatusConditions() {
-        return statusConditions.clone();
+    public StatusCondition[] getStatusConditions() {
+        return statusConditions;
     }
 
     public int getLevel() {
@@ -332,11 +331,11 @@ public class Pokemon {
         this.nature = nature;
     }
 
-    public void setIsFainted(Boolean isFainted) {
+    public void setIsFainted(boolean isFainted) {
         this.isFainted = isFainted;
     }
 
-    public void setStatusConditions(String[] statusConditions) {
+    public void setStatusConditions(StatusCondition[] statusConditions) {
         this.statusConditions = statusConditions;
     }   
     
@@ -425,6 +424,30 @@ public class Pokemon {
 
     public void setIvSpeed(int ivSpeed) {
         this.ivSpeed = ivSpeed;
+    }
+
+    public void setEvHp(int evHp) {
+        this.evHp = evHp;
+    }
+
+    public void setEvAttack(int evAttack) {
+        this.evAttack = evAttack;
+    }
+
+    public void setEvDefense(int evDefense) {
+        this.evDefense = evDefense;
+    }
+
+    public void setEvSpecialAttack(int evSpecialAttack) {
+        this.evSpecialAttack = evSpecialAttack;
+    }
+
+    public void setEvSpecialDefense(int evSpecialDefense) {
+        this.evSpecialDefense = evSpecialDefense;
+    }
+
+    public void setEvSpeed(int evSpeed) {
+        this.evSpeed = evSpeed;
     }
 
     // Sets a single stat's EV yield by index (0=HP, 1=Atk, 2=Def, 3=SpAtk, 4=SpDef, 5=Spd).

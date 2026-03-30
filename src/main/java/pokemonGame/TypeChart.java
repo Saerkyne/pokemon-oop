@@ -36,6 +36,10 @@ public final class TypeChart {
         PHYSICAL, SPECIAL, STATUS
     }
 
+    public static enum StatusCondition {
+        NONE, BURN, FREEZE, PARALYSIS, POISON, SLEEP
+    }
+
 
     private static final Map<Type, Integer> TYPE_INDICES = new HashMap<>();
         static {

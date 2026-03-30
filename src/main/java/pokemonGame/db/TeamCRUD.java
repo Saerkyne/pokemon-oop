@@ -2,9 +2,12 @@ package pokemonGame.db;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+
 import pokemonGame.Pokemon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pokemonGame.Trainer;
 
 public class TeamCRUD {
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamCRUD.class);
@@ -112,7 +115,10 @@ public class TeamCRUD {
                     while (rs.next()) {
                         LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
                                 trainerDbId, rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
-                        Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainerDbId);
+                        TrainerCRUD trainerCRUD = new TrainerCRUD();
+                        Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);
+                        Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainer);
+                        
                         LOGGER.info("Mapped Pokemon for trainer ID {}: instance_id={}, species={}, level={}", 
                                 trainerDbId, pokemon.getId(), pokemon.getSpecies().getDisplayName(), pokemon.getLevel());
                         LOGGER.info("Current HP is {} for Pokemon with instance_id {} in trainer ID {}'s team.", pokemon.getCurrentHP(), pokemon.getId(), trainerDbId);
@@ -140,7 +146,9 @@ public class TeamCRUD {
                     if (rs.next()) {
                         LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
                                 trainerDbId, rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
-                        return PokemonCRUD.mapResultSetToPokemon(rs, trainerDbId);
+                        TrainerCRUD trainerCRUD = new TrainerCRUD();
+                        Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);
+                        return PokemonCRUD.mapResultSetToPokemon(rs, trainer);
                     }
                 }
             }

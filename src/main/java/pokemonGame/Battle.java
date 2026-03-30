@@ -50,9 +50,8 @@ public class Battle {
         LOGGER.info("{} will go first!", speedCheck.getName());
 
         for (Pokemon pokemon : player.getTeam()) {
-            boolean checkFainted = checkFainted(pokemon);
         
-            if (checkFainted) {
+            if (checkFainted(pokemon)) {
                 LOGGER.info("{} has fainted and cannot battle!", pokemon.getNickname());
             } else {
                 LOGGER.info("{} is ready to battle!", pokemon.getNickname());
@@ -88,7 +87,7 @@ public class Battle {
         }
     }
 
-    public static Boolean checkFainted(Pokemon pokemon) {
+    public static boolean checkFainted(Pokemon pokemon) {
         if (pokemon.getCurrentHP() <= 0) {
             pokemon.setIsFainted(true);
             return pokemon.getIsFainted();

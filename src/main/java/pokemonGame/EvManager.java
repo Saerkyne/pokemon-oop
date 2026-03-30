@@ -35,60 +35,28 @@ public class EvManager {
 
     public void setEv(Pokemon pokemon, Stat stat, int evValue) {
         switch (stat) {
-            case HP -> {
-                pokemon.setEvHp(evCapper(pokemon, stat, evValue));
-                recalcTotal(pokemon);
-            }
-            case ATTACK -> {
-                pokemon.setEvAttack(evCapper(pokemon, stat, evValue));
-                recalcTotal(pokemon);
-            }
-            case DEFENSE -> {
-                pokemon.setEvDefense(evCapper(pokemon, stat, evValue));
-                recalcTotal(pokemon);
-            }
-            case SPECIAL_ATTACK -> {
-                pokemon.setEvSpecialAttack(evCapper(pokemon, stat, evValue));
-                recalcTotal(pokemon);
-            }
-            case SPECIAL_DEFENSE -> {
-                pokemon.setEvSpecialDefense(evCapper(pokemon, stat, evValue));
-                recalcTotal(pokemon);
-            }
-            case SPEED -> {
-                pokemon.setEvSpeed(evCapper(pokemon, stat, evValue));
-                recalcTotal(pokemon);
-            }
+            case HP -> pokemon.setEvHp(evCapper(pokemon, stat, evValue));
+            case ATTACK -> pokemon.setEvAttack(evCapper(pokemon, stat, evValue));
+            case DEFENSE -> pokemon.setEvDefense(evCapper(pokemon, stat, evValue));
+            case SPECIAL_ATTACK -> pokemon.setEvSpecialAttack(evCapper(pokemon, stat, evValue));
+            case SPECIAL_DEFENSE -> pokemon.setEvSpecialDefense(evCapper(pokemon, stat, evValue));
+            case SPEED -> pokemon.setEvSpeed(evCapper(pokemon, stat, evValue)); 
         }
+        recalcTotal(pokemon);
     }
 
     // Getters for EV Values, based on Stat enum
     public static int getEv(Pokemon pokemon, Stat stat) {
-        switch (stat) {
-            case HP -> {
-                return pokemon.evHp;
-            }
-            case ATTACK -> {
-                return pokemon.evAttack;
-            }
-            case DEFENSE -> {
-                return pokemon.evDefense;
-            }
-            case SPECIAL_ATTACK -> {
-                return pokemon.evSpecialAttack;
-            }
-            case SPECIAL_DEFENSE -> {
-                return pokemon.evSpecialDefense;
-            }
-            case SPEED -> {
-                return pokemon.evSpeed;
-            }
-            default -> {
-                LOGGER.warn("Invalid stat provided to getEv method: " + stat);
-                return 0;
-            }
-        }
+        return switch (stat) {
+            case HP -> pokemon.evHp;
+            case ATTACK -> pokemon.evAttack;
+            case DEFENSE -> pokemon.evDefense;
+            case SPECIAL_ATTACK -> pokemon.evSpecialAttack;
+            case SPECIAL_DEFENSE -> pokemon.evSpecialDefense;
+            case SPEED -> pokemon.evSpeed;
+        };
     }
+
 
     public static int getTotalEv(Pokemon pokemon) {
         return pokemon.evTotal;
@@ -100,8 +68,7 @@ public class EvManager {
     }
 
     public static boolean checkEvTotals(Pokemon pokemon) {
-        int total = pokemon.evHp + pokemon.evAttack + pokemon.evDefense +
-                pokemon.evSpecialAttack + pokemon.evSpecialDefense + pokemon.evSpeed;
+        int total = getTotalEv(pokemon);
         if (total > 510) {
             LOGGER.warn("Total EVs exceed the maximum of 510. Current total: {}", total);
             return false;
@@ -122,33 +89,14 @@ public class EvManager {
                 stat, currentEv, evToAdd, newEvValue);
         
         switch (stat) {
-                case HP:
-                pokemon.setEvHp(evAddable(pokemon, stat, evToAdd) + pokemon.evHp);
-                recalcTotal(pokemon);
-                break;
-            case ATTACK:
-                pokemon.setEvAttack(evAddable(pokemon, stat, evToAdd) + pokemon.evAttack);
-                recalcTotal(pokemon);
-                break;
-            case DEFENSE:
-                pokemon.setEvDefense(evAddable(pokemon, stat, evToAdd) + pokemon.evDefense);
-                recalcTotal(pokemon);
-                break;
-            case SPECIAL_ATTACK:
-                pokemon.setEvSpecialAttack(evAddable(pokemon, stat, evToAdd) + pokemon.evSpecialAttack);
-                recalcTotal(pokemon);
-                break;
-            case SPECIAL_DEFENSE:
-                pokemon.setEvSpecialDefense(evAddable(pokemon, stat, evToAdd) + pokemon.evSpecialDefense);
-                recalcTotal(pokemon);
-                break;
-            case SPEED:
-                pokemon.setEvSpeed(evAddable(pokemon, stat, evToAdd) + pokemon.evSpeed);
-                recalcTotal(pokemon);
-                break;
+            case HP -> pokemon.setEvHp(evAddable(pokemon, stat, evToAdd) + pokemon.evHp);
+            case ATTACK -> pokemon.setEvAttack(evAddable(pokemon, stat, evToAdd) + pokemon.evAttack);
+            case DEFENSE -> pokemon.setEvDefense(evAddable(pokemon, stat, evToAdd) + pokemon.evDefense);
+            case SPECIAL_ATTACK -> pokemon.setEvSpecialAttack(evAddable(pokemon, stat, evToAdd) + pokemon.evSpecialAttack);
+            case SPECIAL_DEFENSE -> pokemon.setEvSpecialDefense(evAddable(pokemon, stat, evToAdd) + pokemon.evSpecialDefense);
+            case SPEED -> pokemon.setEvSpeed(evAddable(pokemon, stat, evToAdd) + pokemon.evSpeed);
         }
+        recalcTotal(pokemon);
     }
-    
-
     
 }

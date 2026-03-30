@@ -1,10 +1,11 @@
 # Pokemon-OOP — Code Review
 
-**Review Date:** March 29, 2026  
+**Review Date:** March 29, 2026 (updated March 29, 2026)  
 **Reviewer:** GitHub Copilot (automated review via Code Review skill)  
 **Prior Review:** March 25, 2026  
 **Scope:** Full codebase — domain layer, persistence layer, bot layer, tests, build configuration, and species/move subclasses  
-**Codebase Snapshot:** 151 species files, ~165 move files, 16 core domain/utility classes, 3 bot classes, 4 persistence classes, 9 test classes (476 passing tests)
+**Codebase Snapshot:** 151 species files, ~165 move files, 16 core domain/utility classes, 3 bot classes, 4 persistence classes, 9 test classes (476 passing tests)  
+**Next Phase:** Simple battle loop with persistence for Discord teams; `App.java` retirement
 
 ---
 
@@ -33,6 +34,9 @@ This is a follow-up review to the March 25 review. Significant progress has been
 - ✅ **`mapResultSetToPokemon()` HP ordering fixed** — `setCurrentHP(currentHp)` now called after `calculateAllStats()`
 - ✅ **Batched UPDATE in `reorderTeamAfterRelease()`** — uses `addBatch()`/`executeBatch()`
 - ✅ **Autocomplete expanded** — species suggestions for `addpokemon`, team nicknames for `releasepokemon`
+- ✅ **`maven-shade-plugin` added** — uber-JAR now builds with all dependencies bundled; deployable via `java -jar`
+- ✅ **Main class set to `BotRunner`** — both `maven-jar-plugin` and `maven-shade-plugin` point to `pokemonGame.bot.BotRunner`
+- ✅ **`classgraph` dependency removed** — dead dependency cleaned from `pom.xml`
 
 **Remaining Key Issues:**
 
@@ -42,8 +46,8 @@ This is a follow-up review to the March 25 review. Significant progress has been
 - 🟡 **`checkteam` queries the database twice** for the same trainer
 - 🟡 **`PokemonFactory` still uses reflection** despite the enum migration — `Class.forName()` on every creation
 - 🟡 **`StatCalculator.calculateAllStats()` doesn't set `currentHP`** — callers must remember to set it after
-- 🟢 **`classgraph` dependency is unused** — dead dependency in `pom.xml`
-- 🟢 **`App.java` has hardcoded Discord IDs and no-arg `main` testing code** — tech-debt accumulation
+- ✅ ~~**`classgraph` dependency is unused**~~ — removed from `pom.xml`
+- 📋 **`App.java` is slated for removal** — `BotRunner` is now the sole entry point; `App.java` will be retired after this build
 
 ---
 
@@ -392,19 +396,11 @@ LOGGER.info("No PP left for move: {}", move.getMoveName());
 
 ---
 
-### 11. [nit] Unused `classgraph` Dependency in `pom.xml`
+### 11. ~~[nit] Unused `classgraph` Dependency in `pom.xml`~~ ✅ RESOLVED
 
 **File:** `pom.xml`
 
-```xml
-<dependency>
-    <groupId>io.github.classgraph</groupId>
-    <artifactId>classgraph</artifactId>
-    <version>4.8.179</version>
-</dependency>
-```
-
-The ClassGraph scanning code in `PokemonFactory` is commented out — the factory now uses enum-driven registration. This dependency is no longer used and can be removed, reducing the JAR size and build complexity.
+~~The `classgraph` dependency has been removed from `pom.xml`.~~ This nit is resolved — the dead dependency is gone, reducing JAR size and build complexity.
 
 ---
 
@@ -469,22 +465,15 @@ The constructor assignment is redundant since the field initializer already runs
 
 ---
 
-### 15. [suggestion] `App.java` Contains Hardcoded Testing Data
+### 15. [suggestion → planned] `App.java` Retirement
 
 **File:** `src/main/java/pokemonGame/App.java`
 
-`App.main()` contains hardcoded Discord IDs and creates specific Pokémon for specific trainers:
+**Update:** `App.java` is confirmed for removal. With `BotRunner` now set as the main class in both `maven-jar-plugin` and `maven-shade-plugin`, and the uber-JAR successfully running via `java -jar`, `App.java` no longer serves a purpose in the build pipeline. This is expected to be the final build that includes `App.java`.
 
-```java
-Trainer tallas = trainerCRUD.getTrainerByDiscordId(143562769591959552L);
-Pokemon tallasCharizard = new Charizard("Charizard");
-```
+**Original concern:** `App.main()` contained hardcoded Discord IDs and manually created Pokémon for specific trainers — useful during early development but not portable or maintainable. Now that the Discord bot is the primary interface, this class is superseded.
 
-This is fine for development, but these hardcoded IDs will fail on any other environment. Consider:
-
-- Moving test data setup to a separate script or command
-- Adding comments noting which Discord users these IDs correspond to
-- Using environment variables for test Discord IDs if this is run in CI
+**Action:** Delete `App.java` when ready. Any remaining test scenarios it covers should be migrated to JUnit tests or Discord slash commands.
 
 ---
 
@@ -753,9 +742,9 @@ These document known incomplete features and are properly `@Disabled` with expla
 | HikariCP | ✅ New addition — version 5.1.0 |
 | JDA | ✅ Version 6.3.1 |
 | Dependency convergence | ✅ `maven-enforcer-plugin` with `dependencyConvergence` |
-| Unused dependency | 🟢 `classgraph 4.8.179` — no longer used |
-| Main class | ⚠️ Still `pokemonGame.App` — should likely be `pokemonGame.bot.BotRunner` for deployment |
-| Uber-JAR | ❌ No `maven-shade-plugin` — the built JAR won't include dependencies |
+| ~~Unused dependency~~ | ✅ `classgraph` removed from `pom.xml` |
+| Main class | ✅ `pokemonGame.bot.BotRunner` — set in both `maven-jar-plugin` and `maven-shade-plugin` |
+| Uber-JAR | ✅ `maven-shade-plugin` 3.6.0 — bundles all dependencies, filters signature files, verified working via `java -jar` |
 
 ---
 
@@ -795,11 +784,46 @@ These document known incomplete features and are properly `@Disabled` with expla
 | 8 | 🟢 Nit | Enhanced switch in `EvManager` | `EvManager.java` |
 | 9 | 🟢 Nit | String concatenation in `EvManager` logger | `EvManager.java` |
 | 10 | 🟢 Nit | String concatenation in `MoveSlot` logger | `MoveSlot.java` |
-| 11 | 🟢 Nit | Unused `classgraph` dependency | `pom.xml` |
+| 11 | ✅ Resolved | ~~Unused `classgraph` dependency~~ | `pom.xml` |
 | 12 | 🟢 Nit | `statusConditions` — consider enum for future | `Pokemon.java` |
 | 13 | 🟢 Nit | Null check missing in `AutoCompleteBot` | `AutoCompleteBot.java` |
 | 14 | 🟢 Suggestion | Redundant `evYield` initialization in constructor | `Pokemon.java` |
-| 15 | 🟢 Suggestion | `App.java` hardcoded test data | `App.java` |
+| 15 | � Planned | `App.java` retirement (final build) | `App.java` |
 | 16 | 🟢 Suggestion | `getAliases()` returns mutable array | `PokeSpecies.java` |
 
-**Overall Verdict:** 💬 **Comment** — the codebase has improved substantially since the prior review. The two blocking issues are straightforward null-safety fixes. The architecture, testing, and code organization are strong. Continue building out the battle system (`startTurn()` loop) and add move accuracy checks to `Attack.calculateDamage()` as the next major features.
+**Overall Verdict:** 💬 **Comment** — the codebase has improved substantially since the prior review. The two blocking issues are straightforward null-safety fixes. The architecture, testing, and code organization are strong. Build configuration is now deployment-ready with the shade plugin and BotRunner as the main class.
+
+---
+
+## Next Development Phase
+
+The following section documents the planned next steps based on the current state of the project.
+
+### Battle Loop with Persistence
+
+The immediate next goal is implementing a **simple battle loop** with **persistence for Discord teams**. This connects several existing pieces:
+
+| Existing Component | Status | Role in Battle Loop |
+| -------------------- | -------- | --------------------- |
+| `Battle.java` | `startTurn()` is an empty placeholder | Will house the turn-by-turn loop logic |
+| `Attack.java` | Damage calc complete, accuracy check missing | Core damage resolution per turn |
+| `TeamCRUD.java` | Full CRUD for team slots | Load/save teams between battles |
+| `PokemonCRUD.java` | Full CRUD for Pokémon instances | Persist HP, faint status, EV gains after battle |
+| `SlashExample.java` | `battlestate` command exists but is broken (issue #2) | Entry point for initiating battles via Discord |
+
+**Key design considerations for the battle loop:**
+
+1. **Turn structure:** Each turn, both players select a move (via Discord buttons/select menus), speed determines who goes first (`Battle.checkSpeed()`), damage is applied (`Battle.dealDamage()`), and faint checks run (`Battle.checkFainted()`).
+2. **Persistence boundary:** Save Pokémon state (HP, faint status) to the database after each battle ends — not mid-battle. In-memory state during the battle is sufficient.
+3. **Separation of concerns:** Keep the battle loop logic in the domain layer (`Battle.java`). The bot layer should only handle Discord I/O (displaying move choices, showing damage results, announcing winners).
+4. **The `battlestate` command (issue #2)** needs to be fixed first — it currently crashes due to accessing a non-existent option. This command will likely become the entry point for starting a battle.
+5. **Move accuracy** — `Attack.calculateDamage()` still doesn't check `move.getAccuracy()`. This should be implemented before or alongside the battle loop so moves can miss.
+
+### `App.java` Retirement
+
+`App.java` is confirmed for removal after this build. `BotRunner` is now the sole entry point. Any test scenarios that `App.java` covered should be migrated to either:
+
+- **JUnit tests** for domain logic verification
+- **Discord slash commands** for integration testing via the bot
+
+**Overall Verdict (updated):** The project is in a strong position to build the battle loop. The domain layer has the core mechanics (damage, type effectiveness, STAB, crits, speed ordering), the persistence layer can save/load teams, and the bot layer has the command infrastructure. The two blocking NPE fixes (#1, #2) should be resolved first, then the battle loop can iterate on top of the existing foundation.

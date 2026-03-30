@@ -10,6 +10,7 @@ import pokemonGame.db.TeamCRUD;
 import pokemonGame.db.TrainerCRUD;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import java.util.List;
 import org.slf4j.Logger;
@@ -101,11 +102,13 @@ public class SlashExample extends ListenerAdapter{
                 }
                 String nickname = event.getOption("nickname") != null ? event.getOption("nickname").getAsString() : species.getDisplayName();
                 
-                if (trainerCRUD.getTrainerByDiscordId(userId) == null) {
+                
+                Trainer currentTrainer = trainerCRUD.getTrainerByDiscordId(userId);
+                if (currentTrainer == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
                 }
-                Trainer currentTrainer = trainerCRUD.getTrainerByDiscordId(userId);
+                
                 
 
                 if (teamCRUD.checkSlotIndex(currentTrainer.getDbId()) >= 6) {
@@ -145,11 +148,13 @@ public class SlashExample extends ListenerAdapter{
             case "releasepokemon":
                 LOGGER.info("Received slash command; '{}' with (nick)name: '{}' from user: {} (ID: {})", event.getName(), event.getOption("pokemon").getAsString(), user, userId);
                 String releasedPokemon = event.getOption("pokemon").getAsString();
-                if (trainerCRUD.getTrainerByDiscordId(userId) == null) {
+                
+                Trainer releasingTrainer = trainerCRUD.getTrainerByDiscordId(userId);
+                if (releasingTrainer == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
                 }
-                Trainer releasingTrainer = trainerCRUD.getTrainerByDiscordId(userId);
+                
 
                 Pokemon pokemonToRelease = PokemonCRUD.getPokemonByNicknameAndTrainer(releasedPokemon, releasingTrainer);
                 if (pokemonToRelease == null) {
@@ -171,11 +176,12 @@ public class SlashExample extends ListenerAdapter{
                 LOGGER.info("Received slash command; '{}' with confirmation: '{}' from user: {} (ID: {})", event.getName(), event.getOption("confirm").getAsString(), user, userId);
                 String confirmation = event.getOption("confirm").getAsString();
                 if (confirmation.equalsIgnoreCase("CONFIRM")) {
-                    if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+
+                    Member member = event.getMember();
+                    if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
                         event.reply("You do not have permission to clear the database!").setEphemeral(true).queue();
                         return;
                     }
-                    
 
                     DatabaseSetup.deleteAllData();
                     

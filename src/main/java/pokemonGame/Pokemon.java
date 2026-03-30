@@ -2,9 +2,13 @@ package pokemonGame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collections;
+import java.util.EnumSet;
+
 import pokemonGame.TypeChart.Type;
 import pokemonGame.TypeChart.Category;
 import pokemonGame.TypeChart.StatusCondition;
@@ -53,7 +57,32 @@ public class Pokemon {
     private int[] evYield = new int[]{0, 0, 0, 0, 0, 0}; // This array holds the EV yield for each stat when this Pokemon is defeated in battle, 
     // in the order of HP, Attack, Defense, Special Attack, Special Defense, Speed
     private Natures nature;
-    private StatusCondition[] statusConditions = new StatusCondition[0]; // This array holds any status conditions currently affecting the Pokemon (e.g. "Paralyzed", "Burned")
+    // STATUS CONDITIONS — current implementation uses an array.
+    //
+    // ENUMSET ALTERNATIVE (recommended when status effects are implemented):
+    // An EnumSet is a Set backed by a bitmask — perfect for tracking multiple
+    // simultaneous conditions (a Pokémon can be poisoned AND burned at once).
+    // This is different from Type or Category, which are single-value fields
+    // (a Pokémon has exactly one primary type, a move has exactly one category).
+    // StatusCondition needs a *collection* because multiple can be active.
+    //
+    // Field:   private EnumSet<StatusCondition> statusConditions = EnumSet.noneOf(StatusCondition.class);
+    //
+    // Add:     statusConditions.add(StatusCondition.BURN);         // no-op if already present
+    // Remove:  statusConditions.remove(StatusCondition.POISON);    // no-op if absent
+    // Check:   statusConditions.contains(StatusCondition.FREEZE);  // O(1) bit check, no loop
+    // Clear:   statusConditions.clear();                           // heal all conditions
+    //
+    // Getter (return unmodifiable view to protect encapsulation):
+    //   public Set<StatusCondition> getStatusConditions() {
+    //       return Collections.unmodifiableSet(statusConditions);
+    //   }
+    //
+    // Setter (replace entirely — e.g. when loading from DB):
+    //   public void setStatusConditions(EnumSet<StatusCondition> conditions) {
+    //       this.statusConditions = conditions;
+    //   }
+    private EnumSet<StatusCondition> statusConditions = EnumSet.noneOf(StatusCondition.class);
     private boolean isFainted = false; // This boolean indicates whether the Pokemon has fainted (current HP is 0 or less)
     private final ArrayList<MoveSlot> moveset;
     
@@ -152,8 +181,8 @@ public class Pokemon {
         return id;
     }
 
-    public StatusCondition[] getStatusConditions() {
-        return statusConditions;
+    public Set<StatusCondition> getStatusConditions() {
+        return Collections.unmodifiableSet(statusConditions);
     }
 
     public int getLevel() {
@@ -335,9 +364,9 @@ public class Pokemon {
         this.isFainted = isFainted;
     }
 
-    public void setStatusConditions(StatusCondition[] statusConditions) {
-        this.statusConditions = statusConditions;
-    }   
+    public void setStatusConditions(EnumSet<StatusCondition> conditions) {
+        this.statusConditions = conditions;
+    }  
     
     public void setHpBase(int hp) {
         this.hpBase = hp;

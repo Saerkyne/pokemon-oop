@@ -15,7 +15,17 @@ public final class Attack {
     private static final int MAX_CRIT_CHANCE = 1500; // Maximum crit chance of 15% (1500/10000)
     private static final int SPEED_CRIT_MULTIPLIER = 83; // Crit chance increases by 0.83% for each point of speed difference (83/10000)
 
-    
+    public static boolean checkAccuracy(Pokemon attacker, Pokemon defender, Move move) {
+        int accuracy = move.getAccuracy();
+        if (accuracy >= 100) {
+            LOGGER.info("Move '{}' has perfect accuracy and will always hit.", move.getMoveName());
+            return true; // Moves with 100% or higher accuracy always hit
+        }
+        int randomValue = RNG.nextInt(100) + 1; // Random value between 1 and 100
+        boolean isHit = randomValue <= accuracy; // Move hits if random value is less than or equal to accuracy
+        LOGGER.info("Accuracy check for move '{}': accuracy={}, randomValue={}, isHit={}", move.getMoveName(), accuracy, randomValue, isHit);
+        return isHit;
+    }
     
     public static float calculateEffectiveness(Type defenderType, Move move) {
         Type moveType = move.getMoveType();
@@ -82,8 +92,16 @@ public final class Attack {
             LOGGER.info("No STAB for move '{}' used by '{}'", move.getMoveName(), attacker.getNickname());
         }
 
-        LOGGER.info("Effectiveness message: {}", "It" + (combinedEffectiveness == 0.0 ? " had no effect..." : combinedEffectiveness < 1 ? "'s not very effective..." : combinedEffectiveness > 1 ? "'s super effective!" : "'s effective."));
-
+        if (combinedEffectiveness == 0.0) {
+            LOGGER.info("The move '{}' had no effect on '{}'.", move.getMoveName(), defender.getNickname());
+        } else if (combinedEffectiveness < 1.0) {
+            LOGGER.info("The move '{}' was not very effective against '{}'.", move.getMoveName(), defender.getNickname());
+        } else if (combinedEffectiveness > 1.0) {
+            LOGGER.info("The move '{}' was super effective against '{}'.", move.getMoveName(), defender.getNickname());
+        } else {
+            LOGGER.info("The move '{}' was effective against '{}'.", move.getMoveName(), defender.getNickname());
+        }
+        
 
         int level = attacker.getLevel();
         int power = move.getMovePower();
@@ -129,7 +147,7 @@ public final class Attack {
         damage = (finalDamage * randomFactor) / 255;
         int minDamage = (int)(finalDamage * 217) / 255;
         int maxDamage = (int)(finalDamage * 255) / 255;
-        LOGGER.info("Damage range: " + minDamage + " - " + maxDamage);
+        LOGGER.info("Damage range: {} - {}", minDamage, maxDamage);
 
         return damage;
 

@@ -29,6 +29,7 @@ import pokemonGame.Stat;
 public class PokemonCRUD {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PokemonCRUD.class);
+    private static EvManager evManager = new EvManager();
 
     public int createDBPokemon(Pokemon pokemon) {
         try (Connection conn = DatabaseSetup.getConnection()) {
@@ -78,7 +79,7 @@ public class PokemonCRUD {
                 try (ResultSet rs = pstmt.executeQuery()) {
                     
                     if (rs.next()) {
-                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer.getDbId());
+                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
                         LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies(), trainer.getDbId());
                         return foundPokemon; // Return the retrieved Pokémon
                     } else {
@@ -162,9 +163,9 @@ public class PokemonCRUD {
         }
     }
 
-    public static Pokemon mapResultSetToPokemon(ResultSet rs, int trainerDbId) throws SQLException {
+    public static Pokemon mapResultSetToPokemon(ResultSet rs, Trainer trainer) throws SQLException {
 
-        TrainerCRUD getById = new TrainerCRUD();
+        
         int foundPokemonId = rs.getInt("instance_id");
         PokeSpecies species = PokeSpecies.valueOf(rs.getString("species").toUpperCase().replaceAll("[^a-zA-Z]", "")); // Assuming species is stored as display name, we need to convert it back to enum constant name format
         String name = rs.getString("nickname");
@@ -188,7 +189,7 @@ public class PokemonCRUD {
 
         // Create a new Pokemon object and populate its fields from the ResultSet
         Pokemon foundPokemon = PokemonFactory.createPokemonFromRegistry(species, name);
-        foundPokemon.setTrainer(getById.getTrainerByDbId(trainerDbId)); // Set the trainer using the trainer's DB ID
+        foundPokemon.setTrainer(trainer); // Set the trainer using the Trainer object
         foundPokemon.setId(foundPokemonId);
         foundPokemon.setLevel(level);
         foundPokemon.setNature(Natures.valueOf(nature.toUpperCase()));
@@ -198,7 +199,6 @@ public class PokemonCRUD {
         foundPokemon.setIvSpecialAttack(ivSpAttack);
         foundPokemon.setIvSpecialDefense(ivSpDefense);
         foundPokemon.setIvSpeed(ivSpeed);
-        EvManager evManager = new EvManager();
         evManager.setEv(foundPokemon, Stat.HP, evHp);
         evManager.setEv(foundPokemon, Stat.ATTACK, evAttack);
         evManager.setEv(foundPokemon, Stat.DEFENSE, evDefense);
@@ -221,7 +221,7 @@ public class PokemonCRUD {
                 pstmt.setString(2, nickname);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
-                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer.getDbId());
+                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
                         LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies(), trainer.getDbId());
                         return foundPokemon; // Return the retrieved Pokémon
                     } else {

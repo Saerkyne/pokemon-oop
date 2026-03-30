@@ -64,4 +64,15 @@ public class Trainer {
         }
     }
 
+    // Remove single pokemon from team
+    public boolean removePokemonFromTeam(Pokemon pokemon) {
+        if (team.remove(pokemon)) {
+            LOGGER.info("Removed {} ({}) from {}'s team.", pokemon.getNickname(), pokemon.getSpecies(), this.name);
+            return true;
+        } else {
+            LOGGER.warn("{} is not on {}'s team. Cannot remove.", pokemon.getNickname(), this.name);
+            return false;
+        }
+    }
+
 }

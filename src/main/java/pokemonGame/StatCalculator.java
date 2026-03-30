@@ -9,7 +9,7 @@ public class StatCalculator {
 
     // Method for calculating Max HP
     public static int calcMaxHP(int hpBase, int level, int ivHp, int ev) {
-        LOGGER.info("Calculating max HP with base HP: " + hpBase + ", level: " + level + ", IV HP: " + ivHp + ", EV HP: " + ev);
+        LOGGER.info("Calculating max HP with base HP: {}, level: {}, IV HP: {}, EV HP: {}", hpBase, level, ivHp, ev);
 
         // Calculating the actual HP of a Pokemon requires the base HP stat, the Pokemon's level, 
         // and its individual values (IVs) and effort values (EVs).
@@ -58,7 +58,7 @@ public class StatCalculator {
             // This means that if you change EVs or IVs in a way that changes max HP, your current HP will not automatically adjust to the new max HP. This is something that could
             // be changed in the future if desired, but for now we will just keep it simple and not implement that logic.
 
-            LOGGER.info("Max HP changed from " + oldMaxHP + " to " + pokemon.getMaxHP() + ". Current HP remains at " + pokemon.getCurrentHP() + ".");
+            LOGGER.info("Max HP changed from {} to {}. Current HP remains at {}.", oldMaxHP, pokemon.getMaxHP(), pokemon.getCurrentHP());
         }
 
 

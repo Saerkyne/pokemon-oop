@@ -14,6 +14,7 @@ package pokemonGame.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Set;
+
 import com.zaxxer.hikari.HikariDataSource;
 
 import org.slf4j.Logger;
@@ -39,26 +40,42 @@ public class DatabaseSetup {
     private static final String URL = System.getenv("DB_URL");
     private static final String USER = System.getenv("DB_USER");
     private static final String PASSWORD = System.getenv("DB_USER_PASSWORD");
-    private static final HikariDataSource DataSource = new HikariDataSource();
+    private static final HikariDataSource DATA_SOURCE = new HikariDataSource();
     static {
-        DataSource.setJdbcUrl(URL);
-        DataSource.setUsername(USER);
-        DataSource.setPassword(PASSWORD);
+        if (URL == null || USER == null || PASSWORD == null) {
+            logger.error("Database credentials are not set in environment variables.");
+            throw new IllegalStateException("Database credentials are missing");
+        }
+        DATA_SOURCE.setJdbcUrl(URL);
+        DATA_SOURCE.setUsername(USER);
+        DATA_SOURCE.setPassword(PASSWORD);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (DATA_SOURCE != null && !DATA_SOURCE.isClosed()) {
+                logger.info("Shutting down HikariCP connection pool.");
+                DATA_SOURCE.close();
+            }
+        }));
     }
 
     public static Connection getConnection() {
 
         logger.info("Attempting to get database connection with URL: {}", URL);
 
-        if (URL == null || USER == null || PASSWORD == null) {
-            logger.error("Database credentials are not set in environment variables.");
-            throw new IllegalStateException("Database credentials are missing");
-        }
+        
         try {
-            return DataSource.getConnection();
+            return DATA_SOURCE.getConnection();
         } catch (SQLException e) {
             logger.error("Error obtaining database connection: {}", e.getMessage(), e);
             throw new IllegalStateException("Unable to obtain database connection", e);
+        }
+    }
+
+
+    public static void closeDataSource() {
+        if (DATA_SOURCE != null && !DATA_SOURCE.isClosed()) {
+            DATA_SOURCE.close();
+            logger.info("HikariCP connection pool closed.");
         }
     }
 

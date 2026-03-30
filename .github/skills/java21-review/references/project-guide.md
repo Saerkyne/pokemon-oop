@@ -63,7 +63,7 @@ Provide a **layered architecture diagram** showing:
 
 Use a `graph TD` (top-down) or `graph LR` (left-right) diagram:
 
-```
+```mermaid
 Example structure (adapt to the actual project):
 
 graph TD
@@ -91,7 +91,7 @@ graph TD
 After every Mermaid diagram, provide a numbered walkthrough:
 
 > **How the architecture works:**
-
+>
 > 1. The **Presentation Layer** receives user input (commands, HTTP requests, etc.) and passes it to the Domain Layer. It never touches the database directly.
 > 2. The **Domain Layer** contains all business logic — rules, calculations, validations. It doesn't know how data is stored or how users interact. This makes it testable in isolation.
 > 3. The **Persistence Layer** handles reading from and writing to the database. It translates between domain objects and database rows.
@@ -105,7 +105,7 @@ For the main user workflows (2-4 key flows), provide:
 
 Use `sequenceDiagram` for interactions between components, or `flowchart TD` for decision logic:
 
-```
+```mermaid
 Example flow (adapt to the actual project):
 
 sequenceDiagram

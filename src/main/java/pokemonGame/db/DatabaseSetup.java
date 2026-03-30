@@ -40,6 +40,7 @@ public class DatabaseSetup {
     private static final String URL = System.getenv("DB_URL");
     private static final String USER = System.getenv("DB_USER");
     private static final String PASSWORD = System.getenv("DB_USER_PASSWORD");
+    @SuppressWarnings("resource") // We manage the lifecycle of this DataSource manually.
     private static final HikariDataSource DATA_SOURCE = new HikariDataSource();
     static {
         if (URL == null || USER == null || PASSWORD == null) {

@@ -68,6 +68,10 @@ public final class TypeChart {
 
     public static float getEffectiveness(Type moveType, Type pokemonType) {
 
+        if (pokemonType == Type.NONE || pokemonType == null) {
+            return 1.0f; // Neutral effectiveness for NONE or null type
+        }
+
         Integer moveIndex = TYPE_INDICES.get(moveType);
         Integer pokemonIndex = TYPE_INDICES.get(pokemonType);
 

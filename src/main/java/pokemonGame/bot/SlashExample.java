@@ -1,5 +1,4 @@
 package pokemonGame.bot;
-import pokemonGame.App;
 import pokemonGame.Pokemon;
 import pokemonGame.PokemonFactory;
 import pokemonGame.StatCalculator;
@@ -43,7 +42,7 @@ public class SlashExample extends ListenerAdapter{
 
             case "createtrainer":
                 LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("name").getAsString(), user, userId);
-                int createAttempt = App.createTrainer(event.getOption("name").getAsString(), userId, user);
+                int createAttempt = Trainer.createTrainer(event.getOption("name").getAsString(), userId, user);
 
                 if (createAttempt == -1) {
                     event.reply("You are already a trainer!").setEphemeral(true).queue();

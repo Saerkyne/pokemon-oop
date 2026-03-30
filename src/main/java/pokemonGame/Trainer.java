@@ -2,6 +2,9 @@ package pokemonGame;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import pokemonGame.db.TrainerCRUD;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -72,6 +75,38 @@ public class Trainer {
         } else {
             LOGGER.warn("{} is not on {}'s team. Cannot remove.", pokemon.getNickname(), this.name);
             return false;
+        }
+    }
+
+    public static int createTrainer(String name, long discordID, String discordUsername) {
+        // This method can be used to create a trainer and set up their team
+        // Create a Trainer and ask for their name
+        TrainerCRUD trainerCRUDSearch = new TrainerCRUD();
+        Trainer trainerSearch = trainerCRUDSearch.getTrainerByDiscordId(discordID);
+        
+        if (trainerSearch != null) {
+            LOGGER.info("Welcome back, {}!", trainerSearch.getName());
+            return -1; // Return -1 to indicate that a new trainer was not created
+        } else {
+            LOGGER.info("No existing trainer found with Discord ID: {}", discordID);
+            LOGGER.info("Creating a new trainer profile for {}...", name);
+        
+        
+            Trainer trainer = new Trainer(name);
+
+            TrainerCRUD trainerCRUDCreate = new TrainerCRUD();
+            int trainerId = trainerCRUDCreate.createDBTrainer(discordID, discordUsername, name);
+            trainer.setDbId(trainerId);
+
+            LOGGER.info("{}, welcome to the world of Pokemon!", trainer.getName());
+
+            System.out.println();
+            System.out.println();
+            System.out.println();
+
+            System.out.println("You can have up to 6 Pokemon on your team. Let's start by choosing your first Pokemon!");
+
+            return 1; // Return 1 to indicate that a new trainer was created
         }
     }
 

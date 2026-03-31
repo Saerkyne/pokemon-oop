@@ -6,7 +6,7 @@ Architecture decisions, MariaDB table designs, JDBC reference, and hands-on Java
 
 ## Table of Contents
 
-### Part 1 — Architecture Decisions
+### [Part 1 — Architecture Decisions](#part-1--architecture-decisions)
 
 1. [The Rule of Thumb](#the-rule-of-thumb)
 2. [Stays as Java Classes (Game Rules / Logic)](#stays-as-java-classes-game-rules--logic)
@@ -14,12 +14,12 @@ Architecture decisions, MariaDB table designs, JDBC reference, and hands-on Java
 4. [What About Species Data and Learnsets?](#what-about-species-data-and-learnsets)
 5. [The Load/Save Pattern](#the-loadsave-pattern)
 
-### Part 2 — MariaDB Reference
+### [Part 2 — MariaDB Reference](#part-2--mariadb-reference)
 
-6. [MariaDB Setup](#mariadb-setup)
-7. [Java Connectivity (JDBC)](#java-connectivity-jdbc)
-8. [Data Types for This Project](#data-types-for-this-project)
-9. [Example Programs](#example-programs)
+1. [MariaDB Setup](#mariadb-setup)
+2. [Java Connectivity (JDBC)](#java-connectivity-jdbc)
+3. [Data Types for This Project](#data-types-for-this-project)
+4. [Example Programs](#example-programs)
    - [Database Schema (Run This First)](#database-schema-run-this-first)
    - [Example 1 — Basic Connection and Table Creation](#example-1--basic-connection-and-table-creation)
    - [Example 2 — CRUD Operations](#example-2--crud-operations)
@@ -27,32 +27,33 @@ Architecture decisions, MariaDB table designs, JDBC reference, and hands-on Java
    - [Example 4 — Transactions (Trading Pokémon Between Trainers)](#example-4--transactions-trading-pokémon-between-trainers)
    - [Example 5 — Connection Pooling with HikariCP](#example-5--connection-pooling-with-hikaricp)
    - [Example 6 — JOINs and Relationships (Pokémon Movesets)](#example-6--joins-and-relationships-pokémon-movesets)
-10. [Why Not MySQL or SQLite?](#why-not-mysql-or-sqlite)
+5. [Why Not MySQL or SQLite?](#why-not-mysql-or-sqlite)
 
-### Part 3 — Summary
+### [Part 3 — Summary](#part-3--summary)
 
-11. [Summary](#summary)
+1. [What Goes Where](#what-goes-where)
 
 ---
 
-# Part 1 — Architecture Decisions
+## Part 1 — Architecture Decisions
 
-## The Rule of Thumb
+### The Rule of Thumb
 
 **Reference data that defines the game rules** stays in code. **Instance state that's unique to each player's Pokémon/Trainer** goes in the database.
 
 Ask yourself: *"Does this value change because a specific player did something?"*
+
 - **No** → it's a game rule. Keep it in Java.
 - **Yes** → it's instance state. Store it in the database.
 
 ---
 
-## Stays as Java Classes (Game Rules / Logic)
+### Stays as Java Classes (Game Rules / Logic)
 
 These are *static definitions* that never change at runtime. They define what a Bulbasaur **is**, not a specific player's Bulbasaur.
 
 | Class | Why It Stays |
-|---|---|
+| --- | --- |
 | **`Attack`** | Pure stateless calculator. There's no data to store — just formulas. |
 | **`Battle`** | Turn-by-turn logic. Battle state is ephemeral (lives in memory during a fight, discarded when it ends). |
 | **`TypeChart`** | 18×18 float matrix — small, fixed, read-only. Hardcoding is faster and simpler than a database round-trip on every damage calculation. |
@@ -60,13 +61,13 @@ These are *static definitions* that never change at runtime. They define what a 
 | **`Stat`** (enum) | 6 values. Pure code concept. |
 | **`Move`** subclasses | Each move's power/type/accuracy/PP are fixed game data. ~165 classes, but they're all tiny and immutable. A database lookup for every Tackle would add latency for no benefit. |
 
-### Why Not Put Moves or Type Charts in the Database?
+#### Why Not Put Moves or Type Charts in the Database?
 
 You *could*, but consider: these values are defined by the game's rules and literally never change while the application runs. Loading them from a database means slower startup, more failure modes (what if the DB is down?), and no compile-time safety. Hardcoded constants are the right call for rule data in a game.
 
 ---
 
-## Database Table Designs
+### Database Table Designs
 
 This is data that's **unique to each player** and must **survive** between bot sessions.
 
@@ -85,12 +86,10 @@ CREATE TABLE trainers (
 
 Example data:
 
-```
 trainer_id | discord_id  | discord_username | name
 -----------+-------------+------------------+------
 1          | 28374918273 | Calabriel        | Red
 2          | 91827364510 | JonBelf          | Blue
-```
 
 ### `pokemon_instances` — Each Specific Pokémon a Player Owns
 
@@ -125,12 +124,10 @@ This stores the *randomly generated, mutable* per-instance data: IVs (rolled onc
 
 Example data:
 
-```
 instance_id | trainer_id | species    | nickname   | level | nature  | iv_hp | iv_atk | ... | ev_hp | ev_atk | ... | current_hp | is_fainted
 ------------+------------+------------+------------+-------+---------+-------+--------+-----+-------+--------+-----+------------+-----------
 1           | 1          | Bulbasaur  | Bulby      | 7     | Adamant | 28    | 31     | ... | 12    | 4      | ... | 42         | false
 2           | 1          | Charmander | Charmander | 5     | Jolly   | 15    | 22     | ... | 0     | 0      | ... | 38         | false
-```
 
 ### `pokemon_movesets` — Which Moves Each Instance Knows + Current PP
 
@@ -150,13 +147,11 @@ The `move_name` column acts as a key to look up the corresponding Java `Move` ob
 
 Example data:
 
-```
 instance_id | slot_index | move_name  | current_pp
 ------------+------------+------------+-----------
 1           | 0          | Tackle     | 35
 1           | 1          | Growl      | 40
 1           | 2          | Vine Whip  | 22
-```
 
 ### `trainer_teams` — Which Pokémon Are in the Active Party (and in What Order)
 
@@ -176,46 +171,44 @@ NOTE: This table should only have UP TO 6 records (pokemon instances) per traine
 
 Example data:
 
-```
 trainer_id | slot_index | instance_id
 -----------+------------+------------
 1          | 0          | 1
 1          | 1          | 2
-```
 
 ---
 
-## What About Species Data and Learnsets?
+### What About Species Data and Learnsets?
 
 This is the most interesting decision. Right now every species is a Java subclass (`Bulbasaur.java`, `Charmander.java`, etc.) that hardcodes base stats and learnsets. There are two viable paths:
 
-### Option A — Keep Species in Java (Recommended for Now)
+#### Option A — Keep Species in Java (Recommended for Now)
 
 - Each species stays as a Java class with hardcoded base stats and learnset.
 - When loading a Pokémon from the database, use the `species` column to instantiate the right class, then overwrite the instance fields (IVs, EVs, level, nature, HP) from the database row.
 - **Pro:** Compile-time safety, no startup DB queries, matches the current architecture.
 - **Con:** Adding a new species means writing a new Java file.
 
-### Option B — Move Species to the Database (More Advanced, Consider Later)
+#### Option B — Move Species to the Database (More Advanced, Consider Later)
 
 - Store base stats, types, EV yield, and learnsets in database tables.
 - Pokémon become generic `Pokemon` objects populated entirely from DB rows.
 - **Pro:** Add new species without recompiling, data-driven design.
 - **Con:** Lose compile-time checking, need startup caching to avoid constant DB hits, significantly more complex.
 
-### Why Option A Is the Right Choice Now
+#### Why Option A Is the Right Choice Now
 
 Option A is the right choice because the project is a learning codebase. The separate class files make each species visible and debuggable, and the Java compiler catches mistakes (typos in type names, missing stats) that a database would silently accept. Option B is a valid long-term evolution once you're comfortable with both Java and SQL independently.
 
 ---
 
-## The Load/Save Pattern
+### The Load/Save Pattern
 
 Here's how the Java classes and database work together at runtime:
 
-### Loading a Pokémon from the Database
+#### Loading a Pokémon from the Database
 
-```
+```mermaid
 STARTUP:
   Database row: { species: "Bulbasaur", level: 7, nature: "Adamant", iv_hp: 28, ... }
        ↓
@@ -230,9 +223,9 @@ STARTUP:
   Result: fully hydrated Pokemon object in memory
 ```
 
-### Saving a Pokémon After a Battle
+#### Saving a Pokémon After a Battle
 
-```
+```sql
 SAVE (after battle):
   Java object → extract mutable fields → UPDATE pokemon_instances
                                            SET level = 8,
@@ -243,7 +236,7 @@ SAVE (after battle):
                                          WHERE instance_id = 1
 ```
 
-### Why Derived Stats Are Not Stored
+#### Why Derived Stats Are Not Stored
 
 **Derived stats** (`currentAttack`, `currentDefense`, `MaxHP`, etc.) are **not stored** in the database. They're recalculated from base stats + IVs + EVs + nature + level every time you load. Storing derived data creates a risk of the database disagreeing with the formula — a common source of bugs called **data denormalization inconsistency**.
 
@@ -251,14 +244,14 @@ For example, if you store `MaxHP = 42` in the database but then change the HP ca
 
 ---
 
-# Part 2 — MariaDB Reference
+## Part 2 — MariaDB Reference
 
-## MariaDB Setup
+### MariaDB Setup
 
-### Overview
+#### Overview
 
 | | MariaDB |
-|---|---|
+| --- | --- |
 | **Origin** | Fork of MySQL (2009), led by MySQL's original creator |
 | **License** | GPL v2 (fully open source) |
 | **Philosophy** | Drop-in MySQL replacement; ease-of-use first |
@@ -266,14 +259,16 @@ For example, if you store `MaxHP = 42` in the database but then change the HP ca
 
 MariaDB aims to be the community-driven successor to MySQL, maintaining wire-level compatibility with MySQL clients and tools.
 
-### Installation
+#### Installation
 
 **Windows:**
+
 - Download the MSI installer from mariadb.org — it includes a GUI setup wizard.
 - The wizard configures the root password, service name, and port in a few clicks.
 - Comes with HeidiSQL (a GUI client) bundled in the installer.
 
 **Linux (Debian/Ubuntu):**
+
 ```bash
 sudo apt update
 sudo apt install mariadb-server
@@ -281,14 +276,15 @@ sudo mysql_secure_installation   # interactive hardening script
 ```
 
 **Docker:**
+
 ```bash
 docker run --name pokemon-mariadb -e MARIADB_ROOT_PASSWORD=secret -e MARIADB_DATABASE=pokemon_db -p 3306:3306 -d mariadb:latest
 ```
 
-### Day-to-Day Maintenance
+#### Day-to-Day Maintenance
 
 | Task | How |
-|---|---|
+| --- | --- |
 | **Config file** | `my.cnf` / `my.ini` — flat key=value, easy to read |
 | **User management** | `CREATE USER` / `GRANT` — MySQL-style, widely known |
 | **Backups** | `mariadb-dump` (logical) or Mariabackup (physical, hot backups) |
@@ -296,12 +292,12 @@ docker run --name pokemon-mariadb -e MARIADB_ROOT_PASSWORD=secret -e MARIADB_DAT
 | **Upgrades** | `mariadb-upgrade` script handles schema migration between versions |
 | **Monitoring** | `SHOW STATUS`, `SHOW PROCESSLIST` — simple commands |
 
-### Storage Engines
+#### Storage Engines
 
 MariaDB lets you choose a storage engine per table:
 
 | Engine | Use Case |
-|---|---|
+| --- | --- |
 | **InnoDB** (default) | ACID-compliant, row-level locking, foreign keys — best for most applications |
 | **Aria** | Crash-safe improvement over MyISAM; good for read-heavy temp tables |
 | **ColumnStore** | Analytical / data warehouse workloads |
@@ -309,11 +305,11 @@ MariaDB lets you choose a storage engine per table:
 
 ---
 
-## Java Connectivity (JDBC)
+### Java Connectivity (JDBC)
 
 MariaDB connects to Java through **JDBC (Java Database Connectivity)** — the standard Java API for relational database access.
 
-### Maven Dependency
+#### Maven Dependency
 
 Add this to your `pom.xml`:
 
@@ -325,16 +321,16 @@ Add this to your `pom.xml`:
 </dependency>
 ```
 
-### Connection URL
+#### Connection URL
 
 ```java
 String url = "jdbc:mariadb://localhost:3306/pokemon_db";
 ```
 
-### Key JDBC Details
+#### Key JDBC Details
 
 | Aspect | MariaDB (mariadb-java-client) |
-|---|---|
+| --- | --- |
 | **Driver class** | `org.mariadb.jdbc.Driver` (auto-loaded in modern JDBC) |
 | **URL prefix** | `jdbc:mariadb://` |
 | **Batch insert performance** | Fast with `rewriteBatchedStatements=true` URL parameter |
@@ -345,10 +341,10 @@ String url = "jdbc:mariadb://localhost:3306/pokemon_db";
 
 ---
 
-## Data Types for This Project
+### Data Types for This Project
 
 | Concept | MariaDB Type |
-|---|---|
+| --- | --- |
 | Pokémon name / nickname | `VARCHAR(50)` |
 | Dex index | `SMALLINT` |
 | Base stats (0-255) | `TINYINT UNSIGNED` (in Java classes, not DB) |
@@ -366,9 +362,9 @@ String url = "jdbc:mariadb://localhost:3306/pokemon_db";
 
 ---
 
-## Example Programs
+### Example Programs
 
-### Database Schema (Run This First)
+#### Database Schema (Run This First)
 
 Run this in your MariaDB client to create the database and all four tables:
 
@@ -440,7 +436,7 @@ CREATE TABLE IF NOT EXISTS type_chart (
 
 ---
 
-### Example 1 — Basic Connection and Table Creation
+#### Example 1 — Basic Connection and Table Creation
 
 **Concept:** Establishing a JDBC connection, executing DDL statements, and proper resource cleanup with try-with-resources.
 
@@ -488,6 +484,7 @@ public class DatabaseSetup {
 ```
 
 **What this teaches:**
+
 - `DriverManager.getConnection()` — the simplest way to open a database connection
 - **Try-with-resources** — Java's mechanism for auto-closing `Connection`, `Statement`, and `ResultSet` objects (they implement `AutoCloseable`)
 - **DDL via JDBC** — `Statement.execute()` can run any SQL, including `CREATE TABLE`
@@ -495,7 +492,7 @@ public class DatabaseSetup {
 
 ---
 
-### Example 2 — CRUD Operations
+#### Example 2 — CRUD Operations
 
 **Concept:** The four fundamental database operations — Create, Read, Update, Delete — using `Statement` and `ResultSet`. This example uses the `pokemon_instances` schema where only mutable instance data is stored.
 
@@ -593,6 +590,7 @@ public class PokemonCRUD {
 ```
 
 **What this teaches:**
+
 - `executeUpdate()` — for INSERT, UPDATE, DELETE (returns affected row count)
 - `executeQuery()` — for SELECT (returns a `ResultSet`)
 - `ResultSet` navigation — `rs.next()` advances the cursor; `rs.getString()`, `rs.getInt()` extract columns
@@ -600,7 +598,7 @@ public class PokemonCRUD {
 
 ---
 
-### Example 3 — Prepared Statements and SQL Injection Prevention
+#### Example 3 — Prepared Statements and SQL Injection Prevention
 
 **Concept:** Why you should **never** concatenate user input into SQL strings, and how `PreparedStatement` prevents SQL injection.
 
@@ -707,13 +705,14 @@ public class PreparedStatementExample {
 ```
 
 **What this teaches:**
+
 - **SQL injection** — the #1 web application vulnerability (OWASP Top 10) and why string concatenation in SQL is dangerous
 - **PreparedStatement** — the database driver escapes/parameterizes input, making injection impossible
 - **`RETURN_GENERATED_KEYS`** — retrieving auto-generated primary keys after INSERT
 
 ---
 
-### Example 4 — Transactions (Trading Pokémon Between Trainers)
+#### Example 4 — Transactions (Trading Pokémon Between Trainers)
 
 **Concept:** Transactions ensure that a series of operations either **all succeed** or **all roll back**. This is critical when multiple tables must stay consistent — like a Pokémon trade where one trainer loses a Pokémon and another gains one.
 
@@ -844,6 +843,7 @@ public class TransactionExample {
 ```
 
 **What this teaches:**
+
 - **`setAutoCommit(false)`** — begins a transaction (JDBC auto-commits each statement by default)
 - **`conn.commit()`** — makes all changes permanent
 - **`conn.rollback()`** — undoes all changes since the last commit
@@ -852,11 +852,12 @@ public class TransactionExample {
 
 ---
 
-### Example 5 — Connection Pooling with HikariCP
+#### Example 5 — Connection Pooling with HikariCP
 
 **Concept:** Opening a new database connection for every operation is slow. A **connection pool** maintains a set of reusable connections. HikariCP is the fastest Java connection pool and is the default in Spring Boot.
 
 **Add to `pom.xml`:**
+
 ```xml
 <dependency>
     <groupId>com.zaxxer</groupId>
@@ -946,6 +947,7 @@ public class ConnectionPoolExample {
 ```
 
 **What this teaches:**
+
 - **Why pools matter** — creating a TCP connection + authenticating + allocating server resources takes ~5-20ms per connection. A pool amortizes that cost.
 - **`DataSource` vs `DriverManager`** — `DataSource` is the modern, poolable approach; `DriverManager` is simpler but creates a new connection every time
 - **Pool configuration** — understanding `maxPoolSize`, `idleTimeout`, and `maxLifetime`
@@ -953,7 +955,7 @@ public class ConnectionPoolExample {
 
 ---
 
-### Example 6 — JOINs and Relationships (Pokémon Movesets)
+#### Example 6 — JOINs and Relationships (Pokémon Movesets)
 
 **Concept:** Relational databases model relationships using foreign keys and JOIN queries. This example mirrors the `Pokemon` → `MoveSlot` → `Move` relationship from our Java code, using the `pokemon_movesets` table where `move_name` is a string key that maps back to Java `Move` classes at load time.
 
@@ -1110,6 +1112,7 @@ public class MovesetExample {
 ```
 
 **What this teaches:**
+
 - **Foreign keys** — `pokemon_movesets.instance_id` references `pokemon_instances.instance_id`, enforcing that moves can only be assigned to existing Pokémon
 - **Multi-table JOINs** — combining data from `trainers`, `trainer_teams`, `pokemon_instances`, and `pokemon_movesets` in a single query
 - **LEFT JOIN** — includes Pokémon even if they have no moves yet (unlike INNER JOIN which would skip them)
@@ -1118,18 +1121,18 @@ public class MovesetExample {
 
 ---
 
-## Why Not MySQL or SQLite?
+### Why Not MySQL or SQLite?
 
 Before committing to a database, it's worth understanding *why* certain options were excluded. Choosing the right tool for the job is an engineering skill that matters as much as writing the SQL itself.
 
-### MySQL — Redundant With MariaDB
+#### MySQL — Redundant With MariaDB
 
 MariaDB was created in 2009 as a fork of MySQL by **Michael "Monty" Widenius** — the same person who originally created MySQL. The fork happened after Oracle acquired Sun Microsystems (and MySQL with it), and the community was concerned about Oracle's stewardship of the open-source project.
 
 Because of this shared history:
 
 | Aspect | MySQL | MariaDB |
-|---|---|---|
+| --- | --- | --- |
 | **SQL dialect** | Identical for 99% of operations | Identical for 99% of operations |
 | **Wire protocol** | MySQL protocol | Same MySQL protocol — clients are interchangeable |
 | **JDBC driver** | `mysql-connector-j` | `mariadb-java-client` (also works with MySQL servers) |
@@ -1138,24 +1141,26 @@ Because of this shared history:
 | **License** | GPL v2 + proprietary Enterprise edition | GPL v2 only (fully open source, no proprietary tier) |
 
 **What MariaDB adds over MySQL:**
+
 - More storage engines (Aria, ColumnStore, Spider for sharding)
 - Faster optimizer in some cases (derived table optimizations, subquery rewrites)
 - Truly open-source governance — no features locked behind a commercial license
 - Thread pool included in the community edition (MySQL restricts this to Enterprise)
 
 **What MySQL has that MariaDB doesn't:**
+
 - Oracle's backing and enterprise support contracts
 - MySQL Shell (a more advanced CLI tool)
 - Group Replication / InnoDB Cluster (MySQL's HA solution — MariaDB has Galera Cluster instead)
 
 **Bottom line:** For learning JDBC and relational database concepts, MySQL and MariaDB are interchangeable. Every SQL query, every `PreparedStatement`, every transaction example in this document works on MySQL without modification. Learning MariaDB *is* learning MySQL.
 
-### SQLite — Wrong Architecture for a Multi-User Bot
+#### SQLite — Wrong Architecture for a Multi-User Bot
 
 SQLite is an excellent database, but it solves a fundamentally different problem. Understanding *why* it's wrong here teaches an important architectural concept: **matching your database's concurrency model to your application's access pattern.**
 
 | Characteristic | SQLite | MariaDB |
-|---|---|---|
+| --- | --- | --- |
 | **Architecture** | Embedded library, no server process | Client-server: separate database process |
 | **Storage** | Single file on disk (e.g., `pokemon.db`) | Server manages its own data directory |
 | **Concurrency** | One writer at a time (file-level lock) | Many simultaneous readers and writers (row-level locking) |
@@ -1164,11 +1169,11 @@ SQLite is an excellent database, but it solves a fundamentally different problem
 | **Max database size** | ~281 TB (theoretical); practical limit ~1 TB | Effectively unlimited |
 | **Configuration** | Zero — this is its biggest strength | Requires setup (ports, users, passwords, config files) |
 
-#### Why This Matters for the Discord Bot
+##### Why This Matters for the Discord Bot
 
 Picture the runtime scenario:
 
-```
+```mermaid
 [Discord User A] ──battle command──▶ ┌──────────────┐      ┌──────────┐
                                       │  Discord Bot │ ───▶ │ MariaDB  │
 [Discord User B] ──battle command──▶ │  (Java app)  │ ───▶ │          │
@@ -1176,6 +1181,7 @@ Picture the runtime scenario:
 ```
 
 Three users send commands nearly simultaneously. The bot needs to:
+
 1. **Read** User A's team and their opponent's team (two queries)
 2. **Write** the battle result, updating HP, applying EV gains (several writes)
 3. **Read** User B's team at the same time
@@ -1185,7 +1191,7 @@ Three users send commands nearly simultaneously. The bot needs to:
 
 **With MariaDB (InnoDB):** Row-level locking means concurrent writes to different rows proceed in parallel. Two different battles update different Pokémon — no conflict at all.
 
-#### When SQLite *Is* the Right Choice
+##### When SQLite *Is* the Right Choice
 
 SQLite shines in scenarios that are the opposite of a Discord bot:
 
@@ -1198,11 +1204,11 @@ SQLite shines in scenarios that are the opposite of a Discord bot:
 
 If this project were a single-player desktop game (no Discord, no network), SQLite would actually be the *best* choice — zero configuration, no server to install, the database is just a file you can ship with the game.
 
-#### The Decision Framework
+##### The Decision Framework
 
 When choosing a database, ask these questions:
 
-```
+```mermaid
 1. Will multiple users write to the database at the same time?
    └─ Yes → Client-server database (MariaDB)
    └─ No  → SQLite is fine
@@ -1224,12 +1230,12 @@ For this project's planned Discord bot: the answer to questions 1, 2, and 3 is *
 
 ---
 
-# Part 3 — Summary
+## Part 3 — Summary
 
-## What Goes Where
+### What Goes Where
 
 | Data | Where | Why |
-|---|---|---|
+| --- | --- | --- |
 | Type chart (18×18) | Java `TypeChart` | Fixed rules, tiny, read-only |
 | Natures (25 entries) | Java `Natures` enum | Fixed rules, type-safe |
 | Move definitions (~165) | Java `Move` subclasses | Fixed rules, immutable |
@@ -1242,10 +1248,10 @@ For this project's planned Discord bot: the answer to questions 1, 2, and 3 is *
 | **Team composition** | **Database** | Per-player, mutable |
 | Derived stats (currentAttack, MaxHP...) | **Neither** — recalculated on load | Avoid storing values computable from other stored values |
 
-## MariaDB Quick Reference
+### MariaDB Quick Reference
 
 | Category | Detail |
-|---|---|
+| --- | --- |
 | **JDBC dependency** | `org.mariadb.jdbc:mariadb-java-client:3.3.3` |
 | **Connection URL** | `jdbc:mariadb://host:3306/pokemon_db` |
 | **Auto-increment** | `INT AUTO_INCREMENT PRIMARY KEY` |
@@ -1254,7 +1260,7 @@ For this project's planned Discord bot: the answer to questions 1, 2, and 3 is *
 | **CHECK constraints** | Supported since MariaDB 10.2.1 |
 | **Storage engine** | InnoDB (default) — ACID-compliant, row-level locking, foreign keys |
 
-## Quick-Start Checklist
+### Quick-Start Checklist
 
 1. Install MariaDB (native or Docker)
 2. Add the JDBC driver dependency to `pom.xml`

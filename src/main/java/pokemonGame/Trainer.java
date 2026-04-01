@@ -52,6 +52,17 @@ public class Trainer {
         this.name = name;
     }
 
+    // Set active pokemon in team. Should default to the first pokemon added to the team, but this can be used to change the active pokemon if needed (e.g. for switch action).
+    public void setActivePokemon(Pokemon activePokemon) {
+        if (team.contains(activePokemon)) {
+            team.remove(activePokemon);
+            team.add(0, activePokemon); // Move the active Pokémon to the front of the list
+            LOGGER.info("{} is now the active Pokémon for {}.", activePokemon.getNickname(), this.name);
+        } else {
+            LOGGER.warn("{} is not on {}'s team. Cannot set as active Pokémon.", activePokemon.getNickname(), this.name);
+        }
+    }
+
     
 
     // Add single pokemon to team

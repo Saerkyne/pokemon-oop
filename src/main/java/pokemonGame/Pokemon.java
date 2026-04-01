@@ -149,7 +149,7 @@ public class Pokemon {
     // ========================
 
     // Getters for attributes
-    public List<MoveSlot> getMoveset() {
+    public List<MoveSlot> getMoveSet() {
         return Collections.unmodifiableList(moveset);
     }
 

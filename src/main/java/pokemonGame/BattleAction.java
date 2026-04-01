@@ -1,5 +1,7 @@
 package pokemonGame;
 
+import java.sql.Timestamp;
+
 /**
  * BattleAction — a sealed interface representing a player's chosen action for a battle turn.
  *
@@ -65,6 +67,52 @@ package pokemonGame;
  */
 public sealed interface BattleAction permits MoveAction, SwitchAction {
 
+    /*
+     * SUGGESTION: Strip this interface down to only what's truly shared between
+     * MoveAction and SwitchAction. Right now it has 8 methods, but most are
+     * type-specific — getMoveSlotIndex() returns -1 for SwitchAction, and
+     * getSwitchPokemonId() returns -1 for MoveAction. That pattern (sentinel
+     * values for "not applicable") is exactly what sealed + pattern matching
+     * is designed to eliminate.
+     *
+     * The whole point of having separate record types is that each type carries
+     * only its own data. The caller uses pattern matching to get at it:
+     *
+     *   switch (action) {
+     *       case MoveAction ma   -> resolveMove(ma, defender);
+     *       case SwitchAction sa -> resolveSwitch(sa);
+     *   }
+     *
+     * Inside resolveMove(), you call ma.moveSlotIndex() directly — no interface
+     * method needed. Inside resolveSwitch(), you call sa.teamSlotIndex() directly.
+     * No -1 sentinels, no null returns, no getActionType() string comparison.
+     *
+     * REMOVE these methods:
+     *   - getActionType()      → the type IS the action type (instanceof / pattern match)
+     *   - getSubmittedAt()     → persistence concern, belongs in BattleTurnCRUD
+     *   - getMoveSlotIndex()   → only meaningful on MoveAction, access via pattern match
+     *   - getSwitchPokemonId() → only meaningful on SwitchAction, access via pattern match
+     *   - getMoveSlot()        → only meaningful on MoveAction, access via pattern match
+     *   - getMove()            → only meaningful on MoveAction, access via pattern match
+     *
+     * KEEP only what both action types genuinely share:
+     *   - trainer()           → who performed the action
+     *   - activePokemon()     → the Pokémon that was on the field when the action was chosen
+     *
+     * Simplified interface:
+     *
+     *   public sealed interface BattleAction permits MoveAction, SwitchAction {
+     *       Trainer trainer();
+     *       Pokemon activePokemon();
+     *   }
+     */
 
-
+    String getActionType();
+    Timestamp getSubmittedAt();
+    int getMoveSlotIndex(); // Only valid for MoveAction, can return -1 for SwitchAction
+    int getSwitchPokemonId(); // Only valid for SwitchAction, can return -1 for MoveAction
+    Trainer getTrainer();
+    Pokemon getCurrentPokemon();
+    MoveSlot getMoveSlot(); // This can be implemented to return the MoveSlot being used for a MoveAction, or null for SwitchAction
+    Move getMove();
 }

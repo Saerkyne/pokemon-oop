@@ -58,7 +58,7 @@ public class LearnsetEntry {
                 continue;
             }
             // Skip moves the Pokémon already knows
-            boolean alreadyKnown = p.getMoveset().stream()
+            boolean alreadyKnown = p.getMoveSet().stream()
                     .anyMatch(m -> m.getMove().getMoveName().equals(e.getMove().getMoveName()));
             if (alreadyKnown) {
                 continue;

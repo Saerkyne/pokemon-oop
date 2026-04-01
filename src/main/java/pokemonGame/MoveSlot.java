@@ -82,8 +82,8 @@ public class MoveSlot {
         }
 
         LOGGER.info("Which move should be forgotten?");
-        for (int i = 0; i < p.getMoveset().size(); i++) {
-            LOGGER.info("  {}: {}", i + 1, p.getMoveset().get(i).getMove().getMoveName());
+        for (int i = 0; i < p.getMoveSet().size(); i++) {
+            LOGGER.info("  {}: {}", i + 1, p.getMoveSet().get(i).getMove().getMoveName());
         }
         LOGGER.info("Choice (1-4): ");
         int slot = Integer.parseInt(console.readLine());

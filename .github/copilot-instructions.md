@@ -10,6 +10,7 @@ This is a **learning project** for Java and Object-Oriented Programming concepts
 - Use JDA's event system for all user interactions — no direct console input.
 - When making suggestions, explain the rationale behind them, especially if they involve design patterns or architectural principles. The goal is to learn and understand, not just to get a working implementation. 
 - **Make suggestions inside comments in the file being referenced** rather than just describing them in messages. This way, the reasoning is directly tied to the relevant code sections for better learning.
+- **Always place code examples and snippets inside Javadoc or block comments in the relevant source file** rather than only showing them in chat messages. In chat, reference the file and line numbers where the examples were added (e.g., "See BattleAction.java lines 18–52 for examples"). This works around VS Code chat rendering issues with multiple code fences and keeps examples permanently tied to the code they explain.
 
 ## Technology Stack
 

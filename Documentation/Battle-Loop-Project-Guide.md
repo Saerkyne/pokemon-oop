@@ -383,7 +383,7 @@ Build from the **inside out** — domain records first, then the turn logic, the
 
 **What to build:** Three record classes in the `pokemonGame` package.
 
-```mermaid
+```
 BattleAction (sealed interface)
 ├── MoveAction(MoveSlot slot, Pokemon target)   — record
 └── SwitchAction(Pokemon switchTo)              — record
@@ -415,10 +415,10 @@ Create migration scripts following the project's existing pattern (numbered `.sq
 | `battle_id` | INT AUTO_INCREMENT PK | Unique battle identifier |
 | `trainer1_id` | INT FK → trainers | Challenger |
 | `trainer2_id` | INT FK → trainers | Challenged player |
-| `trainer1_active_pokemon_id` | INT FK → pokemon_instances, NULLABLE | Trainer 1's currently active Pokémon |
-| `trainer2_active_pokemon_id` | INT FK → pokemon_instances, NULLABLE | Trainer 2's currently active Pokémon |
+| `trainer1_active_pokemon_id` | INT FK → pokemon_instances | Trainer 1's currently active Pokémon |
+| `trainer2_active_pokemon_id` | INT FK → pokemon_instances | Trainer 2's currently active Pokémon |
 | `status` | ENUM('PENDING', 'TEAM_SETUP', 'ACTIVE', 'FINISHED') | Battle lifecycle phase |
-| `winner_id` | INT FK → trainers, NULLABLE | Set when battle ends |
+| `winner_id` | INT FK → trainers | Set when battle ends |
 | `turn_number` | INT DEFAULT 0 | Current turn counter |
 | `created_at` | TIMESTAMP | When the challenge was issued |
 | `updated_at` | TIMESTAMP | Last state change (for stale battle detection) |
@@ -430,8 +430,8 @@ Create migration scripts following the project's existing pattern (numbered `.sq
 | `battle_id` | INT FK → battles | Which battle |
 | `trainer_id` | INT FK → trainers | Who submitted |
 | `action_type` | ENUM('MOVE', 'SWITCH') | What kind of action |
-| `move_slot_index` | SMALLINT, NULLABLE | Which move slot (0–3), null for switch actions |
-| `switch_pokemon_id` | INT FK → pokemon_instances, NULLABLE | Which Pokémon to switch to, null for move actions |
+| `move_slot_index` | SMALLINT | Which move slot (0–3), null for switch actions |
+| `switch_pokemon_id` | INT FK → pokemon_instances | Which Pokémon to switch to, null for move actions |
 | `submitted_at` | TIMESTAMP | When the action was submitted |
 | PK: (`battle_id`, `trainer_id`) | | One pending action per player per battle |
 

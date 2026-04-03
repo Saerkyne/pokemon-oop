@@ -61,10 +61,16 @@ public class BotRunner {
                     .setIntegrationTypes(IntegrationType.ALL)
                     .setDefaultPermissions(DefaultMemberPermissions.DISABLED)
                     .addOption(OptionType.STRING, "confirm", "Type 'CONFIRM' to clear the database", true))
+
+                .addCommands(Commands.slash("startbattle", "Starts a battle with another trainer (not implemented yet)")
+                    .setContexts(InteractionContextType.ALL)
+                    .setIntegrationTypes(IntegrationType.ALL)
+                    .addOption(OptionType.USER, "opponent", "The trainer you want to battle", true))
                     
                 .queue();
 
     }
 
+    
     
 }

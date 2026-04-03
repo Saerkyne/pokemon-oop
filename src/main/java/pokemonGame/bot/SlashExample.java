@@ -10,10 +10,13 @@ import pokemonGame.db.TrainerCRUD;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import pokemonGame.BattleService;
 import pokemonGame.PokeSpecies;
 
 public class SlashExample extends ListenerAdapter{
@@ -22,14 +25,19 @@ public class SlashExample extends ListenerAdapter{
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        if (event.getGuild() == null) {
-            return;
-        }
         String user = event.getUser().getName();
         long userId = event.getUser().getIdLong();
         TrainerCRUD trainerCRUD = new TrainerCRUD();
         PokemonCRUD pokemonCRUD = new PokemonCRUD();
         TeamCRUD teamCRUD = new TeamCRUD();
+
+        /*
+        NOTICED ISSUE - USERS CAN HAVE MULTIPLE BATTLES WITH DIFFERENT PEOPLE AT THE SAME TIME
+        THERE IS NO LOGIC FOR KEEPING DIFFERENT TEAMS SEPARATE - IN FACT, EVERY USER CAN ONLY HAVE
+        ONE TEAM CURRENTLY. THIS MUST BE CHANGED TO ALLOW FOR MULTIPLE TEAMS PER USER,
+        AND THE TEAMS MUST BE LINKED TO SPECIFIC BATTLES, SO THAT USERS DON'T HAVE THE SAME POKEMON
+        INSTANCE FIGHTING IN TWO DIFFERENT BATTLES AT THE SAME TIME, WHICH CAUSES ALL KINDS OF ISSUES WITH HP TRACKING, ETC.
+        */
 
 
 
@@ -40,6 +48,41 @@ public class SlashExample extends ListenerAdapter{
                 event.reply("The battle is currently in progress!").queue();
                 return;
 
+            case "startbattle":
+                LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("opponent").getAsUser().getName(), user, userId);
+                // We need to check that both users have trainers, create a battle record in the database,
+                // and then reply with the battle ID or some kind of confirmation message. 
+                // The battle loop will be handled separately, and the battle state can be checked with the /battlestate command.
+                // If the attacking trainer doesn't have a team set up yet, we should reply with a 
+                // message telling them to set up their team first using /checkteam and /addpokemon.
+                Trainer attackingTrainer = trainerCRUD.getTrainerByDiscordId(userId);
+                if (attackingTrainer == null) {
+                    event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
+                    return;
+                }
+                List<Pokemon> attackingTeam = teamCRUD.getDBTeamForTrainer(attackingTrainer.getDbId());
+                if (attackingTeam.isEmpty()) {
+                    event.reply("You need to set up your team first using /checkteam and /addpokemon!").setEphemeral(true).queue();
+                    return;
+                }
+                Trainer defendingTrainer = trainerCRUD.getTrainerByDiscordId(event.getOption("opponent").getAsUser().getIdLong());
+                if (defendingTrainer == null) {
+                    event.reply("Your opponent needs to create a trainer first using /createtrainer!").setEphemeral(true).queue();
+                    return;
+                }
+                // We won't check the defending trainer's team here, since they might want to set it up after the battle is initiated.
+
+                if (BattleService.createBattle(attackingTrainer.getDbId(), defendingTrainer.getDbId())) {
+                    event.reply("Challenge issued successfully!").queue();
+
+                    // Notify the opponent trainer of the challenge (e.g., via Discord DM or in-app notification)
+                    sendMessage(event.getOption("opponent").getAsUser(), "You have been challenged to a battle by " + attackingTrainer.getName() + "(" + user + ")! Use /battlestate to check the status of the battle and /checkteam to set up your team if you haven't already. You can accept with /acceptchallenge or decline with /declinechallenge (not implemented yet).");
+                } else {
+                    event.reply("There is already an active or pending battle between you and your opponent!").setEphemeral(true).queue();
+                }
+
+                return;
+            
             case "createtrainer":
                 LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("name").getAsString(), user, userId);
                 int createAttempt = Trainer.createTrainer(event.getOption("name").getAsString(), userId, user);
@@ -196,4 +239,11 @@ public class SlashExample extends ListenerAdapter{
                     .queue();  
         }
     }
+
+    public void sendMessage(User user, String message) {
+        user.openPrivateChannel().queue((channel) -> {
+            channel.sendMessage(message).queue();
+        });
+    }
+
 }

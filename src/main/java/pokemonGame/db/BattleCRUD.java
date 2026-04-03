@@ -9,7 +9,7 @@ public class BattleCRUD {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BattleCRUD.class);
 
-    public int createBattle(int trainer1Id, int trainer2Id) {
+    public int createBattle(int trainer1Id, int trainer2Id, String status) {
         // Implementation to create a battle in the database and return its ID
         LOGGER.info("Creating battle between trainer {} and trainer {}", trainer1Id, trainer2Id);
         try (Connection conn = DatabaseSetup.getConnection()) {
@@ -21,7 +21,7 @@ public class BattleCRUD {
                 pstmt.setInt(2, trainer2Id);
                 pstmt.setNull(3, Types.INTEGER); // Active Pokémon will be set later
                 pstmt.setNull(4, Types.INTEGER); // Active Pokémon will be set later
-                pstmt.setString(5, "Active");
+                pstmt.setString(5, status);
                 Timestamp now = new Timestamp(System.currentTimeMillis());
                 pstmt.setTimestamp(6, now);
                 pstmt.setTimestamp(7, now);
@@ -100,6 +100,42 @@ public class BattleCRUD {
             }
         } catch (SQLException e) {
             LOGGER.error("Error retrieving active battle for trainer {}", trainerId, e);
+        }
+
+        return null; // Placeholder return value
+    }
+
+    public Battle getActiveBattleForTrainerMatchup(int trainer1Id, int trainer2Id) {
+        // Implementation to retrieve the active battle for a given trainer matchup
+        LOGGER.info("Retrieving active battle for trainer matchup: {} vs {}", trainer1Id, trainer2Id);
+
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT * FROM battles WHERE ((trainer1_id = ? AND trainer2_id = ?) OR (trainer1_id = ? AND trainer2_id = ?)) AND (status = 'ACTIVE' OR status = 'PENDING')";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainer1Id);
+                pstmt.setInt(2, trainer2Id);
+                pstmt.setInt(3, trainer2Id);
+                pstmt.setInt(4, trainer1Id);
+                try (ResultSet battleSet = pstmt.executeQuery()) {
+                    if (battleSet.next()) {
+                        Battle battle = new Battle();
+                        battle.setBattleId(battleSet.getInt("battle_id"));
+                        battle.setTrainer1Id(battleSet.getInt("trainer1_id"));
+                        battle.setTrainer2Id(battleSet.getInt("trainer2_id"));
+                        battle.setTrainer1ActivePokemonId(battleSet.getInt("trainer1_active_pokemon_id"));
+                        battle.setTrainer2ActivePokemonId(battleSet.getInt("trainer2_active_pokemon_id"));
+                        battle.setStatus(Battle.Status.valueOf(battleSet.getString("status")));
+                        battle.setStartTime(battleSet.getTimestamp("created_at"));
+                        battle.setUpdateTime(battleSet.getTimestamp("updated_at"));
+                        return battle;
+                    }
+                }
+             } catch (SQLException e) {
+                LOGGER.error("Error retrieving active battle for trainer matchup: {} vs {}", trainer1Id, trainer2Id, e);
+             }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving active battle for trainer matchup: {} vs {}", trainer1Id, trainer2Id, e);
         }
 
         return null; // Placeholder return value

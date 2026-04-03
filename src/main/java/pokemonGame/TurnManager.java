@@ -40,49 +40,37 @@ public class TurnManager {
      * resolution after the first, with a faint check in between.
      */
 
-    /*
-     * SUGGESTION: Replace the string-based switch with pattern matching on the
-     * sealed BattleAction type. Instead of:
-     *
-     *   switch (firstAction.getActionType()) {
-     *       case "MOVE"   -> resolveMove(firstAction, defender);
-     *       case "SWITCH" -> resolveSwitch(firstAction);
-     *   }
-     *
-     * Use (after slimming down BattleAction — see BattleAction.java):
-     *
-     *   switch (firstAction) {
-     *       case MoveAction ma   -> resolveMove(ma, defender);
-     *       case SwitchAction sa -> resolveSwitch(sa);
-     *   }
-     *
-     * Benefits:
-     *   - Compile-time exhaustiveness: add a new action type and every switch
-     *     that doesn't handle it becomes a compile error.
-     *   - No string typo risk: "MVOE" compiles fine but never matches.
-     *     MoveAction is a type — misspell it and the compiler catches it.
-     *   - Direct field access: ma.moveSlotIndex() instead of
-     *     firstAction.getMoveSlotIndex() through the interface.
-     */
-    public TurnManager(Battle battle, BattleAction trainer1Action, BattleAction trainer2Action) {
+    public TurnManager() {
+      
+    }
 
+    public static TurnResult resolveTurn(BattleAction trainer1Action, BattleAction trainer2Action, Battle battle) {
+        // Determine turn order
         BattleAction firstAction = getFirstAction(trainer1Action, trainer2Action, battle);
-        Pokemon defender = (firstAction == trainer1Action) ? trainer2Action.getCurrentPokemon() : trainer1Action.getCurrentPokemon();
+        BattleAction secondAction = (firstAction == trainer1Action) ? trainer2Action : trainer1Action;
 
-        
-        switch (firstAction.getActionType()) {
-            case "MOVE" -> {
-                resolveMove(firstAction, defender);
-                LOGGER.info("{} will go first with their move!", firstAction.getTrainer().getName());
-            }
-            case "SWITCH" -> {
-                resolveSwitch(firstAction);
-                LOGGER.info("{} will go first with their switch!", firstAction.getTrainer().getName());
+        // Resolve first action
+        Pokemon defender = (firstAction == trainer1Action) ? secondAction.activePokemon() : firstAction.activePokemon();
+        if (firstAction instanceof MoveAction ma) {
+            resolveMove(ma, defender);
+        } else if (firstAction instanceof SwitchAction sa) {
+            resolveSwitch(sa);
+        }
+
+        // Check if defender fainted after first action
+        boolean defenderFainted = BattleService.checkFainted(defender);
+
+        // Resolve second action only if defender is still alive
+        if (!defenderFainted) {
+            if (secondAction instanceof MoveAction ma) {
+                resolveMove(ma, firstAction.activePokemon());
+            } else if (secondAction instanceof SwitchAction sa) {
+                resolveSwitch(sa);
             }
         }
-        
 
-                
+        // Construct and return TurnResult based on the outcomes of both actions
+        return new TurnResult(/* parameters based on the results */);
     }
 
   
@@ -90,23 +78,35 @@ public class TurnManager {
     // 1. If one trainer is switching and the other is using a move, the switching trainer goes first.
     // 2. If both trainers are using moves, the trainer with the faster active Pokémon goes first.
     // 3. If both active Pokémon have the same speed, the turn order is determined randomly.
-    public BattleAction getFirstAction(BattleAction trainer1Action, BattleAction trainer2Action, Battle battle) {
+    //
+    // DESIGN NOTE: Keeping all priority logic in one method is the right call here.
+    // Splitting into checkForSwitch() + a speed comparison elsewhere would mean:
+    //   - checkForSwitch() returns a boolean, but you still need to figure out WHICH
+    //     action is first, so you'd need a second method for that anyway.
+    //   - Putting speed comparison inside resolveMove() mixes concerns — resolveMove()
+    //     handles one action's execution (PP, accuracy, damage). Deciding turn order
+    //     is a separate responsibility.
+    //
+    // This method reads as a clean priority chain:
+    //   switches go first → faster speed goes first → coin flip on ties
+    // One method, one decision, one BattleAction returned. Each rule is one if-block.
+    //
+    // If priority brackets are added later (Quick Attack has +1, Protect has +4, etc.),
+    // they'd slot in naturally between the switch check and the speed check:
+    //   switches → priority bracket comparison → speed comparison → coin flip
+    public static BattleAction getFirstAction(BattleAction trainer1Action, BattleAction trainer2Action, Battle battle) {
         // Check for a switch action - those have ultimate priority
-        if (trainer1Action.getActionType().equals("SWITCH") || trainer2Action.getActionType().equals("SWITCH")) {
+        if (trainer1Action instanceof SwitchAction || trainer2Action instanceof SwitchAction) {
             // one trainer is switching, so they go first regardless of speed
-            if (trainer1Action.getActionType().equals("SWITCH")) {
+            if (trainer1Action instanceof SwitchAction) {
                 return trainer1Action;
             } else {
                 return trainer2Action;
             }
 
         } else {
-            // SUGGESTION: battle.checkSpeed() is just a wrapper around pokemon.getCurrentSpeed().
-            // Call getCurrentSpeed() directly to remove the unnecessary indirection:
-            //   int trainer1Speed = trainer1Action.getCurrentPokemon().getCurrentSpeed();
-            //   int trainer2Speed = trainer2Action.getCurrentPokemon().getCurrentSpeed();
-            int trainer1Speed = battle.checkSpeed(trainer1Action.getCurrentPokemon());
-            int trainer2Speed = battle.checkSpeed(trainer2Action.getCurrentPokemon());
+            int trainer1Speed = trainer1Action.activePokemon().getCurrentSpeed();
+            int trainer2Speed = trainer2Action.activePokemon().getCurrentSpeed();
             if (trainer1Speed > trainer2Speed) {
                 return trainer1Action;
             } else if (trainer2Speed > trainer1Speed) {
@@ -124,13 +124,13 @@ public class TurnManager {
 
     // We know both trainers are using Moves, not switching. Speed has been checked, now we are resolving in the correct order.
     // This will get called twice per round - once for the first action, then again for the second action if the slower Pokémon is still alive after the first action resolves.
-    public void resolveMove(BattleAction action, Pokemon defender) {
+    public static void resolveMove(MoveAction action, Pokemon defender) {
         // Check current PP for move actions before executing
         int currentPpFirstAction = action.getMoveSlot().getCurrentPP();
         
         // If the move has no PP left, it fails and the Pokémon uses Struggle or skips the turn (depending on your implementation)
         if (currentPpFirstAction <= 0) {
-            LOGGER.info("{} tried to use {}, but it has no PP left!", action.getCurrentPokemon().getNickname(), action.getMove().getMoveName());
+            LOGGER.info("{} tried to use {}, but it has no PP left!", action.activePokemon().getNickname(), action.getMove().getMoveName());
             // Handle PP failure (e.g., use Struggle, skip turn, etc.)
             return;
         }
@@ -138,17 +138,16 @@ public class TurnManager {
         // Execute the action (e.g., deal damage, switch Pokémon, etc.)
         // Reduce PP by 1 before executing the move to reflect the cost of using it, even if the move fails or the Pokémon faints as a result.
         action.getMoveSlot().use();
-        if (dealDamage(action.getCurrentPokemon(), defender, action.getMove())) {
+        if (dealDamage(action.activePokemon(), defender, action.getMove())) {
             // Handle the case where the defender has fainted
 
         }
     }
 
     // We know this action is a switch, so we just need to swap the active Pokémon for the trainer performing the switch action.
-    public void resolveSwitch(BattleAction action) {
+    public static void resolveSwitch(SwitchAction action) {
         Trainer trainer = action.getTrainer();
-        int switchPokemonId = action.getSwitchPokemonId();
-        Pokemon newPokemon = trainer.getTeam().get(switchPokemonId);
+        Pokemon newPokemon = action.getSwitchPokemon();
         trainer.setActivePokemon(newPokemon);
         LOGGER.info("{} switched to {}!", trainer.getName(), newPokemon.getNickname());
     }
@@ -173,7 +172,7 @@ public class TurnManager {
         // Print out the result of the attack
         LOGGER.info("{} used {}!", attacker.getNickname(), move.getMoveName());
 
-        if (!Battle.checkFainted(defender)) {
+        if (!BattleService.checkFainted(defender)) {
             LOGGER.info("{} took {} damage and has {} HP left.", defender.getNickname(), damage, defender.getCurrentHP());
             return false; // Defender is still alive
         } else {

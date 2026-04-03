@@ -2,6 +2,7 @@ package pokemonGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.Timestamp;
+import java.util.List;
 
 /*
  * NOTE ON BATTLE'S ROLE: This class stores IDs (trainer1Id, trainer1ActivePokemonId, etc.)
@@ -111,73 +112,11 @@ public class Battle {
         return winningTrainerId;
     }
 
-    /*
-     * SUGGESTION: Two small improvements here.
-     *
-     * 1. Typo: "Pokmeon" → "Pokemon" in the method name.
-     *
-     * 2. This returns a Pokemon[] with nulls in fainted slots (e.g., [Bulbasaur, null, Pikachu]).
-     *    Callers then have to check for null at every index. Returning a List<Pokemon>
-     *    containing only the alive ones is easier to work with:
-     *
-     *      public List<Pokemon> getAllRemainingPokemon(Trainer trainer) {
-     *          return trainer.getTeam().stream()
-     *              .filter(p -> !p.getIsFainted())
-     *              .toList();   // Java 16+ Stream.toList()
-     *      }
-     *
-     *    The caller can check .isEmpty() to see if the trainer has lost, and
-     *    iterate without null checks. The logging can stay if you want it.
-     *
-     * 3. This method takes a Trainer but Battle stores trainer IDs, not Trainer
-     *    objects. That's fine — BattleService will hydrate the Trainer from the
-     *    DB and pass it in. Just be aware that this method won't be callable
-     *    from Battle alone; it needs the caller to provide the live Trainer.
-     */
-    public Pokemon[] getAllRemainingPokemon(Trainer trainer) {
-        Pokemon[] remainingPokemon = new Pokemon[trainer.getTeam().size()];
-        LOGGER.info("Getting all remaining Pokémon for trainer {}...", trainer.getName());
-        trainer.getTeam().forEach(pokemon -> {
-            if (!pokemon.getIsFainted()) {
-                LOGGER.info("{} ({}) is still able to battle with {} HP left.", pokemon.getNickname(), pokemon.getSpecies(), pokemon.getCurrentHP());
-                remainingPokemon[trainer.getTeam().indexOf(pokemon)] = pokemon;
-            } else {
-                LOGGER.info("{} ({}) has fainted and cannot battle.", pokemon.getNickname(), pokemon.getSpecies());
-            }
-        });
-        return remainingPokemon;
-    }
-
-    // Calculations
-    
-    /*
-     * SUGGESTION: This method is a pass-through — it takes a Pokemon and returns
-     * pokemon.getCurrentSpeed(). The caller (TurnManager.getFirstAction) could
-     * just call pokemon.getCurrentSpeed() directly.
-     *
-     * The old checkSpeed() compared two Pokémon and returned the faster one.
-     * This new version only returns one Pokémon's speed, so the comparison
-     * happens in TurnManager instead — which is fine, but it makes this wrapper
-     * unnecessary. Consider removing it and calling getCurrentSpeed() directly
-     * in TurnManager:
-     *
-     *   int trainer1Speed = trainer1Action.getCurrentPokemon().getCurrentSpeed();
-     *   int trainer2Speed = trainer2Action.getCurrentPokemon().getCurrentSpeed();
-     *
-     * Keeping Battle focused on state (IDs, status, timestamps) and letting
-     * TurnManager own all turn-resolution logic is cleaner separation.
-     */
-    public int checkSpeed(Pokemon pokemon1) {
-        int pokemon1Speed = pokemon1.getCurrentSpeed();
-        return pokemon1Speed;
-    }
-
-    public static boolean checkFainted(Pokemon pokemon) {
-        if (pokemon.getCurrentHP() <= 0) {
-            pokemon.setIsFainted(true);
-            return pokemon.getIsFainted();
-        }
-        return pokemon.getIsFainted();
+    public List<Pokemon> getAllRemainingPokemon(Trainer trainer) {
+        LOGGER.info("Getting all remaining Pokemon for trainer: {}", trainer.getName());
+        return trainer.getTeam().stream()
+            .filter(p -> !p.getIsFainted())
+            .toList();
     }
 
 

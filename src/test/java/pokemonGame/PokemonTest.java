@@ -125,7 +125,7 @@ class PokemonTest {
      */
     @Test
     void newPokemonStartsWithEmptyMoveset() {
-        assertTrue(abra.getMoveset().isEmpty());
+        assertTrue(abra.getMoveSet().isEmpty());
     }
 
     /*
@@ -148,9 +148,9 @@ class PokemonTest {
      *          the stored move is the correct one (covered by addMoveStoresCorrectMove).
      */
     @Test
-    void addMoveSuceeds() {
+    void addMoveSucceeds() {
         assertTrue(abra.addMove(new Psychic()));
-        assertEquals(1, abra.getMoveset().size());
+        assertEquals(1, abra.getMoveSet().size());
     }
 
     /*
@@ -163,7 +163,7 @@ class PokemonTest {
     @Test
     void addMoveStoresCorrectMove() {
         abra.addMove(new Psychic());
-        assertEquals("Psychic", abra.getMoveset().get(0).getMove().getMoveName());
+        assertEquals("Psychic", abra.getMoveSet().get(0).getMove().getMoveName());
     }
 
     /*
@@ -180,7 +180,7 @@ class PokemonTest {
         abra.addMove(new Teleport());
         abra.addMove(new MegaPunch());
         abra.addMove(new MegaKick());
-        assertEquals(4, abra.getMoveset().size());
+        assertEquals(4, abra.getMoveSet().size());
         assertTrue(abra.isMovesetFull());
     }
 
@@ -213,7 +213,7 @@ class PokemonTest {
     void replaceMoveSucceeds() {
         abra.addMove(new Psychic());
         assertTrue(abra.replaceMove(0, new Teleport()));
-        assertEquals("Teleport", abra.getMoveset().get(0).getMove().getMoveName());
+        assertEquals("Teleport", abra.getMoveSet().get(0).getMove().getMoveName());
     }
 
     /*

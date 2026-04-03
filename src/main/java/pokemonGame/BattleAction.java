@@ -1,118 +1,159 @@
 package pokemonGame;
 
-import java.sql.Timestamp;
-
 /**
  * BattleAction — a sealed interface representing a player's chosen action for a battle turn.
  *
- * "sealed" means only the classes listed after "permits" can implement this interface.
- * The compiler enforces this — no other class can implement BattleAction.
+ * This file uses three Java 21 features that work together. They're explained below
+ * in order from simplest to most advanced, building on each other.
  *
- * Why sealed? When you switch over a BattleAction, the compiler knows every possible type,
- * so it can verify you've handled them all. If you later add a new action type to the
- * permits list, every switch that doesn't handle it becomes a compile error — bugs caught
- * at compile time, not runtime.
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * FEATURE 1: INTERFACES (familiar ground)
+ * ═══════════════════════════════════════════════════════════════════════════════
  *
- * The permitted types (MoveAction, SwitchAction) are records — immutable data carriers.
- * Records auto-generate the constructor, getters, equals(), hashCode(), and toString().
- * Immutability means once created, they can't be changed — safe to pass between layers.
+ * An interface is a contract: "any class implementing me must provide these methods."
+ * BattleAction says: every action has a trainer() and an activePokemon().
  *
- * --- Example: Record declarations implementing this sealed interface ---
+ *   public interface BattleAction {
+ *       Trainer trainer();
+ *       Pokemon activePokemon();
+ *   }
  *
- *   public record MoveAction(int moveSlotIndex) implements BattleAction { }
- *   public record SwitchAction(int switchPokemonId) implements BattleAction { }
+ * Both MoveAction and SwitchAction implement it, so any code that receives a
+ * BattleAction can safely call trainer() and activePokemon() without knowing
+ * which specific type it is.
  *
- * --- Example: Without sealed, you need a dead else branch ---
+ * But a regular interface has a problem: ANYONE can implement it. A third-party
+ * class, a test stub, a mistake — the compiler can't help you know all the types.
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * FEATURE 2: SEALED (closing the set of allowed types)
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * Adding "sealed" + "permits" locks down exactly which classes can implement
+ * the interface:
+ *
+ *   public sealed interface BattleAction permits MoveAction, SwitchAction { }
+ *
+ * Now the compiler KNOWS there are exactly two kinds of BattleAction. Period.
+ * No one else can implement it. This has a powerful consequence: when you write
+ * a switch statement over a BattleAction, the compiler can check that you've
+ * handled every case.
+ *
+ * Think of it like an enum, but instead of each variant being just a name,
+ * each variant is a full class with its own fields and methods.
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * FEATURE 3: RECORDS (concise immutable data classes)
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * A record is a class where you only declare the fields, and Java generates
+ * the constructor, getters, equals(), hashCode(), and toString() for free.
+ *
+ * Compare:
+ *
+ *   // Without records — 30+ lines of boilerplate:
+ *   public final class MoveAction implements BattleAction {
+ *       private final Trainer trainer;
+ *       private final Pokemon pokemon;
+ *       private final int moveSlotIndex;
+ *
+ *       public MoveAction(Trainer trainer, Pokemon pokemon, int moveSlotIndex) {
+ *           this.trainer = trainer;
+ *           this.pokemon = pokemon;
+ *           this.moveSlotIndex = moveSlotIndex;
+ *       }
+ *
+ *       public Trainer trainer() { return trainer; }
+ *       public Pokemon pokemon() { return pokemon; }
+ *       public int moveSlotIndex() { return moveSlotIndex; }
+ *       // plus equals(), hashCode(), toString()...
+ *   }
+ *
+ *   // With records — one line:
+ *   public record MoveAction(Trainer trainer, Pokemon pokemon, int moveSlotIndex)
+ *       implements BattleAction { }
+ *
+ * Both produce the exact same class. The record just eliminates the repetition.
+ *
+ * Records are also immutable — once created, the fields can't change. This is
+ * important for the battle loop: a BattleAction represents a choice that was
+ * already made. It should never be modified after creation.
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * PUTTING IT TOGETHER: How TurnManager uses all three features
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * In TurnManager, you receive a BattleAction but need to do different things
+ * depending on whether it's a MoveAction or SwitchAction.
+ *
+ * --- The old way (before Java 21): instanceof + manual cast ---
  *
  *   if (action instanceof MoveAction) {
- *       // handle move
+ *       MoveAction ma = (MoveAction) action;       // cast
+ *       MoveSlot slot = ma.getMoveSlot();           // now you can access fields
+ *       resolveMove(ma, defender);
  *   } else if (action instanceof SwitchAction) {
- *       // handle switch
+ *       SwitchAction sa = (SwitchAction) action;   // cast
+ *       resolveSwitch(sa);
  *   } else {
- *       // ??? what goes here? You'd never expect this case,
- *       // but the compiler doesn't know that.
+ *       // What goes here? With a regular interface, you can't be sure
+ *       // there isn't some third implementation you missed.
  *   }
  *
- * --- Example: With sealed + pattern matching switch (exhaustive, no default needed) ---
+ * --- The new way: pattern matching + sealed ---
  *
  *   switch (action) {
- *       case MoveAction ma  -> executeMoveAction(ma);
- *       case SwitchAction sa -> executeSwitchAction(sa);
- *       // No default needed — the compiler knows this is exhaustive.
+ *       case MoveAction ma   -> resolveMove(ma, defender);
+ *       case SwitchAction sa -> resolveSwitch(sa);
  *   }
  *
- * --- Example: Record pattern matching (destructuring) in the battle loop ---
+ * What's happening:
+ *   1. "case MoveAction ma" tests the type AND casts into variable 'ma' in one step.
+ *   2. Because BattleAction is sealed, the compiler knows MoveAction and
+ *      SwitchAction are the ONLY possibilities. No default case needed.
+ *   3. If you later add a third action type (e.g., ItemAction) to the permits
+ *      list, every switch statement that doesn't handle it becomes a compile
+ *      error. The compiler forces you to handle the new type everywhere.
+ *
+ * --- Destructuring (one more level, optional but elegant) ---
+ *
+ * Records support "record patterns" — extracting fields inline:
  *
  *   switch (action) {
- *       case MoveAction(var slotIndex) -> {
- *           // slotIndex is extracted directly — no casting needed
- *           MoveSlot slot = attacker.getMoveSet().get(slotIndex);
- *           // calculate and apply damage...
+ *       case MoveAction(var trainer, var pokemon, var slotIndex) -> {
+ *           // trainer, pokemon, and slotIndex are ready to use
+ *           MoveSlot slot = pokemon.getMoveSet().get(slotIndex);
  *       }
- *       case SwitchAction(var pokemonId) -> {
- *           // pokemonId is extracted directly
- *           // swap the active Pokémon...
+ *       case SwitchAction(var trainer, var pokemon, var teamSlot) -> {
+ *           Pokemon newPokemon = trainer.getTeam().get(teamSlot);
  *       }
  *   }
  *
- * --- Example: The old way without records or pattern matching ---
+ * You don't have to use destructuring — "case MoveAction ma ->" is perfectly
+ * fine. Destructuring is just a convenience when you want direct access to the
+ * record's fields without calling ma.moveSlotIndex().
  *
- *   if (action instanceof MoveAction) {
- *       MoveAction ma = (MoveAction) action;  // manual cast
- *       int slotIndex = ma.moveSlotIndex();   // manual getter call
- *   }
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * WHY THIS MATTERS FOR THE BATTLE LOOP
+ * ═══════════════════════════════════════════════════════════════════════════════
  *
- * Progression: sealed interface locks down the type set → records make each variant
- * concise and immutable → pattern matching switch gives compiler-checked branching.
+ * The old approach (a single class with getActionType() returning "MOVE" or
+ * "SWITCH" and sentinel values like -1 for inapplicable fields) works, but:
+ *
+ *   - Nothing stops you from calling getMoveSlotIndex() on a switch action
+ *     and getting a meaningless -1. The compiler can't help.
+ *   - String comparisons ("MOVE".equals(...)) can have typos that compile fine.
+ *   - Adding a third action type means hunting through every if/else chain.
+ *
+ * The sealed interface + records approach makes illegal states unrepresentable:
+ *   - MoveAction has moveSlotIndex. SwitchAction has teamSlotIndex. Neither
+ *     has fields that don't belong to it.
+ *   - The compiler enforces exhaustive handling of all action types.
+ *   - Each type is immutable and self-documenting.
  */
 public sealed interface BattleAction permits MoveAction, SwitchAction {
 
-    /*
-     * SUGGESTION: Strip this interface down to only what's truly shared between
-     * MoveAction and SwitchAction. Right now it has 8 methods, but most are
-     * type-specific — getMoveSlotIndex() returns -1 for SwitchAction, and
-     * getSwitchPokemonId() returns -1 for MoveAction. That pattern (sentinel
-     * values for "not applicable") is exactly what sealed + pattern matching
-     * is designed to eliminate.
-     *
-     * The whole point of having separate record types is that each type carries
-     * only its own data. The caller uses pattern matching to get at it:
-     *
-     *   switch (action) {
-     *       case MoveAction ma   -> resolveMove(ma, defender);
-     *       case SwitchAction sa -> resolveSwitch(sa);
-     *   }
-     *
-     * Inside resolveMove(), you call ma.moveSlotIndex() directly — no interface
-     * method needed. Inside resolveSwitch(), you call sa.teamSlotIndex() directly.
-     * No -1 sentinels, no null returns, no getActionType() string comparison.
-     *
-     * REMOVE these methods:
-     *   - getActionType()      → the type IS the action type (instanceof / pattern match)
-     *   - getSubmittedAt()     → persistence concern, belongs in BattleTurnCRUD
-     *   - getMoveSlotIndex()   → only meaningful on MoveAction, access via pattern match
-     *   - getSwitchPokemonId() → only meaningful on SwitchAction, access via pattern match
-     *   - getMoveSlot()        → only meaningful on MoveAction, access via pattern match
-     *   - getMove()            → only meaningful on MoveAction, access via pattern match
-     *
-     * KEEP only what both action types genuinely share:
-     *   - trainer()           → who performed the action
-     *   - activePokemon()     → the Pokémon that was on the field when the action was chosen
-     *
-     * Simplified interface:
-     *
-     *   public sealed interface BattleAction permits MoveAction, SwitchAction {
-     *       Trainer trainer();
-     *       Pokemon activePokemon();
-     *   }
-     */
-
+    Trainer trainer();
+    Pokemon activePokemon();
     String getActionType();
-    Timestamp getSubmittedAt();
-    int getMoveSlotIndex(); // Only valid for MoveAction, can return -1 for SwitchAction
-    int getSwitchPokemonId(); // Only valid for SwitchAction, can return -1 for MoveAction
-    Trainer getTrainer();
-    Pokemon getCurrentPokemon();
-    MoveSlot getMoveSlot(); // This can be implemented to return the MoveSlot being used for a MoveAction, or null for SwitchAction
-    Move getMove();
 }

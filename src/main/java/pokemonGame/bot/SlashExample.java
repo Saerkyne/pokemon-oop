@@ -60,7 +60,7 @@ public class SlashExample extends ListenerAdapter{
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
                 }
-                List<Pokemon> attackingTeam = teamCRUD.getDBTeamForTrainer(attackingTrainer.getDbId());
+                List<Pokemon> attackingTeam = teamCRUD.getDBTeamForTrainer(attackingTrainer.getDbId(), );
                 if (attackingTeam.isEmpty()) {
                     event.reply("You need to set up your team first using /checkteam and /addpokemon!").setEphemeral(true).queue();
                     return;
@@ -95,6 +95,22 @@ public class SlashExample extends ListenerAdapter{
                     return;
                 }
             
+            case "createteam":
+                LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("teamname").getAsString(), user, userId);
+                Trainer teamCreator = trainerCRUD.getTrainerByDiscordId(userId);
+                if (teamCreator == null) {
+                    event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
+                    return;
+                }
+                int teamCreateAttempt = teamCRUD.createTeamForTrainer(teamCreator.getDbId(), event.getOption("teamname").getAsString());
+                if (teamCreateAttempt == -1) {
+                    event.reply("Sorry, there was an error creating your team!").setEphemeral(true).queue();
+                    return;
+                } else {
+                    event.reply("Team created successfully! You can have up to 3 teams. Use /checkteam to see your current teams and /addpokemon to add Pokemon to them!").queue();
+                    return;
+                }
+            
             case "checkteam":
                 LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", event.getName(), user, userId);
                 
@@ -103,8 +119,9 @@ public class SlashExample extends ListenerAdapter{
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
                 }
+                int teamId = teamCRUD.getActiveTeamIdForTrainer(trainer.getDbId());
 
-                List<Pokemon> teamInfo = teamCRUD.getDBTeamForTrainer(trainer.getDbId());
+                List<Pokemon> teamInfo = teamCRUD.getDBTeamForTrainer(trainer.getDbId(), teamId);
                 
 
                 if (teamInfo.isEmpty()) {

@@ -66,7 +66,11 @@ public class BotRunner {
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
                     .addOption(OptionType.USER, "opponent", "The trainer you want to battle", true))
-                    
+                
+                .addCommands(Commands.slash("createteam", "Creates a new team for your trainer")
+                    .setContexts(InteractionContextType.ALL)
+                    .setIntegrationTypes(IntegrationType.ALL)
+                    .addOption(OptionType.STRING, "teamname", "The name of the team to create", true, true))
                 .queue();
 
     }

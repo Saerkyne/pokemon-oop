@@ -9,22 +9,24 @@ public class BattleCRUD {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BattleCRUD.class);
 
-    public int createBattle(int trainer1Id, int trainer2Id, String status) {
+    public int createBattle(int trainer1Id, int trainer2Id, String status, int trainer1TeamId, int trainer2TeamId) {
         // Implementation to create a battle in the database and return its ID
         LOGGER.info("Creating battle between trainer {} and trainer {}", trainer1Id, trainer2Id);
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "INSERT INTO battles (trainer1_id, trainer2_id, trainer1_active_pokemon_id, " 
-                + "trainer2_active_pokemon_id, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                + "trainer2_active_pokemon_id, trainer1_team_id, trainer2_team_id, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setInt(1, trainer1Id);
                 pstmt.setInt(2, trainer2Id);
                 pstmt.setNull(3, Types.INTEGER); // Active Pokémon will be set later
                 pstmt.setNull(4, Types.INTEGER); // Active Pokémon will be set later
-                pstmt.setString(5, status);
+                pstmt.setInt(5, trainer1TeamId);
+                pstmt.setInt(6, trainer2TeamId);
+                pstmt.setString(7, status);
                 Timestamp now = new Timestamp(System.currentTimeMillis());
-                pstmt.setTimestamp(6, now);
-                pstmt.setTimestamp(7, now);
+                pstmt.setTimestamp(8, now);
+                pstmt.setTimestamp(9, now);
 
                 pstmt.executeUpdate();
                 try (ResultSet battleSet = pstmt.getGeneratedKeys()) {

@@ -157,10 +157,12 @@ instance_id | slot_index | move_name  | current_pp
 
 ```sql
 CREATE TABLE trainer_teams (
+    team_id      INT AUTO_INCREMENT PRIMARY KEY,
     trainer_id   INT NOT NULL,
+    team_name    VARCHAR(50) NOT NULL,
     slot_index   SMALLINT NOT NULL,
     instance_id  INT NOT NULL,
-    PRIMARY KEY (trainer_id, slot_index),
+    UNIQUE (trainer_id, team_name, slot_index),
     FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id),
     FOREIGN KEY (instance_id) REFERENCES pokemon_instances(instance_id),
     CHECK (slot_index BETWEEN 0 AND 5)

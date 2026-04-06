@@ -415,6 +415,8 @@ Create migration scripts following the project's existing pattern (numbered `.sq
 | `battle_id` | INT AUTO_INCREMENT PK | Unique battle identifier |
 | `trainer1_id` | INT FK → trainers | Challenger |
 | `trainer2_id` | INT FK → trainers | Challenged player |
+| `trainer1_team_id` | INT FK → teams | Challenger's team at battle start |
+| `trainer2_team_id` | INT FK → teams | Challenged player's team at battle start |
 | `trainer1_active_pokemon_id` | INT FK → pokemon_instances | Trainer 1's currently active Pokémon |
 | `trainer2_active_pokemon_id` | INT FK → pokemon_instances | Trainer 2's currently active Pokémon |
 | `status` | ENUM('PENDING', 'TEAM_SETUP', 'ACTIVE', 'FINISHED') | Battle lifecycle phase |

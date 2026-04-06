@@ -34,7 +34,10 @@ public class DatabaseSetup {
         "trainer_teams",
         "pokemon_movesets",
         "pokemon_instances",
-        "trainers"
+        "trainers",
+        "battles",
+        "battle_pending_actions",
+        "battle_turn_history"
     );
 
     private static final String URL = System.getenv("DB_URL");

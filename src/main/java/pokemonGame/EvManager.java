@@ -4,6 +4,14 @@ package pokemonGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Manages Effort Value (EV) operations for Pokémon. Handles adding, setting,
+ * and querying EVs while enforcing the per-stat cap of 252 and the total cap
+ * of 510 across all six stats.
+ *
+ * @see Stat
+ * @see StatCalculator
+ */
 public class EvManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EvManager.class);

@@ -74,16 +74,16 @@ public class PokemonCRUD {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND instance_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, trainer.getDbId());
+                pstmt.setInt(1, trainer.getTrainerDbId());
                 pstmt.setInt(2, pokemonId);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     
                     if (rs.next()) {
                         Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
-                        LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies(), trainer.getDbId());
+                        LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies(), trainer.getTrainerDbId());
                         return foundPokemon; // Return the retrieved Pokémon
                     } else {
-                        LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemonId, trainer.getDbId());
+                        LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemonId, trainer.getTrainerDbId());
                         return null; // Return null if no Pokémon is found
                     }
                 }
@@ -123,7 +123,7 @@ public class PokemonCRUD {
                 pstmt.setInt(17, EvManager.getEv(pokemon, Stat.SPEED));
                 pstmt.setInt(18, pokemon.getCurrentExp());
                 pstmt.setBoolean(19, pokemon.getIsFainted());
-                pstmt.setInt(20, pokemon.getId());
+                pstmt.setInt(20, pokemon.getPokemonDbId());
                 pstmt.setLong(21, pokemon.getTrainerDbId());
 
                 int rowsAffected = pstmt.executeUpdate();
@@ -131,7 +131,7 @@ public class PokemonCRUD {
                     LOGGER.info("Pokemon '{}' ({}) updated successfully for trainer ID {}.", pokemon.getNickname(), pokemon.getSpecies().getDisplayName(), pokemon.getTrainerDbId());
                     return true; // Return true to indicate successful update
                 } else {
-                    LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemon.getId(), pokemon.getTrainerDbId());
+                    LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemon.getPokemonDbId(), pokemon.getTrainerDbId());
                     return false; // Return false to indicate no Pokemon found to update
                 }
             }
@@ -145,7 +145,7 @@ public class PokemonCRUD {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "DELETE FROM pokemon_instances WHERE instance_id = ? AND trainer_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, pokemon.getId());
+                pstmt.setInt(1, pokemon.getPokemonDbId());
                 pstmt.setInt(2, pokemon.getTrainerDbId());
 
                 int rowsAffected = pstmt.executeUpdate();
@@ -153,7 +153,7 @@ public class PokemonCRUD {
                     LOGGER.info("Pokemon '{}' ({}) deleted successfully for trainer ID {}.", pokemon.getNickname(), pokemon.getSpecies().getDisplayName(), pokemon.getTrainerDbId());
                     return true; // Return true to indicate successful deletion
                 } else {
-                    LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemon.getId(), pokemon.getTrainerDbId());
+                    LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemon.getPokemonDbId(), pokemon.getTrainerDbId());
                     return false; // Return false to indicate no Pokemon found to delete
                 }
             }
@@ -190,7 +190,7 @@ public class PokemonCRUD {
         // Create a new Pokemon object and populate its fields from the ResultSet
         Pokemon foundPokemon = PokemonFactory.createPokemonFromRegistry(species, name);
         foundPokemon.setTrainer(trainer); // Set the trainer using the Trainer object
-        foundPokemon.setId(foundPokemonId);
+        foundPokemon.setPokemonDbId(foundPokemonId);
         foundPokemon.setLevel(level);
         foundPokemon.setNature(Natures.valueOf(nature.toUpperCase()));
         foundPokemon.setIvHp(ivHp);
@@ -217,15 +217,15 @@ public class PokemonCRUD {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND nickname = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, trainer.getDbId());
+                pstmt.setInt(1, trainer.getTrainerDbId());
                 pstmt.setString(2, nickname);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
-                        LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies(), trainer.getDbId());
+                        LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies(), trainer.getTrainerDbId());
                         return foundPokemon; // Return the retrieved Pokémon
                     } else {
-                        LOGGER.warn("No Pokemon found with nickname: '{}' for trainer ID: {}", nickname, trainer.getDbId());
+                        LOGGER.warn("No Pokemon found with nickname: '{}' for trainer ID: {}", nickname, trainer.getTrainerDbId());
                         return null; // Return null if no Pokémon is found
                     }
                 }

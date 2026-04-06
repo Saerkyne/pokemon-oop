@@ -4,6 +4,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/**
+ * Resolves a single battle turn. Receives both players' {@link BattleAction}s,
+ * determines turn order by speed, executes each action (damage calculation via
+ * {@link Attack}, PP decrement via {@link MoveSlot}, faint checks), and returns
+ * a {@link TurnResult}.
+ *
+ * <p>This class is pure game logic — it never touches the database.
+ * {@link BattleService} handles persistence before and after calling this class.</p>
+ *
+ * @see BattleAction
+ * @see TurnResult
+ */
 public class TurnManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TurnManager.class);
@@ -65,14 +77,14 @@ public class TurnManager {
         if (defenderFainted) {
             // Check if the trainer with the fainted Pokémon has any remaining Pokémon to switch in
             Trainer defendingTrainer = (firstAction == trainer1Action) ? secondAction.trainer() : firstAction.trainer();
-            if (!defendingTrainer.getTeam().isEmpty()) {
+            if (defendingTrainer.getTeam().getTeamSize() > 0) {
                 // If they have Pokémon left, the battle continues and they will switch in a new Pokémon on their next turn
-                LOGGER.info("{} has fainted! {} has {} Pokémon left to switch in.", defender.getNickname(), defendingTrainer.getName(), defendingTrainer.getTeam().size());
+                LOGGER.info("{} has fainted! {} has {} Pokémon left to switch in.", defender.getNickname(), defendingTrainer.getTrainerName(), defendingTrainer.getTeam().getTeamSize());
             } else {
                 // If they have no Pokémon left, the battle is over and the other trainer wins
                 battleOver = true;
                 winner = (firstAction == trainer1Action) ? firstAction.trainer() : secondAction.trainer();
-                LOGGER.info("{} has fainted and {} has no Pokémon left to switch in! {} wins the battle!", defender.getNickname(), defendingTrainer.getName(), winner.getName());
+                LOGGER.info("{} has fainted and {} has no Pokémon left to switch in! {} wins the battle!", defender.getNickname(), defendingTrainer.getTrainerName(), winner.getTrainerName());
             }
         }
         // Resolve second action only if defender is still alive
@@ -181,8 +193,13 @@ public class TurnManager {
     public static void resolveSwitch(SwitchAction action) {
         Trainer trainer = action.getTrainer();
         Pokemon newPokemon = action.getSwitchPokemon();
-        trainer.setActivePokemon(newPokemon);
-        LOGGER.info("{} switched to {}!", trainer.getName(), newPokemon.getNickname());
+        Team team = trainer.getTeam();
+        if (newPokemon == null) {
+            LOGGER.error("{} attempted to switch, but the team slot was empty!", trainer.getTrainerName());
+            return; // Handle invalid switch attempt (e.g., skip turn, prompt for a valid switch, etc.)
+        }
+        team.setTeamSlotOne(newPokemon);
+        LOGGER.info("{} switched to {}!", trainer.getTrainerName(), newPokemon.getNickname());
     }
 
     // Deal Damage

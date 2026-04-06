@@ -20,6 +20,7 @@ import java.util.List;
 */
 
 import pokemonGame.Pokemon;
+import pokemonGame.Team;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pokemonGame.Trainer;
@@ -78,7 +79,7 @@ public class TeamCRUD {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, trainerId);
                 pstmt.setInt(2, team_id);
-
+ 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         int slotCount = rs.getInt("slot_count");
@@ -124,7 +125,7 @@ public class TeamCRUD {
         }
     }
 
-    public List<Pokemon> getDBTeamForTrainer(int trainerDbId, int teamId) {
+    public Team getDBTeamForTrainer(int trainerDbId, int teamId) {
         List<Pokemon> team = new ArrayList<>();
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT p.* FROM pokemon_instances p "
@@ -144,8 +145,8 @@ public class TeamCRUD {
                         Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainer);
                         
                         LOGGER.info("Mapped Pokemon for trainer ID {}: instance_id={}, species={}, level={}", 
-                                trainerDbId, pokemon.getId(), pokemon.getSpecies().getDisplayName(), pokemon.getLevel());
-                        LOGGER.info("Current HP is {} for Pokemon with instance_id {} in trainer ID {}'s team.", pokemon.getCurrentHP(), pokemon.getId(), trainerDbId);
+                                trainerDbId, pokemon.getPokemonDbId(), pokemon.getSpecies().getDisplayName(), pokemon.getLevel());
+                        LOGGER.info("Current HP is {} for Pokemon with instance_id {} in trainer ID {}'s team.", pokemon.getCurrentHP(), pokemon.getPokemonDbId(), trainerDbId);
                         team.add(pokemon);
                     }
                 }
@@ -153,7 +154,9 @@ public class TeamCRUD {
         } catch (SQLException e) {
             LOGGER.error("Error retrieving team for trainer ID {}: {}", trainerDbId, e.getMessage(), e);
         }
-        return team;
+        Team resultTeam = new Team("Loaded Team");
+        resultTeam.setPokemonList(team);
+        return resultTeam;
     }
 
     public Pokemon getPokemonInSlotForTrainer(int trainerDbId, int teamId, int slotIndex) {
@@ -292,5 +295,76 @@ public class TeamCRUD {
             LOGGER.error("Error creating team '{}' for trainer ID {}: {}", teamName, trainerId, e.getMessage(), e);
         }
         return -1; // Return -1 to indicate an error occurred
+    }
+
+    public int getActiveTeamIdForTrainer(int trainerId) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT team_id FROM trainer_teams WHERE trainer_id = ? ORDER BY team_id LIMIT 1"; // Assuming the first team is the active one
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainerId);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        int teamId = rs.getInt("team_id");
+                        LOGGER.info("Retrieved active team ID {} for trainer ID {}.", teamId, trainerId);
+                        return teamId; // Return the active team ID
+                    } else {
+                        LOGGER.warn("No active team found for trainer ID {}.", trainerId);
+                        return -1; // Return -1 to indicate no active team found
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving active team ID for trainer ID {}: {}", trainerId, e.getMessage(), e);
+            return -1; // Return -1 to indicate an error occurred
+        }
+    }
+
+    public List<String> getTeamNamesForTrainer(int trainerId) {
+        List<String> teamNames = new ArrayList<>();
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT DISTINCT team_name FROM trainer_teams WHERE trainer_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainerId);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        String teamName = rs.getString("team_name");
+                        LOGGER.info("Found team name '{}' for trainer ID {}.", teamName, trainerId);
+                        teamNames.add(teamName); // Add the team name to the list
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving team names for trainer ID {}: {}", trainerId, e.getMessage(), e);
+        }
+        return teamNames; // Return the list of team names (empty if none found or an error occurred)
+    }
+
+    public Team getTeamByNameForTrainer(int trainerId, String teamName) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT team_id FROM trainer_teams WHERE trainer_id = ? AND team_name = ? LIMIT 1";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainerId);
+                pstmt.setString(2, teamName);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        int teamId = rs.getInt("team_id");
+                        LOGGER.info("Retrieved team ID {} for team name '{}' and trainer ID {}.", teamId, teamName, trainerId);
+                        return getDBTeamForTrainer(trainerId, teamId); // Return the Team object for the found team ID
+                    } else {
+                        LOGGER.warn("No team found with name '{}' for trainer ID {}.", teamName, trainerId);
+                        return null; // Return null to indicate no team found
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving team by name '{}' for trainer ID {}: {}", teamName, trainerId, e.getMessage(), e);
+            return null; // Return null to indicate an error occurred
+        }
     }
 }

@@ -1,5 +1,13 @@
 package pokemonGame;
 
+/**
+ * A player's choice to use a move during a battle turn.
+ * Immutable record — captures the trainer, their active Pokémon, and which
+ * move slot (0–3) was selected.
+ *
+ * @see BattleAction
+ * @see SwitchAction
+ */
 public record MoveAction(Trainer trainer, Pokemon pokemon, int moveSlotIndex) implements BattleAction {
 
     public int getMoveSlotIndex() {

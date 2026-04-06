@@ -3,6 +3,17 @@ package pokemonGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Calculates derived stats (HP, Attack, Defense, Sp.Atk, Sp.Def, Speed) from
+ * base stats, IVs, EVs, level, and nature using the Gen III+ formula.
+ * All methods are static — no instance state.
+ *
+ * <p>HP formula: {@code ((2*base + IV + EV/4) * level / 100) + level + 10}<br>
+ * Other stats: {@code (((2*base + IV + EV/4) * level / 100) + 5) * natureModifier}</p>
+ *
+ * @see EvManager
+ * @see Natures
+ */
 public class StatCalculator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatCalculator.class);

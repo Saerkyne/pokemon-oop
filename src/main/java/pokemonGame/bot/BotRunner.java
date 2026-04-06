@@ -41,19 +41,22 @@ public class BotRunner {
                     .setIntegrationTypes(IntegrationType.ALL)
                     .addOption(OptionType.STRING, "name", "The name of the trainer", true, true))
                 
-                .addCommands(Commands.slash("checkteam", "Checks the trainer's current team")
+                .addCommands(Commands.slash("checkteam", "Checks the trainer's team makeup")
                     .setContexts(InteractionContextType.ALL)
-                    .setIntegrationTypes(IntegrationType.ALL))
+                    .setIntegrationTypes(IntegrationType.ALL)
+                    .addOption(OptionType.STRING, "team", "Required, specify team name", true, true))
             
                 .addCommands(Commands.slash("addpokemon", "Adds a Pokémon to your team")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
+                    .addOption(OptionType.STRING, "team", "The team to add the Pokémon to", true, true)
                     .addOption(OptionType.STRING, "species", "The name of the Pokémon to add (Gen 1 only currently)", true, true)
                     .addOption(OptionType.STRING, "nickname", "The nickname for the Pokémon (optional)", false))
         
                 .addCommands(Commands.slash("releasepokemon", "Releases a Pokémon from your team")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
+                    .addOption(OptionType.STRING, "team", "The team the Pokémon belongs to", true, true)
                     .addOption(OptionType.STRING, "pokemon", "The nickname (or species, if not nicknamed) of the Pokémon to release", true, true))
     
                 .addCommands(Commands.slash("cleardatabase", "Clears all data from the database (trainers, teams, and Pokémon)")
@@ -65,6 +68,7 @@ public class BotRunner {
                 .addCommands(Commands.slash("startbattle", "Starts a battle with another trainer (not implemented yet)")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
+                    .addOption(OptionType.STRING, "team", "The team you want to battle with", true, true)
                     .addOption(OptionType.USER, "opponent", "The trainer you want to battle", true))
                 
                 .addCommands(Commands.slash("createteam", "Creates a new team for your trainer")

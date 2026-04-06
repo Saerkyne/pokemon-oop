@@ -7,9 +7,16 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.Set;
 
-// NEEDS TO BE UPDATE TO USE ENUM INSTEAD OF STRING FOR SPECIES.
-// NO LONGER NEEDS TO SCAN FOR CLASSES, JUST MAP ENUM VALUES TO CONSTRUCTORS IN A STATIC BLOCK.
-
+/**
+ * Factory for creating {@link Pokemon} instances from species names or
+ * {@link PokeSpecies} enum values. Maintains a static registry mapping
+ * species display names to constructor references.
+ *
+ * <p>Usage: {@code PokemonFactory.createPokemonFromRegistry(PokeSpecies.BULBASAUR, "Bulby")}</p>
+ *
+ * @see PokeSpecies
+ * @see Pokemon
+ */
 public class PokemonFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PokemonFactory.class);

@@ -13,13 +13,30 @@ import pokemonGame.TypeChart.Type;
 import pokemonGame.TypeChart.Category;
 import pokemonGame.TypeChart.StatusCondition;
 
+/**
+ * Represents a single Pokémon instance with species data, individual stats
+ * (IVs, EVs, nature), a moveset of up to 4 {@link MoveSlot}s, and mutable
+ * battle state (current HP, faint flag). Species subclasses in
+ * {@code pokemonGame.mons} extend this class and provide base stats and
+ * learnsets.
+ *
+ * <p>Derived stats (currentAttack, maxHP, etc.) are recalculated via
+ * {@link StatCalculator} whenever base inputs change — they are never
+ * stored in the database.</p>
+ *
+ * @see PokeSpecies
+ * @see StatCalculator
+ * @see Natures
+ */
 public class Pokemon {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pokemon.class);
 
     // Initialize attributes for all Pokemon
     private Trainer trainer; // This is the trainer that this Pokemon belongs to; it is set when the Pokemon is added to a trainer's team
-    private int id; // This can be used to link the Pokémon to the database record
+    private int pokemonDbId; // This can be used to link the Pokémon to the database record
+    private int currentTeamId; // This can be used to link the Pokémon to a specific team in the database, if needed
+    private int currentTeamSlotIndex; // This can be used to track which slot (1-6) the Pokémon is currently occupying in the team, if needed
     private PokeSpecies species;
     private String nickname;
     private int dexIndex;
@@ -177,8 +194,8 @@ public class Pokemon {
         return dexIndex;
     }
 
-    public int getId() {
-        return id;
+    public int getPokemonDbId() {
+        return pokemonDbId;
     }
 
     public Set<StatusCondition> getStatusConditions() {
@@ -294,7 +311,15 @@ public class Pokemon {
             LOGGER.warn("Attempted to get trainer DB ID for Pokémon with no trainer assigned. Throwing exception.");
             throw new IllegalStateException("Trainer not assigned to this Pokemon yet.");
         }
-        return trainer.getDbId();
+        return trainer.getTrainerDbId();
+    }
+
+    public int getCurrentTeamId() {
+        return currentTeamId;
+    }
+
+    public int getCurrentTeamSlotIndex() {
+        return currentTeamSlotIndex;
     }
 
     // Special Methods to get the appropriate attack or defense stat based on the move's category (Physical, Special, or Status)
@@ -348,8 +373,8 @@ public class Pokemon {
         this.trainer = trainer;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setPokemonDbId(int pokemonDbId) {
+        this.pokemonDbId = pokemonDbId;
     }
 
     public void setNickname(String nickname) {
@@ -490,6 +515,14 @@ public class Pokemon {
     public void addExp(int exp) {
         this.currentExp += exp;
         // Placeholder for level up logic when currentExp exceeds the threshold for the next level
+    }
+
+    public void setCurrentTeamId(int currentTeamId) {
+        this.currentTeamId = currentTeamId;
+    }
+
+    public void setCurrentTeamSlotIndex(int currentTeamSlotIndex) {
+        this.currentTeamSlotIndex = currentTeamSlotIndex;
     }
 
     

@@ -6,6 +6,7 @@ import pokemonGame.PokemonFactory;
 import pokemonGame.db.TeamCRUD;
 import pokemonGame.db.TrainerCRUD;
 import pokemonGame.Trainer;
+import pokemonGame.Team;
 import java.util.Collections;
 
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -88,12 +89,33 @@ public class AutoCompleteBot extends ListenerAdapter {
                 event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
                 return;
             }
-
-
+            Team trainerTeam = teamCRUD.getDBTeamForTrainer(releasingTrainer.getTrainerDbId(), releasingTrainer.getTeam().getTeamDbId());
+            if (trainerTeam == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No team found, return empty choices
+                return;
+            }
             
-            List<Command.Choice> options = teamCRUD.getDBTeamForTrainer(releasingTrainer.getDbId()).stream()
+            List<Command.Choice> options = trainerTeam.getPokemonList().stream()
                 .filter(choice -> choice.getNickname().toLowerCase().startsWith(userInput))
                 .map(choice -> new Command.Choice(choice.getNickname(), choice.getNickname()))
+                .collect(Collectors.toList());
+            event.replyChoices(options).queue();
+        }
+
+        if (event.getName().equals("checkteam") && event.getFocusedOption().getName().equals("team")) {
+            String userInput = event.getFocusedOption().getValue().toLowerCase();
+            Long discordId = event.getUser().getIdLong();
+            TrainerCRUD trainerCRUD = new TrainerCRUD();
+            TeamCRUD teamCRUD = new TeamCRUD();
+            Trainer trainer = trainerCRUD.getTrainerByDiscordId(discordId);
+            if (trainer == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
+                return;
+            }
+            
+            List<Command.Choice> options = teamCRUD.getTeamNamesForTrainer(trainer.getTrainerDbId()).stream()
+                .filter(teamName -> teamName.toLowerCase().startsWith(userInput))
+                .map(teamName -> new Command.Choice(teamName, teamName))
                 .collect(Collectors.toList());
             event.replyChoices(options).queue();
         }

@@ -15,6 +15,19 @@ import java.util.List;
  * passes both the Battle and the live objects to TurnManager. Battle is the
  * persistence-friendly state container; TurnManager works with the live domain objects.
  */
+
+/**
+ * Persistence-friendly state container for a battle between two trainers.
+ * Stores database IDs for participants, active Pokémon, team references,
+ * status, and turn count. Maps directly to the {@code battles} table.
+ *
+ * <p>This class holds IDs, not live domain objects. {@link BattleService}
+ * hydrates the corresponding {@link Trainer} and {@link Pokemon} objects
+ * before passing them to {@link TurnManager} for turn resolution.</p>
+ *
+ * @see BattleService
+ * @see TurnManager
+ */
 public class Battle {
     private static final Logger LOGGER = LoggerFactory.getLogger(Battle.class);
 
@@ -113,8 +126,8 @@ public class Battle {
     }
 
     public List<Pokemon> getAllRemainingPokemon(Trainer trainer) {
-        LOGGER.info("Getting all remaining Pokemon for trainer: {}", trainer.getName());
-        return trainer.getTeam().stream()
+        LOGGER.info("Getting all remaining Pokemon for trainer: {}", trainer.getTrainerName());
+        return trainer.getTeam().getPokemonList().stream()
             .filter(p -> !p.getIsFainted())
             .toList();
     }

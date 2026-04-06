@@ -2,6 +2,14 @@ package pokemonGame;
 
 import pokemonGame.db.BattleCRUD;
 
+/**
+ * Orchestrates battle lifecycle: creating challenges, validating participants,
+ * buffering asynchronous move submissions, delegating turn resolution to
+ * {@link TurnManager}, and persisting state changes via the DAO layer.
+ *
+ * @see Battle
+ * @see TurnManager
+ */
 public class BattleService {
 
     public static BattleAction createActionFromDbRow(int trainerId, String actionType, int moveSlotIndex, int switchPokemonId) {
@@ -30,7 +38,7 @@ public class BattleService {
         return pokemon.getCurrentHP() <= 0;
     }  
 
-    public static boolean createBattle(int trainer1Id, int trainer2Id) {
+    public static boolean createBattle(int trainer1Id, int trainer2Id, int trainer1TeamId, int trainer2TeamId) {
         // Implementation to create a new battle in the database and return the battle ID
         // We need to check for an existing active battle for this trainer matchup
 
@@ -42,7 +50,27 @@ public class BattleService {
         }
 
         // Create a new battle and set its status to "Pending" until both trainers have submitted their teams and are ready to start
-        battleCrud.createBattle(trainer1Id, trainer2Id, "PENDING");
+        battleCrud.createBattle(trainer1Id, trainer2Id, "PENDING", trainer1TeamId, trainer2TeamId);
+        return true;
+
+        // Issue a challenge to the opponent trainer (e.g., via Discord DM or in-app notification)
+
+        
+    }
+
+    public static boolean createChallenge(int challengerTrainerId, int opponentTrainerId) {
+        // Implementation to create a new battle challenge in the database and return the battle ID
+        // We need to check for an existing active battle for this trainer matchup
+
+        
+        BattleCRUD battleCrud = new BattleCRUD();
+        if (battleCrud.getActiveBattleForTrainerMatchup(challengerTrainerId, opponentTrainerId) != null) {
+            // There is already an active battle for this trainer matchup
+            return false;
+        }
+
+        // Create a new battle with status "Pending" until both trainers have accepted the challenge and submitted their teams
+        battleCrud.createBattle(challengerTrainerId, opponentTrainerId, "PENDING", -1, -1);
         return true;
 
         // Issue a challenge to the opponent trainer (e.g., via Discord DM or in-app notification)

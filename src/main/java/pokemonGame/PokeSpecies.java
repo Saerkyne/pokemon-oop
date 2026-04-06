@@ -7,6 +7,13 @@ import pokemonGame.mons.*;
 
 
 
+/**
+ * Enum of all 151 Gen 1 Pokémon species. Each entry holds a display name
+ * and a constructor reference for creating a {@link Pokemon} instance of
+ * that species via {@link PokemonFactory}.
+ *
+ * @see PokemonFactory
+ */
 public enum PokeSpecies {
     ABRA("Abra", "Abra", Abra::new),
     AERODACTYL("Aerodactyl", "Aerodactyl", Aerodactyl::new),

@@ -171,8 +171,9 @@ class BattleTest {
     @Disabled("Pending change to check direct access instead of method call")
     @Test
     void fasterPokemonTrainerGoesFirst() {
-        player.addPokemonToTeam(fastPokemon);
-        opponent.addPokemonToTeam(slowPokemon);
+        TeamService teamService = new TeamService();
+        teamService.addPokemonToTeam(player.getTeam(), fastPokemon);
+        teamService.addPokemonToTeam(opponent.getTeam(), slowPokemon);
 
         // Precondition check: confirm the speed values are set up as expected
         assertTrue(fastPokemon.getCurrentSpeed() > slowPokemon.getCurrentSpeed(),
@@ -192,8 +193,9 @@ class BattleTest {
     @Disabled("Pending change to check direct access instead of method call")
     @Test
     void slowerPokemonTrainerGoesSecond() {
-        player.addPokemonToTeam(slowPokemon);
-        opponent.addPokemonToTeam(fastPokemon);
+        TeamService teamService = new TeamService();
+        teamService.addPokemonToTeam(player.getTeam(), slowPokemon);
+        teamService.addPokemonToTeam(opponent.getTeam(), fastPokemon);
 
         // Precondition check: confirm the speed values are set up as expected
         assertTrue(fastPokemon.getCurrentSpeed() > slowPokemon.getCurrentSpeed(),
@@ -220,8 +222,9 @@ class BattleTest {
         abra1.setCurrentSpeed(100);
         abra2.setCurrentSpeed(100);
 
-        player.addPokemonToTeam(abra1);
-        opponent.addPokemonToTeam(abra2);
+        TeamService teamService = new TeamService();
+        teamService.addPokemonToTeam(player.getTeam(), abra1);
+        teamService.addPokemonToTeam(opponent.getTeam(), abra2);
 
         // Run multiple times — result should always be one of the two trainers
         for (int i = 0; i < 20; i++) {
@@ -252,8 +255,9 @@ class BattleTest {
         abra1.setCurrentSpeed(100);
         abra2.setCurrentSpeed(100);
 
-        player.addPokemonToTeam(abra1);
-        opponent.addPokemonToTeam(abra2);
+        TeamService teamService = new TeamService();
+        teamService.addPokemonToTeam(player.getTeam(), abra1);
+        teamService.addPokemonToTeam(opponent.getTeam(), abra2);
 
         boolean playerFirst = false;
         boolean opponentFirst = false;
@@ -607,11 +611,12 @@ class BattleTest {
         slow2.setLevel(50);
 
         // Player's lead is slow, but has a fast bench Pokémon
-        player.addPokemonToTeam(slow1);
-        player.addPokemonToTeam(fast1);
+        TeamService teamService = new TeamService();
+        teamService.addPokemonToTeam(player.getTeam(), slow1);
+        teamService.addPokemonToTeam(player.getTeam(), fast1);
         // Opponent's lead is fast, but has a slow bench Pokémon
-        opponent.addPokemonToTeam(fast2);
-        opponent.addPokemonToTeam(slow2);
+        teamService.addPokemonToTeam(opponent.getTeam(), fast2);
+        teamService.addPokemonToTeam(opponent.getTeam(), slow2);
 
         // Opponent should go first because their lead Pokémon is faster
         BattleAction first = TurnManager.getFirstAction(

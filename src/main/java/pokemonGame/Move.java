@@ -2,6 +2,17 @@ package pokemonGame;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.TypeChart.Category;
 
+/**
+ * Abstract base class for all Pokémon moves. Each concrete subclass (in
+ * {@code pokemonGame.moves}) represents one move and passes its fixed stats
+ * (name, power, type, category, accuracy, PP) to this constructor.
+ *
+ * <p>Move objects are immutable game-rule data. Per-instance PP tracking
+ * is handled by {@link MoveSlot}.</p>
+ *
+ * @see MoveSlot
+ * @see Attack
+ */
 public abstract class Move {
     private String moveName;
     private int movePower;

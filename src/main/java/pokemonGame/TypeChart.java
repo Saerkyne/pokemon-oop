@@ -2,6 +2,15 @@ package pokemonGame;
 import java.util.Map;
 import java.util.HashMap;
 
+/**
+ * 18×18 type effectiveness matrix and related enums ({@link Type},
+ * {@link Category}, {@link StatusCondition}). All data is static and
+ * immutable — lookups are array-indexed for speed.
+ *
+ * <p>The matrix is indexed by {@link Type#ordinal()}: row = attacking type,
+ * column = defending type. Values are float multipliers
+ * (0, 0.5, 1, or 2).</p>
+ */
 public final class TypeChart {
 
     private TypeChart() {} // Utility class — prevent instantiation

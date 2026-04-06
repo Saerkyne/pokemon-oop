@@ -5,6 +5,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Wraps a {@link Move} with mutable PP tracking. Each Pokémon's moveset is
+ * a list of up to 4 MoveSlots. The underlying Move is immutable (game-rule
+ * data); the MoveSlot tracks per-instance PP consumption.
+ *
+ * @see Move
+ * @see Pokemon
+ */
 public class MoveSlot {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MoveSlot.class);

@@ -3,6 +3,16 @@ package pokemonGame;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Associates a {@link Move} with how and when a Pokémon can learn it.
+ * Each species' learnset is a list of LearnsetEntry objects defined in
+ * the species subclass. The {@link Source} enum indicates the learning
+ * method (level-up, TM, etc.) and the parameter holds the detail
+ * (level number, TM number).
+ *
+ * @see Move
+ * @see Pokemon
+ */
 public class LearnsetEntry {
     // Egg and Tutor moves don't exist in Gen 1, but we can still use the same
     //  class to represent them for future generations if added.

@@ -14,6 +14,8 @@ class TrainerTest {
     @BeforeEach
     void setUp() {
         trainer = new Trainer("Ash");
+        Team team = new Team("Ash's Team");
+        trainer.setTeam(team);
     }
 
     /*
@@ -25,7 +27,7 @@ class TrainerTest {
      */
     @Test
     void trainerHasCorrectName() {
-        assertEquals("Ash", trainer.getName());
+        assertEquals("Ash", trainer.getTrainerName());
     }
 
     /*
@@ -36,7 +38,7 @@ class TrainerTest {
      */
     @Test
     void newTrainerHasEmptyTeam() {
-        assertTrue(trainer.getTeam().isEmpty());
+        assertTrue(trainer.getTeam().getPokemonList().isEmpty());
     }
 
     /*
@@ -49,8 +51,9 @@ class TrainerTest {
      */
     @Test
     void addPokemonIncreasesTeamSize() {
-        trainer.addPokemonToTeam(new Abra("Abra"));
-        assertEquals(1, trainer.getTeam().size());
+        TeamService teamService = new TeamService();
+        teamService.addPokemonToTeam(trainer.getTeam(), new Abra("Abra"));
+        assertEquals(1, trainer.getTeam().getTeamSize());
     }
 
     /*
@@ -62,10 +65,11 @@ class TrainerTest {
      */
     @Test
     void canAddUpToSixPokemon() {
+        TeamService teamService = new TeamService();
         for (int i = 1; i <= 6; i++) {
-            trainer.addPokemonToTeam(new Abra("Abra " + i));
+            teamService.addPokemonToTeam(trainer.getTeam(), new Abra("Abra " + i));
         }
-        assertEquals(6, trainer.getTeam().size());
+        assertEquals(6, trainer.getTeam().getTeamSize());
     }
 
     /*
@@ -79,11 +83,12 @@ class TrainerTest {
      */
     @Test
     void cannotAddSeventhPokemon() {
+        TeamService teamService = new TeamService();
         for (int i = 1; i <= 6; i++) {
-            trainer.addPokemonToTeam(new Abra("Abra " + i));
+            teamService.addPokemonToTeam(trainer.getTeam(), new Abra("Abra " + i));
         }
-        trainer.addPokemonToTeam(new Abra("Too Many"));
-        assertEquals(6, trainer.getTeam().size(),
+        teamService.addPokemonToTeam(trainer.getTeam(), new Abra("Too Many"));
+        assertEquals(6, trainer.getTeam().getTeamSize(),
                 "Team should remain at 6 when trying to add a 7th Pokémon");
     }
 
@@ -95,8 +100,8 @@ class TrainerTest {
      */
     @Test
     void setNameUpdatesTrainerName() {
-        trainer.setName("Gary");
-        assertEquals("Gary", trainer.getName());
+        trainer.setTrainerName("Gary");
+        assertEquals("Gary", trainer.getTrainerName());
     }
 
     /*
@@ -110,8 +115,9 @@ class TrainerTest {
     @Test
     void addedPokemonIsRetrievable() {
         Pokemon abra = new Abra("My Abra");
-        trainer.addPokemonToTeam(abra);
-        assertSame(abra, trainer.getTeam().get(0),
+        TeamService teamService = new TeamService();
+        teamService.addPokemonToTeam(trainer.getTeam(), abra);
+        assertSame(abra, trainer.getTeam().getTeamSlot(0),
                 "The same Pokémon object should be retrievable from the team");
     }
 
@@ -129,13 +135,14 @@ class TrainerTest {
         Pokemon second = new Bulbasaur("Second");
         Pokemon third = new Abra("Third");
 
-        trainer.addPokemonToTeam(first);
-        trainer.addPokemonToTeam(second);
-        trainer.addPokemonToTeam(third);
+        TeamService teamService = new TeamService();
+        teamService.addPokemonToTeam(trainer.getTeam(), first);
+        teamService.addPokemonToTeam(trainer.getTeam(), second);
+        teamService.addPokemonToTeam(trainer.getTeam(), third);
 
-        assertSame(first, trainer.getTeam().get(0));
-        assertSame(second, trainer.getTeam().get(1));
-        assertSame(third, trainer.getTeam().get(2));
+        assertSame(first, trainer.getTeam().getTeamSlot(0));
+        assertSame(second, trainer.getTeam().getTeamSlot(1));
+        assertSame(third, trainer.getTeam().getTeamSlot(2));
     }
 
     /*
@@ -148,11 +155,12 @@ class TrainerTest {
      */
     @Test
     void canAddDifferentSpecies() {
-        trainer.addPokemonToTeam(new Abra("Abra"));
-        trainer.addPokemonToTeam(new Bulbasaur("Bulbasaur"));
-        assertEquals(2, trainer.getTeam().size());
-        assertEquals("Abra", trainer.getTeam().get(0).getNickname());
-        assertEquals("Bulbasaur", trainer.getTeam().get(1).getNickname());
+        TeamService teamService = new TeamService();
+        teamService.addPokemonToTeam(trainer.getTeam(), new Abra("Abra"));
+        teamService.addPokemonToTeam(trainer.getTeam(), new Bulbasaur("Bulbasaur"));
+        assertEquals(2, trainer.getTeam().getTeamSize());
+        assertEquals("Abra", trainer.getTeam().getTeamSlot(0).getNickname());
+        assertEquals("Bulbasaur", trainer.getTeam().getTeamSlot(1).getNickname());
     }
 
     /*
@@ -167,12 +175,13 @@ class TrainerTest {
     @Test
     void twoTrainersHaveIndependentTeams() {
         Trainer other = new Trainer("Gary");
-        trainer.addPokemonToTeam(new Abra("Ash's Abra"));
-        other.addPokemonToTeam(new Bulbasaur("Gary's Bulbasaur"));
+        TeamService teamService = new TeamService();
+        teamService.addPokemonToTeam(trainer.getTeam(), new Abra("Ash's Abra"));
+        teamService.addPokemonToTeam(other.getTeam(), new Bulbasaur("Gary's Bulbasaur"));
 
-        assertEquals(1, trainer.getTeam().size());
-        assertEquals(1, other.getTeam().size());
-        assertEquals("Ash's Abra", trainer.getTeam().get(0).getNickname());
-        assertEquals("Gary's Bulbasaur", other.getTeam().get(0).getNickname());
+        assertEquals(1, trainer.getTeam().getTeamSize());
+        assertEquals(1, other.getTeam().getTeamSize());
+        assertEquals("Ash's Abra", trainer.getTeam().getTeamSlot(0).getNickname());
+        assertEquals("Gary's Bulbasaur", other.getTeam().getTeamSlot(0).getNickname());
     }
 }

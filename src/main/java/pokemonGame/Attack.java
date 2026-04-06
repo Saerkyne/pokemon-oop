@@ -5,6 +5,14 @@ import org.slf4j.LoggerFactory;
 import pokemonGame.TypeChart.Type;
 import pokemonGame.TypeChart.Category;
 
+/**
+ * Stateless damage calculator. Handles accuracy checks, critical-hit rolls,
+ * type effectiveness (via {@link TypeChart}), STAB, and the random damage
+ * factor. All methods are static — there is no instance state.
+ *
+ * <p>The critical-hit formula is custom: base 4.17% chance, scaling up by
+ * 0.83% per point of speed advantage, capped at 15%.</p>
+ */
 public final class Attack {
 
     private Attack() {}

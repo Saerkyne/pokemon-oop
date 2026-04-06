@@ -234,4 +234,32 @@ public class TeamService {
         int slotCount = teamCRUD.checkSlotIndex(trainerId, teamId);
         return slotCount >= Team.MAX_TEAM_SIZE;
     }
+
+    public Team getTeamFromName(int trainerId, String teamName) {
+        return teamCRUD.getTeamByNameForTrainer(trainerId, teamName);
+    }
+
+    /**
+     * Returns a Pokemon object based on pokemon nickname, assuming nicknames are unique within a team.
+     * @param trainerId the trainer's database ID
+     * @param teamId the team's database ID
+     * @param nickname the nickname of the Pokemon to find
+     * @return the Pokemon object if found, or null if not found
+     */
+    public Pokemon getPokemonByNickname(int trainerId, int teamId, String nickname) {
+        Team loadedTeam = loadTeam(trainerId, teamId);
+        if (loadedTeam == null) {
+            LOGGER.warn("Team ID {} not found for trainer ID {} when searching for Pokémon by nickname.", teamId, trainerId);
+            return null;
+        }
+
+        for (Pokemon pokemon : loadedTeam.getPokemonList()) {
+            if (pokemon.getNickname().equalsIgnoreCase(nickname)) {
+                return pokemon;
+            }
+        }
+
+        LOGGER.warn("Pokémon with nickname '{}' not found in team ID {} for trainer ID {}.", nickname, teamId, trainerId);
+        return null;
+    }
 }

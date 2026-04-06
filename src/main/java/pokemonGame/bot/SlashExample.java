@@ -1,8 +1,5 @@
 package pokemonGame.bot;
 import pokemonGame.db.DatabaseSetup;
-import pokemonGame.db.PokemonCRUD;
-import pokemonGame.db.TeamCRUD;
-import pokemonGame.db.TrainerCRUD;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Team;
 import pokemonGame.model.Trainer;
@@ -11,7 +8,7 @@ import pokemonGame.service.TrainerService;
 import pokemonGame.species.PokeSpecies;
 import pokemonGame.species.PokemonFactory;
 import pokemonGame.core.StatCalculator;
-//   import pokemonGame.TeamService;
+import pokemonGame.service.TeamService;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -29,29 +26,8 @@ public class SlashExample extends ListenerAdapter{
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String user = event.getUser().getName();
         long userId = event.getUser().getIdLong();
-        TrainerCRUD trainerCRUD = new TrainerCRUD();
-        PokemonCRUD pokemonCRUD = new PokemonCRUD();
-        TeamCRUD teamCRUD = new TeamCRUD();
-        // TODO: Replace the three CRUD instantiations above with:
-        //   TrainerService trainerService = new TrainerService();
-        //   TeamService teamService = new TeamService();
-        // Then update each case below to call service methods instead of CRUD methods directly.
-        // For example:
-        //   trainerCRUD.getTrainerByDiscordId(userId)  →  trainerService.getTrainerByDiscordId(userId)
-        //   teamCRUD.createTeamForTrainer(...)          →  teamService.createTeam(...)
-        //   teamCRUD.getDBTeamForTrainer(...)            →  teamService.loadTeam(...)
-        //   teamCRUD.addPokemonToDBTeam(...)             →  teamService.addPokemonToTeam(team, pokemon)
-        //   teamCRUD.getSlotIndexForPokemon(...) + removePokemonFromDBTeam(...) + reorderTeamAfterRelease(...)
-        //       →  teamService.releasePokemon(team, pokemon)   (one call replaces three)
-        //   Trainer.createTrainer(...)                  →  trainerService.createTrainer(...)
-
-        /*
-        NOTICED ISSUE - USERS CAN HAVE MULTIPLE BATTLES WITH DIFFERENT PEOPLE AT THE SAME TIME
-        THERE IS NO LOGIC FOR KEEPING DIFFERENT TEAMS SEPARATE - IN FACT, EVERY USER CAN ONLY HAVE
-        ONE TEAM CURRENTLY. THIS MUST BE CHANGED TO ALLOW FOR MULTIPLE TEAMS PER USER,
-        AND THE TEAMS MUST BE LINKED TO SPECIFIC BATTLES, SO THAT USERS DON'T HAVE THE SAME POKEMON
-        INSTANCE FIGHTING IN TWO DIFFERENT BATTLES AT THE SAME TIME, WHICH CAUSES ALL KINDS OF ISSUES WITH HP TRACKING, ETC.
-        */
+        TeamService teamService = new TeamService();
+        TrainerService trainerService = new TrainerService();
 
 
 
@@ -69,19 +45,19 @@ public class SlashExample extends ListenerAdapter{
                 // The battle loop will be handled separately, and the battle state can be checked with the /battlestate command.
                 // If the attacking trainer doesn't have a team set up yet, we should reply with a 
                 // message telling them to set up their team first using /checkteam and /addpokemon.
-                Trainer attackingTrainer = trainerCRUD.getTrainerByDiscordId(userId);
+                Trainer attackingTrainer = trainerService.getTrainerByDiscordId(userId);
                 if (attackingTrainer == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
                 }
                 String challengerTeamName = event.getOption("team").getAsString();
-                Team challengerTeam = teamCRUD.getTeamByNameForTrainer(attackingTrainer.getTrainerDbId(), challengerTeamName);
+                Team challengerTeam = teamService.getTeamFromName(attackingTrainer.getTrainerDbId(), challengerTeamName);
                 if (challengerTeam == null) {
                     event.reply("You need to set up your team first using /checkteam and /addpokemon!").setEphemeral(true).queue();
                     return;
                 }
 
-                Trainer defendingTrainer = trainerCRUD.getTrainerByDiscordId(event.getOption("opponent").getAsUser().getIdLong());
+                Trainer defendingTrainer = trainerService.getTrainerByDiscordId(event.getOption("opponent").getAsUser().getIdLong());
                 if (defendingTrainer == null) {
                     event.reply("Your opponent needs to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
@@ -101,7 +77,6 @@ public class SlashExample extends ListenerAdapter{
             
             case "createtrainer":
                 LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("name").getAsString(), user, userId);
-                TrainerService trainerService = new TrainerService();
                 Trainer createAttempt = trainerService.createTrainer(event.getOption("name").getAsString(), userId, user);
 
                 if (createAttempt == null) {
@@ -114,13 +89,13 @@ public class SlashExample extends ListenerAdapter{
             
             case "createteam":
                 LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("teamname").getAsString(), user, userId);
-                Trainer teamCreator = trainerCRUD.getTrainerByDiscordId(userId);
+                Trainer teamCreator = trainerService.getTrainerByDiscordId(userId);
                 if (teamCreator == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
                 }
-                int teamCreateAttempt = teamCRUD.createTeamForTrainer(teamCreator.getTrainerDbId(), event.getOption("teamname").getAsString());
-                if (teamCreateAttempt == -1) {
+                Team teamCreateAttempt = teamService.createTeam(teamCreator.getTrainerDbId(), event.getOption("teamname").getAsString());
+                if (teamCreateAttempt == null) {
                     event.reply("Sorry, there was an error creating your team!").setEphemeral(true).queue();
                     return;
                 } else {
@@ -133,14 +108,14 @@ public class SlashExample extends ListenerAdapter{
 
                 String teamName = event.getOption("team").getAsString();
                 
-                Trainer trainer = trainerCRUD.getTrainerByDiscordId(userId);
+                Trainer trainer = trainerService.getTrainerByDiscordId(userId);
                 if (trainer == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
                 }
-                Team trainerTeam = teamCRUD.getTeamByNameForTrainer(trainer.getTrainerDbId(), teamName);
+                Team trainerTeam = teamService.getTeamFromName(trainer.getTrainerDbId(), teamName);
 
-                List<Pokemon> teamInfo = teamCRUD.getDBTeamForTrainer(trainer.getTrainerDbId(), trainerTeam.getTeamDbId()).getPokemonList();
+                List<Pokemon> teamInfo = trainerTeam.getPokemonList();
                 
 
                 if (!(trainerTeam.getTeamSize() > 0)) {
@@ -181,20 +156,18 @@ public class SlashExample extends ListenerAdapter{
                 String nickname = event.getOption("nickname") != null ? event.getOption("nickname").getAsString() : species.getDisplayName();
                 
                 
-                Trainer currentTrainer = trainerCRUD.getTrainerByDiscordId(userId);
+                Trainer currentTrainer = trainerService.getTrainerByDiscordId(userId);
                 if (currentTrainer == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
                 }
-                Team addTeam = teamCRUD.getTeamByNameForTrainer(currentTrainer.getTrainerDbId(), event.getOption("team").getAsString());
+                Team addTeam = teamService.getTeamFromName(currentTrainer.getTrainerDbId(), event.getOption("team").getAsString());
                 if (addTeam == null) {
                     event.reply("You need to create a team first using /createteam!").setEphemeral(true).queue();
                     return;
                 }
-                
-                
 
-                if (teamCRUD.checkSlotIndex(currentTrainer.getTrainerDbId(), addTeam.getTeamDbId()) >= 6) {
+                if (addTeam.isFull()) {
                     event.reply("Your team is full! Cannot add more Pokémon.").setEphemeral(true).queue();
                     return;
                 }
@@ -209,22 +182,17 @@ public class SlashExample extends ListenerAdapter{
                     StatCalculator.calculateAllStats(newPokemon);; // Recalculate stats based on level 50 for testing purposes
                     
 
-                    int pokemonId = pokemonCRUD.createDBPokemon(newPokemon);
-                    if (pokemonId == -1) {
+                    
+                    int slotIndex = teamService.addPokemonToTeam(addTeam, newPokemon);
+                    if (slotIndex == -1) {
                         event.reply("Sorry, there was an error adding that Pokémon to your team!").setEphemeral(true).queue();
                         return;
+                    } else if (slotIndex == -3) {
+                        event.reply("Your team is full! Cannot add more Pokémon.").setEphemeral(true).queue();
+                        return;
                     } else {
-                        int slotIndex = teamCRUD.addPokemonToDBTeam(currentTrainer.getTrainerDbId(), addTeam.getTeamDbId(), pokemonId);
-                        if (slotIndex == -1) {
-                            event.reply("Sorry, there was an error adding that Pokémon to your team!").setEphemeral(true).queue();
-                            return;
-                        } else if (slotIndex == -3) {
-                            event.reply("Your team is full! Cannot add more Pokémon.").setEphemeral(true).queue();
-                            return;
-                        } else {
-                            event.reply("Successfully added " + newPokemon.getNickname() + " to your team in slot " + (slotIndex + 1) + "!").queue();
-                            return;
-                        }
+                        event.reply("Successfully added " + newPokemon.getNickname() + " to your team in slot " + (slotIndex + 1) + "!").queue();
+                        return;
                     }
                 }
 
@@ -232,28 +200,28 @@ public class SlashExample extends ListenerAdapter{
                 LOGGER.info("Received slash command; '{}' with (nick)name: '{}' from user: {} (ID: {})", event.getName(), event.getOption("pokemon").getAsString(), user, userId);
                 String releasedPokemon = event.getOption("pokemon").getAsString();
                 
-                Trainer releasingTrainer = trainerCRUD.getTrainerByDiscordId(userId);
+                Trainer releasingTrainer = trainerService.getTrainerByDiscordId(userId);
                 if (releasingTrainer == null) {
                     event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
                     return;
                 }
                 
-
-                Pokemon pokemonToRelease = PokemonCRUD.getPokemonByNicknameAndTrainer(releasedPokemon, releasingTrainer);
-                if (pokemonToRelease == null) {
-                    event.reply("No Pokémon with that nickname found on your team! Make sure you entered the correct nickname.").setEphemeral(true).queue();
-                    return;
-                }
-                Team releaseTeam = teamCRUD.getTeamByNameForTrainer(releasingTrainer.getTrainerDbId(), event.getOption("team").getAsString());
+                Team releaseTeam = teamService.getTeamFromName(releasingTrainer.getTrainerDbId(), event.getOption("team").getAsString());
                 if (releaseTeam == null) {
                     event.reply("You need to create a team first using /createteam!").setEphemeral(true).queue();
                     return;
                 }
-                int slotToRelease = teamCRUD.getSlotIndexForPokemon(releasingTrainer.getTrainerDbId(), releaseTeam.getTeamDbId(), pokemonToRelease.getPokemonDbId());
-                boolean releaseSuccess = teamCRUD.removePokemonFromDBTeam(releasingTrainer.getTrainerDbId(), releaseTeam.getTeamDbId(), slotToRelease);
+
+                Pokemon pokemonToRelease = teamService.getPokemonByNickname(releasingTrainer.getTrainerDbId(), releaseTeam.getTeamDbId(), releasedPokemon);
+                if (pokemonToRelease == null) {
+                    event.reply("No Pokémon with that nickname found on your team! Make sure you entered the correct nickname.").setEphemeral(true).queue();
+                    return;
+                }
+                
+                
+                boolean releaseSuccess = teamService.releasePokemon(releaseTeam, pokemonToRelease);
                 if (releaseSuccess) {
-                    event.reply("Successfully released " + pokemonToRelease.getNickname() + " from slot " + (slotToRelease + 1) + " of your team!").queue();
-                    teamCRUD.reorderTeamAfterRelease(releasingTrainer.getTrainerDbId(), releaseTeam.getTeamDbId());
+                    event.reply("Successfully released " + pokemonToRelease.getNickname() + " from slot " + (pokemonToRelease.getCurrentTeamSlotIndex() + 1) + " of your team!").queue();
                     return;
                 } else {
                     event.reply("Sorry, there was an error releasing that Pokémon from your team! Make sure you entered a valid slot index.").setEphemeral(true).queue();

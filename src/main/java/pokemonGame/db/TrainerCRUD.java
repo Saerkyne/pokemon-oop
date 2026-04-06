@@ -1,8 +1,10 @@
 package pokemonGame.db;
 import java.sql.*;
-import pokemonGame.Trainer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import pokemonGame.model.Trainer;
 
 public class TrainerCRUD {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerCRUD.class);

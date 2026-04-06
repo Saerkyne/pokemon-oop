@@ -1,9 +1,10 @@
 package pokemonGame.db;
 
-import pokemonGame.BattleAction;
-import pokemonGame.BattleService;
-import pokemonGame.MoveAction;
-import pokemonGame.SwitchAction;
+import pokemonGame.battle.BattleAction;
+import pokemonGame.battle.MoveAction;
+import pokemonGame.battle.SwitchAction;
+import pokemonGame.service.BattleService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;

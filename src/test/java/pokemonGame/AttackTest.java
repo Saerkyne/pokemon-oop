@@ -7,12 +7,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.provider.Arguments;
 
-import pokemonGame.mons.Abra;
-import pokemonGame.mons.Bulbasaur;
-import pokemonGame.mons.Electrode;
-import pokemonGame.mons.Slowbro;
+import pokemonGame.battle.Attack;
+import pokemonGame.core.StatCalculator;
+import pokemonGame.core.TypeChart.Type;
+import pokemonGame.model.Move;
+import pokemonGame.model.Pokemon;
 import pokemonGame.moves.*;
-import pokemonGame.TypeChart.Type;
+import pokemonGame.species.Abra;
+import pokemonGame.species.Bulbasaur;
+import pokemonGame.species.Electrode;
+import pokemonGame.species.Slowbro;
 
 class AttackTest {
 

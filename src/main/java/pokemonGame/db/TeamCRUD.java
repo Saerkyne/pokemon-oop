@@ -19,11 +19,12 @@ import java.util.List;
 * );
 */
 
-import pokemonGame.Pokemon;
-import pokemonGame.Team;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pokemonGame.Trainer;
+
+import pokemonGame.model.Pokemon;
+import pokemonGame.model.Team;
+import pokemonGame.model.Trainer;
 
 public class TeamCRUD {
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamCRUD.class);

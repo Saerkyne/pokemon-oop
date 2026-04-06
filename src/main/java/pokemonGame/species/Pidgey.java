@@ -1,0 +1,203 @@
+package pokemonGame.species;
+
+import pokemonGame.moves.*;
+import pokemonGame.core.Stat;
+import pokemonGame.core.StatCalculator;
+import pokemonGame.core.TypeChart.Type;
+import pokemonGame.model.LearnsetEntry;
+import pokemonGame.model.Pokemon;
+import pokemonGame.model.LearnsetEntry.Source;
+
+import java.util.List;
+
+public class Pidgey extends Pokemon {
+
+    private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
+    static {
+        // Level-up moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                Gust.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                SandAttack.INSTANCE,
+                Source.LEVEL,
+                5
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                QuickAttack.INSTANCE,
+                Source.LEVEL,
+                12
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Whirlwind.INSTANCE,
+                Source.LEVEL,
+                19
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                WingAttack.INSTANCE,
+                Source.LEVEL,
+                28
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Agility.INSTANCE,
+                Source.LEVEL,
+                36
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                MirrorMove.INSTANCE,
+                Source.LEVEL,
+                44
+            )
+        );
+
+        // HM moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                Fly.INSTANCE,
+                Source.HM,
+                2
+            )
+        );
+
+        // TM moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                RazorWind.INSTANCE,
+                Source.TM,
+                2
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Whirlwind.INSTANCE,
+                Source.TM,
+                4
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Toxic.INSTANCE,
+                Source.TM,
+                6
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                TakeDown.INSTANCE,
+                Source.TM,
+                9
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                DoubleEdge.INSTANCE,
+                Source.TM,
+                10
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Rage.INSTANCE,
+                Source.TM,
+                20
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Mimic.INSTANCE,
+                Source.TM,
+                31
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                DoubleTeam.INSTANCE,
+                Source.TM,
+                32
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Reflect.INSTANCE,
+                Source.TM,
+                33
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Bide.INSTANCE,
+                Source.TM,
+                34
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Swift.INSTANCE,
+                Source.TM,
+                39
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                SkyAttack.INSTANCE,
+                Source.TM,
+                43
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Rest.INSTANCE,
+                Source.TM,
+                44
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Substitute.INSTANCE,
+                Source.TM,
+                50
+            )
+        );
+    }
+
+    public Pidgey(String nickname) {
+        super(
+            PokeSpecies.PIDGEY,
+            16,
+            Type.NORMAL,
+            Type.FLYING,
+            5,
+            40,
+            45,
+            40,
+            35,
+            35,
+            56
+        );
+
+        this.setNickname(nickname);
+        this.setEvYield(Stat.SPEED, 1);
+        this.generateRandomIVs();
+        StatCalculator.calculateAllStats(this);
+    }
+
+    @Override
+    public List<LearnsetEntry> getLearnset() {
+        return LEARNSET;
+    }
+}

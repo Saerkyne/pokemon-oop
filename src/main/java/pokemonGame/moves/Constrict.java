@@ -1,7 +1,7 @@
 package pokemonGame.moves;
-import pokemonGame.Move;
-import pokemonGame.TypeChart.Type;
-import pokemonGame.TypeChart.Category;
+import pokemonGame.core.TypeChart.Category;
+import pokemonGame.core.TypeChart.Type;
+import pokemonGame.model.Move;
 
 public class Constrict extends Move {
     public static final Constrict INSTANCE = new Constrict();

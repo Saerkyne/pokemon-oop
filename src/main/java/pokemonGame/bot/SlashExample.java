@@ -1,16 +1,16 @@
 package pokemonGame.bot;
-import pokemonGame.Pokemon;
-import pokemonGame.PokemonFactory;
-import pokemonGame.StatCalculator;
-import pokemonGame.Trainer;
 import pokemonGame.db.DatabaseSetup;
 import pokemonGame.db.PokemonCRUD;
 import pokemonGame.db.TeamCRUD;
 import pokemonGame.db.TrainerCRUD;
-import pokemonGame.Team;
-import pokemonGame.TrainerService;
-// TODO: After service layer migration, replace the three DAO imports above with:
-//   import pokemonGame.TrainerService;
+import pokemonGame.model.Pokemon;
+import pokemonGame.model.Team;
+import pokemonGame.model.Trainer;
+import pokemonGame.service.BattleService;
+import pokemonGame.service.TrainerService;
+import pokemonGame.species.PokeSpecies;
+import pokemonGame.species.PokemonFactory;
+import pokemonGame.core.StatCalculator;
 //   import pokemonGame.TeamService;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.Permission;
@@ -20,9 +20,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import pokemonGame.BattleService;
-import pokemonGame.PokeSpecies;
 
 public class SlashExample extends ListenerAdapter{
 

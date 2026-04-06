@@ -1,11 +1,16 @@
 package pokemonGame;
 
 import org.junit.jupiter.api.Test;
+
+import pokemonGame.model.Pokemon;
+import pokemonGame.model.Team;
+import pokemonGame.model.Trainer;
+import pokemonGame.service.TeamService;
+import pokemonGame.species.Abra;
+import pokemonGame.species.Bulbasaur;
+
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
-
-import pokemonGame.mons.Abra;
-import pokemonGame.mons.Bulbasaur;
 
 class TrainerTest {
 

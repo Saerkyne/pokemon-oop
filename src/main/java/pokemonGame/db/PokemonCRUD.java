@@ -14,17 +14,18 @@
 // should be kept in the code, not the database.   
 
 package pokemonGame.db;
-import pokemonGame.Pokemon;
-import pokemonGame.PokemonFactory;
-import pokemonGame.StatCalculator;
-import pokemonGame.EvManager;
-import pokemonGame.Natures;
-import pokemonGame.Trainer;
+import pokemonGame.core.EvManager;
+import pokemonGame.core.Natures;
+import pokemonGame.core.Stat;
+import pokemonGame.core.StatCalculator;
+import pokemonGame.model.Pokemon;
+import pokemonGame.model.Trainer;
+import pokemonGame.species.PokeSpecies;
+import pokemonGame.species.PokemonFactory;
+
 import java.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pokemonGame.PokeSpecies;
-import pokemonGame.Stat;
 
 public class PokemonCRUD {
 

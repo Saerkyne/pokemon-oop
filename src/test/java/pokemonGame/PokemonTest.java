@@ -4,15 +4,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-import pokemonGame.mons.Abra;
-import pokemonGame.mons.Bulbasaur;
+import pokemonGame.core.EvManager;
+import pokemonGame.core.Natures;
+import pokemonGame.core.Stat;
+import pokemonGame.core.StatCalculator;
+import pokemonGame.core.TypeChart.Category;
+import pokemonGame.core.TypeChart.Type;
+import pokemonGame.model.Move;
+import pokemonGame.model.Pokemon;
 import pokemonGame.moves.Psychic;
 import pokemonGame.moves.Teleport;
 import pokemonGame.moves.MegaPunch;
 import pokemonGame.moves.MegaKick;
 import pokemonGame.moves.Toxic;
-import pokemonGame.TypeChart.Category;
-import pokemonGame.TypeChart.Type;
+import pokemonGame.species.Abra;
+import pokemonGame.species.Bulbasaur;
+import pokemonGame.species.PokeSpecies;
 
 class PokemonTest {
 

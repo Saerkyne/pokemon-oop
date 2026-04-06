@@ -1,0 +1,196 @@
+package pokemonGame.species;
+
+import pokemonGame.moves.*;
+import pokemonGame.core.Stat;
+import pokemonGame.core.StatCalculator;
+import pokemonGame.core.TypeChart.Type;
+import pokemonGame.model.LearnsetEntry;
+import pokemonGame.model.Pokemon;
+import pokemonGame.model.LearnsetEntry.Source;
+
+import java.util.List;
+
+public class Oddish extends Pokemon {
+
+    private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
+    static {
+        // Level-up moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                Absorb.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                PoisonPowder.INSTANCE,
+                Source.LEVEL,
+                15
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                StunSpore.INSTANCE,
+                Source.LEVEL,
+                17
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                SleepPowder.INSTANCE,
+                Source.LEVEL,
+                19
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Acid.INSTANCE,
+                Source.LEVEL,
+                24
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                PetalDance.INSTANCE,
+                Source.LEVEL,
+                33
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                SolarBeam.INSTANCE,
+                Source.LEVEL,
+                46
+            )
+        );
+
+        // HM moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                Cut.INSTANCE,
+                Source.HM,
+                1
+            )
+        );
+
+        // TM moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                SwordsDance.INSTANCE,
+                Source.TM,
+                3
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Toxic.INSTANCE,
+                Source.TM,
+                6
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                TakeDown.INSTANCE,
+                Source.TM,
+                9
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                DoubleEdge.INSTANCE,
+                Source.TM,
+                10
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Rage.INSTANCE,
+                Source.TM,
+                20
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                MegaDrain.INSTANCE,
+                Source.TM,
+                21
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                SolarBeam.INSTANCE,
+                Source.TM,
+                22
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Mimic.INSTANCE,
+                Source.TM,
+                31
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                DoubleTeam.INSTANCE,
+                Source.TM,
+                32
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Reflect.INSTANCE,
+                Source.TM,
+                33
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Bide.INSTANCE,
+                Source.TM,
+                34
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Rest.INSTANCE,
+                Source.TM,
+                44
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Substitute.INSTANCE,
+                Source.TM,
+                50
+            )
+        );
+    }
+
+    public Oddish(String nickname) {
+        super(
+            PokeSpecies.ODDISH,
+            43,
+            Type.GRASS,
+            Type.POISON,
+            5,
+            45,
+            50,
+            55,
+            75,
+            65,
+            30
+        );
+
+        this.setNickname(nickname);
+        this.setEvYield(Stat.SPECIAL_ATTACK, 1);
+        this.generateRandomIVs();
+        StatCalculator.calculateAllStats(this);
+    }
+
+    @Override
+    public List<LearnsetEntry> getLearnset() {
+        return LEARNSET;
+    }
+}

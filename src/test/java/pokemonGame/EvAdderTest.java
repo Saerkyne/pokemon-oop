@@ -4,7 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-import pokemonGame.mons.Abra;
+import pokemonGame.core.EvManager;
+import pokemonGame.core.Stat;
+import pokemonGame.model.Pokemon;
+import pokemonGame.species.Abra;
 
 /**
  * Unit tests for the EV adder methods on {@link Pokemon}.

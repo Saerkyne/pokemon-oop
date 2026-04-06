@@ -1,7 +1,7 @@
 package pokemonGame.moves;
-import pokemonGame.Move;
-import pokemonGame.TypeChart.Type;
-import pokemonGame.TypeChart.Category;
+import pokemonGame.core.TypeChart.Category;
+import pokemonGame.core.TypeChart.Type;
+import pokemonGame.model.Move;
 
 public class Absorb extends Move {
     // Flyweight singleton — Move objects are immutable, so one shared instance is safe.

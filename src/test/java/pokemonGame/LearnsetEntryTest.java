@@ -3,8 +3,12 @@ package pokemonGame;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import pokemonGame.mons.Abra;
+import pokemonGame.model.LearnsetEntry;
+import pokemonGame.model.Move;
+import pokemonGame.model.Pokemon;
 import pokemonGame.moves.Psychic;
+import pokemonGame.species.Abra;
+
 import java.util.List;
 
 class LearnsetEntryTest {

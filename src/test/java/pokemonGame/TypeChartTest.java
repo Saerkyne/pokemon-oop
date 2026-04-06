@@ -4,11 +4,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import pokemonGame.core.TypeChart;
+import pokemonGame.core.TypeChart.Type;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.stream.Stream;
-
-import pokemonGame.TypeChart.Type;
 
 /*
  * Unit tests for {@link TypeChart#getEffectiveness(String, String)}.

@@ -1,0 +1,201 @@
+package pokemonGame.species;
+
+import pokemonGame.moves.*;
+import pokemonGame.core.Stat;
+import pokemonGame.core.StatCalculator;
+import pokemonGame.core.TypeChart.Type;
+import pokemonGame.model.LearnsetEntry;
+import pokemonGame.model.Pokemon;
+import pokemonGame.model.LearnsetEntry.Source;
+
+import java.util.List;
+
+public class Grimer extends Pokemon {
+
+    private static final List<LearnsetEntry> LEARNSET = new java.util.ArrayList<>();
+    static {
+        // Level Up Moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                Disable.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Pound.INSTANCE,
+                Source.LEVEL,
+                1
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                PoisonGas.INSTANCE,
+                Source.LEVEL,
+                30
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Minimize.INSTANCE,
+                Source.LEVEL,
+                33
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Sludge.INSTANCE,
+                Source.LEVEL,
+                37
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Harden.INSTANCE,
+                Source.LEVEL,
+                42
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Screech.INSTANCE,
+                Source.LEVEL,
+                48
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                AcidArmor.INSTANCE,
+                Source.LEVEL,
+                55
+            )
+        );
+
+        // TM Moves
+        LEARNSET.add(
+            new LearnsetEntry(
+                Toxic.INSTANCE,
+                Source.TM,
+                6
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                BodySlam.INSTANCE,
+                Source.TM,
+                8
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Rage.INSTANCE,
+                Source.TM,
+                20
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                MegaDrain.INSTANCE,
+                Source.TM,
+                21
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Thunderbolt.INSTANCE,
+                Source.TM,
+                24
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Thunder.INSTANCE,
+                Source.TM,
+                25
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Mimic.INSTANCE,
+                Source.TM,
+                31
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                DoubleTeam.INSTANCE,
+                Source.TM,
+                32
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Bide.INSTANCE,
+                Source.TM,
+                34
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                SelfDestruct.INSTANCE,
+                Source.TM,
+                36
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                FireBlast.INSTANCE,
+                Source.TM,
+                38
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Rest.INSTANCE,
+                Source.TM,
+                44
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Explosion.INSTANCE,
+                Source.TM,
+                47
+            )
+        );
+        LEARNSET.add(
+            new LearnsetEntry(
+                Substitute.INSTANCE,
+                Source.TM,
+                50
+            )
+        );
+    }
+
+    public Grimer(String nickname) {
+        super(
+            PokeSpecies.GRIMER,
+            88,
+            Type.POISON,
+            Type.NONE,
+            5,
+            80,
+            80,
+            50,
+            40,
+            50,
+            25
+        );
+
+        this.setNickname(nickname);
+        this.setEvYield(Stat.HP, 1); // Grimer yields 1 EV point in HP when defeated
+        this.generateRandomIVs();
+        StatCalculator.calculateAllStats(this);
+    }
+
+    @Override
+    public List<LearnsetEntry> getLearnset() {
+        return LEARNSET;
+    }
+}

@@ -3,7 +3,10 @@ package pokemonGame;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import pokemonGame.mons.Abra;
+import pokemonGame.core.Natures;
+import pokemonGame.core.Stat;
+import pokemonGame.model.Pokemon;
+import pokemonGame.species.Abra;
 
 class NaturesTest {
 

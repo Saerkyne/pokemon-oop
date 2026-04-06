@@ -1,7 +1,7 @@
 package pokemonGame.moves;
-import pokemonGame.Move;
-import pokemonGame.TypeChart.Type;
-import pokemonGame.TypeChart.Category;
+import pokemonGame.core.TypeChart.Category;
+import pokemonGame.core.TypeChart.Type;
+import pokemonGame.model.Move;
 
 public class Blizzard extends Move {
     public static final Blizzard INSTANCE = new Blizzard();

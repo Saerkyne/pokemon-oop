@@ -2,11 +2,13 @@ package pokemonGame.bot;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import pokemonGame.PokemonFactory;
+
 import pokemonGame.db.TeamCRUD;
 import pokemonGame.db.TrainerCRUD;
-import pokemonGame.Trainer;
-import pokemonGame.Team;
+import pokemonGame.model.Team;
+import pokemonGame.model.Trainer;
+import pokemonGame.species.PokemonFactory;
+
 import java.util.Collections;
 
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;

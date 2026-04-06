@@ -91,7 +91,31 @@ public class AutoCompleteBot extends ListenerAdapter {
                 event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
                 return;
             }
-            Team trainerTeam = teamCRUD.getDBTeamForTrainer(releasingTrainer.getTrainerDbId(), releasingTrainer.getTeam().getTeamDbId());
+            /*
+             * FIX: The original code referenced an undefined variable `team`.
+             * We need to determine which team the trainer wants to release from.
+             * Here we read the "team" option from the slash command (if provided)
+             * to look up the correct Team object. If the option isn't filled in yet,
+             * we fall back to the first team available for the trainer.
+             */
+            String teamName = event.getOption("team") != null
+                    ? event.getOption("team").getAsString()
+                    : null;
+            // If no team name was provided yet, try to get the first available team
+            if (teamName == null) {
+                List<String> teamNames = teamCRUD.getTeamNamesForTrainer(releasingTrainer.getTrainerDbId());
+                if (teamNames.isEmpty()) {
+                    event.replyChoices(Collections.emptyList()).queue(); // No teams exist, return empty choices
+                    return;
+                }
+                teamName = teamNames.get(0);
+            }
+            Team selectedTeam = releasingTrainer.getTeam(teamName);
+            if (selectedTeam == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // Team not found on trainer, return empty choices
+                return;
+            }
+            Team trainerTeam = teamCRUD.getDBTeamForTrainer(releasingTrainer.getTrainerDbId(), selectedTeam.getTeamDbId());
             if (trainerTeam == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No team found, return empty choices
                 return;

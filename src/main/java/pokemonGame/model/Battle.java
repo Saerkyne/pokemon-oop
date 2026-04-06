@@ -129,9 +129,9 @@ public class Battle {
         return winningTrainerId;
     }
 
-    public List<Pokemon> getAllRemainingPokemon(Trainer trainer) {
+    public List<Pokemon> getAllRemainingPokemon(Trainer trainer, Team team) {
         LOGGER.info("Getting all remaining Pokemon for trainer: {}", trainer.getTrainerName());
-        return trainer.getTeam().getPokemonList().stream()
+        return trainer.getTeam(team.getTeamName()).getPokemonList().stream()
             .filter(p -> !p.getIsFainted())
             .toList();
     }

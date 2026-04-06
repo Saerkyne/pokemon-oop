@@ -2,6 +2,7 @@ package pokemonGame.battle;
 
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Trainer;
+import pokemonGame.model.Team;
 
 /**
  * A player's choice to switch their active Pokémon during a battle turn.
@@ -11,10 +12,10 @@ import pokemonGame.model.Trainer;
  * @see BattleAction
  * @see MoveAction
  */
-public record SwitchAction(Trainer trainer, Pokemon pokemon, int teamSlotIndex) implements BattleAction {
+public record SwitchAction(Trainer trainer, Pokemon pokemon, Team team, int teamSlotIndex) implements BattleAction {
 
     public Pokemon getSwitchPokemon() {
-        return trainer.getTeam().getTeamSlot(teamSlotIndex);
+        return trainer.getTeam(team.getTeamName()).getTeamSlot(teamSlotIndex);
     }
 
     public Trainer getTrainer() {
@@ -27,5 +28,9 @@ public record SwitchAction(Trainer trainer, Pokemon pokemon, int teamSlotIndex) 
 
     public String getActionType() {
         return "SWITCH";
+    }
+
+    public Team getTeam() {
+        return team;
     }
 }

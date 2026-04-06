@@ -4,6 +4,7 @@ import pokemonGame.model.Move;
 import pokemonGame.model.MoveSlot;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Trainer;
+import pokemonGame.model.Team;
 
 /**
  * A player's choice to use a move during a battle turn.
@@ -13,7 +14,7 @@ import pokemonGame.model.Trainer;
  * @see BattleAction
  * @see SwitchAction
  */
-public record MoveAction(Trainer trainer, Pokemon pokemon, int moveSlotIndex) implements BattleAction {
+public record MoveAction(Trainer trainer, Pokemon pokemon, Team team, int moveSlotIndex) implements BattleAction {
 
     public int getMoveSlotIndex() {
         return moveSlotIndex;
@@ -39,6 +40,10 @@ public record MoveAction(Trainer trainer, Pokemon pokemon, int moveSlotIndex) im
 
     public String getActionType() {
         return "MOVE";
-    }   
+    }
+
+    public Team team() {
+        return team;
+    }
 
 }

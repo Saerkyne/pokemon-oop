@@ -85,9 +85,10 @@ public class TurnManager {
         if (defenderFainted) {
             // Check if the trainer with the fainted Pokémon has any remaining Pokémon to switch in
             Trainer defendingTrainer = (firstAction == trainer1Action) ? secondAction.trainer() : firstAction.trainer();
-            if (defendingTrainer.getTeam().getTeamSize() > 0) {
+            Team defendingTeam = (firstAction == trainer1Action) ? secondAction.team() : firstAction.team();
+            if (defendingTrainer.getTeam(defendingTeam.getTeamName()).getTeamSize() > 0) {
                 // If they have Pokémon left, the battle continues and they will switch in a new Pokémon on their next turn
-                LOGGER.info("{} has fainted! {} has {} Pokémon left to switch in.", defender.getNickname(), defendingTrainer.getTrainerName(), defendingTrainer.getTeam().getTeamSize());
+                LOGGER.info("{} has fainted! {} has {} Pokémon left to switch in.", defender.getNickname(), defendingTrainer.getTrainerName(), defendingTrainer.getTeam(defendingTeam.getTeamName()).getTeamSize());
             } else {
                 // If they have no Pokémon left, the battle is over and the other trainer wins
                 battleOver = true;
@@ -201,7 +202,7 @@ public class TurnManager {
     public static void resolveSwitch(SwitchAction action) {
         Trainer trainer = action.getTrainer();
         Pokemon newPokemon = action.getSwitchPokemon();
-        Team team = trainer.getTeam();
+        Team team = action.getTeam();
         if (newPokemon == null) {
             LOGGER.error("{} attempted to switch, but the team slot was empty!", trainer.getTrainerName());
             return; // Handle invalid switch attempt (e.g., skip turn, prompt for a valid switch, etc.)

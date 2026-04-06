@@ -50,8 +50,13 @@ public class Trainer {
         this.trainerName = trainerName;
     }
 
-    public Team getTeam() {
-        return team;
+    public Team getTeam(String teamName) {
+        if (team != null && team.getTeamName().equals(teamName)) {
+            return team;
+        } else {
+            return null; // or throw an exception if you prefer
+        }
+
     }
 
     public void setTeam(Team team) {

@@ -2,6 +2,7 @@ package pokemonGame.battle;
 
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Trainer;
+import pokemonGame.model.Team;
 
 /**
  * BattleAction — a sealed interface representing a player's chosen action for a battle turn.
@@ -159,4 +160,5 @@ public sealed interface BattleAction permits MoveAction, SwitchAction {
     Trainer trainer();
     Pokemon activePokemon();
     String getActionType();
+    Team team();
 }

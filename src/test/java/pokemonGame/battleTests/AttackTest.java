@@ -1,4 +1,4 @@
-package pokemonGame;
+package pokemonGame.battleTests;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package pokemonGame;
+package pokemonGame.modelTests;
 
 import org.junit.jupiter.api.Test;
 

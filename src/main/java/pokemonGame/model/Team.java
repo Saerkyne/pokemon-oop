@@ -71,6 +71,10 @@ public class Team {
         this.pokemonList = pokemonList;
     }
 
+    public int getTeamSize() {
+        return pokemonList.size();
+    }
+
     public Pokemon getTeamSlot(int teamSlotIndex) {
         switch (teamSlotIndex) {
             case 0: return teamSlotOne;
@@ -85,77 +89,30 @@ public class Team {
         }
     }
 
-    public void setTeamSlotOne(Pokemon teamSlotOne) {
-        this.teamSlotOne = teamSlotOne;
-        if (pokemonList != null && !pokemonList.isEmpty()) {
-            this.teamSlotOne = pokemonList.get(0); // Set the first Pokémon in the list as the active Pokémon
-        } else {
-            LOGGER.warn("Pokemon list is empty. Cannot set team slot one.");
+    public void setTeamSlot(int teamSlotIndex, Pokemon pokemon) {
+        if (teamSlotIndex < 0 || teamSlotIndex > 5) {
+            LOGGER.warn("Invalid team slot index: {}. Valid range is 0-5.", teamSlotIndex);
+            return;
         }
-    }
 
-    
-
-    public void setTeamSlotTwo(Pokemon teamSlotTwo) {
-        this.teamSlotTwo = teamSlotTwo;
-        if (pokemonList != null && pokemonList.size() > 1) {
-            this.teamSlotTwo = pokemonList.get(1); // Set the second Pokémon in the list as the second slot
-        } else {
-            LOGGER.warn("Pokemon list does not have enough Pokémon. Cannot set team slot two.");
+        // Update the named slot field
+        switch (teamSlotIndex) {
+            case 0: teamSlotOne = pokemon; pokemon.setCurrentTeamSlotIndex(teamSlotIndex);break;
+            case 1: teamSlotTwo = pokemon; pokemon.setCurrentTeamSlotIndex(teamSlotIndex);break;
+            case 2: teamSlotThree = pokemon; pokemon.setCurrentTeamSlotIndex(teamSlotIndex);break;
+            case 3: teamSlotFour = pokemon; pokemon.setCurrentTeamSlotIndex(teamSlotIndex);break;
+            case 4: teamSlotFive = pokemon; pokemon.setCurrentTeamSlotIndex(teamSlotIndex);break;
+            case 5: teamSlotSix = pokemon; pokemon.setCurrentTeamSlotIndex(teamSlotIndex);break;
         }
-    }
 
-    
-
-    public void setTeamSlotThree(Pokemon teamSlotThree) {
-        this.teamSlotThree = teamSlotThree;
-        if (pokemonList != null && pokemonList.size() > 2) {
-            this.teamSlotThree = pokemonList.get(2); // Set the third Pokémon in the list as the third slot
-        } else {
-            LOGGER.warn("Pokemon list does not have enough Pokémon. Cannot set team slot three.");
+        // Sync pokemonList: pad with nulls if the list hasn't grown to this index yet,
+        // then set the element. ArrayList.set() requires the index to already exist;
+        // ArrayList.add() appends to the end. By padding first, we ensure set() works.
+        while (pokemonList.size() <= teamSlotIndex) {
+            pokemonList.add(null);
         }
-    }
-
-   
-
-    public void setTeamSlotFour(Pokemon teamSlotFour) {
-        this.teamSlotFour = teamSlotFour;
-        if (pokemonList != null && pokemonList.size() > 3) {
-            this.teamSlotFour = pokemonList.get(3); // Set the fourth Pokémon in the list as the fourth slot
-        } else {
-            LOGGER.warn("Pokemon list does not have enough Pokémon. Cannot set team slot four.");
-        }
-    }
-
-    
-
-    public void setTeamSlotFive(Pokemon teamSlotFive) {
-        this.teamSlotFive = teamSlotFive;
-        if (pokemonList != null && pokemonList.size() > 4) {
-            this.teamSlotFive = pokemonList.get(4); // Set the fifth Pokémon in the list as the fifth slot
-        } else {
-            LOGGER.warn("Pokemon list does not have enough Pokémon. Cannot set team slot five.");
-        }
-    }
-
-    
-
-    public void setTeamSlotSix(Pokemon teamSlotSix) {
-        this.teamSlotSix = teamSlotSix;
-        if (pokemonList != null && pokemonList.size() > 5) {
-            this.teamSlotSix = pokemonList.get(5); // Set the sixth Pokémon in the list as the sixth slot
-        } else {
-            LOGGER.warn("Pokemon list does not have enough Pokémon. Cannot set team slot six.");
-        }
-    }
-
-    public int getTeamSize() {
-        return pokemonList != null ? pokemonList.size() : 0;
+        pokemonList.set(teamSlotIndex, pokemon);
     }   
-
-    public boolean contains(Pokemon pokemon) {
-        return pokemonList != null && pokemonList.contains(pokemon);
-    }
 
     public void add(Pokemon pokemon) {
         if (pokemonList != null && pokemonList.size() < 6) {

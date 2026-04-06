@@ -15,7 +15,7 @@ import pokemonGame.model.Team;
 public record SwitchAction(Trainer trainer, Pokemon pokemon, Team team, int teamSlotIndex) implements BattleAction {
 
     public Pokemon getSwitchPokemon() {
-        return trainer.getTeam(team.getTeamName()).getTeamSlot(teamSlotIndex);
+        return team.getTeamSlot(teamSlotIndex);
     }
 
     public Trainer getTrainer() {

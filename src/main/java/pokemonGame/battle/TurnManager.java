@@ -70,39 +70,43 @@ public class TurnManager {
         BattleAction secondAction = (firstAction == trainer1Action) ? trainer2Action : trainer1Action;
 
         // Resolve first action
-        Pokemon defender = (firstAction == trainer1Action) ? secondAction.activePokemon() : firstAction.activePokemon();
+        Pokemon firstActor = firstAction.activePokemon();
+        Pokemon secondActor = secondAction.activePokemon();
         DamageResult action1Result = null;
         if (firstAction instanceof MoveAction ma) {
-            action1Result = resolveMove(ma, defender);
+            action1Result = resolveMove(ma, secondActor);
         } else if (firstAction instanceof SwitchAction sa) {
-            resolveSwitch(sa);
+            firstActor = resolveSwitch(sa); // Update firstActor reference to the new active Pokémon after the switch
         }
 
         // Check if defender fainted after first action
-        boolean defenderFainted = BattleService.checkFainted(defender);
+        boolean defenderFainted = BattleService.checkFainted(secondActor);
         boolean battleOver = false;
         Trainer winner = null;
         if (defenderFainted) {
             // Check if the trainer with the fainted Pokémon has any remaining Pokémon to switch in
             Trainer defendingTrainer = (firstAction == trainer1Action) ? secondAction.trainer() : firstAction.trainer();
             Team defendingTeam = (firstAction == trainer1Action) ? secondAction.team() : firstAction.team();
-            if (defendingTrainer.getTeam(defendingTeam.getTeamName()).getTeamSize() > 0) {
-                // If they have Pokémon left, the battle continues and they will switch in a new Pokémon on their next turn
-                LOGGER.info("{} has fainted! {} has {} Pokémon left to switch in.", defender.getNickname(), defendingTrainer.getTrainerName(), defendingTrainer.getTeam(defendingTeam.getTeamName()).getTeamSize());
-            } else {
-                // If they have no Pokémon left, the battle is over and the other trainer wins
+
+            for (Pokemon p : defendingTeam.getPokemonList()) {
+                if (!BattleService.checkFainted(p)) {
+                    // If they have at least one non-fainted Pokémon, the battle continues and they will switch in a new Pokémon on their next turn
+                    LOGGER.info("{} has fainted! {} has {} Pokémon left to switch in.", secondActor.getNickname(), defendingTrainer.getTrainerName(), defendingTeam.getTeamSize());
+                    break;
+                }
+                // If they have no non-fainted Pokémon left, the battle is over and the other trainer wins
                 battleOver = true;
                 winner = (firstAction == trainer1Action) ? firstAction.trainer() : secondAction.trainer();
-                LOGGER.info("{} has fainted and {} has no Pokémon left to switch in! {} wins the battle!", defender.getNickname(), defendingTrainer.getTrainerName(), winner.getTrainerName());
+                LOGGER.info("{} has fainted and {} has no Pokémon left to switch in! {} wins the battle!", secondActor.getNickname(), defendingTrainer.getTrainerName(), winner.getTrainerName());
             }
         }
         // Resolve second action only if defender is still alive
         DamageResult action2Result = null;
         if (!defenderFainted) {
             if (secondAction instanceof MoveAction ma) {
-                action2Result = resolveMove(ma, secondAction.activePokemon());
+                action2Result = resolveMove(ma, firstActor);
             } else if (secondAction instanceof SwitchAction sa) {
-                resolveSwitch(sa);
+                secondActor = resolveSwitch(sa); // Update secondActor reference to the new active Pokémon after the switch
             }
         }
 
@@ -199,16 +203,27 @@ public class TurnManager {
     }
 
     // We know this action is a switch, so we just need to swap the active Pokémon for the trainer performing the switch action.
-    public static void resolveSwitch(SwitchAction action) {
+    public static Pokemon resolveSwitch(SwitchAction action) {
         Trainer trainer = action.getTrainer();
+        Pokemon activePokemon = action.activePokemon();
         Pokemon newPokemon = action.getSwitchPokemon();
         Team team = action.getTeam();
         if (newPokemon == null) {
             LOGGER.error("{} attempted to switch, but the team slot was empty!", trainer.getTrainerName());
-            return; // Handle invalid switch attempt (e.g., skip turn, prompt for a valid switch, etc.)
+            return activePokemon; // Handle invalid switch attempt (e.g., skip turn, prompt for a valid switch, etc.)
         }
-        team.setTeamSlotOne(newPokemon);
+        // Need logic to readjust team slots so that the new active Pokémon is in the correct slot and the old active Pokémon is moved to the switched-out slot
+        int activePokemonSlotIndex = activePokemon.getCurrentTeamSlotIndex();
+        int newPokemonSlotIndex = newPokemon.getCurrentTeamSlotIndex();
+
+        team.setTeamSlot(activePokemonSlotIndex, newPokemon); // Move the new Pokémon into the active slot
+        team.setTeamSlot(newPokemonSlotIndex, activePokemon); // Move the old active Pokémon into the switched-out slot
+        
+        
+        activePokemon.setCurrentTeamSlotIndex(newPokemonSlotIndex); // Update the old active Pokémon's team slot index to reflect its new position
+        newPokemon.setCurrentTeamSlotIndex(activePokemonSlotIndex); // Set the new active Pokémon's team slot index to the old active Pokémon's slot index
         LOGGER.info("{} switched to {}!", trainer.getTrainerName(), newPokemon.getNickname());
+        return newPokemon;
     }
 
     // Deal Damage

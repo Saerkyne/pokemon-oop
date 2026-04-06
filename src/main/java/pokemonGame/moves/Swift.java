@@ -7,7 +7,7 @@ public class Swift extends Move {
     public static final Swift INSTANCE = new Swift();
 
     public Swift() {
-        super("Swift", 60, Type.NORMAL, Category.SPECIAL, 0, 20);
+        super("Swift", 60, Type.NORMAL, Category.SPECIAL, 110, 20);
         // == Special Effect (Not Yet Implemented) ==
         // Bypasses accuracy checks; always hits the target
         // (except during semi-invulnerable turns of Fly, Dig, etc.).

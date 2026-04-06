@@ -22,10 +22,24 @@ public final class Attack {
     private Attack() {}
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Attack.class);
-    private static final Random RNG = new Random();
-    private static final int BASE_CRIT_CHANCE = 417; // Base crit chance of 4.17% (417/10000)
-    private static final int MAX_CRIT_CHANCE = 1500; // Maximum crit chance of 15% (1500/10000)
-    private static final int SPEED_CRIT_MULTIPLIER = 83; // Crit chance increases by 0.83% for each point of speed difference (83/10000)
+    private static Random rng = new Random();
+    private static final int BASE_CRIT_CHANCE = 400; // Base crit chance of 4.00% (400/10000)
+    private static final int MAX_CRIT_CHANCE = 2000; // Maximum crit chance of 20% (2000/10000)
+    private static final int SPEED_CRIT_MULTIPLIER = 8; // Crit chance increases by 0.08% for each point of speed difference (8/10000)
+
+    /**
+     * Replaces the random number generator used by all Attack methods.
+     * Intended for testing — pass a {@code Random} with a fixed seed to
+     * make damage calculations, accuracy checks, and crit rolls
+     * deterministic and reproducible.
+     *
+     * <p>Example: {@code Attack.setRng(new Random(42));}</p>
+     *
+     * @param random the Random instance to use (pass {@code new Random()} to restore default behavior)
+     */
+    public static void setRng(Random random) {
+        rng = random;
+    }
 
     public static boolean checkAccuracy(Pokemon attacker, Pokemon defender, Move move) {
         int accuracy = move.getAccuracy();
@@ -33,7 +47,7 @@ public final class Attack {
             LOGGER.info("Move '{}' has perfect accuracy and will always hit.", move.getMoveName());
             return true; // Moves with 100% or higher accuracy always hit
         }
-        int randomValue = RNG.nextInt(100) + 1; // Random value between 1 and 100
+        int randomValue = rng.nextInt(100) + 1; // Random value between 1 and 100
         boolean isHit = randomValue <= accuracy; // Move hits if random value is less than or equal to accuracy
         LOGGER.info("Accuracy check for move '{}': accuracy={}, randomValue={}, isHit={}", move.getMoveName(), accuracy, randomValue, isHit);
         return isHit;
@@ -54,7 +68,7 @@ public final class Attack {
     }
 
     public static int randomInt(int min, int max) {
-        return RNG.nextInt((max - min) + 1) + min;
+        return rng.nextInt((max - min) + 1) + min;
     }
 
     // Non RBY crit formula, using attacker speed and opponent speed to determine crit chance,
@@ -68,9 +82,9 @@ public final class Attack {
         
         int attackerSpeed = attacker.getCurrentSpeed();
         int defenderSpeed = defender.getCurrentSpeed();
-        int critChance = BASE_CRIT_CHANCE; // Base crit chance of 4.17% (417/10000)
-        critChance = BASE_CRIT_CHANCE + (attackerSpeed - defenderSpeed) * SPEED_CRIT_MULTIPLIER; // Increase crit chance by 0.83% for each point of speed difference
-        critChance = Math.min(MAX_CRIT_CHANCE, Math.max(BASE_CRIT_CHANCE, critChance)); // Cap crit chance between 4.17% and 15%
+        int critChance = BASE_CRIT_CHANCE; // Base crit chance of 4.00% (400/10000)
+        critChance = BASE_CRIT_CHANCE + ((attackerSpeed - defenderSpeed) * SPEED_CRIT_MULTIPLIER); // Increase crit chance by 0.08% for each point of speed difference
+        critChance = Math.min(MAX_CRIT_CHANCE, Math.max(BASE_CRIT_CHANCE, critChance)); // Cap crit chance between 4.00% and 20%
         int randomValue = randomInt(1, 10000); // Random value between 1 and 10000
         boolean isCritical = randomValue <= critChance; // Crit occurs if random value is less than or equal to crit chance
         LOGGER.info("Critical hit calculation: attackerSpeed={}, defenderSpeed={}, critChance={}, randomValue={}, isCritical={}", attackerSpeed, defenderSpeed, critChance, randomValue, isCritical);

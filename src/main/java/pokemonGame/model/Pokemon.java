@@ -374,6 +374,14 @@ public class Pokemon {
         this.level = level;
     }
 
+    public void setTypePrimary(Type typePrimary) {
+        this.typePrimary = typePrimary;
+    }
+
+    public void setTypeSecondary(Type typeSecondary) {
+        this.typeSecondary = typeSecondary;
+    }
+
     public void setTrainer(Trainer trainer) {
         this.trainer = trainer;
     }

@@ -21,6 +21,24 @@ import pokemonGame.species.Abra;
 import pokemonGame.species.Bulbasaur;
 import pokemonGame.species.PokeSpecies;
 
+/**
+ * Unit tests for the {@link Pokemon} model class.
+ *
+ * Behaviors under test:
+ *   - Level: default level, setLevel, levelUp, stat recalculation on level gain
+ *   - Name: setName, default name matches constructor argument
+ *   - Moveset: addMove, replaceMove, capacity limit (4 moves), isMovesetFull
+ *   - Stat routing: getAttackStatForMove / getDefenseStatForMove by move category
+ *   - IVs: random generation within [0, 31] range
+ *   - EVs: setter behavior, per-stat cap (252), global cap (510)
+ *   - Nature: assignment, setter, applyNature
+ *   - Fainted flag: default state, toggle lifecycle
+ *   - HP management: setCurrentHP, clamping at zero
+ *   - Stat calculation formulas: calcMaxHP, calcCurrentStat, nature modifiers
+ *   - Species info: species name, primary/secondary typing, dual-type Pokémon
+ *   - Learnset: non-empty learnset for known species
+ *   - EV yield: non-null yield map per species
+ */
 class PokemonTest {
 
     private Pokemon abra;
@@ -30,7 +48,9 @@ class PokemonTest {
         abra = new Abra("Test Abra");
     }
 
+    // =========================================================================
     // --- Level ---
+    // =========================================================================
 
     /*
      * CHECKS:  A freshly constructed Pokémon starts at level 5, the universal default
@@ -93,7 +113,9 @@ class PokemonTest {
         assertEquals(50, abra.getLevel());
     }
 
+    // =========================================================================
     // --- Name ---
+    // =========================================================================
 
     /*
      * CHECKS:  setName() updates the Pokémon's display name (nickname).
@@ -122,7 +144,9 @@ class PokemonTest {
         assertEquals("Abra", fresh.getNickname());
     }
 
+    // =========================================================================
     // --- Moveset management ---
+    // =========================================================================
 
     /*
      * CHECKS:  A newly created Pokémon has no moves in its moveset (empty collection).
@@ -239,7 +263,9 @@ class PokemonTest {
         assertFalse(abra.replaceMove(5, new Teleport()));
     }
 
+    // =========================================================================
     // --- Stat attack/defense routing ---
+    // =========================================================================
 
     /*
      * CHECKS:  getAttackStatForMove() returns the current Attack stat when given a
@@ -331,7 +357,9 @@ class PokemonTest {
         assertEquals(0, abra.getDefenseStatForMove(teleport));
     }
 
+    // =========================================================================
     // --- IVs ---
+    // =========================================================================
 
     /*
      * CHECKS:  All six IVs (HP, Attack, Defense, SpAtk, SpDef, Speed) are generated
@@ -351,7 +379,9 @@ class PokemonTest {
         assertTrue(abra.getIvSpeed() >= 0 && abra.getIvSpeed() <= 31);
     }
 
+    // =========================================================================
     // --- EVs ---
+    // =========================================================================
 
     /*
      * CHECKS:  A newly constructed Pokémon starts with 0 total EVs (no pre-assigned
@@ -437,7 +467,9 @@ class PokemonTest {
         assertEquals(252, EvManager.getEv(abra, Stat.DEFENSE));
     }
 
+    // =========================================================================
     // --- Nature ---
+    // =========================================================================
 
     /*
      * CHECKS:  A newly constructed Pokémon always has a non-null nature assigned.
@@ -478,7 +510,9 @@ class PokemonTest {
         assertNotNull(abra.getNature());
     }
 
+    // =========================================================================
     // --- isFainted ---
+    // =========================================================================
 
     /*
      * CHECKS:  A newly constructed Pokémon has isFainted == false (alive by default).
@@ -520,7 +554,9 @@ class PokemonTest {
         assertFalse(abra.getIsFainted());
     }
 
+    // =========================================================================
     // --- HP management ---
+    // =========================================================================
 
     
 
@@ -556,7 +592,9 @@ class PokemonTest {
                 "HP should be clamped at 0 when set to a negative value");
     }
 
+    // =========================================================================
     // --- Stat calculation formulas ---
+    // =========================================================================
 
     /*
      * CHECKS:  calcMaxHP() correctly implements the Generation III HP formula:
@@ -625,7 +663,9 @@ class PokemonTest {
                 "A lowered nature should give a lower stat");
     }
 
+    // =========================================================================
     // --- Species info ---
+    // =========================================================================
 
     /*
      * CHECKS:  The species name for an Abra instance is "Abra".
@@ -677,7 +717,9 @@ class PokemonTest {
         assertEquals(Type.POISON, bulba.getTypeSecondary());
     }
 
+    // =========================================================================
     // --- Learnset ---
+    // =========================================================================
 
     /*
      * CHECKS:  An Abra instance has at least one entry in its learnset (it can learn
@@ -692,7 +734,9 @@ class PokemonTest {
         assertFalse(abra.getLearnset().isEmpty());
     }
 
+    // =========================================================================
     // --- EV yield ---
+    // =========================================================================
 
     /*
      * CHECKS:  Abra has a non-null EV yield map, confirming the species has a defined

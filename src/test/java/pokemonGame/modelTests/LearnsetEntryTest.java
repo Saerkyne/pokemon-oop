@@ -11,9 +11,21 @@ import pokemonGame.species.Abra;
 
 import java.util.List;
 
+/**
+ * Unit tests for the {@link LearnsetEntry} model class.
+ *
+ * Behaviors under test:
+ *   - Constructor / getters: storing and retrieving Move, Source, and parameter
+ *   - getEligibleMoves: filtering by known moves, level-gated moves, TM/HM availability
+ *   - Level-up unlock: more moves become eligible as the Pokémon levels up
+ *   - Null safety: getEligibleMoves(null) returns an empty list
+ *   - Source enum: all five values (LEVEL, TM, HM, EGG, TUTOR) are defined
+ */
 class LearnsetEntryTest {
 
+    // =========================================================================
     // --- Constructor / getters ---
+    // =========================================================================
 
     /*
      * CHECKS:  The LearnsetEntry constructor correctly stores the Move reference, and
@@ -56,7 +68,9 @@ class LearnsetEntryTest {
         assertEquals(16, entry.getParameter());
     }
 
+    // =========================================================================
     // --- getEligibleMoves ---
+    // =========================================================================
 
     /*
      * CHECKS:  getEligibleMoves() excludes moves the Pokémon already knows, preventing
@@ -121,6 +135,10 @@ class LearnsetEntryTest {
                 "HM moves should always be eligible regardless of level");
     }
 
+    // =========================================================================
+    // --- Level-up unlock ---
+    // =========================================================================
+
     /*
      * CHECKS:  Level-up moves with a required level above the Pokémon's current level
      *          do NOT appear in the eligible list.
@@ -169,6 +187,10 @@ class LearnsetEntryTest {
                 "More level-up moves should be eligible at higher levels");
     }
 
+    // =========================================================================
+    // --- Null safety ---
+    // =========================================================================
+
     /*
      * CHECKS:  getEligibleMoves(null) returns an empty list instead of throwing a
      *          NullPointerException.
@@ -184,6 +206,10 @@ class LearnsetEntryTest {
         assertNotNull(eligible);
         assertTrue(eligible.isEmpty());
     }
+
+    // =========================================================================
+    // --- Eligible move count after learning ---
+    // =========================================================================
 
     /*
      * CHECKS:  The eligible-move count decreases after a move is learned, confirming
@@ -209,6 +235,10 @@ class LearnsetEntryTest {
         assertTrue(after.size() < countBefore,
                 "Eligible move count should decrease after learning a move");
     }
+
+    // =========================================================================
+    // --- Source enum completeness ---
+    // =========================================================================
 
     /*
      * CHECKS:  All five expected Source enum values (LEVEL, TM, HM, EGG, TUTOR) are

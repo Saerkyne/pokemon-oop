@@ -17,10 +17,7 @@ import pokemonGame.species.Abra;
  *   - Total EV maximum across all six stats: 510
  *   - Setters OVERWRITE (not add to) the stat value
  *   - evTotal must always equal the sum of all six individual EVs
- *
- * These tests define correct behavior. The current implementation may fail
- * some of these if it contains bugs — that is the point. Fix the code to
- * make them pass, not the other way around.
+ *   - Negative inputs are treated as 0 (no negative EVs in game rules)
  */
 class EvSetterTest {
 
@@ -39,7 +36,6 @@ class EvSetterTest {
      * CHECKS:  A newly constructed Pokémon has 0 EVs in every stat and 0 total.
      * HOW:     Asserts all six EV getters and getEvTotal() return 0.
      * IDEAL:   All EVs start at 0. The constructor should not assign any EVs.
-     * CURRENT: Should pass — constructors do not assign EVs.
      */
     @Test
     void freshPokemonHasZeroEvs() {
@@ -60,7 +56,6 @@ class EvSetterTest {
      * CHECKS:  setEvHp() stores the provided value and it can be retrieved.
      * HOW:     Calls setEvHp(100), then asserts getEvHp() returns 100.
      * IDEAL:   The setter directly assigns the value when within limits.
-     * CURRENT: Should pass with the corrected setter.
      */
     @Test
     void setEvHpStoresValue() {
@@ -73,7 +68,6 @@ class EvSetterTest {
      * CHECKS:  setEvAttack() stores the provided value and it can be retrieved.
      * HOW:     Calls setEvAttack(200), then asserts getEvAttack() returns 200.
      * IDEAL:   The setter directly assigns the value when within limits.
-     * CURRENT: Should pass.
      */
     @Test
     void setEvAttackStoresValue() {
@@ -86,7 +80,6 @@ class EvSetterTest {
      * CHECKS:  setEvDefense() stores the provided value and it can be retrieved.
      * HOW:     Calls setEvDefense(150), then asserts getEvDefense() returns 150.
      * IDEAL:   The setter directly assigns the value when within limits.
-     * CURRENT: Should pass.
      */
     @Test
     void setEvDefenseStoresValue() {
@@ -99,7 +92,6 @@ class EvSetterTest {
      * CHECKS:  setEvSpecialAttack() stores the provided value and it can be retrieved.
      * HOW:     Calls setEvSpecialAttack(252), then asserts getEvSpecialAttack() returns 252.
      * IDEAL:   The per-stat max of 252 is accepted without capping.
-     * CURRENT: Should pass.
      */
     @Test
     void setEvSpecialAttackStoresValue() {
@@ -112,7 +104,6 @@ class EvSetterTest {
      * CHECKS:  setEvSpecialDefense() stores the provided value and it can be retrieved.
      * HOW:     Calls setEvSpecialDefense(80), then asserts getEvSpecialDefense() returns 80.
      * IDEAL:   The setter directly assigns the value when within limits.
-     * CURRENT: Should pass.
      */
     @Test
     void setEvSpecialDefenseStoresValue() {
@@ -125,7 +116,6 @@ class EvSetterTest {
      * CHECKS:  setEvSpeed() stores the provided value and it can be retrieved.
      * HOW:     Calls setEvSpeed(44), then asserts getEvSpeed() returns 44.
      * IDEAL:   The setter directly assigns the value when within limits.
-     * CURRENT: Should pass.
      */
     @Test
     void setEvSpeedStoresValue() {
@@ -142,7 +132,6 @@ class EvSetterTest {
      * CHECKS:  After setting one EV, evTotal equals that single value.
      * HOW:     Calls setEvHp(100), then asserts getEvTotal() returns 100.
      * IDEAL:   evTotal always equals the sum of all six individual EVs.
-     * CURRENT: Should pass with the corrected setter.
      */
     @Test
     void evTotalReflectsSingleSetter() {
@@ -155,7 +144,6 @@ class EvSetterTest {
      * CHECKS:  After setting EVs in multiple stats, evTotal equals their sum.
      * HOW:     Sets HP=100, Attack=150, Speed=50, then asserts evTotal is 300.
      * IDEAL:   evTotal is always the exact sum of all six individual EVs.
-     * CURRENT: Should pass if all setters correctly track the total.
      */
     @Test
     void evTotalReflectsMultipleSetters() {
@@ -171,7 +159,6 @@ class EvSetterTest {
      * HOW:     Sets all six EVs to specific values summing to 510, then asserts
      *          evTotal equals 510.
      * IDEAL:   A fully EV-trained Pokémon reports exactly 510 total.
-     * CURRENT: Should pass.
      */
     @Test
     void evTotalSumsAllSixStats() {
@@ -190,7 +177,6 @@ class EvSetterTest {
      * CHECKS:  setEvHp() caps at 252 when given a value above the per-stat max.
      * HOW:     Calls setEvHp(300), then asserts getEvHp() returns 252.
      * IDEAL:   No single stat can exceed 252. Values above are silently capped.
-     * CURRENT: Should pass with the Math.min(252, ...) logic.
      */
     @Test
     void setEvHpCapsAtPerStatMax() {
@@ -203,7 +189,6 @@ class EvSetterTest {
      * CHECKS:  setEvAttack() caps at 252 when given a value above the per-stat max.
      * HOW:     Calls setEvAttack(999), then asserts getEvAttack() returns 252.
      * IDEAL:   No single stat can exceed 252.
-     * CURRENT: Should pass.
      */
     @Test
     void setEvAttackCapsAtPerStatMax() {
@@ -216,7 +201,6 @@ class EvSetterTest {
      * CHECKS:  Setting a stat to exactly 252 is accepted without modification.
      * HOW:     Calls setEvSpeed(252), then asserts getEvSpeed() returns 252.
      * IDEAL:   252 is the boundary — it should be accepted as-is.
-     * CURRENT: Should pass.
      */
     @Test
     void exactPerStatMaxIsAccepted() {
@@ -235,7 +219,6 @@ class EvSetterTest {
      * HOW:     Sets HP=252, Attack=252 (total=504). Then sets Defense=100.
      *          Only 6 room remains, so Defense should be capped to 6.
      * IDEAL:   The total never exceeds 510. The last setter gets the remainder.
-     * CURRENT: Should pass.
      */
     @Test
     void totalCapReducesExcessiveStat() {
@@ -255,7 +238,6 @@ class EvSetterTest {
      *          Speed=100. Speed should remain 0.
      * IDEAL:   Once 510 is reached, no additional EVs can be assigned to a
      *          stat that was 0.
-     * CURRENT: Should pass.
      */
     @Test
     void noRoomLeftMeansZero() {
@@ -276,7 +258,6 @@ class EvSetterTest {
      *          Per-stat cap is 252, total room is 6. The total room (6) is
      *          stricter, so Defense should be 6.
      * IDEAL:   Math.min(value, Math.min(252, roomTotal)) — both caps applied.
-     * CURRENT: Should pass.
      */
     @Test
     void bothCapsAppliedSimultaneously() {
@@ -297,8 +278,6 @@ class EvSetterTest {
      * HOW:     Calls setEvHp(100), then setEvHp(50). Asserts getEvHp() is 50,
      *          not 150. Also asserts evTotal is 50, not 150.
      * IDEAL:   Setters replace the current value. The total adjusts accordingly.
-     * CURRENT: Critical test — the old code (before the fix) failed this because
-     *          it treated the setter as additive.
      */
     @Test
     void setEvHpOverwritesDoesNotAdd() {
@@ -316,7 +295,6 @@ class EvSetterTest {
      *          HP to 0. Total should drop to 258, freeing 252 room. Then sets
      *          Speed=200. Speed should be 200.
      * IDEAL:   Overwriting down reclaims total room for other stats.
-     * CURRENT: Should pass.
      */
     @Test
     void overwritingDownFreesRoom() {
@@ -342,7 +320,6 @@ class EvSetterTest {
      *          don't change.
      * HOW:     Calls setEvHp(100) twice. Asserts getEvHp()=100, evTotal=100.
      * IDEAL:   Repeated identical sets are harmless — no double-counting.
-     * CURRENT: The old buggy code would have produced evTotal=200 here.
      */
     @Test
     void settingSameValueTwiceIsIdempotent() {
@@ -358,8 +335,6 @@ class EvSetterTest {
      *          guard in the old code would have blocked this).
      * HOW:     Calls setEvHp(252), then setEvHp(0). Asserts getEvHp()=0.
      * IDEAL:   Setters allow any valid value regardless of current value.
-     * CURRENT: The old code had `if (this.evHp == 252) return;` which would
-     *          have blocked this overwrite.
      */
     @Test
     void canOverwriteMaxStatToZero() {
@@ -381,9 +356,6 @@ class EvSetterTest {
      *          in the game rules).
      * HOW:     Calls setEvHp(-50). Asserts getEvHp() is 0 and evTotal is 0.
      * IDEAL:   Negative inputs are clamped to 0 — EVs cannot be negative.
-     * CURRENT: May fail if the setter doesn't clamp negatives. The Math.min()
-     *          chain would allow a negative through since Math.min(-50, 252)
-     *          is -50. A Math.max(0, ...) wrapper is needed.
      */
     @Test
     void negativeEvIsTreatedAsZero() {
@@ -398,7 +370,6 @@ class EvSetterTest {
      * HOW:     Sets HP=100 first, then setEvAttack(-10). Asserts Attack=0,
      *          evTotal=100.
      * IDEAL:   Negative inputs are clamped to 0 and don't subtract from total.
-     * CURRENT: May fail — same issue as above.
      */
     @Test
     void negativeEvDoesNotCorruptTotal() {
@@ -419,8 +390,6 @@ class EvSetterTest {
      * HOW:     Performs a series of sets and overwrites across all six stats,
      *          then asserts evTotal equals the manual sum of the six getters.
      * IDEAL:   The invariant evTotal == sum(all six EVs) holds at ALL times.
-     * CURRENT: Should pass if all six setters correctly subtract old values
-     *          before adding new ones.
      */
     @Test
     void evTotalAlwaysEqualsSumOfAllSixStats() {
@@ -455,7 +424,6 @@ class EvSetterTest {
      * HOW:     Fills to 510, overwrites HP down, fills Speed up. Asserts
      *          total <= 510 and equals the sum of all six EVs.
      * IDEAL:   No sequence of valid setter calls can break the 510 invariant.
-     * CURRENT: Should pass.
      */
     @Test
     void complexSequenceNeverExceeds510() {

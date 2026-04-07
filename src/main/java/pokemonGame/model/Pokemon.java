@@ -255,6 +255,17 @@ public class Pokemon {
         return currentHP;
     }
 
+    public int getStat(Stat stat) {
+       return switch (stat) {
+            case HP -> getMaxHP();
+            case ATTACK -> getCurrentAttack();
+            case DEFENSE -> getCurrentDefense();
+            case SPECIAL_ATTACK -> getCurrentSpecialAttack();
+            case SPECIAL_DEFENSE -> getCurrentSpecialDefense();
+            case SPEED -> getCurrentSpeed();
+        };
+    }
+
     public int getCurrentAttack() {
         return currentAttack;
     }

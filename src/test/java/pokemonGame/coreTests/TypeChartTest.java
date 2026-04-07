@@ -24,7 +24,10 @@ class TypeChartTest {
 
     // TypeChart is now a static utility class — call methods directly
 
+    // =========================================================================
     // --- Super effective (2.0) ---
+    // =========================================================================
+
     static Stream<Arguments> provideSuperEffectivePairs() {
         return Stream.of(
             // Normal is super effective against nothing
@@ -99,13 +102,23 @@ class TypeChartTest {
         );
     }
 
+    /*
+     * CHECKS:  Every type matchup that should deal double damage returns 2.0.
+     * HOW:     Parameterized over all (defender, attacker) pairs where the
+     *          attacker type is super effective against the defender type.
+     * IDEAL:   getEffectiveness(attackType, defendType) == 2.0f for every pair.
+     */
     @ParameterizedTest
     @MethodSource("provideSuperEffectivePairs")
     void testSuperEffectivePairs(Type defendType, Type attackType) {
         assertEquals(2.0f, TypeChart.getEffectiveness(attackType, defendType));
     }
 
-    
+
+
+    // =========================================================================
+    // --- Not very effective (0.5) ---
+    // =========================================================================
 
     static Stream<Arguments> provideNotVeryEffectivePairs() {
         return Stream.of(
@@ -191,13 +204,21 @@ class TypeChartTest {
         );
     }
     
+    /*
+     * CHECKS:  Every type matchup that should deal half damage returns 0.5.
+     * HOW:     Parameterized over all (defender, attacker) pairs where the
+     *          attacker type is resisted by the defender type.
+     * IDEAL:   getEffectiveness(attackType, defendType) == 0.5f for every pair.
+     */
     @ParameterizedTest
     @MethodSource("provideNotVeryEffectivePairs")
     void testNotVeryEffective(Type defendType, Type attackType) {
         assertEquals(0.5f, TypeChart.getEffectiveness(attackType, defendType));
     }
 
+    // =========================================================================
     // --- Immunities (0.0) ---
+    // =========================================================================
 
     static Stream<Arguments> provideImmunePairs() {
         return Stream.of(
@@ -219,11 +240,21 @@ class TypeChartTest {
         );
     }
 
+    /*
+     * CHECKS:  Every type matchup involving a complete immunity returns 0.0.
+     * HOW:     Parameterized over all (defender, attacker) pairs where the
+     *          defender is completely immune to the attack type.
+     * IDEAL:   getEffectiveness(attackType, defenderType) == 0.0f for every pair.
+     */
     @ParameterizedTest
     @MethodSource("provideImmunePairs")
     void immunityReturnsZero(Type defenderType, Type attackType) {
         assertEquals(0.0f, TypeChart.getEffectiveness(attackType, defenderType));
     }
+
+    // =========================================================================
+    // --- Neutral effectiveness (1.0) ---
+    // =========================================================================
 
     static Stream<Arguments> provideNeutralPairs() {
         return Stream.of(
@@ -452,6 +483,13 @@ class TypeChartTest {
         );
     }
 
+    /*
+     * CHECKS:  Every type matchup with no special relationship returns 1.0.
+     *          Also covers edge cases: Type.NONE and null defender types.
+     * HOW:     Parameterized over all (defender, attacker) pairs where no
+     *          advantage, resistance, or immunity applies.
+     * IDEAL:   getEffectiveness(attackType, defenderType) == 1.0f for every pair.
+     */
     @ParameterizedTest
     @MethodSource("provideNeutralPairs")
     void neutralEffectivenessReturns1(Type defenderType, Type attackType) {

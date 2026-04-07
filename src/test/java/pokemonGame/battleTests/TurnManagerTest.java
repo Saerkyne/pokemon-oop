@@ -15,45 +15,26 @@ import pokemonGame.moves.Tackle;
 import pokemonGame.model.Move;
 import pokemonGame.model.MoveSlot;
 import pokemonGame.model.Battle;
+import pokemonGame.core.StatCalculator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/*
- * TEST IMPROVEMENT SUGGESTIONS
- * ============================
- *
- * 1. REDUCE BOILERPLATE WITH A HELPER METHOD
- *    Every test repeats the same 10+ lines to create trainers, teams, Pokémon,
- *    set levels, add moves, and assign team slots. This makes tests hard to read
- *    because the interesting part (the action + assertion) is buried under setup.
- *
- *    The helper method buildScenario() below creates a ready-to-use test fixture
- *    in one call. Each test only needs to customize what's unique to its scenario
- *    (e.g., setting HP low for a faint test).
- *
- *    Alternative: @BeforeEach could set up shared fields, but that hides the setup
- *    from each test and makes tests depend on shared mutable state — a helper
- *    method is more explicit and safer.
- *
- * 2. AVOID RANDOMNESS IN TESTS
- *    Both Abras can have different speeds due to random IVs and natures, so
- *    getFirstAction() may pick either trainer to go first. Tests that depend on
- *    a specific turn order should force deterministic speeds (e.g., set one
- *    Pokémon's speed higher). Otherwise the test can pass or fail depending on
- *    random seed — this is called a "flaky test."
- *
- * 3. ASSERT ON THE RESULT'S CONTENTS, NOT JUST ITS TYPE
- *    `assertTrue(result instanceof TurnResult)` is redundant because the variable
- *    is declared as TurnResult — the compiler already enforces this. Instead,
- *    assert on the values inside the result (damage dealt, whether it was a crit,
- *    etc.) to verify the logic actually worked.
- *
- * 4. TEST ONE BEHAVIOR PER TEST
- *    The switch test asserts both "switching worked" AND "the new Pokémon took
- *    damage." If the damage assertion fails, it's unclear whether switching broke
- *    or damage calculation broke. Splitting into two tests makes failures
- *    diagnostic — you immediately know which behavior is broken.
+/**
+ * Unit tests for the {@link TurnManager} class, which handles the core logic 
+ * of resolving a turn in a Pokémon battle.
+ * 
+ * This test class covers various scenarios, including:
+ * - Both trainers using moves and taking damage without fainting
+ * - One trainer's Pokémon fainting from the other's attack
+ * - Trainers switching Pokémon mid-turn
+ * - Invalid switch attempts
+ * - Edge cases like using a move with 0 PP
+ * 
+ * The tests are designed to be deterministic by controlling randomness in stats 
+ * and damage rolls, ensuring consistent results across runs. Each test verifies 
+ * not only the type of result (e.g., battle over or not) but also the specific 
+ * content of the results, such as HP changes, PP consumption, and effectiveness values.
  */
 class TurnManagerTest {
 
@@ -84,6 +65,12 @@ class TurnManagerTest {
         Pokemon abra2 = new Abra("Abra2");
         abra1.setLevel(50);
         abra2.setLevel(50);
+        StatCalculator.calculateAllStats(abra1);
+        StatCalculator.calculateAllStats(abra2);
+        // calculateAllStats doesn't reset currentHP when maxHP was already set
+        // (see StatCalculator lines 72-80), so we must heal to the new max manually.
+        abra1.setCurrentHP(abra1.getMaxHP());
+        abra2.setCurrentHP(abra2.getMaxHP());
         Move tackle = new Tackle();
         abra1.addMove(tackle);
         abra2.addMove(tackle);
@@ -91,23 +78,77 @@ class TurnManagerTest {
         team2.setTeamSlot(0, abra2);
         return new Object[]{t1, t2, team1, team2, abra1, abra2};
     }
-    // -- Test that resolveTurn returns a TurnResult object (not null, correct type)
 
     @Test
-    void resolveTurnReturnsTurnResult() {
+    void resolveTurn_bothUseMoves_bothTakeDamageAndBattleContinues() {
+        // ARRANGE — build scenario and fix randomness so results are deterministic
         Object[] s = buildScenario();
         Trainer t1 = (Trainer) s[0]; Trainer t2 = (Trainer) s[1];
         Team team1 = (Team) s[2]; Team team2 = (Team) s[3];
         Pokemon abra1 = (Pokemon) s[4]; Pokemon abra2 = (Pokemon) s[5];
 
+        // Force deterministic speeds so we know abra1 always goes first.
+        // Without this, random IVs/natures could swap turn order, making
+        // assertions about action1Result vs action2Result unreliable.
+        abra1.setCurrentSpeed(100);
+        abra2.setCurrentSpeed(50);
+
+        // Seed the RNG so damage rolls, crit checks, and accuracy checks
+        // produce the same values every run. This eliminates flakiness.
+        Attack.setRng(new java.util.Random(42));
+
+        // Capture HP and PP before the turn so we can verify changes after
+        int abra1HpBefore = abra1.getCurrentHP();
+        int abra2HpBefore = abra2.getCurrentHP();
+        int abra1PpBefore = abra1.getMoveSet().get(0).getCurrentPP();
+        int abra2PpBefore = abra2.getMoveSet().get(0).getCurrentPP();
+
         MoveAction action1 = new MoveAction(t1, abra1, team1, 0);
         MoveAction action2 = new MoveAction(t2, abra2, team2, 0);
-
         Battle battle = new Battle();
 
+        // ACT
         TurnResult result = TurnManager.resolveTurn(action1, action2, battle);
-        assertNotNull(result);
-        assertTrue(result instanceof TurnResult);
+
+        // ASSERT — verify every field of TurnResult, not just the type
+        assertNotNull(result, "resolveTurn should never return null");
+
+        // Both Pokémon used a move, so both DamageResults should exist
+        assertNotNull(result.action1Result(),
+                "action1Result should not be null when the first actor used a move");
+        assertNotNull(result.action2Result(),
+                "action2Result should not be null when the second actor used a move (neither fainted)");
+
+        // The battle should continue — one Tackle shouldn't KO a level 50 Abra
+        assertFalse(result.battleOver(),
+                "Battle should not be over after a single Tackle exchange at full HP");
+        assertNull(result.winner(),
+                "There should be no winner when the battle is still ongoing");
+
+        // Verify damage was actually dealt (content, not just type)
+        assertTrue(result.action1Result().damage() > 0,
+                "First action (Tackle) should deal some damage");
+        assertTrue(result.action2Result().damage() > 0,
+                "Second action (Tackle) should deal some damage");
+
+        // Verify HP was reduced on the Pokémon objects (side-effect check)
+        assertTrue(abra2.getCurrentHP() < abra2HpBefore,
+                "Abra2 should have lost HP from Abra1's Tackle");
+        assertTrue(abra1.getCurrentHP() < abra1HpBefore,
+                "Abra1 should have lost HP from Abra2's Tackle");
+
+        // Verify PP was consumed for both moves
+        assertEquals(abra1PpBefore - 1, abra1.getMoveSet().get(0).getCurrentPP(),
+                "Abra1's Tackle PP should decrease by 1 after using it");
+        assertEquals(abra2PpBefore - 1, abra2.getMoveSet().get(0).getCurrentPP(),
+                "Abra2's Tackle PP should decrease by 1 after using it");
+
+        // Verify effectiveness — Tackle is Normal-type, Abra is Psychic-type,
+        // so effectiveness should be 1.0 (neutral)
+        assertEquals(1.0f, result.action1Result().effectiveness(), 0.001f,
+                "Normal-type Tackle vs Psychic-type Abra should be neutral (1.0)");
+        assertEquals(1.0f, result.action2Result().effectiveness(), 0.001f,
+                "Normal-type Tackle vs Psychic-type Abra should be neutral (1.0)");
     }
 
     @Test

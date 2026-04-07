@@ -19,10 +19,8 @@ import pokemonGame.species.Abra;
  *   - evTotal must always equal the sum of all six individual EVs
  *   - Adders call calculateCurrentStats() after applying — stats should update
  *   - Adders should not accept negative inputs (EVs only go up via training)
- *
- * These tests define correct behavior. The current implementation may fail
- * some of these if it contains bugs — that is the point. Fix the code to
- * make them pass.
+ *   - Setters and adders should interact correctly — setters overwrite, 
+ *     adders add on top, and both update evTotal consistently.
  */
 class EvAdderTest {
 
@@ -41,7 +39,6 @@ class EvAdderTest {
      * CHECKS:  addEvHp() increases the HP EV by the given amount from 0.
      * HOW:     Calls addEvHp(50), then asserts getEvHp() returns 50.
      * IDEAL:   Adding to 0 gives exactly the added amount.
-     * CURRENT: Should pass.
      */
     @Test
     void addEvHpFromZero() {
@@ -54,7 +51,6 @@ class EvAdderTest {
      * CHECKS:  addEvAttack() increases the Attack EV by the given amount from 0.
      * HOW:     Calls addEvAttack(100), then asserts getEvAttack() returns 100.
      * IDEAL:   Adding to 0 gives exactly the added amount.
-     * CURRENT: Should pass.
      */
     @Test
     void addEvAttackFromZero() {
@@ -67,7 +63,6 @@ class EvAdderTest {
      * CHECKS:  Multiple adds to the same stat accumulate correctly.
      * HOW:     Calls addEvHp(50) three times. Asserts getEvHp() returns 150.
      * IDEAL:   Repeated adds accumulate: 50 + 50 + 50 = 150.
-     * CURRENT: Should pass.
      */
     @Test
     void multipleAddsAccumulate() {
@@ -86,7 +81,6 @@ class EvAdderTest {
      * CHECKS:  After adding EVs to one stat, evTotal reflects the added amount.
      * HOW:     Calls addEvHp(80), then asserts getEvTotal() returns 80.
      * IDEAL:   evTotal is updated on every add.
-     * CURRENT: Should pass.
      */
     @Test
     void evTotalReflectsSingleAdd() {
@@ -99,7 +93,6 @@ class EvAdderTest {
      * CHECKS:  After adding EVs to multiple stats, evTotal equals their sum.
      * HOW:     Adds HP=100, Attack=50, Speed=30 (sum=180). Asserts evTotal=180.
      * IDEAL:   evTotal always equals the sum of all six individual EVs.
-     * CURRENT: Should pass.
      */
     @Test
     void evTotalReflectsMultipleAdds() {
@@ -118,7 +111,6 @@ class EvAdderTest {
      * CHECKS:  addEvHp() caps the stat at 252 when a single add exceeds it.
      * HOW:     Calls addEvHp(300). Asserts getEvHp() is 252, not 300.
      * IDEAL:   A single large add is clamped to the per-stat max.
-     * CURRENT: Should pass — the Math.min(addedEv, roomStat) handles this.
      */
     @Test
     void singleAddCapsAtPerStatMax() {
@@ -132,7 +124,6 @@ class EvAdderTest {
      * HOW:     Adds HP=200, then HP=200 again. Total adds = 400, but the stat
      *          should cap at 252. The second add should contribute only 52.
      * IDEAL:   Cumulative adds never push a stat past 252.
-     * CURRENT: Should pass.
      */
     @Test
     void cumulativeAddsCapsAtPerStatMax() {
@@ -148,7 +139,6 @@ class EvAdderTest {
      *          unchanged.
      * HOW:     Adds HP=252, then addEvHp(0). Asserts HP still 252, total 252.
      * IDEAL:   A zero add doesn't corrupt the state.
-     * CURRENT: Should pass — the `actual <= 0` guard handles this.
      */
     @Test
     void addZeroAtMaxIsNoOp() {
@@ -169,7 +159,6 @@ class EvAdderTest {
      * HOW:     Adds HP=252, Attack=252 (total=504). Then addEvDefense(100).
      *          Only 6 room remains, so Defense should be 6.
      * IDEAL:   Total never exceeds 510. Excess is silently discarded.
-     * CURRENT: Should pass.
      */
     @Test
     void totalCapReducesAdd() {
@@ -186,7 +175,6 @@ class EvAdderTest {
      * HOW:     Fills to 510 (HP=252, Attack=252, Defense=6). Then addEvSpeed(50).
      *          Speed should remain 0.
      * IDEAL:   At total=510, all adds to any stat are no-ops.
-     * CURRENT: Should pass — the `if (evTotal >= 510) return;` guard handles this.
      */
     @Test
     void noAddPossibleAtTotalMax() {
@@ -207,7 +195,6 @@ class EvAdderTest {
      * HOW:     Adds HP=252, Attack=252 (total=504). Then addEvDefense(300).
      *          Per-stat cap allows 252, but total cap only allows 6. Result: 6.
      * IDEAL:   Math.min(added, Math.min(roomTotal, roomStat)) — both applied.
-     * CURRENT: Should pass.
      */
     @Test
     void bothCapsEnforcedOnAdd() {
@@ -228,8 +215,6 @@ class EvAdderTest {
      *          go up from training in the game rules).
      * HOW:     Adds HP=100, then addEvHp(-50). Asserts HP is still 100.
      * IDEAL:   Negative adds are rejected. The stat stays unchanged.
-     * CURRENT: Should pass — the Math.min(-50, roomStat) gives a negative
-     *          `actual`, and the `if (actual <= 0) return;` guard catches it.
      */
     @Test
     void negativeAddDoesNotDecreaseStat() {
@@ -244,7 +229,6 @@ class EvAdderTest {
      * CHECKS:  Adding a negative value from 0 does not produce a negative stat.
      * HOW:     Calls addEvAttack(-10). Asserts getEvAttack() is 0, evTotal is 0.
      * IDEAL:   Negative adds on a fresh Pokémon are safely ignored.
-     * CURRENT: Should pass.
      */
     @Test
     void negativeAddOnFreshPokemonIsNoOp() {
@@ -264,8 +248,7 @@ class EvAdderTest {
      * HOW:     Calls setEvHp(100), then addEvHp(50). Asserts getEvHp() is 150
      *          and evTotal is 150.
      * IDEAL:   Setters and adders share the same underlying state. Adding
-     *          after setting accumulates from the set value.
-     * CURRENT: Should pass if both setters and adders maintain evTotal correctly.
+     *          after setting accumulates from the set value..
      */
     @Test
     void adderWorksAfterSetter() {
@@ -282,7 +265,6 @@ class EvAdderTest {
      * HOW:     Adds HP=100, Attack=50 (total=150). Then sets HP to 10.
      *          HP should be 10, total should be 60.
      * IDEAL:   Setters overwrite regardless of whether EVs came from adders.
-     * CURRENT: Should pass.
      */
     @Test
     void setterOverwritesAfterAdder() {
@@ -306,7 +288,6 @@ class EvAdderTest {
      * HOW:     Performs a series of adds across all six stats, then verifies
      *          evTotal equals the sum of all six getters.
      * IDEAL:   The invariant evTotal == sum(all six EVs) holds at all times.
-     * CURRENT: Should pass.
      */
     @Test
     void evTotalConsistentAfterMixedAdds() {
@@ -336,8 +317,6 @@ class EvAdderTest {
      *          more. At the end, asserts evTotal equals the manual sum and
      *          is <= 510.
      * IDEAL:   No sequence of valid setter/adder calls can break the invariants.
-     * CURRENT: This is the most comprehensive integration test. If this passes,
-     *          the EV system is working correctly.
      */
     @Test
     void complexMixedSequenceMaintainsInvariants() {

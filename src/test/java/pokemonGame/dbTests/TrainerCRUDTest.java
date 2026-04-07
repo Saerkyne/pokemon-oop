@@ -8,6 +8,23 @@ import pokemonGame.db.TrainerCRUD;
 import pokemonGame.db.DatabaseSetup;
 import pokemonGame.model.Trainer;
 
+/**
+ * Unit tests for {@link TrainerCRUD} database operations.
+ *
+ * CRUD operations under test:
+ *   - Create: insert a new trainer row and receive its generated DB ID
+ *   - Read:   retrieve a trainer by Discord ID or by database ID
+ *   - Update: change a trainer's name by Discord ID or by database ID
+ *   - Delete: remove a trainer by Discord ID or by database ID
+ *
+ * Additional behaviors under test:
+ *   - Duplicate Discord IDs are rejected (returns -1)
+ *   - Lookups for non-existent IDs return null
+ *   - Deletions of non-existent rows affect zero rows
+ *
+ * Each test starts from an empty database ({@code DatabaseSetup.deleteAllData()}
+ * in {@code @BeforeEach}) so tests are fully isolated from one another.
+ */
 class TrainerCRUDTest {
 
     private TrainerCRUD trainerCRUD = new TrainerCRUD();
@@ -29,21 +46,58 @@ class TrainerCRUDTest {
         return new Object[]{trainer};
     }
 
+    // =========================================================================
+    // --- Create ---
+    // =========================================================================
+
+    /*
+     * CHECKS:  A new trainer can be inserted into the database and receives a
+     *          valid auto-generated ID.
+     * HOW:     Calls createDBTrainer() with a Discord ID, display name, and
+     *          trainer name, then asserts the returned ID is positive.
+     * IDEAL:   Returned ID > 0 indicates the row was successfully inserted.
+     */
     @Test
     void testCreateTrainer() {
-        // This test will create a trainer record in the database and then attempt to retrieve it.
-        // We will verify that the retrieved trainer matches the one we created.
         Object[] scenario = buildScenario();
         Trainer trainer = (Trainer) scenario[0];
 
-        // Create the trainer in the database and get the generated ID
         int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
         assertTrue(trainerId > 0, "Trainer ID should be greater than 0");
     }
 
+    /*
+     * CHECKS:  Attempting to create two trainers with the same Discord ID fails
+     *          on the second insert (unique constraint enforced by the DB).
+     * HOW:     Creates one trainer, then calls createDBTrainer() again with the
+     *          same Discord ID. Asserts the second call returns -1.
+     * IDEAL:   Duplicate Discord IDs are rejected; only one row per user.
+     */
+    @Test
+    void testCreateDuplicateTrainer() {
+        Object[] scenario = buildScenario();
+        Trainer trainer = (Trainer) scenario[0];
+
+        int firstTrainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
+        assertTrue(firstTrainerId > 0, "First trainer ID should be greater than 0");
+
+        int secondTrainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
+        assertEquals(-1, secondTrainerId, "Second trainer creation should fail with -1");
+    }
+
+    // =========================================================================
+    // --- Read ---
+    // =========================================================================
+
+    /*
+     * CHECKS:  A trainer can be retrieved by its Discord ID and all fields
+     *          match what was originally inserted.
+     * HOW:     Creates a trainer, then calls getTrainerByDiscordId(). Asserts
+     *          name, Discord ID, and DB ID all match.
+     * IDEAL:   Round-trip: create → read returns identical data.
+     */
     @Test
     void testGetTrainerByDiscordId() {
-        // This test will create a trainer and then attempt to retrieve it by its Discord ID.
         Object[] scenario = buildScenario();
         Trainer trainer = (Trainer) scenario[0];
         int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
@@ -56,29 +110,29 @@ class TrainerCRUDTest {
         assertEquals(trainerId, retrievedTrainer.getTrainerDbId(), "Trainer DB IDs should match");
     }
 
+    /*
+     * CHECKS:  Querying a Discord ID that has no matching row returns null
+     *          rather than throwing an exception.
+     * HOW:     Calls getTrainerByDiscordId() with a non-existent ID on an
+     *          empty database.
+     * IDEAL:   Null return signals "not found" — callers can check without
+     *          needing try/catch.
+     */
     @Test
     void testGetTrainerByDiscordIdNotFound() {
-        // This test will attempt to retrieve a trainer by a Discord ID that does not exist in the database.
         Trainer retrievedTrainer = trainerCRUD.getTrainerByDiscordId(999999999L);
         assertNull(retrievedTrainer, "Retrieved trainer should be null for non-existent Discord ID");
     }
 
-    @Test
-    void testCreateDuplicateTrainer() {
-        // This test will attempt to create two trainers with the same Discord ID and verify that the second creation fails.
-        Object[] scenario = buildScenario();
-        Trainer trainer = (Trainer) scenario[0];
-
-        int firstTrainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
-        assertTrue(firstTrainerId > 0, "First trainer ID should be greater than 0");
-
-        int secondTrainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
-        assertEquals(-1, secondTrainerId, "Second trainer creation should fail with -1");
-    }   
-
+    /*
+     * CHECKS:  A trainer can be retrieved by its auto-generated database ID
+     *          and all fields match what was originally inserted.
+     * HOW:     Creates a trainer, captures the returned DB ID, then calls
+     *          getTrainerByDbId(). Asserts name, Discord ID, and DB ID.
+     * IDEAL:   Both lookup paths (Discord ID and DB ID) return the same data.
+     */
     @Test
     void testGetTrainerByDbId() {
-        // This test will create a trainer and then attempt to retrieve it by its database ID.
         Object[] scenario = buildScenario();
         Trainer trainer = (Trainer) scenario[0];
         int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
@@ -91,42 +145,33 @@ class TrainerCRUDTest {
         assertEquals(trainerId, retrievedTrainer.getTrainerDbId(), "Trainer DB IDs should match");
     }
 
+    /*
+     * CHECKS:  Querying a database ID that has no matching row returns null
+     *          rather than throwing an exception.
+     * HOW:     Calls getTrainerByDbId() with a non-existent ID on an empty
+     *          database.
+     * IDEAL:   Null return signals "not found" — consistent with the Discord
+     *          ID lookup behavior.
+     */
     @Test
     void testGetTrainerByDbIdNotFound() {
-        // This test will attempt to retrieve a trainer by a database ID that does not exist.
         Trainer retrievedTrainer = trainerCRUD.getTrainerByDbId(9999);
         assertNull(retrievedTrainer, "Retrieved trainer should be null for non-existent DB ID");
     }
 
-    @Test
-    void testDeleteTrainerByDiscordId() {
-        // This test will create a trainer, delete it by its Discord ID, and then verify that it can no longer be retrieved.
-        Object[] scenario = buildScenario();
-        Trainer trainer = (Trainer) scenario[0];
-        int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
-        assertTrue(trainerId > 0, "Trainer ID should be greater than 0");
-        int rowsDeleted = trainerCRUD.deleteTrainerByDiscordId(trainer.getDiscordId());
-        assertEquals(1, rowsDeleted, "One row should be deleted");
-        Trainer retrievedTrainer = trainerCRUD.getTrainerByDiscordId(trainer.getDiscordId());
-        assertNull(retrievedTrainer, "Retrieved trainer should be null after deletion");
-    }
+    // =========================================================================
+    // --- Update ---
+    // =========================================================================
 
-    @Test
-    void testDeleteTrainerbyDbId() {
-        // This test will create a trainer, delete it by its database ID, and then verify that it can no longer be retrieved.
-        Object[] scenario = buildScenario();
-        Trainer trainer = (Trainer) scenario[0];
-        int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
-        assertTrue(trainerId > 0, "Trainer ID should be greater than 0");
-        int rowsDeleted = trainerCRUD.deleteTrainerByDiscordId(trainer.getDiscordId());
-        assertEquals(1, rowsDeleted, "One row should be deleted");
-        Trainer retrievedTrainer = trainerCRUD.getTrainerByDbId(trainerId);
-        assertNull(retrievedTrainer, "Retrieved trainer should be null after deletion");
-    }
-
+    /*
+     * CHECKS:  A trainer's name can be updated by Discord ID, and the change
+     *          persists when the trainer is re-read from the database.
+     * HOW:     Creates a trainer, calls updateTrainerNameByDiscordId() with a
+     *          new name, then re-reads and asserts the name changed.
+     * IDEAL:   rowsUpdated == 1 and the re-read name matches the new value.
+     */
     @Test
     void testUpdateTrainerNameByDiscordId() {
-        // This test will create a trainer, update its name, and then verify that the updated name is correctly stored in the database.
         Object[] scenario = buildScenario();
         Trainer trainer = (Trainer) scenario[0];
         int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
@@ -141,9 +186,15 @@ class TrainerCRUDTest {
         assertEquals(newName, retrievedTrainer.getTrainerName(), "Trainer name should be updated");
     }
 
+    /*
+     * CHECKS:  A trainer's name can be updated by database ID, and the change
+     *          persists when the trainer is re-read from the database.
+     * HOW:     Creates a trainer, calls updateTrainerNameByDbId() with a new
+     *          name, then re-reads by DB ID and asserts the name changed.
+     * IDEAL:   rowsUpdated == 1 and the re-read name matches the new value.
+     */
     @Test
     void testUpdateTrainerNameByDbId() {
-        // This test will create a trainer, update its name by DB ID, and then verify that the updated name is correctly stored in the database.
         Object[] scenario = buildScenario();
         Trainer trainer = (Trainer) scenario[0];
         int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
@@ -156,5 +207,47 @@ class TrainerCRUDTest {
         Trainer retrievedTrainer = trainerCRUD.getTrainerByDbId(trainerId);
         assertNotNull(retrievedTrainer, "Retrieved trainer should not be null");
         assertEquals(newName, retrievedTrainer.getTrainerName(), "Trainer name should be updated");
+    }
+
+    // =========================================================================
+    // --- Delete ---
+    // =========================================================================
+
+    /*
+     * CHECKS:  A trainer can be deleted by Discord ID, and a subsequent lookup
+     *          returns null.
+     * HOW:     Creates a trainer, calls deleteTrainerByDiscordId(), asserts one
+     *          row was deleted, then verifies getTrainerByDiscordId() returns null.
+     * IDEAL:   rowsDeleted == 1 and the trainer is no longer retrievable.
+     */
+    @Test
+    void testDeleteTrainerByDiscordId() {
+        Object[] scenario = buildScenario();
+        Trainer trainer = (Trainer) scenario[0];
+        int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
+        assertTrue(trainerId > 0, "Trainer ID should be greater than 0");
+        int rowsDeleted = trainerCRUD.deleteTrainerByDiscordId(trainer.getDiscordId());
+        assertEquals(1, rowsDeleted, "One row should be deleted");
+        Trainer retrievedTrainer = trainerCRUD.getTrainerByDiscordId(trainer.getDiscordId());
+        assertNull(retrievedTrainer, "Retrieved trainer should be null after deletion");
+    }
+
+    /*
+     * CHECKS:  A trainer can be deleted by Discord ID, and a subsequent lookup
+     *          by database ID also returns null (both paths see the deletion).
+     * HOW:     Creates a trainer, calls deleteTrainerByDiscordId(), then verifies
+     *          getTrainerByDbId() returns null.
+     * IDEAL:   Deletion by one key makes the row invisible to all lookup paths.
+     */
+    @Test
+    void testDeleteTrainerbyDbId() {
+        Object[] scenario = buildScenario();
+        Trainer trainer = (Trainer) scenario[0];
+        int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
+        assertTrue(trainerId > 0, "Trainer ID should be greater than 0");
+        int rowsDeleted = trainerCRUD.deleteTrainerByDiscordId(trainer.getDiscordId());
+        assertEquals(1, rowsDeleted, "One row should be deleted");
+        Trainer retrievedTrainer = trainerCRUD.getTrainerByDbId(trainerId);
+        assertNull(retrievedTrainer, "Retrieved trainer should be null after deletion");
     }
 }

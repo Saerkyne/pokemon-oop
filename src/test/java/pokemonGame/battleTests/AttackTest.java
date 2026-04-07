@@ -19,6 +19,22 @@ import pokemonGame.core.TypeChart.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Unit tests for the {@link Attack} class.
+ * 
+ * Test coverage includes:
+ * - Accuracy checks for moves with different accuracy values.
+ * - Random number generation for accuracy and critical hits.
+ * - Critical hit calculations based on speed differences.
+ * - Damage calculations based on levels, stats, move power, and type effectiveness.
+ * - Edge cases such as status moves, zero power moves, and null/none types.
+ * 
+ * Note: Some tests rely on seeding the RNG to ensure deterministic outcomes 
+ * for accuracy and critical hit tests. This allows us to verify that moves with
+ * specific accuracy values hit or miss as expected, and that critical hits occur 
+ * at the correct rates based on speed differences.
+ */
+
 class AttackTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(AttackTest.class);
 
@@ -36,8 +52,15 @@ class AttackTest {
         Attack.setRng(new Random());
     }
 
+    // =========================================================================
     // --- Accuracy Tests ---
+    // =========================================================================
 
+    /*
+     * CHECKS:  Moves with perfect accuracy always hit, even with accuracy modifiers.
+     * HOW:     Uses a move with perfect accuracy and asserts it always hits.
+     * IDEAL:   Perfect accuracy moves never miss.
+     */
     @Test
     void checkAccuracy_PerfectAccuracy() {
         Pokemon attacker = new Abra("Attacker");
@@ -48,6 +71,11 @@ class AttackTest {
         assertTrue(Attack.checkAccuracy(attacker, defender, move));
     }
 
+    /*
+     * CHECKS:  Moves with low accuracy hit approximately the expected number of times.
+     * HOW:     Uses a move with 70% accuracy and counts hits over 1000 attempts.
+     * IDEAL:   Low accuracy moves hit roughly according to their accuracy percentage.
+     */
     @Test
     void checkAccuracy_LowAccuracy() {
         Pokemon attacker = new Abra("Attacker");
@@ -65,6 +93,11 @@ class AttackTest {
         assertTrue(hitCount > 600 && hitCount < 800, "Move with 70% accuracy should hit at least once in 1000 attempts (Ideally around 700 hits).");
     }
 
+    /*
+    * CHECKS:  Moves with 100% accuracy should hit every time, if no accuracy modifiers are applied.
+    * HOW:     Uses a move with 100% accuracy and counts hits over 1000 attempts.
+    * IDEAL:   Perfect accuracy moves never miss, so it should hit all 1000 attempts.
+    */
     @Test
     void checkAccuracy_HighAccuracy() {
         Pokemon attacker = new Abra("Attacker");
@@ -82,8 +115,15 @@ class AttackTest {
         assertEquals(1000, hitCount, "Move with 100% accuracy should hit all 1000 attempts.");
     }
 
+    // =========================================================================
     // --- Randomness Tests ---
+    // =========================================================================
 
+    /*
+     * CHECKS:  Random integers are generated within the specified range.
+     * HOW:     Calls randomInt(min, max) 1000 times and asserts each value is within the range.
+     * IDEAL:   All generated values should be between min and max, inclusive.
+     */
     @Test
     void randomInt_WithinRange() {
         int min = 1;
@@ -94,6 +134,11 @@ class AttackTest {
         }
     }
 
+    /*
+     * CHECKS:  Random integers are generated correctly across different ranges.
+     * HOW:     Calls randomInt(min, max) 1000 times for each range and asserts each value is within the range.
+     * IDEAL:   All generated values should be between min and max, inclusive.
+     */
     @Test
     void randomInt_DifferentRanges() {
         int[][] ranges = {{1, 10}, {0, 100}, {-50, 50}, {100, 200}};
@@ -107,6 +152,11 @@ class AttackTest {
         }
     }
 
+    /*
+     * CHECKS:  Random integers are generated with a uniform distribution.
+     * HOW:     Calls randomInt(min, max) 10000 times and counts occurrences of each value.
+     * IDEAL:   Each number in the range should appear approximately equally.
+     */
     @Test
     void randomInt_IsRandom() {
         int min = 1;
@@ -122,8 +172,15 @@ class AttackTest {
         }
     }
 
+    // =========================================================================
     // --- Critical Hit Tests ---
+    // =========================================================================
 
+    /*
+     * CHECKS:  Critical hit calculation returns a boolean value.
+     * HOW:     Calls calculateCriticalHit(attacker, defender) and asserts the result is a boolean.
+     * IDEAL:   The result should always be true or false.
+     */
     @Test
     void criticalHitReturnsBoolean() {
         Pokemon attacker = new Abra("Attacker");
@@ -134,6 +191,11 @@ class AttackTest {
         assertTrue(isCritical == true || isCritical == false, "criticalHit should return a boolean value.");
     }
 
+    /*
+     * CHECKS:  Critical hit chance is at the base rate when there is no speed difference.
+     * HOW:     Calls calculateCriticalHit(attacker, defender) 10000 times with equal speed and counts critical hits.
+     * IDEAL:   The number of critical hits should be around the base rate (4%).
+     */
     @Test
     void criticalHitChanceIsBaseAtNoDifference() {
         Pokemon attacker = new Abra("Attacker");
@@ -149,9 +211,15 @@ class AttackTest {
             }
         }
         LOGGER.info("Critical hit count with no speed difference: {}", critCount);
-        assertTrue(critCount > 300 && critCount < 500, "With no speed difference, critical hits should occur at the base rate of around 4.17% (Ideally around 417 hits in 10000 attempts).");
+        assertTrue(critCount > 300 && critCount < 500, "With no speed difference, critical hits should occur at the base rate of around 4% (Ideally around 400 hits in 10000 attempts).");
     }
 
+    /*
+     * CHECKS:  Critical hit chance scales with speed difference.
+     * HOW:     Calls calculateCriticalHit(attacker, defender) 10000 times with a high speed difference and counts critical hits.
+     * IDEAL:   The number of critical hits should be higher than the base rate, 
+     *          and should match the expected rate based on the speed difference (e.g., around 12% for a 100 speed difference).
+     */
     @Test
     void criticalHitChanceScalesWithSpeedDifference() {
         Pokemon fastAttacker = new Abra("Fast Attacker");
@@ -170,6 +238,11 @@ class AttackTest {
         assertTrue(critCount > 1100 && critCount < 1400, "There should be some critical hits with a high speed difference.");
     }
 
+    /*
+     * CHECKS:  Critical hit chance is capped at a maximum value.
+     * HOW:     Calls calculateCriticalHit(attacker, defender) 10000 times with an extremely high speed difference and counts critical hits.
+     * IDEAL:   The number of critical hits should not exceed the cap (e.g., 20%).
+     */
     @Test
     void criticalHitChanceIsCapped() {
         Pokemon veryFastAttacker = new Abra("Very Fast Attacker");
@@ -188,8 +261,15 @@ class AttackTest {
         assertTrue(critCount > 1900 && critCount < 2100, "Critical hit chance should be capped at 20%.");
     }
 
+    // =========================================================================
     // --- Calculate Damage Tests ---
+    // =========================================================================
 
+    /*
+     * CHECKS:  Status moves do not deal damage.
+     * HOW:     Calls calculateDamage(attacker, defender, move) with a status move.
+     * IDEAL:   The damage should be 0.
+     */
     @Test
     void checkForStatusMove() {
         Pokemon attacker = new Abra("Attacker");
@@ -201,17 +281,56 @@ class AttackTest {
         assertEquals(0, damage, "Status moves should not deal damage.");
     }
 
+    /*
+     * CHECKS:  Damage dealt should be non-negative.
+     * HOW:     Calls calculateDamage(attacker, defender, move) many times with varied stats
+     *          and different moves to ensure damage never goes negative, even in edge cases.
+     * IDEAL:   The damage should always be >= 0, regardless of stat combinations or move used.
+     */
     @Test
     void calculateDamageReturnsNonNegative() {
         Pokemon attacker = new Abra("Attacker");
         Pokemon defender = new Abra("Defender");
-        attacker.setLevel(50);
-        defender.setLevel(50);
-        Move move = new Tackle(); // Physical move with 40 power
-        int damage = Attack.calculateDamage(attacker, defender, move);
-        assertTrue(damage >= 0, "Damage should be a non-negative value.");
+        Move physicalMove = new Tackle();
+        Move specialMove = new Thunder();
+        Move statusMove = new Growl();
+
+        // Test across a variety of level, attack, and defense combinations
+        // to catch any edge case where the damage formula might underflow.
+        int[][] statCombinations = {
+            // {attackerLevel, defenderLevel, attackStat, defenseStat}
+            {1, 100, 1, 255},    // Weakest attacker vs strongest defender
+            {5, 5, 10, 10},      // Low-level mirror match
+            {50, 50, 100, 100},  // Standard mid-game scenario
+            {100, 1, 255, 1},    // Strongest attacker vs weakest defender
+            {1, 1, 1, 1},        // Absolute minimums
+        };
+
+        for (int[] stats : statCombinations) {
+            attacker.setLevel(stats[0]);
+            defender.setLevel(stats[1]);
+            attacker.setCurrentAttack(stats[2]);
+            attacker.setCurrentSpecialAttack(stats[2]);
+            defender.setCurrentDefense(stats[3]);
+            defender.setCurrentSpecialDefense(stats[3]);
+
+            for (Move move : new Move[]{physicalMove, specialMove, statusMove}) {
+                // Run multiple times per combination to account for random factor variance
+                for (int i = 0; i < 100; i++) {
+                    int damage = Attack.calculateDamage(attacker, defender, move);
+                    assertTrue(damage >= 0,
+                        String.format("Damage should be non-negative for level %d attacker (atk=%d) vs level %d defender (def=%d) using %s, but got %d.",
+                            stats[0], stats[2], stats[1], stats[3], move.getMoveName(), damage));
+                }
+            }
+        }
     }
 
+    /*
+      * CHECKS:  Higher level attackers should generally deal more damage than lower level attackers, all else being equal.
+      * HOW:     Compares damage from a low-level attacker and a high-level attacker using the same move and stats.
+      * IDEAL:   The higher level attacker should consistently deal more damage than the lower level attacker.
+      */
     @Test
     void higherLevelDealsMoreDamage() {
         Pokemon lowLevelAttacker = new Abra("Low Level Attacker");
@@ -226,6 +345,11 @@ class AttackTest {
         assertTrue(highLevelDamage > lowLevelDamage, "Higher level attacker should deal more damage than lower level attacker.");
     }
 
+    /*
+      * CHECKS:  Higher power moves should generally deal more damage than lower power moves, all else being equal.
+      * HOW:     Compares damage from a low-power move and a high-power move using the same attacker and defender stats.
+      * IDEAL:   The higher power move should consistently deal more damage than the lower power move.
+      */
     @Test
     void higherMovePowerDealsMoreDamage() {
         Pokemon attacker = new Abra("Attacker");
@@ -239,6 +363,11 @@ class AttackTest {
         assertTrue(highPowerDamage > lowPowerDamage, "Higher power move should deal more damage than lower power move.");
     }
 
+    /*
+      * CHECKS:  Higher attack stat should generally deal more damage with physical moves, all else being equal.
+      * HOW:     Compares damage from a low-attack attacker and a high-attack attacker using the same move and stats.
+      * IDEAL:   The attacker with higher attack stat should consistently deal more damage than the attacker with lower attack stat.
+      */
     @Test
     void higherAttackStatDealsMoreDamageWithPhysicalMove() {
         Pokemon lowAttackAttacker = new Abra("Low Attack Attacker");
@@ -256,6 +385,11 @@ class AttackTest {
         assertTrue(highAttackDamage > lowAttackDamage, "Attacker with higher attack stat should deal more damage than attacker with lower attack stat.");
     }
 
+    /*
+      * CHECKS:  Higher defense stat should generally reduce damage from physical moves, all else being equal.
+      * HOW:     Compares damage from a low-defense defender and a high-defense defender using the same move and attacker stats.
+      * IDEAL:   The defender with higher defense stat should consistently take less damage than the defender with lower defense stat.
+      */
     @Test
     void higherDefenseStatReducesDamageWithPhysicalMove() {
         Pokemon attacker = new Abra("Attacker");
@@ -273,6 +407,11 @@ class AttackTest {
         assertTrue(lowDefenseDamage > highDefenseDamage, "Defender with higher defense stat should take less damage than defender with lower defense stat.");
     }
 
+    /*
+      * CHECKS:  Higher special attack stat should generally deal more damage with special moves, all else being equal.
+      * HOW:     Compares damage from a low-special-attack attacker and a high-special-attack attacker using the same move and stats.
+      * IDEAL:   The attacker with higher special attack stat should consistently deal more damage than the attacker with lower special attack stat when using a special move.
+      */
     @Test
     void higherSpecialAttackStatDealsMoreDamageWithSpecialMove() {
         Pokemon lowSpAttackAttacker = new Abra("Low Sp. Attack Attacker");
@@ -290,6 +429,11 @@ class AttackTest {
         assertTrue(highSpAttackDamage > lowSpAttackDamage, "Attacker with higher special attack stat should deal more damage than attacker with lower special attack stat when using a special move.");
     }
 
+    /*
+      * CHECKS:  Higher special defense stat should generally reduce damage from special moves, all else being equal.
+      * HOW:     Compares damage from a low-special-defense defender and a high-special-defense defender using the same move and attacker stats.
+      * IDEAL:   The defender with higher special defense stat should consistently take less damage than the defender with lower special defense stat when attacked with a special move.
+      */
     @Test
     void higherSpecialDefenseStatReducesDamageWithSpecialMove() {
         Pokemon attacker = new Abra("Attacker");
@@ -307,6 +451,11 @@ class AttackTest {
         assertTrue(lowSpDefenseDamage > highSpDefenseDamage, "Defender with higher special defense stat should take less damage than defender with lower special defense stat when attacked with a special move.");
     }
 
+    /*
+      * CHECKS:  Special attack stat should not affect damage from physical moves, all else being equal.
+      * HOW:     Compares damage from a low-special-attack attacker and a high-special-attack attacker using the same physical move and stats.
+      * IDEAL:   The damage should be within the expected range regardless of the attacker's special attack stat.
+      */
     @Test
     void specialAttackStatDoesNotAffectPhysicalMoveDamage() {
         Pokemon lowSpAttackAttacker = new Abra("Low Sp. Attack Attacker");
@@ -327,6 +476,11 @@ class AttackTest {
         assertTrue(highSpAttackDamage >= 23 && highSpAttackDamage <= 28, "Damage should be within expected range for high special attack attacker.");
     }
 
+    /*
+      * CHECKS:  Attack stat should not affect damage from special moves, all else being equal.
+      * HOW:     Compares damage from a low-attack attacker and a high-attack attacker using the same special move and stats.
+      * IDEAL:   The damage should be within the expected range regardless of the attacker's attack stat.
+      */
     @Test
     void attackStatDoesNotAffectSpecialMoveDamage() {
         Pokemon lowAttackAttacker = new Abra("Low Attack Attacker");
@@ -347,6 +501,11 @@ class AttackTest {
         assertTrue(highAttackDamage >= 68 && highAttackDamage <= 81, "Damage should be within expected range for high attack attacker.");
     }
 
+    /*
+      * CHECKS:  Higher defense stat should generally not affect special move damage, all else being equal.
+      * HOW:     Compares damage from a low-defense defender and a high-defense defender using the same move and attacker stats.
+      * IDEAL:   The defender with higher defense stat should consistently take similar damage to the defender with lower defense stat.
+      */
     @Test
     void defenseStatDoesNotReduceDamageOfSpecialMoves() {
         Pokemon attacker = new Abra("Attacker");
@@ -367,6 +526,11 @@ class AttackTest {
         assertTrue(highDefenseDamage >= 45 && highDefenseDamage <= 54, "Damage should be within expected range for high defense defender.");
     }
 
+    /*
+      * CHECKS:  Higher special defense stat should generally not affect physical move damage, all else being equal.
+      * HOW:     Compares damage from a low-special-defense defender and a high-special-defense defender using the same physical move and attacker stats.
+      * IDEAL:   The defender with higher special defense stat should consistently take similar damage to the defender with lower special defense stat when attacked with a physical move.
+      */
     @Test
     void specialDefenseStatDoesNotReduceDamageOfPhysicalMoves() {
         Pokemon attacker = new Abra("Attacker");
@@ -387,8 +551,15 @@ class AttackTest {
         assertTrue(highSpDefenseDamage >= 16 && highSpDefenseDamage <= 19, "Damage should be within expected range for high special defense defender.");
     }
 
+    // =========================================================================
     // --- Effectiveness Type Check Tests ---
+    // =========================================================================
 
+    /*
+      * CHECKS:  If the defender's secondary type is null, the combined effectiveness should equal the primary effectiveness.
+      * HOW:     Sets the defender's secondary type to null and calculates the combined effectiveness of a move.
+      * IDEAL:   The combined effectiveness should equal the primary effectiveness.
+      */
     @Test
     void calculateEffectivenessReturnsOneOnNullType() {
         Pokemon defender = new Abra("Defender"); // Abra has a single type: Psychic
@@ -400,6 +571,11 @@ class AttackTest {
         assertEquals(combinedEffectiveness, primaryEffectiveness, "If secondary type is null, combined effectiveness should equal primary effectiveness.");
     }
 
+    /*
+      * CHECKS:  If the defender's secondary type is NONE, the combined effectiveness should equal the primary effectiveness.
+      * HOW:     Sets the defender's secondary type to NONE and calculates the combined effectiveness of a move.
+      * IDEAL:   The combined effectiveness should equal the primary effectiveness.
+      */
     @Test
     void calculateEffectivenessReturnsOneOnNoneType() {
         Pokemon defender = new Abra("Defender"); // Abra has a single type: Psychic

@@ -2,5 +2,20 @@
     "java.project.referencedLibraries": [
         "lib/**/*.jar"
     ],
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+
+    // JVM arguments passed to the Java test runner when using VS Code's
+    // Testing panel (the play buttons next to tests). These system properties
+    // override the container's environment variables via resolveConfig() in
+    // DatabaseSetup, letting you point tests at a separate test database
+    // without restarting the container.
+    //
+    // To use the production DB instead, comment out or remove the DB_URL line —
+    // DatabaseSetup will fall back to the DB_URL / DB_USER / DB_USER_PASSWORD
+    // environment variables.
+    "java.test.config": {
+        "vmArgs": [
+            "-DDB_URL=jdbc:mariadb://192.168.1.212:3306/mokepons_test"
+        ]
+    }
 }

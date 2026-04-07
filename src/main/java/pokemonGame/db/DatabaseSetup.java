@@ -40,9 +40,25 @@ public class DatabaseSetup {
         "battle_turn_history"
     );
 
-    private static final String URL = System.getenv("DB_URL");
-    private static final String USER = System.getenv("DB_USER");
-    private static final String PASSWORD = System.getenv("DB_USER_PASSWORD");
+    // Resolve a config value by checking Java system properties first, then env vars.
+    // System properties (-Dkey=value on the command line) take priority, letting you
+    // override the database URL for tests without changing container env vars:
+    //
+    //   mvn test -DDB_URL=jdbc:mariadb://localhost:3306/mokepons_test
+    //
+    // If no system property is set, fall back to the environment variable
+    // that the container already has configured for production use.
+    private static String resolveConfig(String key) {
+        String value = System.getProperty(key);
+        if (value != null) {
+            return value;
+        }
+        return System.getenv(key);
+    }
+
+    private static final String URL = resolveConfig("DB_URL");
+    private static final String USER = resolveConfig("DB_USER");
+    private static final String PASSWORD = resolveConfig("DB_USER_PASSWORD");
     @SuppressWarnings("resource") // We manage the lifecycle of this DataSource manually.
     private static final HikariDataSource DATA_SOURCE = new HikariDataSource();
     static {

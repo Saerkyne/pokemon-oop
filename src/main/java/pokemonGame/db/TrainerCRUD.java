@@ -112,6 +112,27 @@ public class TrainerCRUD {
         }
     }
 
+    public int deleteTrainerByDbId(int trainerDbId) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "DELETE FROM trainers WHERE trainer_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainerDbId);
+                int affectedRows = pstmt.executeUpdate();
+                if (affectedRows > 0) {
+                    LOGGER.info("Trainer with DB ID: {} deleted successfully.", trainerDbId);
+                    return affectedRows; // Return the number of affected rows
+                } else {
+                    LOGGER.warn("No trainer found with DB ID: {}", trainerDbId);
+                    return 0; // Return 0 to indicate no trainer was deleted
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error deleting trainer by DB ID: {}", e.getMessage(), e);
+            return -1; // Return -1 to indicate an error occurred
+        }
+    }
+
     public int updateTrainerNameByDiscordId(long discordID, String newName) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "UPDATE trainers SET name = ? WHERE discord_id = ?";
@@ -130,6 +151,28 @@ public class TrainerCRUD {
             }
         } catch (SQLException e) {
             LOGGER.error("Error updating trainer: {}", e.getMessage(), e);
+            return -1; // Return -1 to indicate an error occurred
+        }
+    }
+
+    public int updateTrainerNameByDbId(int trainerDbId, String newName) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "UPDATE trainers SET name = ? WHERE trainer_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, newName);
+                pstmt.setInt(2, trainerDbId);
+                int affectedRows = pstmt.executeUpdate();
+                if (affectedRows > 0) {
+                    LOGGER.info("Trainer with DB ID: {} updated successfully to name: {}", trainerDbId, newName);
+                    return affectedRows; // Return the number of affected rows
+                } else {
+                    LOGGER.warn("No trainer found with DB ID: {}", trainerDbId);
+                    return 0; // Return 0 to indicate no trainer was updated
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error updating trainer by DB ID: {}", e.getMessage(), e);
             return -1; // Return -1 to indicate an error occurred
         }
     }

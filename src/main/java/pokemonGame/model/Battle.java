@@ -40,6 +40,8 @@ public class Battle {
     private int trainer2Id;
     private int trainer1ActivePokemonId;
     private int trainer2ActivePokemonId;
+    private int team1Id;
+    private int team2Id;
     private Timestamp startTime;
     private Timestamp updateTime;
     private int winningTrainerId;
@@ -67,6 +69,14 @@ public class Battle {
     public void setTrainer2Id(int trainer2Id) {
         this.trainer2Id = trainer2Id;
     }
+
+    public void setTeam1Id(int team1Id) {
+        this.team1Id = team1Id;
+    }
+
+    public void setTeam2Id(int team2Id) {
+        this.team2Id = team2Id;
+    }   
 
     public void setTrainer1ActivePokemonId(int trainer1ActivePokemonId) {
         this.trainer1ActivePokemonId = trainer1ActivePokemonId;
@@ -105,6 +115,14 @@ public class Battle {
         return trainer2Id;
     }
 
+    public int getTeam1Id() {
+        return team1Id;
+    }
+
+    public int getTeam2Id() {
+        return team2Id;
+    }
+    
     public int getTrainer1ActivePokemonId() {
         return trainer1ActivePokemonId;
     }

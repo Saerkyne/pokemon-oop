@@ -1,7 +1,7 @@
 package pokemonGame.dbTests;
 
-class BattleCRUDTest {
+class PokemonCRUDTest {
 
-   
+    
 
 }

@@ -1,7 +1,5 @@
 package pokemonGame.dbTests;
 
-class BattleCRUDTest {
-
-   
+class BattleTurnCRUDTest {
 
 }

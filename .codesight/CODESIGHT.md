@@ -7,13 +7,6 @@
 
 ---
 
-# Middleware
-
-## custom
-- KarateChop — `src/main/java/pokemonGame/moves/KarateChop.java`
-
----
-
 # Dependency Graph
 
 ## Most Imported Files (change these carefully)

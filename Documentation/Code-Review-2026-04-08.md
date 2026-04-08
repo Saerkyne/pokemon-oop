@@ -90,42 +90,19 @@ String teamName = Optional.ofNullable(event.getOption("team"))
 
 ---
 
-### 🟡 [Important] Team Model: Redundant Dual Storage (List + 6 Named Slots)
+### ~~🟡 [Important] Team Model: Redundant Dual Storage (List + 6 Named Slots)~~ — FIXED
 
-**File:** `src/main/java/pokemonGame/model/Team.java` | **Line(s):** ~21–27, 77–97
+**File:** `src/main/java/pokemonGame/model/Team.java`
 
-**What's wrong:**  
-`Team` stores Pokémon in both a `List<Pokemon> pokemonList` AND six individual fields (`teamSlotOne` through `teamSlotSix`). The `add()` method only updates the list; `setTeamSlot()` only updates the named field (and pads the list to match). Two code paths for adding Pokémon = guaranteed inconsistency.
-
-**Why this matters:**  
-If caller A uses `team.add(pokemon)`, the named slots don't update. If caller B checks `team.getTeamSlot(0)`, they get stale data. This is a classic dual-representation bug. The `getPokemonList()` getter also returns the raw mutable list, so external code can bypass both paths entirely.
-
-**Recommended fix:**  
-Remove the six named fields. Use only `List<Pokemon>` (max size 6) with index-based access. Return `Collections.unmodifiableList()` from the getter. Provide `getTeamSlot(int)` as a convenience that delegates to `pokemonList.get(index)`.
+**Status:** ✅ Fixed. Team now uses a single `List<Pokemon>` with index-based access, returning `Collections.unmodifiableList()` from the getter.
 
 ---
 
-### 🟡 [Important] PokemonCRUD: Fragile Species Name ↔ Enum Conversion
+### ~~🟡 [Important] PokemonCRUD: Fragile Species Name ↔ Enum Conversion~~ — FIXED
 
-**File:** `src/main/java/pokemonGame/db/PokemonCRUD.java` | **Line(s):** ~137
+**File:** `src/main/java/pokemonGame/db/PokemonCRUD.java`
 
-**What's wrong:**  
-`mapResultSetToPokemon()` converts the DB species string to a `PokeSpecies` enum via `rs.getString("species").toUpperCase().replaceAll("[^a-zA-Z]", "")`. This regex strips all non-alphabetic characters to handle names like "Mr. Mime" → "MRMIME" or "Farfetch'd" → "FARFETCHD". But if `valueOf()` fails (corrupted data, new species, encoding issue), an uncaught `IllegalArgumentException` crashes the entire load operation.
-
-**Why this matters:**  
-Database data can be corrupted or manually edited. A single bad row shouldn't crash the entire `getDBTeamForTrainer()` call. Also, the regex approach is fragile — if a species name has digits or special characters that are meaningful (like "Porygon2" in Gen 2), the pattern would break.
-
-**Recommended fix:**  
-Wrap in try-catch and add a `PokeSpecies.fromDbString()` lookup method that handles edge cases:
-
-```java
-try {
-    PokeSpecies species = PokeSpecies.valueOf(normalized);
-} catch (IllegalArgumentException e) {
-    LOGGER.error("Unknown species in DB: '{}', skipping", raw);
-    continue; // or return null with logging
-}
-```
+**Status:** ✅ Fixed. DB now stores enum constant names (e.g., `PIKACHU`, `MRMIME`) for both species and natures. Reads use direct `valueOf()` with a try-catch safety net for corrupted data. The fragile regex conversion has been removed.
 
 ---
 
@@ -383,8 +360,7 @@ This is the correct modern approach — no `instanceof` chains, no casting, no `
 ### Medium-Term (Ongoing)
 
 1. **Implement remaining DB tests** (PokemonCRUD, TeamCRUD) to protect data integrity.
-2. **Add `PokeSpecies.valueOf()` error handling** in `PokemonCRUD.mapResultSetToPokemon()`.
-3. **Replace `java.sql.Timestamp` with `java.time.LocalDateTime`** in `Battle`.
-4. **Move `BattleService.checkFainted()` and `LearnsetEntry.getEligibleMoves()` to service layer** to clean up model responsibilities.
-5. **Implement status effects** (burn, paralysis, poison, sleep, freeze) — the `StatusCondition` enum and `EnumSet` are already in place.
-6. **Consider `Optional<T>` returns** instead of null from service/DAO methods to make null-handling explicit.
+2. **Replace `java.sql.Timestamp` with `java.time.LocalDateTime`** in `Battle`.
+3. **Move `BattleService.checkFainted()` and `LearnsetEntry.getEligibleMoves()` to service layer** to clean up model responsibilities.
+4. **Implement status effects** (burn, paralysis, poison, sleep, freeze) — the `StatusCondition` enum and `EnumSet` are already in place.
+5. **Consider `Optional<T>` returns** instead of null from service/DAO methods to make null-handling explicit.

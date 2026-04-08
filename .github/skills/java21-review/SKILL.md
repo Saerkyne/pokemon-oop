@@ -36,7 +36,7 @@ Work through the [Review Checklist](./references/review-checklist.md) systematic
 
 1. **What** — the specific problem
 2. **Why** — why it matters (educational explanation a junior dev can learn from)
-3. **How to fix** — a concrete code example showing the fix
+3. **How to fix** — a concrete code example showing the fix. Offer two fix options if relevant: a minimal fix that may patch the issue, and a more cohesive fix that may involve refactoring, database alterations, or architectural changes. Offer the cohesive fix if it significantly improves the code, even if it's more work. Always explain the key changes in the fix code with comments. Do not offer a complicated fix if it is completely unnecessary for the issue at hand or is complicated for the sake of being complicated. The fix should be the simplest solution that properly addresses the issue while also teaching the developer something programming principles or best practices.
 4. **Severity** — how urgent it is
 
 ### Step 3: Produce Structured Report

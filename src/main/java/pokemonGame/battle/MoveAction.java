@@ -1,5 +1,7 @@
 package pokemonGame.battle;
 
+import java.util.Objects;
+
 import pokemonGame.model.Move;
 import pokemonGame.model.MoveSlot;
 import pokemonGame.model.Pokemon;
@@ -16,6 +18,15 @@ import pokemonGame.model.Team;
  */
 public record MoveAction(Trainer trainer, Pokemon pokemon, Team team, int moveSlotIndex) implements BattleAction {
 
+    public MoveAction {
+        if (moveSlotIndex < 0 || moveSlotIndex > 3) {
+            throw new IllegalArgumentException("Move slot index must be between 0 and 3.");
+        }
+        Objects.requireNonNull(trainer, "Trainer cannot be null.");
+        Objects.requireNonNull(pokemon, "Pokemon cannot be null.");
+        Objects.requireNonNull(team, "Team cannot be null.");
+    }
+    
     public int getMoveSlotIndex() {
         return moveSlotIndex;
     }

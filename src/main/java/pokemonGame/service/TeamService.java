@@ -175,7 +175,7 @@ public class TeamService {
         }
 
         // Step 3: Update in-memory state
-        team.getPokemonList().add(pokemon);
+        team.getTeamAsList().add(pokemon);
         LOGGER.info("Added '{}' to team '{}' in slot {}.", pokemon.getNickname(), team.getTeamName(), slotIndex);
         return slotIndex;
     }
@@ -216,7 +216,7 @@ public class TeamService {
         teamCRUD.reorderTeamAfterRelease(trainerId, teamId);
 
         // Update in-memory state
-        team.getPokemonList().remove(pokemon);
+        team.getTeamAsList().remove(pokemon);
 
         LOGGER.info("Released '{}' from slot {} of team '{}'.", pokemon.getNickname(), slotIndex, team.getTeamName());
         return true;
@@ -253,7 +253,7 @@ public class TeamService {
             return null;
         }
 
-        for (Pokemon pokemon : loadedTeam.getPokemonList()) {
+        for (Pokemon pokemon : loadedTeam.getTeamAsList()) {
             if (pokemon.getNickname().equalsIgnoreCase(nickname)) {
                 return pokemon;
             }

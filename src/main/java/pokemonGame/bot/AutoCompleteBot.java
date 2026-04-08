@@ -121,7 +121,7 @@ public class AutoCompleteBot extends ListenerAdapter {
                 return;
             }
             
-            List<Command.Choice> options = trainerTeam.getPokemonList().stream()
+            List<Command.Choice> options = trainerTeam.getTeamAsList().stream()
                 .filter(choice -> choice.getNickname().toLowerCase().startsWith(userInput))
                 .map(choice -> new Command.Choice(choice.getNickname(), choice.getNickname()))
                 .collect(Collectors.toList());

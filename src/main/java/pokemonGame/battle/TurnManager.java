@@ -88,7 +88,7 @@ public class TurnManager {
             Trainer defendingTrainer = (firstAction == trainer1Action) ? secondAction.trainer() : firstAction.trainer();
             Team defendingTeam = (firstAction == trainer1Action) ? secondAction.team() : firstAction.team();
 
-            for (Pokemon p : defendingTeam.getPokemonList()) {
+            for (Pokemon p : defendingTeam.getTeamAsList()) {
                 if (!BattleService.checkFainted(p)) {
                     // If they have at least one non-fainted Pokémon, the battle continues and they will switch in a new Pokémon on their next turn
                     LOGGER.info("{} has fainted! {} has {} Pokémon left to switch in.", secondActor.getNickname(), defendingTrainer.getTrainerName(), defendingTeam.getTeamSize());

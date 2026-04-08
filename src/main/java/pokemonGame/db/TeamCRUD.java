@@ -156,7 +156,7 @@ public class TeamCRUD {
             LOGGER.error("Error retrieving team for trainer ID {}: {}", trainerDbId, e.getMessage(), e);
         }
         Team resultTeam = new Team("Loaded Team");
-        resultTeam.setPokemonList(team);
+        resultTeam.setTeamAsList(team);
         return resultTeam;
     }
 

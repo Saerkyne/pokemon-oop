@@ -11,132 +11,56 @@
 
 This is a well-structured educational Java project that demonstrates solid OOP fundamentals: clean separation between model/battle/persistence/bot layers, proper use of sealed interfaces and records in the battle system, strong encapsulation in the `Pokemon` class, and comprehensive type chart testing. The codebase has evolved significantly — it now includes a functioning Discord bot, HikariCP connection pooling, a full service layer, and a battle turn system using Java 21 features (sealed interfaces, records, pattern matching).
 
-The main areas needing attention are: (1) a critical division-by-zero bug and an incorrect critical-hit formula in `Attack.java`, (2) a legacy `System.console()` call in model code, (3) the `SlashExample` god-method that should be decomposed, (4) null-safety gaps throughout the bot layer, and (5) 13 of 22 test files remain empty. The project's layered architecture is sound — most issues are localized and fixable without architectural changes.
+The main areas needing attention are: (1) null-safety gaps throughout the bot layer and (2) 13 of 22 test files remain empty. The project's layered architecture is sound — most issues are localized and fixable without architectural changes.
 
 ---
 
 ## Issues
 
-### 🔴 [Blocking] Division by Zero in Damage Calculation
+### ~~🔴 [Blocking] Division by Zero in Damage Calculation~~ — DISMISSED
 
 **File:** `src/main/java/pokemonGame/battle/Attack.java` | **Line(s):** ~126
 
-**What's wrong:**  
-`calculateDamage()` divides by `defenseStat` without checking if it's zero. If a Pokémon's defense stat is ever 0 (possible with very low base + 0 IV + 0 EV at level 1), this causes an `ArithmeticException` crash.
-
-**Why this matters:**  
-Division by zero is a runtime crash — it kills the current battle and sends an unhandled exception to the Discord bot layer. In production, this means the user sees a generic error (or nothing) and the battle state is corrupted. Defensive checks on inputs to math-heavy code are critical, especially when the inputs come from user-created Pokémon with random IVs.
-
-**Current code:**
-
-```java
-int baseDamage = (levelCalc * power * attackStat) / defenseStat / 50 + 2;
-```
-
-**Recommended fix:**
-
-```java
-if (defenseStat <= 0) defenseStat = 1; // Floor to 1 to prevent division by zero
-int baseDamage = (levelCalc * power * attackStat) / defenseStat / 50 + 2;
-```
+**Status:** ✅ Not a real issue. The Gen III+ stat formula (`StatCalculator.calcCurrentStat()`) guarantees a minimum stat value of **4** for any non-HP stat, even in the worst case (base 5, level 1, IV 0, EV 0, 0.9× nature): `floor((floor((2*5 + 0 + 0) * 1 / 100) + 5) * 0.9) = floor(4.5) = 4`. Division by zero is mathematically impossible given the stat calculation.
 
 ---
 
-### 🔴 [Blocking] Critical Hit Formula Does Not Produce 2× Damage
+### ~~🔴 [Blocking] Critical Hit Formula Does Not Produce 2× Damage~~ — DISMISSED
 
 **File:** `src/main/java/pokemonGame/battle/Attack.java` | **Line(s):** ~118–119
 
-**What's wrong:**  
-On a critical hit, the code doubles the Pokémon's level before feeding it into the damage formula: `level = level * 2`. The damage formula is `((2*level/5 + 2) * power * atk / def / 50 + 2)`. Doubling the level does **not** double the damage — it's non-linear. For a level 50 Pokémon, doubling level to 100 yields ~1.67× damage, not 2×. At level 5, crit multiplier is ~1.57×.
+**Status:** ✅ Intentional design. This uses the **Gen 1 damage formula** approach where doubling the level produces a **level-scaling crit multiplier**, not a flat 2×. The ratio `(4L/5 + 2) / (2L/5 + 2)` yields:
 
-**Why this matters:**  
-This is a gameplay-accuracy bug. The custom crit system is a documented design choice, but the intent (per comments and the copilot-instructions) is 2× damage on crit. The current implementation under-delivers at all levels. Mainline Pokémon games apply the crit multiplier directly to final damage (1.5× in modern games, 2× in older games).
+- Level 5: `6/4` = **1.50×**
+- Level 20: `18/10` = **1.80×**
+- Level 95: `78/40` = **1.95×**
 
-**Current code:**
-
-```java
-if (calculateCriticalHit(attacker, defender)) {
-    level = level * 2;  // Intended as 2x damage, but formula is non-linear
-}
-```
-
-**Recommended fix:**
-
-```java
-// Calculate damage normally, then apply crit at the end
-boolean isCritical = calculateCriticalHit(attacker, defender);
-// ... normal damage calculation ...
-if (isCritical) {
-    finalDamage *= 2;  // Direct 2x multiplier applied to final damage
-}
-```
+Crits grow stronger as Pokémon level up, approaching but never reaching 2×. This is the intended behavior.
 
 ---
 
-### 🔴 [Blocking] `System.console()` I/O in Model Layer
+### 🔴 [Blocking] `System.console()` I/O in Model Layer — PLANNED MIGRATION
 
 **File:** `src/main/java/pokemonGame/model/MoveSlot.java` | **Line(s):** ~52–93
 
-**What's wrong:**  
-`MoveSlot.teachMoveFromLearnset(Pokemon p)` reads directly from `System.console()` using `console.readLine()`. This is a model-layer class performing user I/O — a separation-of-concerns violation. Worse, `System.console()` returns `null` in non-interactive environments (Discord bot, CI servers, Docker containers), so the method silently no-ops in production.
-
-**Why this matters:**  
-The copilot-instructions explicitly call this out as a known violation. This is the kind of bug that works "fine" in local testing but breaks silently in production. The method also has uncaught `NumberFormatException` if the user enters non-numeric input. Since the project is now a Discord bot, this code path is dead — but it still pollutes the model layer.
-
-**Recommended fix:**  
-Delete the method entirely. Move teaching logic should live in the bot/service layer, where the user's choice comes from Discord button/select menu interactions, not `System.console()`. The service layer should call `pokemon.addMove(move)` or `pokemon.replaceMove(index, move)` after receiving the user's decision from JDA components.
+**Status:** 🚧 Known legacy code from before the Discord bot layer was added. Planned to be reworked so that move teaching is handled through Discord interactions (buttons/select menus) instead of CLI input. The method will be replaced by a Discord-component-based flow in the bot/service layer.
 
 ---
 
-### 🔴 [Blocking] No Bounds Validation on MoveAction/SwitchAction Index Fields
+### ~~🔴 [Blocking] No Bounds Validation on MoveAction/SwitchAction Index Fields~~ — FIXED
 
 **File:** `src/main/java/pokemonGame/battle/MoveAction.java` | **Line(s):** ~26  
 **File:** `src/main/java/pokemonGame/battle/SwitchAction.java` | **Line(s):** ~14
 
-**What's wrong:**  
-`MoveAction.getMoveSlot()` calls `pokemon.getMoveSet().get(moveSlotIndex)` without bounds-checking. If `moveSlotIndex` is 4+ or negative (from a corrupted Discord interaction or DB row), this throws `IndexOutOfBoundsException`. Same pattern in `SwitchAction.getSwitchPokemon()` with `team.getTeamSlot(teamSlotIndex)`.
-
-**Why this matters:**  
-These records are constructed from user input (Discord slash commands) through the bot layer. If a user manipulates their client or if autocomplete returns stale data, the index could be out of range. Records should validate their invariants at construction using compact constructors — this is what compact constructors are for.
-
-**Recommended fix:**
-
-```java
-public record MoveAction(Trainer trainer, Pokemon pokemon, Team team, int moveSlotIndex)
-    implements BattleAction {
-    
-    public MoveAction {  // Compact constructor — runs before field assignment
-        if (moveSlotIndex < 0 || moveSlotIndex > 3)
-            throw new IllegalArgumentException("moveSlotIndex must be 0–3, was: " + moveSlotIndex);
-        Objects.requireNonNull(trainer, "trainer");
-        Objects.requireNonNull(pokemon, "pokemon");
-    }
-}
-```
+**Status:** ✅ Fixed. Compact constructors now validate index bounds at record construction time.
 
 ---
 
-### 🟡 [Important] SlashExample: 500+ Line God Method
+### ~~🟡 [Important] SlashExample: 500+ Line God Method~~ — FIXED
 
-**File:** `src/main/java/pokemonGame/bot/SlashExample.java` | **Line(s):** ~27–360
+**File:** `src/main/java/pokemonGame/bot/SlashExample.java`
 
-**What's wrong:**  
-`onSlashCommandInteraction()` is a single method that handles 11+ slash commands in one giant switch block. Each case contains inline logic for trainer lookup, team management, Pokémon creation, battle initiation, and response formatting. The method is over 300 lines long.
-
-**Why this matters:**  
-This violates the Single Responsibility Principle — one method doing 11 different things. It makes the code hard to read, hard to test, and easy to introduce bugs. When you add a new command, you're editing the same massive method that handles all other commands. If an exception occurs in one branch, the stack trace gives you a line number inside a 300-line method.
-
-**Recommended fix:**  
-Extract each command into its own private method (e.g., `handleCreateTrainer(event)`, `handleAddPokemon(event)`, `handleBattleState(event)`). The switch body becomes single-line delegations:
-
-```java
-switch (event.getName()) {
-    case "createtrainer" -> handleCreateTrainer(event);
-    case "addpokemon"    -> handleAddPokemon(event);
-    case "battlestate"   -> handleBattleState(event);
-    // ...
-}
-```
+**Status:** ✅ Fixed. Each command handler has been extracted into its own private method, with the switch statement delegating via single-line calls.
 
 ---
 
@@ -446,10 +370,7 @@ This is the correct modern approach — no `instanceof` chains, no casting, no `
 
 ### Immediate (Fix Before Next Feature Work)
 
-1. **Fix the division-by-zero in `Attack.calculateDamage()`** — One-line guardrail that prevents a crash.
-2. **Fix the crit multiplier formula** — Move the 2× multiplier to apply to final damage, not to level.
-3. **Add compact constructors to `MoveAction`, `SwitchAction`, `TurnResult`, `DamageResult`** — Validate invariants at creation.
-4. **Remove `MoveSlot.teachMoveFromLearnset()`** — Delete the `System.console()` method from model code.
+1. **Add compact constructors to `TurnResult`, `DamageResult`** — Validate invariants at creation.
 
 ### Short-Term (Next 2–3 Sessions)
 

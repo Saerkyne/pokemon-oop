@@ -1,5 +1,7 @@
 package pokemonGame.battle;
 
+import java.util.Objects;
+
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Trainer;
 import pokemonGame.model.Team;
@@ -13,6 +15,16 @@ import pokemonGame.model.Team;
  * @see MoveAction
  */
 public record SwitchAction(Trainer trainer, Pokemon pokemon, Team team, int teamSlotIndex) implements BattleAction {
+
+    public SwitchAction {
+        if (teamSlotIndex < 0 || teamSlotIndex > 5) {
+            throw new IllegalArgumentException("Team slot index must be between 0 and 5.");
+        }
+        Objects.requireNonNull(trainer, "Trainer cannot be null.");
+        Objects.requireNonNull(pokemon, "Pokemon cannot be null.");
+        Objects.requireNonNull(team, "Team cannot be null.");
+
+    }
 
     public Pokemon getSwitchPokemon() {
         return team.getTeamSlot(teamSlotIndex);

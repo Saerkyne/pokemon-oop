@@ -383,7 +383,7 @@ Build from the **inside out** — domain records first, then the turn logic, the
 
 **What to build:** Three record classes in the `pokemonGame` package.
 
-```
+```tree
 BattleAction (sealed interface)
 ├── MoveAction(MoveSlot slot, Pokemon target)   — record
 └── SwitchAction(Pokemon switchTo)              — record

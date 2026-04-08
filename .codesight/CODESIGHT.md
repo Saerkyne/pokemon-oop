@@ -1,15 +1,15 @@
 # Pokemon-OOP — AI Context Map
 
 > **Stack:** raw-http | none | unknown | java
-
+>
 > 0 routes | 0 models | 0 components | 0 lib files | 0 env vars | 1 middleware | 901 import links
 > **Token savings:** this file is ~1,300 tokens. Without it, AI exploration would cost ~9,400 tokens. **Saves ~8,100 tokens per conversation.**
 
 ---
 
-# Dependency Graph
+## Dependency Graph
 
-## Most Imported Files (change these carefully)
+### Most Imported Files (change these carefully)
 
 - `src/main/java/pokemonGame/model/Pokemon.java` — imported by **173** files
 - `src/main/java/pokemonGame/model/Move.java` — imported by **172** files
@@ -32,7 +32,7 @@
 - `src/main/java/pokemonGame/db/DatabaseSetup.java` — imported by **2** files
 - `src/main/java/pokemonGame/service/TrainerService.java` — imported by **2** files
 
-## Import Map (who imports what)
+### Import Map (who imports what)
 
 - `src/main/java/pokemonGame/model/Pokemon.java` ← `src/main/java/pokemonGame/battle/Attack.java`, `src/main/java/pokemonGame/battle/BattleAction.java`, `src/main/java/pokemonGame/battle/MoveAction.java`, `src/main/java/pokemonGame/battle/SwitchAction.java`, `src/main/java/pokemonGame/battle/TurnManager.java` +168 more
 - `src/main/java/pokemonGame/model/Move.java` ← `src/main/java/pokemonGame/battle/Attack.java`, `src/main/java/pokemonGame/battle/MoveAction.java`, `src/main/java/pokemonGame/battle/TurnManager.java`, `src/main/java/pokemonGame/moves/Absorb.java`, `src/main/java/pokemonGame/moves/Acid.java` +167 more

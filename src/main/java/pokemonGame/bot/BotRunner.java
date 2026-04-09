@@ -70,6 +70,13 @@ public class BotRunner {
                     .setIntegrationTypes(IntegrationType.ALL)
                     .addOption(OptionType.STRING, "team", "The team you want to battle with", true, true)
                     .addOption(OptionType.USER, "opponent", "The trainer you want to battle", true))
+
+                .addCommands(Commands.slash("teachmoveset", "Teaches a move from the Pokémon's learnset (Gen 1 only currently)")
+                    .setContexts(InteractionContextType.ALL)
+                    .setIntegrationTypes(IntegrationType.ALL)
+                    .addOption(OptionType.STRING, "team", "The team the Pokémon belongs to", true, true)
+                    .addOption(OptionType.STRING, "pokemon", "The nickname (or species, if not nicknamed) of the Pokémon to teach the move to", true, true)
+                    .addOption(OptionType.STRING, "move", "The name of the move to teach", true, true))
                 
                 .addCommands(Commands.slash("createteam", "Creates a new team for your trainer")
                     .setContexts(InteractionContextType.ALL)

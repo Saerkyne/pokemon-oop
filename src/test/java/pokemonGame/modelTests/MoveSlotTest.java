@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import pokemonGame.model.Move;
 import pokemonGame.model.MoveSlot;
+import pokemonGame.service.MoveSlotService;
 
 /**
  * Unit tests for the MoveSlot class, which wraps a Move with mutable PP tracking. 
@@ -105,12 +106,12 @@ class MoveSlotTest {
     void testUse(Move move, int expectedMaxPp) {
         MoveSlot moveSlot = new MoveSlot(move);
         for (int i = 0; i < expectedMaxPp; i++) {
-            boolean result = moveSlot.use();
+            boolean result = MoveSlotService.use(moveSlot);
             assertEquals(result, true, "use() should return true when PP is available");
             assertEquals(moveSlot.getCurrentPP(), expectedMaxPp - (i + 1), "Current PP should decrement by 1 after use()");
         }
         // After using all PP, use() should return false
-        boolean result = moveSlot.use();
+        boolean result = MoveSlotService.use(moveSlot);
         assertEquals(result, false, "use() should return false when no PP is left");
         assertEquals(moveSlot.getCurrentPP(), 0, "Current PP should be 0 after using all PP");
     }
@@ -128,10 +129,10 @@ class MoveSlotTest {
         MoveSlot moveSlot = new MoveSlot(move);
         // Deplete the PP
         for (int i = 0; i < expectedMaxPp; i++) {
-            moveSlot.use();
+            MoveSlotService.use(moveSlot);
         }
         // Restore the PP
-        moveSlot.restore();
+        MoveSlotService.restore(moveSlot);
         assertEquals(moveSlot.getCurrentPP(), expectedMaxPp, "Current PP should be restored to the move's max PP after calling restore()");
     }
 }

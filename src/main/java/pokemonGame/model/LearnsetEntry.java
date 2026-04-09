@@ -1,8 +1,5 @@
 package pokemonGame.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Associates a {@link Move} with how and when a Pokémon can learn it.
  * Each species' learnset is a list of LearnsetEntry objects defined in
@@ -44,37 +41,5 @@ public class LearnsetEntry {
         return parameter;
     }
 
-    /**
-     * Return the subset of a Pokémon's learnset that it is currently eligible
-     * to learn — moves at or below its level that it doesn't already know.
-     * This is a pure query: no I/O, no side-effects.  The caller can present
-     * the list however it likes (terminal, Discord embed, GUI) and then call
-     * {@link Pokemon#addMove} or {@link Pokemon#replaceMove} with the choice.
-     *
-     * @param p the Pokémon whose eligible moves to retrieve
-     * @return  a list of LearnsetEntry the Pokémon can learn right now
-     */
-    public static List<LearnsetEntry> getEligibleMoves(Pokemon p) {
-        if (p == null) {
-            return new ArrayList<>();
-        }
-        List<LearnsetEntry> catalog = p.getLearnset();
-        List<LearnsetEntry> eligible = new ArrayList<>();
-
-        for (LearnsetEntry e : catalog) {
-            // Level-up moves are only eligible at or below the Pokémon's level;
-            // TM/HM moves (and other non-LEVEL sources) are always eligible.
-            if (e.getSource() == Source.LEVEL && p.getLevel() < e.getParameter()) {
-                continue;
-            }
-            // Skip moves the Pokémon already knows
-            boolean alreadyKnown = p.getMoveSet().stream()
-                    .anyMatch(m -> m.getMove().getMoveName().equals(e.getMove().getMoveName()));
-            if (alreadyKnown) {
-                continue;
-            }
-            eligible.add(e);
-        }
-        return eligible;
-    }
+    
 }

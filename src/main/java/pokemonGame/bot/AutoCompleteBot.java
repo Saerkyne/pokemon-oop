@@ -8,7 +8,12 @@ import pokemonGame.db.TeamCRUD;
 import pokemonGame.db.TrainerCRUD;
 import pokemonGame.model.Team;
 import pokemonGame.model.Trainer;
+import pokemonGame.model.LearnsetEntry;
+import pokemonGame.model.Move;
+import pokemonGame.service.MoveSlotService;
+import pokemonGame.species.PokeSpecies;
 import pokemonGame.species.PokemonFactory;
+
 
 import java.util.Collections;
 
@@ -34,6 +39,9 @@ public class AutoCompleteBot extends ListenerAdapter {
                 break;
             case "checkteam":
                 handleCheckTeamAutoComplete(event);
+                break;
+            case "teachmoves":
+                handleTeachMovesAutoComplete(event);
                 break;
             default:
                 // No autocomplete for other commands
@@ -145,6 +153,35 @@ public class AutoCompleteBot extends ListenerAdapter {
             List<Command.Choice> options = teamCRUD.getTeamNamesForTrainer(trainer.getTrainerDbId()).stream()
                 .filter(teamName -> teamName.toLowerCase().startsWith(userInput))
                 .map(teamName -> new Command.Choice(teamName, teamName))
+                .collect(Collectors.toList());
+            event.replyChoices(options).queue();
+        }
+    }
+
+    private void handleTeachMovesAutoComplete(CommandAutoCompleteInteractionEvent event) {
+        String focusedOptionName = event.getFocusedOption().getName();
+        if (focusedOptionName == null) {
+            return; // No focused option, can't handle autocomplete
+        }
+        String teamName = Optional.ofNullable(event.getOption("team"))
+                .map(option -> option.getAsString())
+                .orElse(null);
+        String pokemonName = Optional.ofNullable(event.getOption("pokemon"))
+                .map(option -> option.getAsString())
+                .orElse(null);
+        if (teamName == null || pokemonName == null) {
+            return; // Missing required options, can't handle autocomplete
+        }
+
+        if (focusedOptionName.equals("move")) {
+            String userInput = event.getFocusedOption().getValue().toLowerCase();
+            List<Command.Choice> options = MoveSlotService.getEligibleMoves(PokemonFactory.createPokemonFromRegistry(PokeSpecies.getSpeciesByString(pokemonName), pokemonName)).stream()
+                .map(LearnsetEntry::getMove)
+                .map(Move::getMoveName)
+                .filter(moveName -> moveName.toLowerCase().startsWith(userInput))
+                .sorted() // Alphabetical order
+                .limit(25) // Discord allows a maximum of 25 autocomplete options
+                .map(moveName -> new Command.Choice(moveName, moveName)) // Use the move name as both the display and value
                 .collect(Collectors.toList());
             event.replyChoices(options).queue();
         }

@@ -10,6 +10,7 @@ import pokemonGame.model.Pokemon;
 import pokemonGame.model.Team;
 import pokemonGame.model.Trainer;
 import pokemonGame.service.BattleService;
+import pokemonGame.service.MoveSlotService;
 
 
 /**
@@ -190,7 +191,7 @@ public class TurnManager {
 
         // Execute the action (e.g., deal damage, switch Pokémon, etc.)
         // Reduce PP by 1 before executing the move to reflect the cost of using it, even if the move fails or the Pokémon faints as a result.
-        action.getMoveSlot().use();
+        MoveSlotService.use(action.getMoveSlot());
         int damageDealt = dealDamage(action.activePokemon(), defender, action.getMove());
         float effectiveness = Attack.calculateEffectiveness(defender.getTypePrimary(), action.getMove());
         boolean isCritical = Attack.calculateCriticalHit(action.activePokemon(), defender);

@@ -4,6 +4,7 @@ import pokemonGame.model.Pokemon;
 import pokemonGame.model.Team;
 import pokemonGame.model.Trainer;
 import pokemonGame.service.BattleService;
+import pokemonGame.service.MoveSlotService;
 import pokemonGame.service.TrainerService;
 import pokemonGame.species.PokeSpecies;
 import pokemonGame.species.PokemonFactory;
@@ -14,6 +15,10 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import pokemonGame.model.Move;
+import pokemonGame.model.LearnsetEntry;
+import pokemonGame.model.LearnsetEntry.Source;
+
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -67,7 +72,11 @@ public class SlashExample extends ListenerAdapter{
                 handleAddPokemon(event, user, userId);
                 return;
             }
-                
+             
+            case "teachmoveset" -> {
+                handleTeachMoveset(event, user, userId);
+                return;
+            }
 
             case "releasepokemon" -> {
                 handleReleasePokemon(event, user, userId);
@@ -376,4 +385,80 @@ public class SlashExample extends ListenerAdapter{
 
         return;
     }
+
+    private void handleTeachMoveset(SlashCommandInteractionEvent event, User user, long userId) {
+
+        // Checking for a full moveset and allowing for swapping of moves is a good goal, but we will not do that
+        // just yet. Gotta get a move teaching command working first.
+        String eventName = event.getName();
+        LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", eventName, user.getName(), userId  );
+
+        String teamName = Optional.ofNullable(event.getOption("team"))
+            .map(option -> option.getAsString())
+            .orElse(null);
+        String pokemonName = Optional.ofNullable(event.getOption("pokemon"))
+            .map(option -> option.getAsString())
+            .orElse(null);
+        if (teamName == null || pokemonName == null) {
+            event.reply("Please specify a team name and the nickname of the Pokémon you want to teach the move to!").setEphemeral(true).queue();
+            return;
+        }
+        TrainerService trainerService = new TrainerService();
+        TeamService teamService = new TeamService();
+        
+        Trainer trainer = trainerService.getTrainerByDiscordId(event.getUser().getIdLong());
+        if (trainer == null) {
+            event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
+            return;
+        }
+        Team trainerTeam = teamService.getTeamFromName(trainer.getTrainerDbId(), teamName);
+        if (trainerTeam == null) {
+            event.reply("Team not found! Please specify a valid team name.").setEphemeral(true).queue();
+            return;
+        }
+
+        Pokemon selectedPokemon = teamService.getPokemonByNickname(trainer.getTrainerDbId(), trainerTeam.getTeamDbId(), pokemonName);
+        if (selectedPokemon == null) {
+            event.reply("No Pokémon with that nickname found on your team! Make sure you entered the correct nickname.").setEphemeral(true).queue();
+            return;
+        }
+
+        // If we made it here, we have a valid trainer, team, and pokemon, so we can proceed with teaching the move.
+        // The user will input the move names as options in the slash command, and we will validate that the moves are in the Pokémon's learnset and then update the Pokémon's moveset in the database accordingly.
+        // We should also check that the user isn't trying to teach more than 4 moves, since that's the maximum moveset size in Gen 1.
+
+        List<String> moveNames = List.of(
+            Optional.ofNullable(event.getOption("move one")).map(option -> option.getAsString()).orElse(null),
+            Optional.ofNullable(event.getOption("move two")).map(option -> option.getAsString()).orElse(null),
+            Optional.ofNullable(event.getOption("move three")).map(option -> option.getAsString()).orElse(null),
+            Optional.ofNullable(event.getOption("move four")).map(option -> option.getAsString()).orElse(null)
+        );
+        
+        for (String moveName : moveNames) {
+            Move moveToTeach;
+            if (moveName != null) {
+                moveToTeach = MoveSlotService.getMoveByName(moveName);
+                if (moveToTeach == null) {
+                    event.reply("Move '" + moveName + "' not found! Please make sure you entered the move name correctly.").setEphemeral(true).queue();
+                    return;
+                }
+                for (LearnsetEntry entry : MoveSlotService.getEligibleMoves(selectedPokemon)) {
+                    if (entry.getMove().getMoveName().equalsIgnoreCase(moveName)) {
+                        if (entry.getSource() == Source.LEVEL && entry.getParameter() > selectedPokemon.getLevel()) {
+                            event.reply("Your Pokémon doesn't meet the level requirement to learn " + moveName + "!").setEphemeral(true).queue();
+                            return;
+                        }
+                        // If we made it here, the move is valid and can be taught, so we break out of the loop and proceed to teach the move
+                        break;
+                    }
+                }
+                MoveSlotService.teachMove(selectedPokemon, moveToTeach);
+                event.reply("Successfully taught " + moveName + " to " + selectedPokemon.getNickname() + "!").queue();
+            }
+
+
+        }
+        
+
+    };
 }

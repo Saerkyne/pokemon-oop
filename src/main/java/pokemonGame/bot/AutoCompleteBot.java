@@ -40,8 +40,8 @@ public class AutoCompleteBot extends ListenerAdapter {
             case "checkteam":
                 handleCheckTeamAutoComplete(event);
                 break;
-            case "teachmoves":
-                handleTeachMovesAutoComplete(event);
+            case "teachmoveset":
+                handleTeachMovesetAutoComplete(event);
                 break;
             default:
                 // No autocomplete for other commands
@@ -158,7 +158,7 @@ public class AutoCompleteBot extends ListenerAdapter {
         }
     }
 
-    private void handleTeachMovesAutoComplete(CommandAutoCompleteInteractionEvent event) {
+    private void handleTeachMovesetAutoComplete(CommandAutoCompleteInteractionEvent event) {
         String focusedOptionName = event.getFocusedOption().getName();
         if (focusedOptionName == null) {
             return; // No focused option, can't handle autocomplete
@@ -173,7 +173,7 @@ public class AutoCompleteBot extends ListenerAdapter {
             return; // Missing required options, can't handle autocomplete
         }
 
-        if (focusedOptionName.equals("move")) {
+        if (focusedOptionName.equals("move one") || focusedOptionName.equals("move two") || focusedOptionName.equals("move three") || focusedOptionName.equals("move four")) {
             String userInput = event.getFocusedOption().getValue().toLowerCase();
             List<Command.Choice> options = MoveSlotService.getEligibleMoves(PokemonFactory.createPokemonFromRegistry(PokeSpecies.getSpeciesByString(pokemonName), pokemonName)).stream()
                 .map(LearnsetEntry::getMove)

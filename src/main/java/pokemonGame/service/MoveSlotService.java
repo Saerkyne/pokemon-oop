@@ -12,6 +12,7 @@ import pokemonGame.model.Move;
 import pokemonGame.model.MoveSlot;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.LearnsetEntry.Source;
+import pokemonGame.moves.PokeMove;
 
 public class MoveSlotService {
 
@@ -32,8 +33,8 @@ public class MoveSlotService {
  * @see MoveSlot
  * @see Move
  * @see LearnsetEntry
+ * @see PokeMove
  */
-
 
     public static void teachMoveFromLearnset(Pokemon p) {
         // This needs to be converted to Discord interaction for functionality
@@ -93,6 +94,17 @@ public class MoveSlotService {
         }
     }
 
+    public static void teachMove(Pokemon p, Move move) {
+        if (p.addMove(move)) {
+            LOGGER.info("{} learned {}!", p.getNickname(), move.getMoveName());
+            return;
+        }
+    }
+
+    public static Move getMoveByName(String moveName) {
+        return PokeMove.fromString(moveName).createMove();
+    }
+    
     public static boolean use(MoveSlot slot) {
         int currentPP = slot.getCurrentPP();
         if (currentPP > 0) {

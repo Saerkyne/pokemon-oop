@@ -13,5 +13,15 @@ import pokemonGame.model.Trainer;
  * @param winner         the winning {@link Trainer}, or {@code null} if the battle continues
  */
 public record TurnResult(DamageResult action1Result, DamageResult action2Result, boolean battleOver, Trainer winner) {
-    
+    public TurnResult {
+        if (action1Result == null && action2Result != null) {
+            throw new IllegalArgumentException("Action 2 cannot have a result if Action 1 has no result");
+        }
+        if (battleOver && winner == null) {
+            throw new IllegalArgumentException("Winner must be specified if the battle is over");
+        }
+        if (!battleOver && winner != null) {
+            throw new IllegalArgumentException("Winner must be null if the battle is not over");
+        }
+    }
 }

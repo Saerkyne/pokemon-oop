@@ -17,14 +17,16 @@ import pokemonGame.model.Pokemon;
 public class EvManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EvManager.class);
+    private static final int MAX_EV_PER_STAT = 252;
+    private static final int MAX_TOTAL_EV = 510;
 
 
     // Method for calculating how much EV can be added without exceeding caps for any EV
     private int evAddable(Pokemon pokemon, Stat stat, int newEvValue) {
         int currentEvValue = getEv(pokemon, stat);
         int currentEvTotal = getTotalEv(pokemon);
-        int roomInStat = 252 - currentEvValue;
-        int roomInTotal = 510 - currentEvTotal;
+        int roomInStat = MAX_EV_PER_STAT - currentEvValue;
+        int roomInTotal = MAX_TOTAL_EV - currentEvTotal;
         int maxRoom = Math.min(roomInStat, roomInTotal);
         int cappedAdd = Math.min(newEvValue, maxRoom);
         int maximumAddableValue = Math.max(0, cappedAdd);
@@ -36,8 +38,8 @@ public class EvManager {
         int currentEvValue = getEv(pokemon, stat);
         int currentEvTotal = getTotalEv(pokemon);
         int totalWithoutThisStat = currentEvTotal - currentEvValue;
-        int roomInTotal = 510 - totalWithoutThisStat;
-        int cappedValue = Math.min(newEvValue, Math.min(252, roomInTotal));
+        int roomInTotal = MAX_TOTAL_EV - totalWithoutThisStat;
+        int cappedValue = Math.min(newEvValue, Math.min(MAX_EV_PER_STAT, roomInTotal));
         int finalCappedValue = Math.max(0, cappedValue);
         return finalCappedValue;
     }
@@ -79,13 +81,13 @@ public class EvManager {
 
     public static boolean checkEvTotals(Pokemon pokemon) {
         int total = getTotalEv(pokemon);
-        if (total > 510) {
-            LOGGER.warn("Total EVs exceed the maximum of 510. Current total: {}", total);
+        if (total > MAX_TOTAL_EV) {
+            LOGGER.warn("Total EVs exceed the maximum of {}. Current total: {}", MAX_TOTAL_EV, total);
             return false;
         }
-        if (pokemon.getEvHp() > 252 || pokemon.getEvAttack() > 252 || pokemon.getEvDefense() > 252 || pokemon.getEvSpecialAttack() > 252 || pokemon.getEvSpecialDefense() > 252 || pokemon.getEvSpeed() > 252) {
-            LOGGER.warn("One or more EV stats exceed the maximum of 252. Current EVs - HP: {}, Attack: {}, Defense: {}, Special Attack: {}, Special Defense: {}, Speed: {}",
-                    pokemon.getEvHp(), pokemon.getEvAttack(), pokemon.getEvDefense(), pokemon.getEvSpecialAttack(), pokemon.getEvSpecialDefense(), pokemon.getEvSpeed());
+        if (pokemon.getEvHp() > MAX_EV_PER_STAT || pokemon.getEvAttack() > MAX_EV_PER_STAT || pokemon.getEvDefense() > MAX_EV_PER_STAT || pokemon.getEvSpecialAttack() > MAX_EV_PER_STAT || pokemon.getEvSpecialDefense() > MAX_EV_PER_STAT || pokemon.getEvSpeed() > MAX_EV_PER_STAT) {
+            LOGGER.warn("One or more EV stats exceed the maximum of {}. Current EVs - HP: {}, Attack: {}, Defense: {}, Special Attack: {}, Special Defense: {}, Speed: {}",
+                    MAX_EV_PER_STAT, pokemon.getEvHp(), pokemon.getEvAttack(), pokemon.getEvDefense(), pokemon.getEvSpecialAttack(), pokemon.getEvSpecialDefense(), pokemon.getEvSpeed());
             return false;
         }
         return true;

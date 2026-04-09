@@ -159,6 +159,5 @@ public sealed interface BattleAction permits MoveAction, SwitchAction {
 
     Trainer trainer();
     Pokemon activePokemon();
-    String getActionType();
     Team team();
 }

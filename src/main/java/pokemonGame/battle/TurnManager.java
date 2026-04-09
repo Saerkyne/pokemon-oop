@@ -76,7 +76,14 @@ public class TurnManager {
         if (firstAction instanceof MoveAction ma) {
             action1Result = resolveMove(ma, secondActor);
         } else if (firstAction instanceof SwitchAction sa) {
-            firstActor = resolveSwitch(sa); // Update firstActor reference to the new active Pokémon after the switch
+            // Capture the switch target BEFORE resolveSwitch swaps the team slots,
+            // because getSwitchPokemon() reads from the team array which gets modified.
+            // Records are immutable, so activePokemon() will always return the OLD pokemon.
+            Pokemon switchTarget = sa.getSwitchPokemon();
+            action1Result = resolveSwitch(sa);
+            if (switchTarget != null) {
+                firstActor = switchTarget;
+            }
         }
 
         // Check if defender fainted after first action
@@ -106,7 +113,11 @@ public class TurnManager {
             if (secondAction instanceof MoveAction ma) {
                 action2Result = resolveMove(ma, firstActor);
             } else if (secondAction instanceof SwitchAction sa) {
-                secondActor = resolveSwitch(sa); // Update secondActor reference to the new active Pokémon after the switch
+                Pokemon switchTarget = sa.getSwitchPokemon();
+                action2Result = resolveSwitch(sa);
+                if (switchTarget != null) {
+                    secondActor = switchTarget;
+                }
             }
         }
 
@@ -203,14 +214,14 @@ public class TurnManager {
     }
 
     // We know this action is a switch, so we just need to swap the active Pokémon for the trainer performing the switch action.
-    public static Pokemon resolveSwitch(SwitchAction action) {
+    public static DamageResult resolveSwitch(SwitchAction action) {
         Trainer trainer = action.getTrainer();
         Pokemon activePokemon = action.activePokemon();
         Pokemon newPokemon = action.getSwitchPokemon();
         Team team = action.getTeam();
         if (newPokemon == null) {
             LOGGER.error("{} attempted to switch, but the team slot was empty!", trainer.getTrainerName());
-            return activePokemon; // Handle invalid switch attempt (e.g., skip turn, prompt for a valid switch, etc.)
+            return new DamageResult(0, 0, false, true, false); // Handle invalid switch attempt (e.g., skip turn, prompt for a valid switch, etc.)
         }
         // Need logic to readjust team slots so that the new active Pokémon is in the correct slot and the old active Pokémon is moved to the switched-out slot
         int activePokemonSlotIndex = activePokemon.getCurrentTeamSlotIndex();
@@ -223,7 +234,7 @@ public class TurnManager {
         activePokemon.setCurrentTeamSlotIndex(newPokemonSlotIndex); // Update the old active Pokémon's team slot index to reflect its new position
         newPokemon.setCurrentTeamSlotIndex(activePokemonSlotIndex); // Set the new active Pokémon's team slot index to the old active Pokémon's slot index
         LOGGER.info("{} switched to {}!", trainer.getTrainerName(), newPokemon.getNickname());
-        return newPokemon;
+        return new DamageResult(0, 0, false, true, false); // No damage dealt by a switch, but we can return a result indicating the switch was successful
     }
 
     // Deal Damage

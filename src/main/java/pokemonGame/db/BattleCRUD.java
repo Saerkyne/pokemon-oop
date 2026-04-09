@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import pokemonGame.model.Battle;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 
 public class BattleCRUD {
 
@@ -64,8 +65,8 @@ public class BattleCRUD {
                         battle.setTrainer1ActivePokemonId(battleSet.getInt("trainer1_active_pokemon_id"));
                         battle.setTrainer2ActivePokemonId(battleSet.getInt("trainer2_active_pokemon_id"));
                         battle.setStatus(Battle.Status.valueOf(battleSet.getString("status")));
-                        battle.setStartTime(battleSet.getTimestamp("created_at"));
-                        battle.setUpdateTime(battleSet.getTimestamp("updated_at"));
+                        battle.setStartTime(battleSet.getObject("created_at", LocalDateTime.class));
+                        battle.setUpdateTime(battleSet.getObject("updated_at", LocalDateTime.class));
                         return battle;
                     }
                 }
@@ -96,8 +97,8 @@ public class BattleCRUD {
                         battle.setTrainer1ActivePokemonId(battleSet.getInt("trainer1_active_pokemon_id"));
                         battle.setTrainer2ActivePokemonId(battleSet.getInt("trainer2_active_pokemon_id"));
                         battle.setStatus(Battle.Status.valueOf(battleSet.getString("status")));
-                        battle.setStartTime(battleSet.getTimestamp("created_at"));
-                        battle.setUpdateTime(battleSet.getTimestamp("updated_at"));
+                        battle.setStartTime(battleSet.getObject("created_at", LocalDateTime.class));
+                        battle.setUpdateTime(battleSet.getObject("updated_at", LocalDateTime.class));
                         return battle;
                     }
                 }
@@ -130,8 +131,8 @@ public class BattleCRUD {
                         battle.setTrainer1ActivePokemonId(battleSet.getInt("trainer1_active_pokemon_id"));
                         battle.setTrainer2ActivePokemonId(battleSet.getInt("trainer2_active_pokemon_id"));
                         battle.setStatus(Battle.Status.valueOf(battleSet.getString("status")));
-                        battle.setStartTime(battleSet.getTimestamp("created_at"));
-                        battle.setUpdateTime(battleSet.getTimestamp("updated_at"));
+                        battle.setStartTime(battleSet.getObject("created_at", LocalDateTime.class));
+                        battle.setUpdateTime(battleSet.getObject("updated_at", LocalDateTime.class));
                         return battle;
                     }
                 }
@@ -156,7 +157,7 @@ public class BattleCRUD {
                 pstmt.setString(1, battle.getStatus().name());
                 pstmt.setInt(2, battle.getTrainer1ActivePokemonId());
                 pstmt.setInt(3, battle.getTrainer2ActivePokemonId());
-                pstmt.setTimestamp(4, battle.getUpdateTime());
+                pstmt.setObject(4, battle.getUpdateTime());
                 pstmt.setInt(5, battle.getBattleId());
                 pstmt.executeUpdate();
             }

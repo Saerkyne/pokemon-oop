@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import pokemonGame.battle.TurnManager;
 import pokemonGame.service.BattleService;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /*
@@ -42,8 +42,8 @@ public class Battle {
     private int trainer2ActivePokemonId;
     private int team1Id;
     private int team2Id;
-    private Timestamp startTime;
-    private Timestamp updateTime;
+    private LocalDateTime startTime;
+    private LocalDateTime updateTime;
     private int winningTrainerId;
 
     public static enum Status {
@@ -90,11 +90,11 @@ public class Battle {
         this.status = status;
     }
 
-    public void setStartTime(Timestamp startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -135,11 +135,11 @@ public class Battle {
         return status;
     }
 
-    public Timestamp getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public Timestamp getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 

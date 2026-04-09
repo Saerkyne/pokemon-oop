@@ -19,7 +19,34 @@ public class AutoCompleteBot extends ListenerAdapter {
 
     @Override
     public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
-        if (event.getName().equals("addpokemon") && event.getFocusedOption().getName().equals("species")) {
+
+        String commandName = event.getName();
+        if (commandName == null) {
+            return; // No command name, can't handle autocomplete
+        }
+        switch (commandName) {
+            case "addpokemon":
+                handleAddPokemonAutoComplete(event);
+                break;
+            case "releasepokemon":
+                handleReleasePokemonAutoComplete(event);
+                break;
+            case "checkteam":
+                handleCheckTeamAutoComplete(event);
+                break;
+            default:
+                // No autocomplete for other commands
+                break;
+        }
+    }
+
+
+    private void handleAddPokemonAutoComplete(CommandAutoCompleteInteractionEvent event) {
+        String focusedAddPokemon = event.getFocusedOption().getName();
+        if (focusedAddPokemon == null) {
+            return; // No focused option, can't handle autocomplete
+        }
+        if (focusedAddPokemon.equals("species")) {
             String userInput = event.getFocusedOption().getValue().toLowerCase();
         
             List<Command.Choice> options = PokemonFactory.getSpeciesNames().stream()
@@ -29,106 +56,79 @@ public class AutoCompleteBot extends ListenerAdapter {
                     .map(name -> new Command.Choice(name, name)) // Use the species name as both the display and value
                     .collect(Collectors.toList());
             event.replyChoices(options).queue();
-
         }
+    }
 
-        /*
-         * STATIC vs NON-STATIC METHODS — Explanation
-         * ============================================
-         * 
-         * The compile error "Cannot make a static reference to the non-static method"
-         * means you're calling a method using the CLASS name (e.g., TrainerCRUD.getTrainerByDiscordId(...))
-         * but the method belongs to an INSTANCE (an object), not to the class itself.
-         * 
-         * Think of it like this:
-         * - A CLASS is a blueprint. "TrainerCRUD" describes what a TrainerCRUD object can do.
-         * - An INSTANCE (object) is a specific thing built from that blueprint.
-         * 
-         * STATIC methods belong to the blueprint itself. You call them on the class name:
-         *     Math.sqrt(16)          // sqrt is static — no Math object needed
-         *     PokemonFactory.getSpeciesNames()  // static — works on the class directly
-         * 
-         * NON-STATIC (instance) methods belong to a specific object. You must create
-         * an object first, then call the method on that object:
-         *     TrainerCRUD crud = new TrainerCRUD();   // create an instance
-         *     crud.getTrainerByDiscordId(discordId);  // call on the instance
-         * 
-         * WHY does this distinction exist?
-         * - Instance methods can access instance fields (data unique to each object).
-         *   If TrainerCRUD stored a database connection as a field, each instance could
-         *   have its own connection.
-         * - Static methods can't access instance fields — they don't know which object
-         *   you mean. They only have access to static (shared) data.
-         * 
-         * SHOULD you make these methods static?
-         * - If the method doesn't use any instance fields (no "this.something"), making
-         *   it static is fine and simpler. TrainerCRUD.getTrainerByDiscordId() and
-         *   TeamCRUD.getDBTeamForTrainer() don't use instance state — they open a fresh
-         *   database connection each time. So making them static would be reasonable.
-         * - However, if you later add connection pooling (e.g., a shared HikariDataSource
-         *   field), you'd want instance methods so each CRUD object can hold a reference
-         *   to the data source. That's a design decision for later.
-         * 
-         * TWO WAYS TO FIX:
-         * 
-         * Option A — Create an instance (what we do below):
-         *     TrainerCRUD trainerCRUD = new TrainerCRUD();
-         *     trainerCRUD.getTrainerByDiscordId(discordId);
-         * 
-         * Option B — Make the methods static (change the method declaration):
-         *     public static Trainer getTrainerByDiscordId(long discordID) { ... }
-         *   Then you can call TrainerCRUD.getTrainerByDiscordId(discordId) directly.
-         * 
-         * We use Option A here to match how SlashExample.java already uses these classes.
-         */
-        if (event.getName().equals("releasepokemon") && event.getFocusedOption().getName().equals("pokemon")) {
+    private void handleReleasePokemonAutoComplete(CommandAutoCompleteInteractionEvent event) {
+        String focusedReleasePokemon = event.getFocusedOption().getName();
+        String focusedTeam = null;
+        if (focusedReleasePokemon == null) {
+            return; // No focused option, can't handle autocomplete
+        }
+        if (focusedReleasePokemon.equals("team")) {
+            focusedTeam = "team";
             String userInput = event.getFocusedOption().getValue().toLowerCase();
             Long discordId = event.getUser().getIdLong();
             TrainerCRUD trainerCRUD = new TrainerCRUD();
             TeamCRUD teamCRUD = new TeamCRUD();
-            Trainer releasingTrainer = trainerCRUD.getTrainerByDiscordId(discordId);
-            if (releasingTrainer == null) {
+            Trainer trainer = trainerCRUD.getTrainerByDiscordId(discordId);
+            if (trainer == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
                 return;
             }
-            /*
-             * FIX: The original code referenced an undefined variable `team`.
-             * We need to determine which team the trainer wants to release from.
-             * Here we read the "team" option from the slash command (if provided)
-             * to look up the correct Team object. If the option isn't filled in yet,
-             * we fall back to the first team available for the trainer.
-             */
-            String teamName = event.getOption("team") != null
-                    ? event.getOption("team").getAsString()
-                    : null;
-            // If no team name was provided yet, try to get the first available team
-            if (teamName == null) {
-                List<String> teamNames = teamCRUD.getTeamNamesForTrainer(releasingTrainer.getTrainerDbId());
-                if (teamNames.isEmpty()) {
-                    event.replyChoices(Collections.emptyList()).queue(); // No teams exist, return empty choices
-                    return;
-                }
-                teamName = teamNames.get(0);
+            
+            List<Command.Choice> options = teamCRUD.getTeamNamesForTrainer(trainer.getTrainerDbId()).stream()
+                .filter(teamName -> teamName.toLowerCase().startsWith(userInput))
+                .map(teamName -> new Command.Choice(teamName, teamName))
+                .collect(Collectors.toList());
+            event.replyChoices(options).queue();
+        }
+
+        if (focusedReleasePokemon.equals("pokemon") && focusedTeam == null) {
+            // If the user is trying to autocomplete the "pokemon" option but hasn't selected a team yet,
+            // we can't provide any valid options, so we return an empty list.
+            event.replyChoices(Collections.emptyList()).queue();
+            return;
+        }
+
+        if (focusedReleasePokemon.equals("pokemon") && event.getOption("team") != null) {
+            // If the user has selected a team but hasn't started typing the pokemon name yet,
+            // we can provide a list of all pokemon on that team as autocomplete options.
+            String teamName = event.getOption("team").getAsString();
+            Long discordId = event.getUser().getIdLong();
+            TrainerCRUD trainerCRUD = new TrainerCRUD();
+            TeamCRUD teamCRUD = new TeamCRUD();
+            Trainer trainer = trainerCRUD.getTrainerByDiscordId(discordId);
+            if (trainer == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
+                return;
             }
-            Team selectedTeam = releasingTrainer.getTeam(teamName);
+            Team selectedTeam = trainer.getTeam(teamName);
             if (selectedTeam == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // Team not found on trainer, return empty choices
                 return;
             }
-            Team trainerTeam = teamCRUD.getDBTeamForTrainer(releasingTrainer.getTrainerDbId(), selectedTeam.getTeamDbId());
+            Team trainerTeam = teamCRUD.getDBTeamForTrainer(trainer.getTrainerDbId(), selectedTeam.getTeamDbId());
             if (trainerTeam == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No team found, return empty choices
                 return;
             }
             
             List<Command.Choice> options = trainerTeam.getTeamAsList().stream()
-                .filter(choice -> choice.getNickname().toLowerCase().startsWith(userInput))
                 .map(choice -> new Command.Choice(choice.getNickname(), choice.getNickname()))
                 .collect(Collectors.toList());
             event.replyChoices(options).queue();
         }
 
-        if (event.getName().equals("checkteam") && event.getFocusedOption().getName().equals("team")) {
+    }
+
+    private void handleCheckTeamAutoComplete(CommandAutoCompleteInteractionEvent event) {
+        String focusedTeamCheck = event.getFocusedOption().getName();
+        if (focusedTeamCheck == null) {
+            return; // No focused option, can't handle autocomplete
+        }
+
+        if (focusedTeamCheck.equals("team")) {
             String userInput = event.getFocusedOption().getValue().toLowerCase();
             Long discordId = event.getUser().getIdLong();
             TrainerCRUD trainerCRUD = new TrainerCRUD();

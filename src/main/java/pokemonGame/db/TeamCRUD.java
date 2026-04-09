@@ -138,11 +138,12 @@ public class TeamCRUD {
                 pstmt.setInt(2, teamId);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
+                    TrainerCRUD trainerCRUD = new TrainerCRUD();
+                    Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);
                     while (rs.next()) {
                         LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
                                 trainerDbId, rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
-                        TrainerCRUD trainerCRUD = new TrainerCRUD();
-                        Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);
+                        
                         Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainer);
                         
                         LOGGER.info("Mapped Pokemon for trainer ID {}: instance_id={}, species={}, level={}", 

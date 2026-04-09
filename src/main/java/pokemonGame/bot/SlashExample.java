@@ -26,14 +26,16 @@ public class SlashExample extends ListenerAdapter{
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         User user = event.getUser();
         long userId = user.getIdLong();
+        String eventName = event.getName();
+        LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", eventName, user, userId  );
 
 
 
-        switch (event.getName()) {
+        switch (eventName) {
             
             case "battlestate"-> {
                 // Placeholder, this needs a handler function for pulling data from the database
-                LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", event.getName(), user, userId);
+                LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", eventName, user, userId);
                 event.reply("The battle is currently in progress!").queue();
                 return;
             }
@@ -90,8 +92,9 @@ public class SlashExample extends ListenerAdapter{
     }
 
     private void handleClearDatabase(SlashCommandInteractionEvent event, User user, long userId) {
-        LOGGER.info("Received slash command; '{}' with confirmation: '{}' from user: {} (ID: {})", event.getName(), event.getOption("confirm").getAsString(), user, userId);
-        String confirmation = event.getOption("confirm").getAsString();
+        String eventName = event.getName();
+        String confirmation = event.getOption("confirm") != null ? event.getOption("confirm").getAsString() : "";
+        LOGGER.info("Received slash command; '{}' with confirmation: '{}' from user: {} (ID: {})", eventName, confirmation, user, userId);
         if (confirmation.equalsIgnoreCase("CONFIRM")) {
 
             Member member = event.getMember();
@@ -112,8 +115,9 @@ public class SlashExample extends ListenerAdapter{
     private void handleReleasePokemon(SlashCommandInteractionEvent event, User user, long userId) {
         // This will need to remove the specified Pokemon from the trainer's team in the database, then reply with success or failure message
         // We should probably have the user specify the team and slot number of the Pokemon they want to release, since there can be multiple of the same species and nickname across different teams and slots. 
-        LOGGER.info("Received slash command; '{}' with (nick)name: '{}' from user: {} (ID: {})", event.getName(), event.getOption("pokemon").getAsString(), user, userId);
+        String eventName = event.getName();
         String releasedPokemon = event.getOption("pokemon").getAsString();
+        LOGGER.info("Received slash command; '{}' with (nick)name: '{}' from user: {} (ID: {})", eventName, releasedPokemon, user, userId);
         TrainerService trainerService = new TrainerService();
         TeamService teamService = new TeamService();
         
@@ -148,13 +152,14 @@ public class SlashExample extends ListenerAdapter{
 
     private void handleAddPokemon(SlashCommandInteractionEvent event, User user, long userId) {
         // Needs to create a pokemon and add it to the trainers team in the database, then reply with success or failure message
-        LOGGER.info("Received slash command; '{}' with Pokemon name: '{}' from user: {} (ID: {})", event.getName(), event.getOption("species").getAsString(), user, userId);
+        String eventName = event.getName();
+        String inputSpecies = event.getOption("species").getAsString();
+        LOGGER.info("Received slash command; '{}' with Pokemon name: '{}' from user: {} (ID: {})", eventName, inputSpecies, user, userId);
         // below doesn't work because of the new enum structure with display names and aliases, need to loop through the enum values and check if the input matches either the display name or any of the aliases for each species 
         //PokeSpecies species = PokeSpecies.valueOf(event.getOption("species").getAsString().toUpperCase());
         TeamService teamService = new TeamService();
         TrainerService trainerService = new TrainerService();
 
-        String inputSpecies = event.getOption("species").getAsString();
         PokeSpecies species = PokeSpecies.getSpeciesByString(inputSpecies);
         if (species == null) {
             event.reply("Sorry, that Pokemon hasn't been discovered yet!").setEphemeral(true).queue();
@@ -205,9 +210,14 @@ public class SlashExample extends ListenerAdapter{
     }
 
     private void handleCheckTeam(SlashCommandInteractionEvent event, User user, long userId) {
-        LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", event.getName(), user.getName(), userId  );
+        String eventName = event.getName();
+        LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", eventName, user.getName(), userId  );
 
         String teamName = event.getOption("team").getAsString();
+        if (teamName == null) {
+            event.reply("Please specify a team name to check!").setEphemeral(true).queue();
+            return;
+        }
         TrainerService trainerService = new TrainerService();
         TeamService teamService = new TeamService();
         
@@ -217,12 +227,15 @@ public class SlashExample extends ListenerAdapter{
             return;
         }
         Team trainerTeam = teamService.getTeamFromName(trainer.getTrainerDbId(), teamName);
+        if (trainerTeam == null) {
+            event.reply("Team not found! Please specify a valid team name.").setEphemeral(true).queue();
+            return;
+        }
 
         List<Pokemon> teamInfo = trainerTeam.getTeamAsList();
-        
-
-        if (!(trainerTeam.getTeamSize() > 0)) {
+        if (teamInfo == null || teamInfo.isEmpty()) {
             event.reply("Your team is currently empty!").queue();
+            return;
         } else {
             StringBuilder teamMessage = new StringBuilder("Your current team:\n");
             int slotNumber =  1;
@@ -246,7 +259,12 @@ public class SlashExample extends ListenerAdapter{
     }
 
     private void handleCreateTeam(SlashCommandInteractionEvent event, User user, long userId) {
-        LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("teamname").getAsString(), user, userId);
+        String teamName = event.getOption("teamname").getAsString();
+        if (teamName == null) {
+            event.reply("Please specify a team name to create!").setEphemeral(true).queue();
+            return;
+        }
+        LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), teamName, user, userId);
         TrainerService trainerService = new TrainerService();
         TeamService teamService = new TeamService();
         
@@ -255,7 +273,7 @@ public class SlashExample extends ListenerAdapter{
             event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
             return;
         }
-        Team teamCreateAttempt = teamService.createTeam(teamCreator.getTrainerDbId(), event.getOption("teamname").getAsString());
+        Team teamCreateAttempt = teamService.createTeam(teamCreator.getTrainerDbId(), teamName);
         if (teamCreateAttempt == null) {
             event.reply("Sorry, there was an error creating your team!").setEphemeral(true).queue();
             return;
@@ -266,10 +284,15 @@ public class SlashExample extends ListenerAdapter{
     }
 
     private void handleCreateTrainer(SlashCommandInteractionEvent event, User user, long userId) {
-        LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("name").getAsString(), user, userId);
+        String trainerName = event.getOption("name").getAsString();
+        if (trainerName == null) {
+            event.reply("Please specify a trainer name to create!").setEphemeral(true).queue();
+            return;
+        }
+        LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), trainerName, user, userId);
         TrainerService trainerService = new TrainerService();
 
-        Trainer createAttempt = trainerService.createTrainer(event.getOption("name").getAsString(), userId, user.getName());
+        Trainer createAttempt = trainerService.createTrainer(trainerName, userId, user.getName());
 
         if (createAttempt == null) {
             event.reply("A trainer already exists for your Discord account!").setEphemeral(true).queue();
@@ -281,7 +304,8 @@ public class SlashExample extends ListenerAdapter{
     }
 
     private void handleStartBattle(SlashCommandInteractionEvent event, User user, long userId) {
-        LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), event.getOption("opponent").getAsUser().getName(), user, userId  );
+        String opponentName = event.getOption("opponent").getAsUser().getName();
+        LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), opponentName, user, userId  );
         // We need to check that both users have trainers, create a battle record in the database,
         // and then reply with the battle ID or some kind of confirmation message. 
         // The battle loop will be handled separately, and the battle state can be checked with the /battlestate command.
@@ -296,6 +320,11 @@ public class SlashExample extends ListenerAdapter{
             return;
         }
         String challengerTeamName = event.getOption("team").getAsString();
+        if (challengerTeamName == null) {
+            event.reply("Please specify a team name to use for the battle!").setEphemeral(true).queue();
+            return;
+        }
+
         Team challengerTeam = teamService.getTeamFromName(attackingTrainer.getTrainerDbId(), challengerTeamName);
         if (challengerTeam == null) {
             event.reply("You need to set up your team first using /checkteam and /addpokemon!").setEphemeral(true).queue();

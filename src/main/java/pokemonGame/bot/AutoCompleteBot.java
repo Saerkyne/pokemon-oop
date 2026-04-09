@@ -1,6 +1,7 @@
 package pokemonGame.bot;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import pokemonGame.db.TeamCRUD;
@@ -94,7 +95,9 @@ public class AutoCompleteBot extends ListenerAdapter {
         if (focusedReleasePokemon.equals("pokemon") && event.getOption("team") != null) {
             // If the user has selected a team but hasn't started typing the pokemon name yet,
             // we can provide a list of all pokemon on that team as autocomplete options.
-            String teamName = event.getOption("team").getAsString();
+            String teamName = Optional.ofNullable(event.getOption("team"))
+                .map(option -> option.getAsString())
+                .orElse(null);
             Long discordId = event.getUser().getIdLong();
             TrainerCRUD trainerCRUD = new TrainerCRUD();
             TeamCRUD teamCRUD = new TeamCRUD();

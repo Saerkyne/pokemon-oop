@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,9 +94,11 @@ public class SlashExample extends ListenerAdapter{
 
     private void handleClearDatabase(SlashCommandInteractionEvent event, User user, long userId) {
         String eventName = event.getName();
-        String confirmation = event.getOption("confirm") != null ? event.getOption("confirm").getAsString() : "";
+        String confirmation = Optional.ofNullable(event.getOption("confirm"))
+            .map(option -> option.getAsString())
+            .orElse(null);
         LOGGER.info("Received slash command; '{}' with confirmation: '{}' from user: {} (ID: {})", eventName, confirmation, user, userId);
-        if (confirmation.equalsIgnoreCase("CONFIRM")) {
+        if (confirmation != null && confirmation.equalsIgnoreCase("CONFIRM")) {
 
             Member member = event.getMember();
             if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
@@ -116,7 +119,9 @@ public class SlashExample extends ListenerAdapter{
         // This will need to remove the specified Pokemon from the trainer's team in the database, then reply with success or failure message
         // We should probably have the user specify the team and slot number of the Pokemon they want to release, since there can be multiple of the same species and nickname across different teams and slots. 
         String eventName = event.getName();
-        String releasedPokemon = event.getOption("pokemon").getAsString();
+        String releasedPokemon = Optional.ofNullable(event.getOption("pokemon"))
+            .map(option -> option.getAsString())
+            .orElse(null);
         LOGGER.info("Received slash command; '{}' with (nick)name: '{}' from user: {} (ID: {})", eventName, releasedPokemon, user, userId);
         TrainerService trainerService = new TrainerService();
         TeamService teamService = new TeamService();
@@ -127,7 +132,9 @@ public class SlashExample extends ListenerAdapter{
             return;
         }
         
-        Team releaseTeam = teamService.getTeamFromName(releasingTrainer.getTrainerDbId(), event.getOption("team").getAsString());
+        Team releaseTeam = Optional.ofNullable(event.getOption("team"))
+            .map(option -> teamService.getTeamFromName(releasingTrainer.getTrainerDbId(), option.getAsString()))
+            .orElse(null);
         if (releaseTeam == null) {
             event.reply("You need to create a team first using /createteam!").setEphemeral(true).queue();
             return;
@@ -153,7 +160,9 @@ public class SlashExample extends ListenerAdapter{
     private void handleAddPokemon(SlashCommandInteractionEvent event, User user, long userId) {
         // Needs to create a pokemon and add it to the trainers team in the database, then reply with success or failure message
         String eventName = event.getName();
-        String inputSpecies = event.getOption("species").getAsString();
+        String inputSpecies = Optional.ofNullable(event.getOption("species"))
+            .map(option -> option.getAsString())
+            .orElse(null);
         LOGGER.info("Received slash command; '{}' with Pokemon name: '{}' from user: {} (ID: {})", eventName, inputSpecies, user, userId);
         // below doesn't work because of the new enum structure with display names and aliases, need to loop through the enum values and check if the input matches either the display name or any of the aliases for each species 
         //PokeSpecies species = PokeSpecies.valueOf(event.getOption("species").getAsString().toUpperCase());
@@ -165,7 +174,9 @@ public class SlashExample extends ListenerAdapter{
             event.reply("Sorry, that Pokemon hasn't been discovered yet!").setEphemeral(true).queue();
             return;
         }
-        String nickname = event.getOption("nickname") != null ? event.getOption("nickname").getAsString() : species.getDisplayName();
+        String nickname = Optional.ofNullable(event.getOption("nickname"))
+            .map(option -> option.getAsString())
+            .orElse(species.getDisplayName()); // If no nickname provided, use the species name as the nickname by default
         
         
         Trainer currentTrainer = trainerService.getTrainerByDiscordId(userId);
@@ -173,7 +184,9 @@ public class SlashExample extends ListenerAdapter{
             event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
             return;
         }
-        Team addTeam = teamService.getTeamFromName(currentTrainer.getTrainerDbId(), event.getOption("team").getAsString());
+        Team addTeam = teamService.getTeamFromName(currentTrainer.getTrainerDbId(), Optional.ofNullable(event.getOption("team"))
+            .map(option -> option.getAsString())
+            .orElse(null));
         if (addTeam == null) {
             event.reply("You need to create a team first using /createteam!").setEphemeral(true).queue();
             return;
@@ -213,7 +226,9 @@ public class SlashExample extends ListenerAdapter{
         String eventName = event.getName();
         LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", eventName, user.getName(), userId  );
 
-        String teamName = event.getOption("team").getAsString();
+        String teamName = Optional.ofNullable(event.getOption("team"))
+            .map(option -> option.getAsString())
+            .orElse(null);
         if (teamName == null) {
             event.reply("Please specify a team name to check!").setEphemeral(true).queue();
             return;
@@ -259,7 +274,9 @@ public class SlashExample extends ListenerAdapter{
     }
 
     private void handleCreateTeam(SlashCommandInteractionEvent event, User user, long userId) {
-        String teamName = event.getOption("teamname").getAsString();
+        String teamName = Optional.ofNullable(event.getOption("teamname"))
+            .map(option -> option.getAsString())
+            .orElse(null);
         if (teamName == null) {
             event.reply("Please specify a team name to create!").setEphemeral(true).queue();
             return;
@@ -284,7 +301,9 @@ public class SlashExample extends ListenerAdapter{
     }
 
     private void handleCreateTrainer(SlashCommandInteractionEvent event, User user, long userId) {
-        String trainerName = event.getOption("name").getAsString();
+        String trainerName = Optional.ofNullable(event.getOption("name"))
+            .map(option -> option.getAsString())
+            .orElse(null);
         if (trainerName == null) {
             event.reply("Please specify a trainer name to create!").setEphemeral(true).queue();
             return;
@@ -304,7 +323,9 @@ public class SlashExample extends ListenerAdapter{
     }
 
     private void handleStartBattle(SlashCommandInteractionEvent event, User user, long userId) {
-        String opponentName = event.getOption("opponent").getAsUser().getName();
+        String opponentName = Optional.ofNullable(event.getOption("opponent"))
+            .map(option -> option.getAsUser().getName())
+            .orElse(null);
         LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), opponentName, user, userId  );
         // We need to check that both users have trainers, create a battle record in the database,
         // and then reply with the battle ID or some kind of confirmation message. 
@@ -319,7 +340,9 @@ public class SlashExample extends ListenerAdapter{
             event.reply("You need to create a trainer first using /createtrainer!").setEphemeral(true).queue();
             return;
         }
-        String challengerTeamName = event.getOption("team").getAsString();
+        String challengerTeamName = Optional.ofNullable(event.getOption("team"))
+            .map(option -> option.getAsString())
+            .orElse(null);
         if (challengerTeamName == null) {
             event.reply("Please specify a team name to use for the battle!").setEphemeral(true).queue();
             return;
@@ -331,7 +354,9 @@ public class SlashExample extends ListenerAdapter{
             return;
         }
 
-        Trainer defendingTrainer = trainerService.getTrainerByDiscordId(event.getOption("opponent").getAsUser().getIdLong());
+        Trainer defendingTrainer = Optional.ofNullable(event.getOption("opponent"))
+            .map(option -> trainerService.getTrainerByDiscordId(option.getAsUser().getIdLong()))
+            .orElse(null);
         if (defendingTrainer == null) {
             event.reply("Your opponent needs to create a trainer first using /createtrainer!").setEphemeral(true).queue();
             return;
@@ -342,7 +367,9 @@ public class SlashExample extends ListenerAdapter{
             event.reply("Challenge issued successfully!").queue();
 
             // Notify the opponent trainer of the challenge (e.g., via Discord DM or in-app notification)
-            sendMessage(event.getOption("opponent").getAsUser(), "You have been challenged to a battle by " + attackingTrainer.getTrainerName() + "(" + user.getName() + ")! Use /battlestate to check the status of the battle and /checkteam to set up your team if you haven't already. You can accept with /acceptchallenge or decline with /declinechallenge (not implemented yet).");
+            Optional.ofNullable(event.getOption("opponent"))
+                .map(option -> option.getAsUser())
+                .ifPresent(opponentUser -> sendMessage(opponentUser, "You have been challenged to a battle by " + attackingTrainer.getTrainerName() + "(" + user.getName() + ")! Use /battlestate to check the status of the battle and /checkteam to set up your team if you haven't already. You can accept with /acceptchallenge or decline with /declinechallenge (not implemented yet)."));
         } else {
             event.reply("There is already an active or pending battle between you and your opponent!").setEphemeral(true).queue();
         }

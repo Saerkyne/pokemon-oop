@@ -75,6 +75,10 @@ class MoveSlotTest {
 
     /* CHECKS:  The MoveSlot constructor correctly initializes the current PP 
      *          to the move's max PP and references the correct Move.
+     * HOW:     Create a MoveSlot with a given Move and verify that the current PP 
+     *          is set to the move's max PP and that the MoveSlot references the correct Move.
+     * IDEAL:   The test should pass for all Move classes in the pokemonGame.moves package, 
+     *          ensuring that the MoveSlot constructor works correctly for any Move.
      */
     @ParameterizedTest
     @MethodSource("provideMovesForInitialization")
@@ -82,5 +86,52 @@ class MoveSlotTest {
         MoveSlot moveSlot = new MoveSlot(move);
         assertEquals(moveSlot.getCurrentPP(), expectedMaxPp, "Initial PP should be equal to the move's max PP");
         assertEquals(moveSlot.getMove(), move, "MoveSlot should reference the correct Move");
+    }
+
+    // =========================================================================
+    // --- use() and restore() method tests ---
+    // =========================================================================
+
+    /*
+     * CHECKS:  The use() method correctly decrements the current PP of the MoveSlot.
+     *          The restore() method correctly restores the current PP to the move's max PP.
+     * HOW:     Create a MoveSlot with a given Move, call use() multiple times, and verify that the current PP decreases accordingly.
+     *          Then call restore() and verify that the current PP is reset to the move's max PP.
+     * IDEAL:   The test should pass for all Move classes in the pokemonGame.moves package, 
+     *          ensuring that the use() and restore() methods work correctly for any Move.
+     */
+    @ParameterizedTest
+    @MethodSource("provideMovesForInitialization")
+    void testUse(Move move, int expectedMaxPp) {
+        MoveSlot moveSlot = new MoveSlot(move);
+        for (int i = 0; i < expectedMaxPp; i++) {
+            boolean result = moveSlot.use();
+            assertEquals(result, true, "use() should return true when PP is available");
+            assertEquals(moveSlot.getCurrentPP(), expectedMaxPp - (i + 1), "Current PP should decrement by 1 after use()");
+        }
+        // After using all PP, use() should return false
+        boolean result = moveSlot.use();
+        assertEquals(result, false, "use() should return false when no PP is left");
+        assertEquals(moveSlot.getCurrentPP(), 0, "Current PP should be 0 after using all PP");
+    }
+
+    /*
+     * CHECKS:  The restore() method correctly restores the current PP to the move's max PP after it has been used.
+     * HOW:     Create a MoveSlot with a given Move, call use() multiple times to deplete the PP, 
+     *          then call restore() and verify that the current PP is reset to the move's max PP.
+     * IDEAL:   The test should pass for all Move classes in the pokemonGame.moves package, 
+     *          ensuring that the restore() method works correctly for any Move.
+     */
+    @ParameterizedTest
+    @MethodSource("provideMovesForInitialization")
+    void testRestore(Move move, int expectedMaxPp) {
+        MoveSlot moveSlot = new MoveSlot(move);
+        // Deplete the PP
+        for (int i = 0; i < expectedMaxPp; i++) {
+            moveSlot.use();
+        }
+        // Restore the PP
+        moveSlot.restore();
+        assertEquals(moveSlot.getCurrentPP(), expectedMaxPp, "Current PP should be restored to the move's max PP after calling restore()");
     }
 }

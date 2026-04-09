@@ -106,27 +106,11 @@ String teamName = Optional.ofNullable(event.getOption("team"))
 
 ---
 
-### 🟡 [Important] N+1 Query Pattern in TeamCRUD.getDBTeamForTrainer()
+### ~~🟡 [Important] N+1 Query Pattern in TeamCRUD.getDBTeamForTrainer()~~ — FIXED
 
-**File:** `src/main/java/pokemonGame/db/TeamCRUD.java` | **Line(s):** ~163–171
+**File:** `src/main/java/pokemonGame/db/TeamCRUD.java`
 
-**What's wrong:**  
-Inside the `while (rs.next())` loop, each iteration creates a new `TrainerCRUD` instance and calls `getTrainerByDbId()` — one extra DB query per Pokémon in the team. For a full 6-Pokémon team, this means 7 queries (1 for the team + 6 for the trainer lookup) instead of 2 (1 for team + 1 for trainer).
-
-**Why this matters:**  
-N+1 queries are the most common performance anti-pattern in ORM/DAO code. Each query involves network round-trip to the DB server, connection pool checkout, and result parsing. For a Discord bot that needs to respond within 3 seconds, unnecessary queries add latency.
-
-**Recommended fix:**  
-Load the trainer once before the loop:
-
-```java
-TrainerCRUD trainerCRUD = new TrainerCRUD();
-Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);
-while (rs.next()) {
-    Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainer);
-    // ...
-}
-```
+**Status:** ✅ Fixed. Trainer is now loaded once before the loop instead of per-iteration.
 
 ---
 
@@ -146,96 +130,44 @@ For tests that need deterministic RNG, make the field `volatile` and the setter 
 
 ---
 
-### 🟡 [Important] TurnResult and DamageResult Accept Invalid States
+### ~~🟡 [Important] TurnResult and DamageResult Accept Invalid States~~ — FIXED
 
 **File:** `src/main/java/pokemonGame/battle/TurnResult.java`  
 **File:** `src/main/java/pokemonGame/battle/DamageResult.java`
 
-**What's wrong:**  
-`TurnResult` allows `battleOver=true` with `winner=null` (battle ended but no winner). `DamageResult` allows `isHit=false` with `damage > 0` (missed but dealt damage) and `isCritical=true` (missed but was a crit). These are logically impossible states that records should prevent.
-
-**Why this matters:**  
-Records are value types — their whole purpose is to represent valid data. If invalid states are representable, every consumer must validate. Compact constructors are ideal for enforcing invariants at creation time.
-
-**Recommended fix:**
-
-```java
-public record DamageResult(int damage, float effectiveness, boolean isCritical, boolean isHit, boolean defenderFainted) {
-    public DamageResult {
-        if (damage < 0) throw new IllegalArgumentException("damage must be >= 0");
-        if (!isHit && damage > 0) throw new IllegalArgumentException("miss cannot deal damage");
-        if (!isHit && isCritical) throw new IllegalArgumentException("miss cannot be critical");
-    }
-}
-```
+**Status:** ✅ Fixed. Both records now have compact constructors with thorough invariant validation (damage bounds, miss/crit consistency, effectiveness range, battleOver/winner consistency).
 
 ---
 
-### 🟢 [Suggestion] Replace `java.sql.Timestamp` with `java.time.LocalDateTime`
+### ~~🟢 [Suggestion] Replace `java.sql.Timestamp` with `java.time.LocalDateTime`~~ — FIXED
 
-**File:** `src/main/java/pokemonGame/model/Battle.java` | **Line(s):** ~32, 69
+**File:** `src/main/java/pokemonGame/model/Battle.java`
 
-**What's wrong:**  
-`Battle` uses `java.sql.Timestamp` for `startTime` and `updateTime`. `Timestamp` is mutable (extends `java.util.Date`), thread-unsafe, and part of the legacy JDBC API.
-
-**Why this matters:**  
-`java.time.LocalDateTime` (or `Instant` for UTC) is immutable, thread-safe, and the modern standard since Java 8. MariaDB JDBC driver supports `LocalDateTime` natively via `ResultSet.getObject(col, LocalDateTime.class)`.
+**Status:** ✅ Fixed. `startTime` and `updateTime` now use `java.time.LocalDateTime`.
 
 ---
 
-### 🟢 [Suggestion] Use Enhanced Switch in Bot Layer
+### ~~🟢 [Suggestion] Use Enhanced Switch in Bot Layer~~ — FIXED
 
-**File:** `src/main/java/pokemonGame/bot/SlashExample.java`  
-**File:** `src/main/java/pokemonGame/bot/AutoCompleteBot.java`
+**File:** `src/main/java/pokemonGame/bot/SlashExample.java`
 
-**What's wrong:**  
-Both files use traditional `if/else if` chains or `switch` with `case/break` syntax for routing commands. Java 21's arrow-syntax switch is cleaner and eliminates fall-through bugs.
-
-**Recommended fix:**
-
-```java
-switch (event.getName()) {
-    case "say"           -> handleSay(event);
-    case "ping"          -> event.reply("Pong!").queue();
-    case "createtrainer"  -> handleCreateTrainer(event);
-    default              -> event.reply("Unknown command").setEphemeral(true).queue();
-};
-```
+**Status:** ✅ Fixed. `onSlashCommandInteraction()` now uses arrow-syntax switch (`case "x" -> handler(event)`).
 
 ---
 
-### 🟢 [Suggestion] Remove Redundant `getActionType()` from Sealed Interface
+### ~~🟢 [Suggestion] Remove Redundant `getActionType()` from Sealed Interface~~ — FIXED
 
 **File:** `src/main/java/pokemonGame/battle/BattleAction.java`
 
-**What's wrong:**  
-`BattleAction` defines `getActionType()` returning `"MOVE"` or `"SWITCH"` as strings. Since `BattleAction` is a sealed interface with only `MoveAction` and `SwitchAction` as permits, pattern matching makes this method unnecessary. The string comparison is a type-safety regression.
-
-**Recommended fix:**  
-Remove `getActionType()` and use pattern matching everywhere:
-
-```java
-switch (action) {
-    case MoveAction ma   -> resolveMove(ma, defender);
-    case SwitchAction sa -> resolveSwitch(sa);
-}
-```
+**Status:** ✅ Fixed. `getActionType()` removed. Callers now use sealed-type pattern matching.
 
 ---
 
-### 🟢 [Suggestion] EvManager: Extract Magic Numbers to Constants
+### ~~🟢 [Suggestion] EvManager: Extract Magic Numbers to Constants~~ — FIXED
 
 **File:** `src/main/java/pokemonGame/core/EvManager.java`
 
-**What's wrong:**  
-The per-stat cap (252) and total cap (510) are hardcoded throughout the class. If these values ever change (unlikely, but possible for custom rulesets), every occurrence must be found and updated.
-
-**Recommended fix:**
-
-```java
-private static final int MAX_EV_PER_STAT = 252;
-private static final int MAX_EV_TOTAL = 510;
-```
+**Status:** ✅ Fixed. Per-stat cap (252) and total cap (510) extracted to `MAX_EV_PER_STAT` and `MAX_TOTAL_EV` constants.
 
 ---
 
@@ -347,20 +279,15 @@ This is the correct modern approach — no `instanceof` chains, no casting, no `
 
 ### Immediate (Fix Before Next Feature Work)
 
-1. **Add compact constructors to `TurnResult`, `DamageResult`** — Validate invariants at creation.
+1. **Add null-checks on all `event.getOption()` calls** in `SlashExample` — several unchecked calls remain.
 
 ### Short-Term (Next 2–3 Sessions)
 
-1. **Decompose `SlashExample.onSlashCommandInteraction()`** — Extract per-command handler methods.
-2. **Add null-checks on all `event.getOption()` calls** in `SlashExample` and `AutoCompleteBot`.
-3. **Implement `MoveSlotTest` and `TeamTest`** — Fill the two most critical model test gaps.
-4. **Fix Team model** — Remove the six named slot fields; use `List<Pokemon>` only.
-5. **Fix TeamCRUD N+1 query** — Pre-load trainer before the loop.
+1. **Implement `MoveSlotTest` and `TeamTest`** — Fill the two most critical model test gaps.
+2. **Implement remaining DB tests** (PokemonCRUD, TeamCRUD) to protect data integrity.
 
 ### Medium-Term (Ongoing)
 
-1. **Implement remaining DB tests** (PokemonCRUD, TeamCRUD) to protect data integrity.
-2. **Replace `java.sql.Timestamp` with `java.time.LocalDateTime`** in `Battle`.
-3. **Move `BattleService.checkFainted()` and `LearnsetEntry.getEligibleMoves()` to service layer** to clean up model responsibilities.
-4. **Implement status effects** (burn, paralysis, poison, sleep, freeze) — the `StatusCondition` enum and `EnumSet` are already in place.
-5. **Consider `Optional<T>` returns** instead of null from service/DAO methods to make null-handling explicit.
+1. **Move `BattleService.checkFainted()` and `LearnsetEntry.getEligibleMoves()` to service layer** to clean up model responsibilities.
+2. **Implement status effects** (burn, paralysis, poison, sleep, freeze) — the `StatusCondition` enum and `EnumSet` are already in place.
+3. **Consider `Optional<T>` returns** instead of null from service/DAO methods to make null-handling explicit.

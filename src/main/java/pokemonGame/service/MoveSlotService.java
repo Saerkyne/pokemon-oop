@@ -1,6 +1,5 @@
 package pokemonGame.service;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +12,7 @@ import pokemonGame.model.MoveSlot;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.LearnsetEntry.Source;
 import pokemonGame.moves.PokeMove;
+import pokemonGame.db.MoveCRUD;
 
 public class MoveSlotService {
 
@@ -36,89 +36,72 @@ public class MoveSlotService {
  * @see PokeMove
  */
 
-    public static void teachMoveFromLearnset(Pokemon p) {
-        // This needs to be converted to Discord interaction for functionality
-        Console console = System.console();
-        if (console == null) {
-            LOGGER.error("No console available. Cannot teach move.");
-            return;
-        }
-        
-        List<LearnsetEntry> eligible = MoveSlotService.getEligibleMoves(p);
-
-        if (eligible.isEmpty()) {
-            LOGGER.info("{} has no new moves to learn right now.", p.getNickname());
-            return;
-        }
-
-        LOGGER.info("Pick a move for {} to learn:", p.getNickname());
-        for (int i = 0; i < eligible.size(); i++) {
-            LearnsetEntry e = eligible.get(i);
-            LOGGER.info("  {}: {} ({} {})", i + 1, e.getMove().getMoveName(), e.getSource(), e.getParameter());
-        }
-
-        LOGGER.info("Choice (1-{}): ", eligible.size());
-        int choice = Integer.parseInt(console.readLine());
-        if (choice < 1 || choice > eligible.size()) {
-            LOGGER.warn("Invalid choice. No move learned.");
-            return;
-        }
-
-        Move picked = eligible.get(choice - 1).getMove();
-
-        // If the moveset isn't full, just add it directly
-        if (p.addMove(picked)) {
-            LOGGER.info("{} learned {}!", p.getNickname(), picked.getMoveName());
-            return;
-        }
-
-        // Moveset is full — ask which move to replace
-        LOGGER.info("{} already knows 4 moves.", p.getNickname());
-        LOGGER.info("Replace a move with {}? (yes/no)", picked.getMoveName());
-        String response = console.readLine();
-        if (!response.equalsIgnoreCase("yes")) {
-            LOGGER.info("{} did not learn {}.", p.getNickname(), picked.getMoveName());
-            return;
-        }
-
-        LOGGER.info("Which move should be forgotten?");
-        for (int i = 0; i < p.getMoveSet().size(); i++) {
-            LOGGER.info("  {}: {}", i + 1, p.getMoveSet().get(i).getMove().getMoveName());
-        }
-        LOGGER.info("Choice (1-4): ");
-        int slot = Integer.parseInt(console.readLine());
-        if (p.replaceMove(slot - 1, picked)) {
-            LOGGER.info("{} forgot a move and learned {}!", p.getNickname(), picked.getMoveName());
-        } else {
-            LOGGER.warn("Invalid slot. Move not learned.");
-        }
-    }
+    
 
     public static void teachMove(Pokemon p, Move move) {
-        if (p.addMove(move)) {
-            LOGGER.info("{} learned {}!", p.getNickname(), move.getMoveName());
-            return;
+
+        if (!getEligibleMoves(p).stream().anyMatch(e -> e.getMove().getMoveName().equalsIgnoreCase(move.getMoveName()))) {
+            return; // Move is not eligible to be learned, so we exit without making changes
         }
+
+        MoveCRUD moveCRUD = new MoveCRUD();
+
+        try{
+            if (moveCRUD.insertMoveForPokemon(p.getPokemonDbId(), p.getMoveSet().size(), move.getMoveName(), move.getMaxPp()) == -1) {
+                LOGGER.error("Failed to insert move {} into DB for Pokémon {}.", move.getMoveName(), p.getNickname());
+                return; // Exit without modifying the in-memory moveset if DB insert fails
+            } else {
+            LOGGER.info("Move {} successfully inserted into DB for Pokémon {}.", move.getMoveName(), p.getNickname());
+            p.addMove(move);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to insert move {} into DB for Pokémon {}: {}", move.getMoveName(), p.getNickname(), e.getMessage());
+            throw new RuntimeException("Failed to teach move due to database error.");
+        }
+        
     }
 
     public static Move getMoveByName(String moveName) {
         return PokeMove.fromString(moveName).createMove();
     }
     
-    public static boolean use(MoveSlot slot) {
+    public static boolean use(Pokemon pokemon, MoveSlot slot) {
         int currentPP = slot.getCurrentPP();
-        if (currentPP > 0) {
-            slot.setCurrentPP(currentPP - 1); // Decrease PP by 1 when the move is used
-            return true;
-        } else {
+        if (currentPP <= 0) {
             LOGGER.info("No PP left for move: {}", slot.getMove().getMoveName());
             return false;
         }
+
+        int slotIndex = pokemon.getMoveSet().indexOf(slot);
+        if (slotIndex == -1) {
+            LOGGER.error("MoveSlot for {} not found in {}'s moveset.", slot.getMove().getMoveName(), pokemon.getNickname());
+            return false;
+        }
+
+        int newPP = currentPP - 1;
+        MoveCRUD moveCRUD = new MoveCRUD();
+        if (moveCRUD.updatePP(pokemon.getPokemonDbId(), slotIndex, newPP) == -1) {
+            LOGGER.error("Failed to persist PP update for {} on {}.", slot.getMove().getMoveName(), pokemon.getNickname());
+            return false;
+        }
+        slot.setCurrentPP(newPP);
+        return true;
     }
 
-    public static void restore(MoveSlot slot) {
-         // Restore PP to max PP of the move
-        slot.setCurrentPP(slot.getMove().getMaxPp());
+    public static void restore(Pokemon pokemon, MoveSlot slot) {
+        int slotIndex = pokemon.getMoveSet().indexOf(slot);
+        if (slotIndex == -1) {
+            LOGGER.error("MoveSlot for {} not found in {}'s moveset.", slot.getMove().getMoveName(), pokemon.getNickname());
+            return;
+        }
+
+        int maxPP = slot.getMove().getMaxPp();
+        MoveCRUD moveCRUD = new MoveCRUD();
+        if (moveCRUD.updatePP(pokemon.getPokemonDbId(), slotIndex, maxPP) == -1) {
+            LOGGER.error("Failed to persist PP restore for {} on {}.", slot.getMove().getMoveName(), pokemon.getNickname());
+            return;
+        }
+        slot.setCurrentPP(maxPP);
     }
 
     /**

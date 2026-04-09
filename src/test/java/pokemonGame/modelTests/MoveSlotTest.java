@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import pokemonGame.model.Move;
 import pokemonGame.model.MoveSlot;
 import pokemonGame.service.MoveSlotService;
+import pokemonGame.species.Abra;
+import pokemonGame.model.Pokemon;
 
 /**
  * Unit tests for the MoveSlot class, which wraps a Move with mutable PP tracking. 
@@ -105,13 +107,14 @@ class MoveSlotTest {
     @MethodSource("provideMovesForInitialization")
     void testUse(Move move, int expectedMaxPp) {
         MoveSlot moveSlot = new MoveSlot(move);
+        Pokemon abra = new Abra("testAbra");
         for (int i = 0; i < expectedMaxPp; i++) {
-            boolean result = MoveSlotService.use(moveSlot);
+            boolean result = MoveSlotService.use(abra, moveSlot);
             assertEquals(result, true, "use() should return true when PP is available");
             assertEquals(moveSlot.getCurrentPP(), expectedMaxPp - (i + 1), "Current PP should decrement by 1 after use()");
         }
         // After using all PP, use() should return false
-        boolean result = MoveSlotService.use(moveSlot);
+        boolean result = MoveSlotService.use(abra, moveSlot);
         assertEquals(result, false, "use() should return false when no PP is left");
         assertEquals(moveSlot.getCurrentPP(), 0, "Current PP should be 0 after using all PP");
     }
@@ -127,12 +130,13 @@ class MoveSlotTest {
     @MethodSource("provideMovesForInitialization")
     void testRestore(Move move, int expectedMaxPp) {
         MoveSlot moveSlot = new MoveSlot(move);
+        Pokemon abra = new Abra("testAbra");
         // Deplete the PP
         for (int i = 0; i < expectedMaxPp; i++) {
-            MoveSlotService.use(moveSlot);
+            MoveSlotService.use(abra, moveSlot);
         }
         // Restore the PP
-        MoveSlotService.restore(moveSlot);
+        MoveSlotService.restore(abra, moveSlot);
         assertEquals(moveSlot.getCurrentPP(), expectedMaxPp, "Current PP should be restored to the move's max PP after calling restore()");
     }
 }

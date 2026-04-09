@@ -18,12 +18,15 @@ import pokemonGame.core.EvManager;
 import pokemonGame.core.Natures;
 import pokemonGame.core.Stat;
 import pokemonGame.core.StatCalculator;
+import pokemonGame.model.Move;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Trainer;
+import pokemonGame.moves.PokeMove;
 import pokemonGame.species.PokeSpecies;
 import pokemonGame.species.PokemonFactory;
 
 import java.sql.*;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -222,6 +225,22 @@ public class PokemonCRUD {
         foundPokemon.setIsFainted(isFainted);
         StatCalculator.calculateAllStats(foundPokemon); // Recalculate stats based on IVs, EVs, and level
         foundPokemon.setCurrentHP(currentHp); // Set the current HP after recalculating stats
+
+        // Load moves from pokemon_movesets and populate the in-memory moveset
+        MoveCRUD moveCRUD = new MoveCRUD();
+        List<String[]> moveRows = moveCRUD.getMovesForPokemon(foundPokemonId);
+        for (String[] row : moveRows) {
+            String moveName = row[0];
+            int pp = Integer.parseInt(row[1]);
+            try {
+                Move move = PokeMove.fromString(moveName).createMove();
+                foundPokemon.addMove(move);
+                // Set the persisted PP (may differ from max if the move was partially used)
+                foundPokemon.getMoveSet().get(foundPokemon.getMoveSet().size() - 1).setCurrentPP(pp);
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("Unknown move '{}' in DB for Pokémon instance {}; skipping.", moveName, foundPokemonId);
+            }
+        }
 
         return foundPokemon; // Return the Pokémon object
     }

@@ -191,7 +191,7 @@ public class TurnManager {
 
         // Execute the action (e.g., deal damage, switch Pokémon, etc.)
         // Reduce PP by 1 before executing the move to reflect the cost of using it, even if the move fails or the Pokémon faints as a result.
-        MoveSlotService.use(action.getMoveSlot());
+        MoveSlotService.use(action.pokemon(),action.getMoveSlot());
         int damageDealt = dealDamage(action.activePokemon(), defender, action.getMove());
         float effectiveness = Attack.calculateEffectiveness(defender.getTypePrimary(), action.getMove());
         boolean isCritical = Attack.calculateCriticalHit(action.activePokemon(), defender);

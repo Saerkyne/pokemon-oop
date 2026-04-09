@@ -325,7 +325,7 @@ class TurnManagerTest {
         // Drain all PP
         MoveSlot slot = abra1.getMoveSet().get(0);
         while (slot.getCurrentPP() > 0) {
-            MoveSlotService.use(slot);
+            MoveSlotService.use(abra1, slot);
         }
         int hpBefore = abra2.getCurrentHP();
 

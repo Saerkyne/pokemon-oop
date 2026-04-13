@@ -20,7 +20,10 @@ import pokemonGame.model.LearnsetEntry;
 import pokemonGame.model.LearnsetEntry.Source;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -427,12 +430,12 @@ public class SlashExample extends ListenerAdapter{
         // The user will input the move names as options in the slash command, and we will validate that the moves are in the Pokémon's learnset and then update the Pokémon's moveset in the database accordingly.
         // We should also check that the user isn't trying to teach more than 4 moves, since that's the maximum moveset size in Gen 1.
 
-        List<String> moveNames = List.of(
-            Optional.ofNullable(event.getOption("move one")).map(option -> option.getAsString()).orElse(null),
-            Optional.ofNullable(event.getOption("move two")).map(option -> option.getAsString()).orElse(null),
-            Optional.ofNullable(event.getOption("move three")).map(option -> option.getAsString()).orElse(null),
-            Optional.ofNullable(event.getOption("move four")).map(option -> option.getAsString()).orElse(null)
-        );
+        List<String> moveNames = Stream.of(
+            "move one", "move two", "move three", "move four")
+            .map(name -> event.getOption(name))
+            .filter(Objects::nonNull)
+            .map(option -> option.getAsString())
+            .toList();
         
         for (String moveName : moveNames) {
             Move moveToTeach;

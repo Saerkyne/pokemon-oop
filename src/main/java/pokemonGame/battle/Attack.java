@@ -92,7 +92,7 @@ public final class Attack {
         
     }
 
-    public static int calculateDamage(Pokemon attacker, Pokemon defender, Move move) {
+    public static int calculateDamage(Pokemon attacker, Pokemon defender, Move move, boolean crit) {
         // Placeholder for damage calculation logic
         int damage = 0;
         if (move.getMoveCategory() == Category.STATUS) {
@@ -132,7 +132,7 @@ public final class Attack {
         int level = attacker.getLevel();
         int power = move.getMovePower();
         int attackStat = attacker.getAttackStatForMove(move);
-        int defenseStat = defender.getDefenseStatForMove(move);
+        int defenseStat = defender.getDefenseStatForMove(move); // can never be 0 due to formula - floor is 4, not 0
 
         LOGGER.info("Attacker level: {}", level);
         LOGGER.info("Move power: {}", power);
@@ -144,7 +144,7 @@ public final class Attack {
 
         // Crit damage modifiers
         // RBY has a bad crit formula, that negates stat stages. This is going to "fix" that issue, preventing a crit from ignoring stat changes but still giving a 2x damage bonus.
-        if (calculateCriticalHit(attacker, defender)) {
+        if (crit) {
             level = level * 2; // Bonus multiplier for critical hits
         } 
 

@@ -59,7 +59,7 @@ public class TurnManager {
      * resolution after the first, with a faint check in between.
      */
 
-    public TurnManager() {
+    private TurnManager() {
       
     }
 
@@ -94,16 +94,18 @@ public class TurnManager {
             Trainer defendingTrainer = (firstAction == trainer1Action) ? secondAction.trainer() : firstAction.trainer();
             Team defendingTeam = (firstAction == trainer1Action) ? secondAction.team() : firstAction.team();
 
-            for (Pokemon p : defendingTeam.getTeamAsList()) {
-                if (!p.checkFainted()) {
-                    // If they have at least one non-fainted Pokémon, the battle continues and they will switch in a new Pokémon on their next turn
-                    LOGGER.info("{} has fainted! {} has {} Pokémon left to switch in.", secondActor.getNickname(), defendingTrainer.getTrainerName(), defendingTeam.getTeamSize());
-                    break;
-                }
-                // If they have no non-fainted Pokémon left, the battle is over and the other trainer wins
+            
+            boolean allFainted = defendingTeam.getTeamAsList().stream()
+                    .allMatch(Pokemon::checkFainted);
+            if (allFainted) {
                 battleOver = true;
-                winner = (firstAction == trainer1Action) ? firstAction.trainer() : secondAction.trainer();
-                LOGGER.info("{} has fainted and {} has no Pokémon left to switch in! {} wins the battle!", secondActor.getNickname(), defendingTrainer.getTrainerName(), winner.getTrainerName());
+                Trainer attackingTrainer = (firstAction == trainer1Action)
+                        ? firstAction.trainer()
+                        : secondAction.trainer();
+                winner = attackingTrainer;
+                LOGGER.info("{} has no remaining Pokémon! {} wins the battle!", defendingTrainer.getTrainerName(), winner.getTrainerName());
+            } else {
+                LOGGER.info("{} has fainted! {} must switch to a new Pokémon.", secondActor.getNickname(), defendingTrainer.getTrainerName());
             }
         }
         // Resolve second action only if defender is still alive
@@ -165,7 +167,7 @@ public class TurnManager {
                 return trainer2Action;
             } else {
                 // Speeds are equal, randomly determine turn order
-                if (Math.random() < 0.5) {
+                if (Attack.randomInt(0,1) < 0.5) {
                     return trainer1Action;
                 } else {
                     return trainer2Action;
@@ -190,10 +192,17 @@ public class TurnManager {
         // Reduce PP by 1 in memory before executing the move.
         // Database persistence of PP is handled by BattleService after the turn resolves.
         action.getMoveSlot().setCurrentPP(action.getMoveSlot().getCurrentPP() - 1);
-        int damageDealt = dealDamage(action.activePokemon(), defender, action.getMove());
-        float effectiveness = Attack.calculateEffectiveness(defender.getTypePrimary(), action.getMove());
-        boolean isCritical = Attack.calculateCriticalHit(action.activePokemon(), defender);
         boolean isHit = Attack.checkAccuracy(action.activePokemon(), defender, action.getMove());
+        if (!isHit) {
+            LOGGER.info("{} used {}, but it missed!", action.activePokemon().getNickname(), action.getMove().getMoveName());
+            return new DamageResult(0, 0, false, false, false);
+        }
+        boolean isCritical = Attack.calculateCriticalHit(action.activePokemon(), defender);
+        int damageDealt = Attack.calculateDamage(action.activePokemon(), defender, action.getMove(), isCritical);
+        float effectivenessPrimary = Attack.calculateEffectiveness(defender.getTypePrimary(), action.getMove());
+        float effectivenessSecondary = Attack.calculateEffectiveness(defender.getTypeSecondary(), action.getMove());
+        float combinedEffectiveness = effectivenessPrimary * effectivenessSecondary;
+        
         if (damageDealt > 0) {
             // Handle fainting and other side effects of the move here (e.g., status conditions, recoil damage, etc.)
             if (!defender.checkFainted()) {
@@ -205,11 +214,11 @@ public class TurnManager {
             }
 
             // return the damage result, including whether the move hit, was super effective, and if it was a critical hit
-            return new DamageResult(damageDealt, effectiveness, isCritical, isHit, defender.checkFainted());
+            return new DamageResult(damageDealt, combinedEffectiveness, isCritical, isHit, defender.checkFainted());
 
             
         }
-        return new DamageResult(0, 0, false, true, false); // Placeholder, replace with actual damage calculation
+        return new DamageResult(0, combinedEffectiveness, false, true, false); 
     }
 
     // We know this action is a switch, so we just need to swap the active Pokémon for the trainer performing the switch action.
@@ -240,8 +249,8 @@ public class TurnManager {
     public static int dealDamage(Pokemon attacker, Pokemon defender, Move move) {
         // Calculate damage based on move power, attacker's stats, defender's stats, type effectiveness, etc.
         // This is a placeholder for the actual damage calculation logic.
-        
-        int damage = Attack.calculateDamage(attacker, defender, move);
+        boolean crit = Attack.calculateCriticalHit(attacker, defender);
+        int damage = Attack.calculateDamage(attacker, defender, move, crit);
 
         // Check for damage amount, clamp to 0 if it would go negative
         // We clamp at the setter too, to also set fained status if damage exceeds current HP,

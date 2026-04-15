@@ -11,30 +11,33 @@ import pokemonGame.db.MoveCRUD;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import pokemonGame.service.BattleService;
 import pokemonGame.service.MoveSlotService;
+import pokemonGame.service.TeamService;
+import pokemonGame.service.TrainerService;
 
 // mvn compile exec:java -Dexec.mainClass="pokemonGame.bot.BotRunner"
 
 
 public class BotRunner {
     public static void main( String[] args ) {
+        
         String token = System.getenv("MOKEPONS_API_KEY");
+        if (token == null || token.isBlank()) {
+            throw new IllegalStateException("MOKEPONS_API_KEY environment variable not set");
+        }
         BattleService battleService = new BattleService(new BattleCRUD());
         MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
+        TrainerService trainerService = new TrainerService();
+        TeamService teamService = new TeamService();
 
 
         JDA api = JDABuilder.createDefault(token)
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
-                .addEventListeners(new SlashExample(battleService, moveSlotService))
-                .addEventListeners(new AutoCompleteBot())
+                .addEventListeners(new SlashExample(battleService, moveSlotService, trainerService, teamService))
+                .addEventListeners(new AutoCompleteBot(trainerService, teamService, moveSlotService))
                 .build();
 
             // Register the say slash command with Discord
             api.updateCommands()
-                .addCommands(Commands.slash("say", "Says what you tell it to")
-                    .setContexts(InteractionContextType.ALL)
-                    .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.STRING, "content", "What the bot should say", true, true))
-                
                 .addCommands(Commands.slash("ping", "Pings the bot")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL))
@@ -43,6 +46,7 @@ public class BotRunner {
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL))
                 
+                    // TODO: NEED A HANDLER FOR THIS COMMAND
                 .addCommands(Commands.slash("createtrainer", "Creates a new trainer")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
@@ -53,6 +57,7 @@ public class BotRunner {
                     .setIntegrationTypes(IntegrationType.ALL)
                     .addOption(OptionType.STRING, "team", "Required, specify team name", true, true))
             
+                // TODO: NEED AUTOCOMPLETE FOR TEAM
                 .addCommands(Commands.slash("addpokemon", "Adds a Pokémon to your team")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
@@ -72,6 +77,7 @@ public class BotRunner {
                     .setDefaultPermissions(DefaultMemberPermissions.DISABLED)
                     .addOption(OptionType.STRING, "confirm", "Type 'CONFIRM' to clear the database", true))
 
+                    // TODO: NEED AUTOCOMPLETE FOR TEAM
                 .addCommands(Commands.slash("startbattle", "Starts a battle with another trainer (not implemented yet)")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
@@ -88,6 +94,7 @@ public class BotRunner {
                     .addOption(OptionType.STRING, "move three", "The name of the move to teach", false, true)
                     .addOption(OptionType.STRING, "move four", "The name of the move to teach", false, true))
                 
+                    // TODO: NEED HANDLER FOR THIS COMMAND
                 .addCommands(Commands.slash("createteam", "Creates a new team for your trainer")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)

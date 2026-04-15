@@ -9,6 +9,7 @@ import pokemonGame.model.Pokemon;
 import pokemonGame.moves.Psychic;
 import pokemonGame.species.Abra;
 import pokemonGame.service.MoveSlotService;
+import pokemonGame.db.MoveCRUD;
 
 
 import java.util.List;
@@ -86,13 +87,14 @@ class LearnsetEntryTest {
     @Test
     void eligibleMovesExcludesAlreadyKnownMoves() {
         Pokemon abra = new Abra("Test Abra");
-        List<LearnsetEntry> before = MoveSlotService.getEligibleMoves(abra);
+        MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
+        List<LearnsetEntry> before = moveSlotService.getEligibleMoves(abra);
 
         // Learn the first eligible move
         Move firstMove = before.get(0).getMove();
         abra.addMove(firstMove);
 
-        List<LearnsetEntry> after = MoveSlotService.getEligibleMoves(abra);
+        List<LearnsetEntry> after = moveSlotService.getEligibleMoves(abra);
         boolean stillContains = after.stream()
                 .anyMatch(e -> e.getMove().getMoveName().equals(firstMove.getMoveName()));
         assertFalse(stillContains,
@@ -111,7 +113,8 @@ class LearnsetEntryTest {
     @Test
     void tmMovesAlwaysEligibleRegardlessOfLevel() {
         Pokemon abra = new Abra("Test Abra"); // Level 5
-        List<LearnsetEntry> eligible = MoveSlotService.getEligibleMoves(abra);
+        MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
+        List<LearnsetEntry> eligible = moveSlotService.getEligibleMoves(abra);
         boolean hasTmMove = eligible.stream()
                 .anyMatch(e -> e.getSource() == LearnsetEntry.Source.TM);
         assertTrue(hasTmMove,
@@ -130,7 +133,8 @@ class LearnsetEntryTest {
     @Test
     void hmMovesAlwaysEligibleRegardlessOfLevel() {
         Pokemon abra = new Abra("Test Abra"); // Level 5
-        List<LearnsetEntry> eligible = MoveSlotService.getEligibleMoves(abra);
+        MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
+        List<LearnsetEntry> eligible = moveSlotService.getEligibleMoves(abra);
         boolean hasHmMove = eligible.stream()
                 .anyMatch(e -> e.getSource() == LearnsetEntry.Source.HM);
         assertTrue(hasHmMove,
@@ -153,7 +157,8 @@ class LearnsetEntryTest {
     @Test
     void highLevelMovesFilteredOutAtLowLevel() {
         Pokemon abra = new Abra("Test Abra"); // Level 5
-        List<LearnsetEntry> eligible = MoveSlotService.getEligibleMoves(abra);
+        MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
+        List<LearnsetEntry> eligible = moveSlotService.getEligibleMoves(abra);
         for (LearnsetEntry e : eligible) {
             if (e.getSource() == LearnsetEntry.Source.LEVEL) {
                 assertTrue(e.getParameter() <= abra.getLevel(),
@@ -176,12 +181,13 @@ class LearnsetEntryTest {
     @Test
     void levelUpMovesUnlockWhenLevelIncreases() {
         Pokemon abra = new Abra("Test Abra"); // Level 5
-        int eligibleAtLevel5 = (int) MoveSlotService.getEligibleMoves(abra).stream()
+        MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
+        int eligibleAtLevel5 = (int) moveSlotService.getEligibleMoves(abra).stream()
                 .filter(e -> e.getSource() == LearnsetEntry.Source.LEVEL)
                 .count();
 
         abra.setLevel(100); // Max level — all level-up moves should be available
-        int eligibleAtLevel100 = (int) MoveSlotService.getEligibleMoves(abra).stream()
+        int eligibleAtLevel100 = (int) moveSlotService.getEligibleMoves(abra).stream()
                 .filter(e -> e.getSource() == LearnsetEntry.Source.LEVEL)
                 .count();
 
@@ -204,7 +210,8 @@ class LearnsetEntryTest {
      */
     @Test
     void nullPokemonReturnsEmptyList() {
-        List<LearnsetEntry> eligible = MoveSlotService.getEligibleMoves(null);
+        MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
+        List<LearnsetEntry> eligible = moveSlotService.getEligibleMoves(null);
         assertNotNull(eligible);
         assertTrue(eligible.isEmpty());
     }
@@ -226,14 +233,15 @@ class LearnsetEntryTest {
     @Test
     void eligibleMovesCountDecreaseAfterLearning() {
         Pokemon abra = new Abra("Test Abra");
-        List<LearnsetEntry> before = MoveSlotService.getEligibleMoves(abra);
+        MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
+        List<LearnsetEntry> before = moveSlotService.getEligibleMoves(abra);
         int countBefore = before.size();
 
         // Learn a move — may appear under multiple sources (e.g. LEVEL + TM),
         // so all entries for that move name get filtered out
         abra.addMove(before.get(0).getMove());
 
-        List<LearnsetEntry> after = MoveSlotService.getEligibleMoves(abra);
+        List<LearnsetEntry> after = moveSlotService.getEligibleMoves(abra);
         assertTrue(after.size() < countBefore,
                 "Eligible move count should decrease after learning a move");
     }

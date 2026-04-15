@@ -65,7 +65,7 @@ public class MoveSlotService {
         
     }
 
-    public static Move getMoveByName(String moveName) {
+    public Move getMoveByName(String moveName) {
         return PokeMove.fromString(moveName).createMove();
     }
     
@@ -116,7 +116,7 @@ public class MoveSlotService {
      * @param p the Pokémon whose eligible moves to retrieve
      * @return  a list of LearnsetEntry the Pokémon can learn right now
      */
-    public static List<LearnsetEntry> getEligibleMoves(Pokemon p) {
+    public List<LearnsetEntry> getEligibleMoves(Pokemon p) {
         if (p == null) {
             return new ArrayList<>();
         }

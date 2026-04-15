@@ -17,7 +17,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import pokemonGame.model.Move;
 import pokemonGame.model.LearnsetEntry;
-import pokemonGame.model.LearnsetEntry.Source;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,10 +32,14 @@ public class SlashExample extends ListenerAdapter{
 
     private final BattleService battleService;
     private final MoveSlotService moveSlotService;
+    private final TrainerService trainerService;
+    private final TeamService teamService;
     
-    public SlashExample(BattleService battleService, MoveSlotService moveSlotService) {
+    public SlashExample(BattleService battleService, MoveSlotService moveSlotService, TrainerService trainerService, TeamService teamService) {
         this.battleService = battleService;
         this.moveSlotService = moveSlotService;
+        this.trainerService = trainerService;
+        this.teamService = teamService;
     }
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -105,13 +108,19 @@ public class SlashExample extends ListenerAdapter{
         }
     }
 
-    public void sendMessage(User user, String message) {
+    private void sendMessage(User user, String message) {
         user.openPrivateChannel().queue((channel) -> {
             channel.sendMessage(message).queue();
         });
     }
 
     private void handleClearDatabase(SlashCommandInteractionEvent event, User user, long userId) {
+        Member member = event.getMember();
+            if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
+                event.reply("You do not have permission to clear the database!").setEphemeral(true).queue();
+                return;
+            }
+        
         String eventName = event.getName();
         String confirmation = Optional.ofNullable(event.getOption("confirm"))
             .map(option -> option.getAsString())
@@ -119,11 +128,7 @@ public class SlashExample extends ListenerAdapter{
         LOGGER.info("Received slash command; '{}' with confirmation: '{}' from user: {} (ID: {})", eventName, confirmation, user, userId);
         if (confirmation != null && confirmation.equalsIgnoreCase("CONFIRM")) {
 
-            Member member = event.getMember();
-            if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
-                event.reply("You do not have permission to clear the database!").setEphemeral(true).queue();
-                return;
-            }
+            
 
             DatabaseSetup.deleteAllData();
             
@@ -142,8 +147,6 @@ public class SlashExample extends ListenerAdapter{
             .map(option -> option.getAsString())
             .orElse(null);
         LOGGER.info("Received slash command; '{}' with (nick)name: '{}' from user: {} (ID: {})", eventName, releasedPokemon, user, userId);
-        TrainerService trainerService = new TrainerService();
-        TeamService teamService = new TeamService();
         
         Trainer releasingTrainer = trainerService.getTrainerByDiscordId(userId);
         if (releasingTrainer == null) {
@@ -185,9 +188,7 @@ public class SlashExample extends ListenerAdapter{
         LOGGER.info("Received slash command; '{}' with Pokemon name: '{}' from user: {} (ID: {})", eventName, inputSpecies, user, userId);
         // below doesn't work because of the new enum structure with display names and aliases, need to loop through the enum values and check if the input matches either the display name or any of the aliases for each species 
         //PokeSpecies species = PokeSpecies.valueOf(event.getOption("species").getAsString().toUpperCase());
-        TeamService teamService = new TeamService();
-        TrainerService trainerService = new TrainerService();
-
+        
         PokeSpecies species = PokeSpecies.getSpeciesByString(inputSpecies);
         if (species == null) {
             event.reply("Sorry, that Pokemon hasn't been discovered yet!").setEphemeral(true).queue();
@@ -223,7 +224,7 @@ public class SlashExample extends ListenerAdapter{
         } else {
             newPokemon.setTrainer(currentTrainer);
             newPokemon.setLevel(50); // Set the Pokémon's level to 50 for testing purposes
-            StatCalculator.calculateAllStats(newPokemon);; // Recalculate stats based on level 50 for testing purposes
+            StatCalculator.calculateAllStats(newPokemon); // Recalculate stats based on level 50 for testing purposes
             
 
             
@@ -252,8 +253,6 @@ public class SlashExample extends ListenerAdapter{
             event.reply("Please specify a team name to check!").setEphemeral(true).queue();
             return;
         }
-        TrainerService trainerService = new TrainerService();
-        TeamService teamService = new TeamService();
         
         Trainer trainer = trainerService.getTrainerByDiscordId(event.getUser().getIdLong());
         if (trainer == null) {
@@ -301,8 +300,6 @@ public class SlashExample extends ListenerAdapter{
             return;
         }
         LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), teamName, user, userId);
-        TrainerService trainerService = new TrainerService();
-        TeamService teamService = new TeamService();
         
         Trainer teamCreator = trainerService.getTrainerByDiscordId(userId);
         if (teamCreator == null) {
@@ -328,7 +325,6 @@ public class SlashExample extends ListenerAdapter{
             return;
         }
         LOGGER.info("Received slash command; '{}' with content: '{}' from user: {} (ID: {})", event.getName(), trainerName, user, userId);
-        TrainerService trainerService = new TrainerService();
 
         Trainer createAttempt = trainerService.createTrainer(trainerName, userId, user.getName());
 
@@ -351,8 +347,6 @@ public class SlashExample extends ListenerAdapter{
         // The battle loop will be handled separately, and the battle state can be checked with the /battlestate command.
         // If the attacking trainer doesn't have a team set up yet, we should reply with a 
         // message telling them to set up their team first using /checkteam and /addpokemon.
-        TrainerService trainerService = new TrainerService();
-        TeamService teamService = new TeamService();
 
         Trainer attackingTrainer = trainerService.getTrainerByDiscordId(userId);
         if (attackingTrainer == null) {
@@ -380,6 +374,10 @@ public class SlashExample extends ListenerAdapter{
             event.reply("Your opponent needs to create a trainer first using /createtrainer!").setEphemeral(true).queue();
             return;
         }
+        if (defendingTrainer.getTrainerDbId() == attackingTrainer.getTrainerDbId()) {
+            event.reply("You can't challenge yourself to a battle!").setEphemeral(true).queue();
+            return;
+         }
         // We won't check the defending trainer's team here, since they might want to set it up after the battle is initiated.
 
         if (battleService.createChallenge(attackingTrainer.getTrainerDbId(), defendingTrainer.getTrainerDbId())) {
@@ -413,8 +411,6 @@ public class SlashExample extends ListenerAdapter{
             event.reply("Please specify a team name and the nickname of the Pokémon you want to teach the move to!").setEphemeral(true).queue();
             return;
         }
-        TrainerService trainerService = new TrainerService();
-        TeamService teamService = new TeamService();
         
         Trainer trainer = trainerService.getTrainerByDiscordId(event.getUser().getIdLong());
         if (trainer == null) {
@@ -437,38 +433,43 @@ public class SlashExample extends ListenerAdapter{
         // The user will input the move names as options in the slash command, and we will validate that the moves are in the Pokémon's learnset and then update the Pokémon's moveset in the database accordingly.
         // We should also check that the user isn't trying to teach more than 4 moves, since that's the maximum moveset size in Gen 1.
 
+        
         List<String> moveNames = Stream.of(
             "move one", "move two", "move three", "move four")
             .map(name -> event.getOption(name))
             .filter(Objects::nonNull)
             .map(option -> option.getAsString())
+            .distinct()
             .toList();
         
+            
         for (String moveName : moveNames) {
-            Move moveToTeach;
-            if (moveName != null) {
-                moveToTeach = MoveSlotService.getMoveByName(moveName);
-                if (moveToTeach == null) {
-                    event.reply("Move '" + moveName + "' not found! Please make sure you entered the move name correctly.").setEphemeral(true).queue();
-                    return;
-                }
-                for (LearnsetEntry entry : MoveSlotService.getEligibleMoves(selectedPokemon)) {
-                    if (entry.getMove().getMoveName().equalsIgnoreCase(moveName)) {
-                        if (entry.getSource() == Source.LEVEL && entry.getParameter() > selectedPokemon.getLevel()) {
-                            event.reply("Your Pokémon doesn't meet the level requirement to learn " + moveName + "!").setEphemeral(true).queue();
-                            return;
-                        }
-                        // If we made it here, the move is valid and can be taught, so we break out of the loop and proceed to teach the move
-                        break;
+            boolean foundInLearnset = false;
+            Move moveToTeach = moveSlotService.getMoveByName(moveName);
+            if (moveToTeach == null) {
+                event.reply("Move '" + moveName + "' not found! Please make sure you entered the move name correctly.").setEphemeral(true).queue();
+                return;
+            }
+            for (LearnsetEntry entry : moveSlotService.getEligibleMoves(selectedPokemon)) {
+                if (entry.getMove().getMoveName().equalsIgnoreCase(moveName)) {
+                    if (entry.getSource() == pokemonGame.model.LearnsetEntry.Source.LEVEL && entry.getParameter() > selectedPokemon.getLevel()) {
+                        event.reply("Your Pokémon doesn't meet the level requirement to learn " + moveName + "!").setEphemeral(true).queue();
+                        return;
                     }
+                    foundInLearnset = true;
+                    break;
                 }
-                moveSlotService.teachMove(selectedPokemon, moveToTeach);
-                event.reply("Successfully taught " + moveName + " to " + selectedPokemon.getNickname() + "!").queue();
+            }
+            if (!foundInLearnset) {
+                event.reply("Move '" + moveName + "' is not in " + selectedPokemon.getNickname() + "'s learnset!").setEphemeral(true).queue();
+                return;
             }
 
-
+            moveSlotService.teachMove(selectedPokemon, moveToTeach);
         }
+        event.reply("Successfully taught " + moveNames.size() + " moves to " + selectedPokemon.getNickname() + "!").queue();
+    }
         
+        
+    }
 
-    };
-}

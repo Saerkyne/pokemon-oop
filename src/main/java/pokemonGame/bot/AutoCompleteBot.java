@@ -4,15 +4,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import pokemonGame.db.TeamCRUD;
-import pokemonGame.db.TrainerCRUD;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pokemonGame.model.Team;
 import pokemonGame.model.Trainer;
 import pokemonGame.model.LearnsetEntry;
 import pokemonGame.model.Move;
 import pokemonGame.service.MoveSlotService;
-import pokemonGame.species.PokeSpecies;
+import pokemonGame.service.TrainerService;
+import pokemonGame.service.TeamService;
 import pokemonGame.species.PokemonFactory;
+import pokemonGame.model.Pokemon;
 
 
 import java.util.Collections;
@@ -23,25 +26,54 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 
 public class AutoCompleteBot extends ListenerAdapter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AutoCompleteBot.class);
+
+    private final TrainerService trainerService;
+    private final TeamService teamService;
+    private final MoveSlotService moveSlotService;
+
+    public AutoCompleteBot(TrainerService trainerService, TeamService teamService, MoveSlotService moveSlotService) {
+        this.trainerService = trainerService;
+        this.teamService = teamService;
+        this.moveSlotService = moveSlotService;
+    }
+
     @Override
     public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 
         String commandName = event.getName();
-        if (commandName == null) {
-            return; // No command name, can't handle autocomplete
-        }
         switch (commandName) {
             case "addpokemon":
-                handleAddPokemonAutoComplete(event);
+                try {
+                    handleAddPokemonAutoComplete(event);
+                } catch (Exception e) {
+                    event.replyChoices(Collections.emptyList()).queue(); // In case of any exceptions, return empty choices
+                    LOGGER.error("Error handling autocomplete for addpokemon command", e);
+                }
                 break;
             case "releasepokemon":
-                handleReleasePokemonAutoComplete(event);
+                try {
+                    handleReleasePokemonAutoComplete(event);
+                } catch (Exception e) {
+                    event.replyChoices(Collections.emptyList()).queue(); // In case of any exceptions, return empty choices
+                    LOGGER.error("Error handling autocomplete for releasepokemon command", e);
+                }
                 break;
             case "checkteam":
-                handleCheckTeamAutoComplete(event);
+                try {
+                    handleCheckTeamAutoComplete(event);
+                } catch (Exception e) {
+                    event.replyChoices(Collections.emptyList()).queue(); // In case of any exceptions, return empty choices
+                    LOGGER.error("Error handling autocomplete for checkteam command", e);
+                }
                 break;
             case "teachmoveset":
-                handleTeachMovesetAutoComplete(event);
+                try {
+                    handleTeachMovesetAutoComplete(event);
+                } catch (Exception e) {
+                    event.replyChoices(Collections.emptyList()).queue(); // In case of any exceptions, return empty choices
+                    LOGGER.error("Error handling autocomplete for teachmoveset command", e);
+                }
                 break;
             default:
                 // No autocomplete for other commands
@@ -70,46 +102,36 @@ public class AutoCompleteBot extends ListenerAdapter {
 
     private void handleReleasePokemonAutoComplete(CommandAutoCompleteInteractionEvent event) {
         String focusedReleasePokemon = event.getFocusedOption().getName();
-        String focusedTeam = null;
         if (focusedReleasePokemon == null) {
             return; // No focused option, can't handle autocomplete
         }
         if (focusedReleasePokemon.equals("team")) {
-            focusedTeam = "team";
             String userInput = event.getFocusedOption().getValue().toLowerCase();
             Long discordId = event.getUser().getIdLong();
-            TrainerCRUD trainerCRUD = new TrainerCRUD();
-            TeamCRUD teamCRUD = new TeamCRUD();
-            Trainer trainer = trainerCRUD.getTrainerByDiscordId(discordId);
+            Trainer trainer = trainerService.getTrainerByDiscordId(discordId);
             if (trainer == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
                 return;
             }
             
-            List<Command.Choice> options = teamCRUD.getTeamNamesForTrainer(trainer.getTrainerDbId()).stream()
+            List<Command.Choice> options = teamService.getTeamNames(trainer.getTrainerDbId()).stream()
                 .filter(teamName -> teamName.toLowerCase().startsWith(userInput))
                 .map(teamName -> new Command.Choice(teamName, teamName))
                 .collect(Collectors.toList());
             event.replyChoices(options).queue();
-        }
-
-        if (focusedReleasePokemon.equals("pokemon") && focusedTeam == null) {
+        } else if (focusedReleasePokemon.equals("pokemon")) {
+            if (event.getOption("team") == null) {
             // If the user is trying to autocomplete the "pokemon" option but hasn't selected a team yet,
             // we can't provide any valid options, so we return an empty list.
             event.replyChoices(Collections.emptyList()).queue();
             return;
-        }
-
-        if (focusedReleasePokemon.equals("pokemon") && event.getOption("team") != null) {
-            // If the user has selected a team but hasn't started typing the pokemon name yet,
-            // we can provide a list of all pokemon on that team as autocomplete options.
+            }
+        
             String teamName = Optional.ofNullable(event.getOption("team"))
                 .map(option -> option.getAsString())
                 .orElse(null);
             Long discordId = event.getUser().getIdLong();
-            TrainerCRUD trainerCRUD = new TrainerCRUD();
-            TeamCRUD teamCRUD = new TeamCRUD();
-            Trainer trainer = trainerCRUD.getTrainerByDiscordId(discordId);
+            Trainer trainer = trainerService.getTrainerByDiscordId(discordId);
             if (trainer == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
                 return;
@@ -119,7 +141,7 @@ public class AutoCompleteBot extends ListenerAdapter {
                 event.replyChoices(Collections.emptyList()).queue(); // Team not found on trainer, return empty choices
                 return;
             }
-            Team trainerTeam = teamCRUD.getDBTeamForTrainer(trainer.getTrainerDbId(), selectedTeam.getTeamDbId());
+            Team trainerTeam = teamService.loadTeam(trainer.getTrainerDbId(), selectedTeam.getTeamDbId());
             if (trainerTeam == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No team found, return empty choices
                 return;
@@ -130,7 +152,6 @@ public class AutoCompleteBot extends ListenerAdapter {
                 .collect(Collectors.toList());
             event.replyChoices(options).queue();
         }
-
     }
 
     private void handleCheckTeamAutoComplete(CommandAutoCompleteInteractionEvent event) {
@@ -142,15 +163,13 @@ public class AutoCompleteBot extends ListenerAdapter {
         if (focusedTeamCheck.equals("team")) {
             String userInput = event.getFocusedOption().getValue().toLowerCase();
             Long discordId = event.getUser().getIdLong();
-            TrainerCRUD trainerCRUD = new TrainerCRUD();
-            TeamCRUD teamCRUD = new TeamCRUD();
-            Trainer trainer = trainerCRUD.getTrainerByDiscordId(discordId);
+            Trainer trainer = trainerService.getTrainerByDiscordId(discordId);
             if (trainer == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
                 return;
             }
             
-            List<Command.Choice> options = teamCRUD.getTeamNamesForTrainer(trainer.getTrainerDbId()).stream()
+            List<Command.Choice> options = teamService.getTeamNames(trainer.getTrainerDbId()).stream()
                 .filter(teamName -> teamName.toLowerCase().startsWith(userInput))
                 .map(teamName -> new Command.Choice(teamName, teamName))
                 .collect(Collectors.toList());
@@ -175,7 +194,24 @@ public class AutoCompleteBot extends ListenerAdapter {
 
         if (focusedOptionName.equals("move one") || focusedOptionName.equals("move two") || focusedOptionName.equals("move three") || focusedOptionName.equals("move four")) {
             String userInput = event.getFocusedOption().getValue().toLowerCase();
-            List<Command.Choice> options = MoveSlotService.getEligibleMoves(PokemonFactory.createPokemonFromRegistry(PokeSpecies.getSpeciesByString(pokemonName), pokemonName)).stream()
+            Trainer trainer = trainerService.getTrainerByDiscordId(event.getUser().getIdLong());
+            if (trainer == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
+                return;
+            }
+            int trainerDbId = trainer.getTrainerDbId();
+
+            Team selectedTeam = teamService.getTeamFromName(trainerDbId, teamName);
+            if (selectedTeam == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No team found, return empty choices
+                return;
+            }
+            Pokemon selectedPokemon = teamService.getPokemonByNickname(trainerDbId, selectedTeam.getTeamDbId(), pokemonName);
+            if (selectedPokemon == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No Pokémon found, return empty choices
+                return;
+            }
+            List<Command.Choice> options = moveSlotService.getEligibleMoves(selectedPokemon).stream()
                 .map(LearnsetEntry::getMove)
                 .map(Move::getMoveName)
                 .filter(moveName -> moveName.toLowerCase().startsWith(userInput))

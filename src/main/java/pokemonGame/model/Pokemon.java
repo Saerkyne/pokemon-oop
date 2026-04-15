@@ -640,6 +640,10 @@ public class Pokemon {
         return true;
     }  
 
+    public boolean checkFainted() {
+        return this.getCurrentHP() <= 0;
+    }
+
     // Method for generating a random IV value between 0 and 31 for each stat
     public void generateRandomIVs() {
 

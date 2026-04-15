@@ -4,7 +4,6 @@ import pokemonGame.battle.BattleAction;
 import pokemonGame.battle.TurnManager;
 import pokemonGame.db.BattleCRUD;
 import pokemonGame.model.Battle;
-import pokemonGame.model.Pokemon;
 
 /**
  * Orchestrates battle lifecycle: creating challenges, validating participants,
@@ -15,6 +14,12 @@ import pokemonGame.model.Pokemon;
  * @see TurnManager
  */
 public class BattleService {
+
+    private final BattleCRUD battleCrud;
+
+    public BattleService(BattleCRUD battleCrud) {
+        this.battleCrud = battleCrud;
+    }
 
     public static BattleAction createActionFromDbRow(int trainerId, String actionType, int moveSlotIndex, int switchPokemonId) {
         // This method would query the database to get the necessary Trainer and Pokemon objects
@@ -38,16 +43,13 @@ public class BattleService {
         return null;
     }
 
-    public static boolean checkFainted(Pokemon pokemon) {
-        return pokemon.getCurrentHP() <= 0;
-    }  
+      
 
-    public static boolean createBattle(int trainer1Id, int trainer2Id, int trainer1TeamId, int trainer2TeamId) {
+    public boolean createBattle(int trainer1Id, int trainer2Id, int trainer1TeamId, int trainer2TeamId) {
         // Implementation to create a new battle in the database and return the battle ID
         // We need to check for an existing active battle for this trainer matchup
 
         
-        BattleCRUD battleCrud = new BattleCRUD();
         if (battleCrud.getActiveBattleForTrainerMatchup(trainer1Id, trainer2Id) != null) {
             // There is already an active battle for this trainer matchup
             return false;
@@ -62,12 +64,11 @@ public class BattleService {
         
     }
 
-    public static boolean createChallenge(int challengerTrainerId, int opponentTrainerId) {
+    public boolean createChallenge(int challengerTrainerId, int opponentTrainerId) {
         // Implementation to create a new battle challenge in the database and return the battle ID
         // We need to check for an existing active battle for this trainer matchup
 
         
-        BattleCRUD battleCrud = new BattleCRUD();
         if (battleCrud.getActiveBattleForTrainerMatchup(challengerTrainerId, opponentTrainerId) != null) {
             // There is already an active battle for this trainer matchup
             return false;

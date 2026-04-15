@@ -36,15 +36,19 @@ public class MoveSlotService {
  * @see PokeMove
  */
 
-    
+    private final MoveCRUD moveCRUD;
 
-    public static void teachMove(Pokemon p, Move move) {
+    public MoveSlotService(MoveCRUD moveCRUD) {
+        this.moveCRUD = moveCRUD;
+    }
+
+    public void teachMove(Pokemon p, Move move) {
 
         if (!getEligibleMoves(p).stream().anyMatch(e -> e.getMove().getMoveName().equalsIgnoreCase(move.getMoveName()))) {
             return; // Move is not eligible to be learned, so we exit without making changes
         }
 
-        MoveCRUD moveCRUD = new MoveCRUD();
+        
 
         try{
             if (moveCRUD.insertMoveForPokemon(p.getPokemonDbId(), p.getMoveSet().size(), move.getMoveName(), move.getMaxPp()) == -1) {
@@ -65,7 +69,7 @@ public class MoveSlotService {
         return PokeMove.fromString(moveName).createMove();
     }
     
-    public static boolean use(Pokemon pokemon, MoveSlot slot) {
+    public boolean use(Pokemon pokemon, MoveSlot slot) {
         int currentPP = slot.getCurrentPP();
         if (currentPP <= 0) {
             LOGGER.info("No PP left for move: {}", slot.getMove().getMoveName());
@@ -79,7 +83,6 @@ public class MoveSlotService {
         }
 
         int newPP = currentPP - 1;
-        MoveCRUD moveCRUD = new MoveCRUD();
         if (moveCRUD.updatePP(pokemon.getPokemonDbId(), slotIndex, newPP) == -1) {
             LOGGER.error("Failed to persist PP update for {} on {}.", slot.getMove().getMoveName(), pokemon.getNickname());
             return false;
@@ -88,7 +91,7 @@ public class MoveSlotService {
         return true;
     }
 
-    public static void restore(Pokemon pokemon, MoveSlot slot) {
+    public void restore(Pokemon pokemon, MoveSlot slot) {
         int slotIndex = pokemon.getMoveSet().indexOf(slot);
         if (slotIndex == -1) {
             LOGGER.error("MoveSlot for {} not found in {}'s moveset.", slot.getMove().getMoveName(), pokemon.getNickname());
@@ -96,7 +99,6 @@ public class MoveSlotService {
         }
 
         int maxPP = slot.getMove().getMaxPp();
-        MoveCRUD moveCRUD = new MoveCRUD();
         if (moveCRUD.updatePP(pokemon.getPokemonDbId(), slotIndex, maxPP) == -1) {
             LOGGER.error("Failed to persist PP restore for {} on {}.", slot.getMove().getMoveName(), pokemon.getNickname());
             return;

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import pokemonGame.model.Move;
 import pokemonGame.model.MoveSlot;
+import pokemonGame.db.MoveCRUD;
 import pokemonGame.service.MoveSlotService;
 import pokemonGame.species.Abra;
 import pokemonGame.model.Pokemon;
@@ -107,14 +108,15 @@ class MoveSlotTest {
     @MethodSource("provideMovesForInitialization")
     void testUse(Move move, int expectedMaxPp) {
         Pokemon abra = new Abra("testAbra");
+        MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
         abra.addMove(move);
         for (int i = 0; i < expectedMaxPp; i++) {
-            boolean result = MoveSlotService.use(abra, abra.getMoveSet().get(0));
+            boolean result = moveSlotService.use(abra, abra.getMoveSet().get(0));
             assertEquals(result, true, "use() should return true when PP is available");
             assertEquals(abra.getMoveSet().get(0).getCurrentPP(), expectedMaxPp - (i + 1), "Current PP should decrement by 1 after use()");
         }
         // After using all PP, use() should return false
-        boolean result = MoveSlotService.use(abra, abra.getMoveSet().get(0));
+        boolean result = moveSlotService.use(abra, abra.getMoveSet().get(0));
         assertEquals(result, false, "use() should return false when no PP is left");
         assertEquals(abra.getMoveSet().get(0).getCurrentPP(), 0, "Current PP should be 0 after using all PP");
     }
@@ -131,12 +133,13 @@ class MoveSlotTest {
     void testRestore(Move move, int expectedMaxPp) {
         Pokemon abra = new Abra("testAbra");
         abra.addMove(move);
+        MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
         // Deplete the PP
         for (int i = 0; i < expectedMaxPp; i++) {
-            MoveSlotService.use(abra, abra.getMoveSet().get(0));
+            moveSlotService.use(abra, abra.getMoveSet().get(0));
         }
         // Restore the PP
-        MoveSlotService.restore(abra, abra.getMoveSet().get(0));
+        moveSlotService.restore(abra, abra.getMoveSet().get(0));
         assertEquals(abra.getMoveSet().get(0).getCurrentPP(), expectedMaxPp, "Current PP should be restored to the move's max PP after calling restore()");
     }
 }

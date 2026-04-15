@@ -31,6 +31,13 @@ public class SlashExample extends ListenerAdapter{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SlashExample.class);
 
+    private final BattleService battleService;
+    private final MoveSlotService moveSlotService;
+    
+    public SlashExample(BattleService battleService, MoveSlotService moveSlotService) {
+        this.battleService = battleService;
+        this.moveSlotService = moveSlotService;
+    }
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         User user = event.getUser();
@@ -375,7 +382,7 @@ public class SlashExample extends ListenerAdapter{
         }
         // We won't check the defending trainer's team here, since they might want to set it up after the battle is initiated.
 
-        if (BattleService.createChallenge(attackingTrainer.getTrainerDbId(), defendingTrainer.getTrainerDbId())) {
+        if (battleService.createChallenge(attackingTrainer.getTrainerDbId(), defendingTrainer.getTrainerDbId())) {
             event.reply("Challenge issued successfully!").queue();
 
             // Notify the opponent trainer of the challenge (e.g., via Discord DM or in-app notification)
@@ -455,7 +462,7 @@ public class SlashExample extends ListenerAdapter{
                         break;
                     }
                 }
-                MoveSlotService.teachMove(selectedPokemon, moveToTeach);
+                moveSlotService.teachMove(selectedPokemon, moveToTeach);
                 event.reply("Successfully taught " + moveName + " to " + selectedPokemon.getNickname() + "!").queue();
             }
 

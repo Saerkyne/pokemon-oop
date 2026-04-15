@@ -16,7 +16,6 @@ import pokemonGame.model.Move;
 import pokemonGame.model.MoveSlot;
 import pokemonGame.model.Battle;
 import pokemonGame.core.StatCalculator;
-import pokemonGame.service.MoveSlotService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -324,9 +323,7 @@ class TurnManagerTest {
 
         // Drain all PP
         MoveSlot slot = abra1.getMoveSet().get(0);
-        while (slot.getCurrentPP() > 0) {
-            MoveSlotService.use(abra1, slot);
-        }
+        slot.setCurrentPP(0);
         int hpBefore = abra2.getCurrentHP();
 
         MoveAction action = new MoveAction((Trainer) s[0], abra1, (Team) s[2], 0);

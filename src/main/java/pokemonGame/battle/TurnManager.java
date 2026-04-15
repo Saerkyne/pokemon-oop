@@ -10,7 +10,6 @@ import pokemonGame.model.Pokemon;
 import pokemonGame.model.Team;
 import pokemonGame.model.Trainer;
 import pokemonGame.service.BattleService;
-import pokemonGame.service.MoveSlotService;
 
 
 /**
@@ -28,7 +27,6 @@ import pokemonGame.service.MoveSlotService;
 public class TurnManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TurnManager.class);
-
     /*
      * SUGGESTION: Move this logic out of the constructor and into a method that
      * returns a TurnResult. Constructors should set up the object, not execute
@@ -88,7 +86,7 @@ public class TurnManager {
         }
 
         // Check if defender fainted after first action
-        boolean defenderFainted = BattleService.checkFainted(secondActor);
+        boolean defenderFainted = secondActor.checkFainted();
         boolean battleOver = false;
         Trainer winner = null;
         if (defenderFainted) {
@@ -97,7 +95,7 @@ public class TurnManager {
             Team defendingTeam = (firstAction == trainer1Action) ? secondAction.team() : firstAction.team();
 
             for (Pokemon p : defendingTeam.getTeamAsList()) {
-                if (!BattleService.checkFainted(p)) {
+                if (!p.checkFainted()) {
                     // If they have at least one non-fainted Pokémon, the battle continues and they will switch in a new Pokémon on their next turn
                     LOGGER.info("{} has fainted! {} has {} Pokémon left to switch in.", secondActor.getNickname(), defendingTrainer.getTrainerName(), defendingTeam.getTeamSize());
                     break;
@@ -189,16 +187,16 @@ public class TurnManager {
             return new DamageResult(0, 0, false, false, false);
         }
 
-        // Execute the action (e.g., deal damage, switch Pokémon, etc.)
-        // Reduce PP by 1 before executing the move to reflect the cost of using it, even if the move fails or the Pokémon faints as a result.
-        MoveSlotService.use(action.pokemon(),action.getMoveSlot());
+        // Reduce PP by 1 in memory before executing the move.
+        // Database persistence of PP is handled by BattleService after the turn resolves.
+        action.getMoveSlot().setCurrentPP(action.getMoveSlot().getCurrentPP() - 1);
         int damageDealt = dealDamage(action.activePokemon(), defender, action.getMove());
         float effectiveness = Attack.calculateEffectiveness(defender.getTypePrimary(), action.getMove());
         boolean isCritical = Attack.calculateCriticalHit(action.activePokemon(), defender);
         boolean isHit = Attack.checkAccuracy(action.activePokemon(), defender, action.getMove());
         if (damageDealt > 0) {
             // Handle fainting and other side effects of the move here (e.g., status conditions, recoil damage, etc.)
-            if (!BattleService.checkFainted(defender)) {
+            if (!defender.checkFainted()) {
                 LOGGER.info("{} took {} damage and has {} HP left.", defender.getNickname(), damageDealt, defender.getCurrentHP());
                 
             } else {
@@ -207,7 +205,7 @@ public class TurnManager {
             }
 
             // return the damage result, including whether the move hit, was super effective, and if it was a critical hit
-            return new DamageResult(damageDealt, effectiveness, isCritical, isHit, BattleService.checkFainted(defender));
+            return new DamageResult(damageDealt, effectiveness, isCritical, isHit, defender.checkFainted());
 
             
         }

@@ -6,7 +6,11 @@ import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import pokemonGame.db.BattleCRUD;
+import pokemonGame.db.MoveCRUD;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import pokemonGame.service.BattleService;
+import pokemonGame.service.MoveSlotService;
 
 // mvn compile exec:java -Dexec.mainClass="pokemonGame.bot.BotRunner"
 
@@ -14,10 +18,13 @@ import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 public class BotRunner {
     public static void main( String[] args ) {
         String token = System.getenv("MOKEPONS_API_KEY");
+        BattleService battleService = new BattleService(new BattleCRUD());
+        MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
+
 
         JDA api = JDABuilder.createDefault(token)
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
-                .addEventListeners(new SlashExample())
+                .addEventListeners(new SlashExample(battleService, moveSlotService))
                 .addEventListeners(new AutoCompleteBot())
                 .build();
 

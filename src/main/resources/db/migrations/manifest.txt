@@ -1,0 +1,10 @@
+# Migration manifest — one filename per line, in order.
+# Lines starting with # are comments. Blank lines are ignored.
+# Files live in src/main/resources/db/migrations/ alongside this manifest.
+#
+# Naming convention: V###__short_description.sql
+#   - V prefix + zero-padded number ensures alphabetical = chronological order
+#   - Double underscore separates version from description
+#   - Example: V001__drop_is_fainted.sql
+
+V001__drop_is_fainted.sql

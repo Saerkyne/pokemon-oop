@@ -44,7 +44,8 @@ public class TeamCRUD {
             String sql = "INSERT INTO trainer_teams (trainer_id, team_id, team_name, instance_id, slot_index) VALUES (?, ?, ?, ?, ?)";
             String teamName = getTeamName(trainerId, teamId);
             if (teamName == null) {
-                teamName = "Default Team Name"; // Fallback team name if not found
+                LOGGER.error("No team found for trainer ID {} and team ID {}. Cannot add Pokemon to non-existent team.", trainerId, teamId);
+                return -1; // Return -1 to indicate no team found
             }
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -68,7 +69,6 @@ public class TeamCRUD {
             }
         } catch (SQLException e) {
             LOGGER.error("Error adding Pokemon to team: {}", e.getMessage(), e);
-            e.printStackTrace();
             return -1; // Return -1 to indicate an error occurred
         }
     }
@@ -98,6 +98,9 @@ public class TeamCRUD {
 
     public Boolean removePokemonFromDBTeam(int trainerDbId, int teamId, int slotIndex) {
 
+        // TODO: Remove this and have TeamService handle the logic of deleting the Pokémon instance after removing it from the team. 
+        // TeamService can call PokemonCRUD.deleteDBPokemon() after successfully removing the Pokémon from the team in the database. 
+        // This keeps the responsibilities of each class clear and avoids unnecessary coupling between TeamCRUD and PokemonCRUD.
         PokemonCRUD pokemonCRUD = new PokemonCRUD();
         Pokemon pokemonToDelete = getPokemonInSlotForTrainer(trainerDbId, teamId, slotIndex);
 
@@ -138,6 +141,8 @@ public class TeamCRUD {
                 pstmt.setInt(2, teamId);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
+                    // TODO: Remove the CRUD creation, have TrainerService handle this and pass in the Trainer object to this method. 
+                    // TeamCRUD should not be responsible for creating a TrainerCRUD or retrieving Trainer data.
                     TrainerCRUD trainerCRUD = new TrainerCRUD();
                     Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);
                     while (rs.next()) {
@@ -176,6 +181,8 @@ public class TeamCRUD {
                     if (rs.next()) {
                         LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
                                 trainerDbId, rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
+                        // TODO: Remove the CRUD creation, have TrainerService handle this and pass in the Trainer object to this method. 
+                        // TeamCRUD should not be responsible for creating a TrainerCRUD or retrieving Trainer data.
                         TrainerCRUD trainerCRUD = new TrainerCRUD();
                         Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);
                         return PokemonCRUD.mapResultSetToPokemon(rs, trainer);

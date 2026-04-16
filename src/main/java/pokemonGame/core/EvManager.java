@@ -16,13 +16,17 @@ import pokemonGame.model.Pokemon;
  */
 public class EvManager {
 
+    private EvManager() {
+        // Private constructor to prevent instantiation
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EvManager.class);
     private static final int MAX_EV_PER_STAT = 252;
     private static final int MAX_TOTAL_EV = 510;
 
 
     // Method for calculating how much EV can be added without exceeding caps for any EV
-    private int evAddable(Pokemon pokemon, Stat stat, int newEvValue) {
+    private static int evAddable(Pokemon pokemon, Stat stat, int newEvValue) {
         int currentEvValue = getEv(pokemon, stat);
         int currentEvTotal = getTotalEv(pokemon);
         int roomInStat = MAX_EV_PER_STAT - currentEvValue;
@@ -34,7 +38,7 @@ public class EvManager {
     }
 
     // Method for overwriting EV values, with capping logic to ensure no caps are exceeded
-    private int evCapper(Pokemon pokemon, Stat stat, int newEvValue) {
+    private static int evCapper(Pokemon pokemon, Stat stat, int newEvValue) {
         int currentEvValue = getEv(pokemon, stat);
         int currentEvTotal = getTotalEv(pokemon);
         int totalWithoutThisStat = currentEvTotal - currentEvValue;
@@ -45,7 +49,7 @@ public class EvManager {
     }
 
 
-    public void setEv(Pokemon pokemon, Stat stat, int evValue) {
+    public static void setEv(Pokemon pokemon, Stat stat, int evValue) {
         switch (stat) {
             case HP -> pokemon.setEvHp(evCapper(pokemon, stat, evValue));
             case ATTACK -> pokemon.setEvAttack(evCapper(pokemon, stat, evValue));
@@ -74,7 +78,7 @@ public class EvManager {
         return pokemon.getEvTotal();
     }
 
-    private void recalcTotal(Pokemon pokemon) {
+    private static void recalcTotal(Pokemon pokemon) {
         pokemon.setEvTotal(pokemon.getEvHp() + pokemon.getEvAttack() + pokemon.getEvDefense() +
                 pokemon.getEvSpecialAttack() + pokemon.getEvSpecialDefense() + pokemon.getEvSpeed());
     }
@@ -94,7 +98,7 @@ public class EvManager {
     }
 
     // Adders
-    public void addEv(Pokemon pokemon, Stat stat, int evToAdd) {
+    public static void addEv(Pokemon pokemon, Stat stat, int evToAdd) {
         int currentEv = getEv(pokemon, stat);
         int newEvValue = currentEv + evToAdd;
         LOGGER.info("Adding EV - Stat: {}, Current EV: {}, EV to Add: {}, New EV before capping: {}",

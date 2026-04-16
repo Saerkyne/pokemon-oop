@@ -115,7 +115,6 @@ CREATE TABLE pokemon_instances (
     ev_speed      SMALLINT NOT NULL DEFAULT 0,
     current_hp    INT NOT NULL,
     current_exp   INT NOT NULL DEFAULT 0,
-    is_fainted    BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id)
 );
 ```
@@ -124,10 +123,10 @@ This stores the *randomly generated, mutable* per-instance data: IVs (rolled onc
 
 Example data:
 
-instance_id | trainer_id | species    | nickname   | level | nature  | iv_hp | iv_atk | ... | ev_hp | ev_atk | ... | current_hp | is_fainted
-------------+------------+------------+------------+-------+---------+-------+--------+-----+-------+--------+-----+------------+-----------
-1           | 1          | Bulbasaur  | Bulby      | 7     | Adamant | 28    | 31     | ... | 12    | 4      | ... | 42         | false
-2           | 1          | Charmander | Charmander | 5     | Jolly   | 15    | 22     | ... | 0     | 0      | ... | 38         | false
+instance_id | trainer_id | species    | nickname   | level | nature  | iv_hp | iv_atk | ... | ev_hp | ev_atk | ... | current_hp
+------------+------------+------------+------------+-------+---------+-------+--------+-----+-------+--------+-----+------------
+1           | 1          | Bulbasaur  | Bulby      | 7     | Adamant | 28    | 31     | ... | 12    | 4      | ... | 42
+2           | 1          | Charmander | Charmander | 5     | Jolly   | 15    | 22     | ... | 0     | 0      | ... | 38
 
 ### `pokemon_movesets` — Which Moves Each Instance Knows + Current PP
 
@@ -233,8 +232,7 @@ SAVE (after battle):
                                            SET level = 8,
                                                ev_attack = 8,
                                                current_hp = 35,
-                                               current_exp = 120,
-                                               is_fainted = false
+                                               current_exp = 120
                                          WHERE instance_id = 1
 ```
 
@@ -402,7 +400,6 @@ CREATE TABLE IF NOT EXISTS pokemon_instances (
     ev_speed      SMALLINT NOT NULL DEFAULT 0,
     current_hp    INT NOT NULL,
     current_exp   INT NOT NULL DEFAULT 0,
-    is_fainted    BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id)
 );
 

@@ -86,7 +86,7 @@ public class TurnManager {
         }
 
         // Check if defender fainted after first action
-        boolean defenderFainted = secondActor.checkFainted();
+        boolean defenderFainted = secondActor.getIsFainted();
         boolean battleOver = false;
         Trainer winner = null;
         if (defenderFainted) {
@@ -96,7 +96,7 @@ public class TurnManager {
 
             
             boolean allFainted = defendingTeam.getTeamAsList().stream()
-                    .allMatch(Pokemon::checkFainted);
+                    .allMatch(Pokemon::getIsFainted);
             if (allFainted) {
                 battleOver = true;
                 Trainer attackingTrainer = (firstAction == trainer1Action)
@@ -205,7 +205,7 @@ public class TurnManager {
         
         if (damageDealt > 0) {
             // Handle fainting and other side effects of the move here (e.g., status conditions, recoil damage, etc.)
-            if (!defender.checkFainted()) {
+            if (!defender.getIsFainted()) {
                 LOGGER.info("{} took {} damage and has {} HP left.", defender.getNickname(), damageDealt, defender.getCurrentHP());
                 
             } else {
@@ -214,7 +214,7 @@ public class TurnManager {
             }
 
             // return the damage result, including whether the move hit, was super effective, and if it was a critical hit
-            return new DamageResult(damageDealt, combinedEffectiveness, isCritical, isHit, defender.checkFainted());
+            return new DamageResult(damageDealt, combinedEffectiveness, isCritical, isHit, defender.getIsFainted());
 
             
         }

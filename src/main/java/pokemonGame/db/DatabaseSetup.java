@@ -37,7 +37,8 @@ public class DatabaseSetup {
         "trainers",
         "battles",
         "battle_pending_actions",
-        "battle_turn_history"
+        "battle_turn_history",
+        "schema_migrations"
     );
 
     // Resolve a config value by checking Java system properties first, then env vars.
@@ -76,11 +77,16 @@ public class DatabaseSetup {
                 DATA_SOURCE.close();
             }
         }));
+
+        // Run pending database migrations on startup.
+        // This applies to whichever database DB_URL points at — prod or test —
+        // so both environments stay in sync without manual SSH work.
+        DatabaseMigrator.migrate();
     }
 
     public static Connection getConnection() {
 
-        logger.info("Attempting to get database connection with URL: {}", URL);
+        logger.trace("Attempting to get database connection with URL: {}", URL);
 
         
         try {

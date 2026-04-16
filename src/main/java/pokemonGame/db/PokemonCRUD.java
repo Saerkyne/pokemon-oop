@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 public class PokemonCRUD {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PokemonCRUD.class);
-    private static EvManager evManager = new EvManager();
 
     public int createDBPokemon(Pokemon pokemon) {
         try (Connection conn = DatabaseSetup.getConnection()) {
@@ -104,7 +103,7 @@ public class PokemonCRUD {
                     + "species = ?, nickname = ?, level = ?, nature = ?, "
                     + "iv_hp = ?, iv_attack = ?, iv_defense = ?, iv_sp_attack = ?, iv_sp_defense = ?, iv_speed = ?, "
                     + "current_hp = ?, ev_hp = ?, ev_attack = ?, ev_defense = ?, ev_sp_attack = ?, ev_sp_defense = ?, ev_speed = ?, "
-                    + "current_exp = ?, is_fainted = ? "
+                    + "current_exp = ? "
                     + "WHERE instance_id = ? AND trainer_id = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -126,9 +125,8 @@ public class PokemonCRUD {
                 pstmt.setInt(16, EvManager.getEv(pokemon, Stat.SPECIAL_DEFENSE));
                 pstmt.setInt(17, EvManager.getEv(pokemon, Stat.SPEED));
                 pstmt.setInt(18, pokemon.getCurrentExp());
-                pstmt.setBoolean(19, pokemon.getIsFainted());
-                pstmt.setInt(20, pokemon.getPokemonDbId());
-                pstmt.setLong(21, pokemon.getTrainerDbId());
+                pstmt.setInt(19, pokemon.getPokemonDbId());
+                pstmt.setLong(20, pokemon.getTrainerDbId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
@@ -201,7 +199,6 @@ public class PokemonCRUD {
         int evSpDefense = rs.getInt("ev_sp_defense");
         int evSpeed = rs.getInt("ev_speed");
         int currentExp = rs.getInt("current_exp");
-        boolean isFainted = rs.getBoolean("is_fainted");
 
         // Create a new Pokemon object and populate its fields from the ResultSet
         Pokemon foundPokemon = PokemonFactory.createPokemonFromRegistry(species, name);
@@ -215,18 +212,21 @@ public class PokemonCRUD {
         foundPokemon.setIvSpecialAttack(ivSpAttack);
         foundPokemon.setIvSpecialDefense(ivSpDefense);
         foundPokemon.setIvSpeed(ivSpeed);
-        evManager.setEv(foundPokemon, Stat.HP, evHp);
-        evManager.setEv(foundPokemon, Stat.ATTACK, evAttack);
-        evManager.setEv(foundPokemon, Stat.DEFENSE, evDefense);
-        evManager.setEv(foundPokemon, Stat.SPECIAL_ATTACK, evSpAttack);
-        evManager.setEv(foundPokemon, Stat.SPECIAL_DEFENSE, evSpDefense);
-        evManager.setEv(foundPokemon, Stat.SPEED, evSpeed);
+        EvManager.setEv(foundPokemon, Stat.HP, evHp);
+        EvManager.setEv(foundPokemon, Stat.ATTACK, evAttack);
+        EvManager.setEv(foundPokemon, Stat.DEFENSE, evDefense);
+        EvManager.setEv(foundPokemon, Stat.SPECIAL_ATTACK, evSpAttack);
+        EvManager.setEv(foundPokemon, Stat.SPECIAL_DEFENSE, evSpDefense);
+        EvManager.setEv(foundPokemon, Stat.SPEED, evSpeed);
         foundPokemon.setCurrentExp(currentExp);
-        foundPokemon.setIsFainted(isFainted);
         StatCalculator.calculateAllStats(foundPokemon); // Recalculate stats based on IVs, EVs, and level
         foundPokemon.setCurrentHP(currentHp); // Set the current HP after recalculating stats
 
         // Load moves from pokemon_movesets and populate the in-memory moveset
+        // TODO: Remove this CRUD creation and have MoveSlotService handle this logic. 
+        // PokemonCRUD should only be responsible for CRUD operations on the Pokémon data, 
+        // not loading moves or other related data. This keeps the responsibilities of each class clear
+        //  and avoids unnecessary coupling between PokemonCRUD and MoveCRUD.
         MoveCRUD moveCRUD = new MoveCRUD();
         List<String[]> moveRows = moveCRUD.getMovesForPokemon(foundPokemonId);
         for (String[] row : moveRows) {

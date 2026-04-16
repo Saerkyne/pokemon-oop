@@ -136,8 +136,6 @@ public class BattleCRUD {
                         return battle;
                     }
                 }
-             } catch (SQLException e) {
-                LOGGER.error("Error retrieving active battle for trainer matchup: {} vs {}", trainer1Id, trainer2Id, e);
              }
         } catch (SQLException e) {
             LOGGER.error("Error retrieving active battle for trainer matchup: {} vs {}", trainer1Id, trainer2Id, e);
@@ -167,12 +165,12 @@ public class BattleCRUD {
         }
     }
 
-    public void setActivePokemon(int battleId, int trainerId, int pokemonId) {
+    public void setActivePokemon(int battleId, boolean isTrainer1, int pokemonId) {
         // Implementation to set the active Pokémon for a trainer in a battle
-        LOGGER.info("Setting active Pokémon for trainer {} in battle {} to Pokémon {}", trainerId, battleId, pokemonId);
+        LOGGER.info("Setting active Pokémon for trainer {} in battle {} to Pokémon {}", isTrainer1 ? "Trainer 1" : "Trainer 2", battleId, pokemonId);
         try (Connection conn = DatabaseSetup.getConnection()) {
-            String sql = "UPDATE battles SET "+ (trainerId == getBattleById(battleId).getTrainer1Id() ? "trainer1_active_pokemon_id" : "trainer2_active_pokemon_id") 
-            + "= ?, updated_at = ? WHERE battle_id = ?";
+            String column = isTrainer1 ? "trainer1_active_pokemon_id" : "trainer2_active_pokemon_id";
+            String sql = "UPDATE battles SET " + column + " = ?, updated_at = ? WHERE battle_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, pokemonId);
                 pstmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
@@ -180,7 +178,7 @@ public class BattleCRUD {
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
-            LOGGER.error("Error setting active Pokémon for trainer {} in battle {}", trainerId, battleId, e);
+            LOGGER.error("Error setting active Pokémon for trainer {} in battle {}", isTrainer1 ? "Trainer 1" : "Trainer 2", battleId, e);
         }
 
     }
@@ -212,7 +210,7 @@ public class BattleCRUD {
                 pstmt.setInt(2, trainerId);
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     // Collect battles into a list and convert to an array
-                    // Placeholder implementation, should be replaced with actual collection logic
+                    // TODO: Replace with actual collection logic
                 }
             }
         } catch (SQLException e) {
@@ -229,7 +227,7 @@ public class BattleCRUD {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     // Collect battles into a list and convert to an array
-                    // Placeholder implementation, should be replaced with actual collection logic
+                    // TODO: Replace with actual collection logic
 
                 }
             }

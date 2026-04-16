@@ -406,9 +406,8 @@ class PokemonTest {
      */
     @Test
     void evSetterOnlySetsCurrentValue() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(abra, Stat.HP, 100);
-        evManager.setEv(abra, Stat.HP, 50);
+        EvManager.setEv(abra, Stat.HP, 100);
+        EvManager.setEv(abra, Stat.HP, 50);
         // NOT Additive: should now be 50
         assertEquals(50, EvManager.getEv(abra, Stat.HP));
         assertEquals(50, EvManager.getTotalEv(abra));
@@ -424,9 +423,8 @@ class PokemonTest {
      */
     @Test
     void evCapsAtPerStatMax252() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(abra, Stat.HP, 252);
-        evManager.addEv(abra, Stat.HP, 10); // Should not exceed 252
+        EvManager.setEv(abra, Stat.HP, 252);
+        EvManager.addEv(abra, Stat.HP, 10); // Should not exceed 252
         assertEquals(252, EvManager.getEv(abra, Stat.HP));
         assertEquals(252, EvManager.getTotalEv(abra));
     }
@@ -442,11 +440,10 @@ class PokemonTest {
      */
     @Test
     void evTotalCannotExceed510() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(abra, Stat.ATTACK, 252);
-        evManager.setEv(abra, Stat.SPEED, 252);
+        EvManager.setEv(abra, Stat.ATTACK, 252);
+        EvManager.setEv(abra, Stat.SPEED, 252);
         // evTotal is now 504; only 6 more EVs can fit under the 510 cap
-        evManager.setEv(abra, Stat.HP, 100); // Requests 100 but only 6 should be granted
+        EvManager.setEv(abra, Stat.HP, 100); // Requests 100 but only 6 should be granted
         assertEquals(510, EvManager.getTotalEv(abra),
                 "EV total should be capped at exactly 510");
         assertEquals(6, EvManager.getEv(abra, Stat.HP),
@@ -462,8 +459,7 @@ class PokemonTest {
      */
     @Test
     void individualEvsCappedAt252() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(abra, Stat.DEFENSE, 252);
+        EvManager.setEv(abra, Stat.DEFENSE, 252);
         assertEquals(252, EvManager.getEv(abra, Stat.DEFENSE));
     }
 
@@ -511,14 +507,14 @@ class PokemonTest {
     }
 
     // =========================================================================
-    // --- isFainted ---
+    // --- isFainted (derived from currentHP) ---
     // =========================================================================
 
     /*
      * CHECKS:  A newly constructed Pokémon has isFainted == false (alive by default).
      * HOW:     Calls getIsFainted() on a fresh Abra and asserts false.
-     * IMPROVE: Verify this default across multiple species to ensure no Pokémon is
-     *          created in a pre-fainted state.
+     *          isFainted is now derived from currentHP — no separate boolean field.
+     *          A Pokémon is fainted when currentHP <= 0.
      */
     @Test
     void newPokemonIsNotFainted() {
@@ -526,31 +522,30 @@ class PokemonTest {
     }
 
     /*
-     * CHECKS:  setIsFainted(true) sets the isFainted flag to true.
-     * HOW:     Calls setIsFainted(true) and asserts getIsFainted() returns true.
-     * IMPROVE: See setIsFaintedBackToFalse — these two tests together document the
-     *          full toggle lifecycle. Consider merging them or controlling execution
-     *          order to make the lifecycle explicit.
+     * CHECKS:  A Pokémon with 0 HP is considered fainted.
+     * HOW:     Sets currentHP to 0 and asserts getIsFainted() returns true.
+     *          Since fainted state is derived from HP, setting HP to 0 is what
+     *          causes a Pokémon to faint — no separate setter needed.
      */
     @Test
-    void setIsFaintedUpdatesFlag() {
-        abra.setIsFainted(true);
+    void pokemonWithZeroHpIsFainted() {
+        abra.setCurrentHP(0);
         assertTrue(abra.getIsFainted());
     }
 
     /*
-     * CHECKS:  setIsFainted(false) clears the fainted flag after it was previously set
-     *          to true.
-     * HOW:     Calls setIsFainted(true) then setIsFainted(false) and asserts the final
-     *          value is false.
-     * IMPROVE: Document whether clearing the fainted flag is a supported "revival"
-     *          operation. If it is, add a test that restores HP alongside the flag
-     *          reset and verifies the Pokémon behaves correctly in battle.
+     * CHECKS:  Healing a fainted Pokémon (HP was 0) back to full clears the
+     *          fainted state automatically, since fainted is derived from HP.
+     * HOW:     Sets HP to 0 (fainted), then calls healToFull(), and asserts
+     *          getIsFainted() returns false. This was the MDL-1 bug — with the
+     *          old boolean approach, healToFull() forgot to clear the flag.
+     *          Deriving from HP eliminates that entire class of bugs.
      */
     @Test
-    void setIsFaintedBackToFalse() {
-        abra.setIsFainted(true);
-        abra.setIsFainted(false);
+    void healToFullClearsFaintedState() {
+        abra.setCurrentHP(0);
+        assertTrue(abra.getIsFainted());
+        abra.healToFull();
         assertFalse(abra.getIsFainted());
     }
 

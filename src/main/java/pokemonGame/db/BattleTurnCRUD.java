@@ -83,9 +83,11 @@ public class BattleTurnCRUD {
         // Implementation to submit a pending action for a battle turn
         LOGGER.info("Submitting pending action for battleId: {}, trainerId: {}, action: {}", battleId, trainerId, action);
         try (Connection conn = DatabaseSetup.getConnection()) {
-            String sql = "INSERT INTO battle_pending_actions (battle_id, trainer_id, " 
-            + "action_type, move_slot_index, switch_pokemon_id, submitted_at) " 
-            + "VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO battle_pending_actions (...) VALUES (?, ?, ?, ?, ?, ?) "
+                    + "ON DUPLICATE KEY UPDATE action_type = VALUES(action_type), "
+                    + "move_slot_index = VALUES(move_slot_index), "
+                    + "switch_pokemon_id = VALUES(switch_pokemon_id), "
+                    + "submitted_at = VALUES(submitted_at)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, battleId);
                 pstmt.setInt(2, trainerId);
@@ -182,8 +184,8 @@ public class BattleTurnCRUD {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, battleId);
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    // Process result set and create an array of turn summaries
-                    // For simplicity, returning an empty array here
+                    // TODO: Collect turn history into a list and convert to an array to return
+                    // Placeholder implementation, should be replaced with actual collection logic
                 }
             }
         } catch (SQLException e) {

@@ -1,6 +1,4 @@
 package pokemonGame.core;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * 18×18 type effectiveness matrix and related enums ({@link Type},
@@ -46,33 +44,8 @@ public final class TypeChart {
     }
 
     public static enum StatusCondition {
-        NONE, BURN, FREEZE, PARALYSIS, POISON, SLEEP
-    }
-
-
-    private static final Map<Type, Integer> TYPE_INDICES = new HashMap<>();
-        static {
-        TYPE_INDICES.put(Type.NORMAL, 0);
-        TYPE_INDICES.put(Type.FIRE, 1);
-        TYPE_INDICES.put(Type.WATER, 2);
-        TYPE_INDICES.put(Type.ELECTRIC, 3);
-        TYPE_INDICES.put(Type.GRASS, 4);
-        TYPE_INDICES.put(Type.ICE, 5);
-        TYPE_INDICES.put(Type.FIGHTING, 6);
-        TYPE_INDICES.put(Type.POISON, 7);
-        TYPE_INDICES.put(Type.GROUND, 8);
-        TYPE_INDICES.put(Type.FLYING, 9);
-        TYPE_INDICES.put(Type.PSYCHIC, 10);
-        TYPE_INDICES.put(Type.BUG, 11);
-        TYPE_INDICES.put(Type.ROCK, 12);
-        TYPE_INDICES.put(Type.GHOST, 13);
-        TYPE_INDICES.put(Type.DRAGON, 14);
-        TYPE_INDICES.put(Type.DARK, 15);
-        TYPE_INDICES.put(Type.STEEL, 16);
-        TYPE_INDICES.put(Type.FAIRY, 17);
-        }
-
-    
+        BURN, FREEZE, PARALYSIS, POISON, SLEEP
+    }    
 
 
     public static float getEffectiveness(Type moveType, Type pokemonType) {
@@ -81,15 +54,10 @@ public final class TypeChart {
             return 1.0f; // Neutral effectiveness for NONE or null type
         }
 
-        Integer moveIndex = TYPE_INDICES.get(moveType);
-        Integer pokemonIndex = TYPE_INDICES.get(pokemonType);
+        if (moveType == Type.NONE || moveType == null) {
+            return 1.0f; // Neutral effectiveness for NONE or null move type
+        }
 
-        // Add error handling for invalid types
-        if (moveIndex == null) throw new IllegalArgumentException
-        ("Invalid move type: " + moveType);
-        if (pokemonIndex == null) throw new IllegalArgumentException
-        ("Invalid pokemon type: " + pokemonType);
-
-        return TYPE_CHART[moveIndex][pokemonIndex];
+        return TYPE_CHART[moveType.ordinal()][pokemonType.ordinal()];
     }
 }

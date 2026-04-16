@@ -105,7 +105,6 @@ public class Pokemon {
     //       this.statusConditions = conditions;
     //   }
     private EnumSet<StatusCondition> statusConditions = EnumSet.noneOf(StatusCondition.class);
-    private boolean isFainted = false; // This boolean indicates whether the Pokemon has fainted (current HP is 0 or less)
     private final ArrayList<MoveSlot> moveset;
     
     // each individual Pokémon object keeps its own learnset reference; most species override
@@ -192,7 +191,7 @@ public class Pokemon {
     }
 
     public boolean getIsFainted() {
-        return isFainted;
+        return currentHP <= 0;
     }
 
     public int getDexIndex() {
@@ -409,10 +408,6 @@ public class Pokemon {
         this.nature = nature;
     }
 
-    public void setIsFainted(boolean isFainted) {
-        this.isFainted = isFainted;
-    }
-
     public void setStatusConditions(EnumSet<StatusCondition> conditions) {
         this.statusConditions = conditions;
     }  
@@ -448,7 +443,6 @@ public class Pokemon {
     public void setCurrentHP(int currentHP) {
         if (currentHP < 0) {
             this.currentHP = 0;
-            this.isFainted = true;
         } else if (currentHP > maxHP) {
             this.currentHP = maxHP;
         } else {
@@ -640,9 +634,7 @@ public class Pokemon {
         return true;
     }  
 
-    public boolean checkFainted() {
-        return this.getCurrentHP() <= 0;
-    }
+
 
     // Method for generating a random IV value between 0 and 31 for each stat
     public void generateRandomIVs() {

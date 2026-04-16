@@ -29,11 +29,11 @@ public class StatCalculator {
         // The formula is: HP = ((((2 * baseHP) + IV + (EV / 4)) * Level) / 100) + Level + 10
         // We want an integer, so we are going to do the calculations in steps to ensure we don't lose 
         // precision until the end when we can round down to an integer.
-        int calcHP = (int) Math.floor(ev / 4.0);
-        calcHP = (int) Math.floor((2 * hpBase) + ivHp + calcHP);
-        calcHP = (int) Math.floor(calcHP * level);
-        calcHP = (int) Math.floor(calcHP / 100.0);
-        calcHP = (int) Math.floor(calcHP + level + 10);
+        int evContrib = (int) Math.floor(ev / 4.0);
+        int baseIVContrib =(2 * hpBase) + ivHp + evContrib;
+        int levelContrib = baseIVContrib * level;
+        int division = (int) Math.floor(levelContrib / 100.0);
+        int calcHP = division + level + 10;
         return calcHP;
     }
 
@@ -43,12 +43,11 @@ public class StatCalculator {
         // Stat = (((((2 * baseStat) + IV + (EV/4)) * Level) / 100) + 5) * Nature
         // For now, we will ignore the Nature modifier and just calculate the stat without it.
         // A 1 will be used as a placeholder for the Nature modifier in the future when that is implemented.
-        int calcStat = (int) Math.floor(ev / 4.0);
-        calcStat = (int) Math.floor((2 * baseStat) + iv + calcStat);
-        calcStat = (int) Math.floor(calcStat * level);
-        calcStat = (int) Math.floor(calcStat / 100.0);
-        calcStat = (int) Math.floor(calcStat + 5);
-        calcStat = (int) Math.floor(calcStat * natureModifier);
+        int evContrib = (int) Math.floor(ev / 4.0);
+        int baseIVContrib = (2 * baseStat) + iv + evContrib;
+        int levelContrib = baseIVContrib * level;
+        int division = (int) Math.floor(levelContrib / 100.0);
+        int calcStat = (int) Math.floor((division + 5) * natureModifier);
         return calcStat;
     }
 

@@ -277,7 +277,7 @@ class AttackTest {
         attacker.setLevel(50);
         defender.setLevel(50);
         Move move = new Growl(); // Status move with 0 power
-        int damage = Attack.calculateDamage(attacker, defender, move);
+        int damage = Attack.calculateDamage(attacker, defender, move, false);
         assertEquals(0, damage, "Status moves should not deal damage.");
     }
 
@@ -317,7 +317,7 @@ class AttackTest {
             for (Move move : new Move[]{physicalMove, specialMove, statusMove}) {
                 // Run multiple times per combination to account for random factor variance
                 for (int i = 0; i < 100; i++) {
-                    int damage = Attack.calculateDamage(attacker, defender, move);
+                    int damage = Attack.calculateDamage(attacker, defender, move, false);
                     assertTrue(damage >= 0,
                         String.format("Damage should be non-negative for level %d attacker (atk=%d) vs level %d defender (def=%d) using %s, but got %d.",
                             stats[0], stats[2], stats[1], stats[3], move.getMoveName(), damage));
@@ -340,8 +340,8 @@ class AttackTest {
         highLevelAttacker.setLevel(50);
         defender.setLevel(30);
         Move move = new Tackle(); // Physical move with 40 power
-        int lowLevelDamage = Attack.calculateDamage(lowLevelAttacker, defender, move);
-        int highLevelDamage = Attack.calculateDamage(highLevelAttacker, defender, move);
+        int lowLevelDamage = Attack.calculateDamage(lowLevelAttacker, defender, move, false);
+        int highLevelDamage = Attack.calculateDamage(highLevelAttacker, defender, move, false);
         assertTrue(highLevelDamage > lowLevelDamage, "Higher level attacker should deal more damage than lower level attacker.");
     }
 
@@ -358,8 +358,8 @@ class AttackTest {
         defender.setLevel(50);
         Move lowPowerMove = new Tackle(); // Physical move with 40 power
         Move highPowerMove = new Thunder(); // Special move with 110 power  
-        int lowPowerDamage = Attack.calculateDamage(attacker, defender, lowPowerMove);
-        int highPowerDamage = Attack.calculateDamage(attacker, defender, highPowerMove);
+        int lowPowerDamage = Attack.calculateDamage(attacker, defender, lowPowerMove, false);
+        int highPowerDamage = Attack.calculateDamage(attacker, defender, highPowerMove, false);
         assertTrue(highPowerDamage > lowPowerDamage, "Higher power move should deal more damage than lower power move.");
     }
 
@@ -380,8 +380,8 @@ class AttackTest {
         highAttackAttacker.setCurrentAttack(150);
         defender.setCurrentDefense(100);
         Move move = new Tackle(); // Physical move with 40 power
-        int lowAttackDamage = Attack.calculateDamage(lowAttackAttacker, defender, move);
-        int highAttackDamage = Attack.calculateDamage(highAttackAttacker, defender, move);
+        int lowAttackDamage = Attack.calculateDamage(lowAttackAttacker, defender, move, false);
+        int highAttackDamage = Attack.calculateDamage(highAttackAttacker, defender, move, false);
         assertTrue(highAttackDamage > lowAttackDamage, "Attacker with higher attack stat should deal more damage than attacker with lower attack stat.");
     }
 
@@ -402,8 +402,8 @@ class AttackTest {
         lowDefenseDefender.setCurrentDefense(50);
         highDefenseDefender.setCurrentDefense(150);
         Move move = new Tackle(); // Physical move with 40 power
-        int lowDefenseDamage = Attack.calculateDamage(attacker, lowDefenseDefender, move);
-        int highDefenseDamage = Attack.calculateDamage(attacker, highDefenseDefender, move);
+        int lowDefenseDamage = Attack.calculateDamage(attacker, lowDefenseDefender, move, false);
+        int highDefenseDamage = Attack.calculateDamage(attacker, highDefenseDefender, move, false);
         assertTrue(lowDefenseDamage > highDefenseDamage, "Defender with higher defense stat should take less damage than defender with lower defense stat.");
     }
 
@@ -424,8 +424,8 @@ class AttackTest {
         highSpAttackAttacker.setCurrentSpecialAttack(150);
         defender.setCurrentSpecialDefense(100);
         Move move = new Thunder(); // Special move with 110 power  
-        int lowSpAttackDamage = Attack.calculateDamage(lowSpAttackAttacker, defender, move);
-        int highSpAttackDamage = Attack.calculateDamage(highSpAttackAttacker, defender, move);
+        int lowSpAttackDamage = Attack.calculateDamage(lowSpAttackAttacker, defender, move, false);
+        int highSpAttackDamage = Attack.calculateDamage(highSpAttackAttacker, defender, move, false);
         assertTrue(highSpAttackDamage > lowSpAttackDamage, "Attacker with higher special attack stat should deal more damage than attacker with lower special attack stat when using a special move.");
     }
 
@@ -446,8 +446,8 @@ class AttackTest {
         lowSpDefenseDefender.setCurrentSpecialDefense(50);
         highSpDefenseDefender.setCurrentSpecialDefense(150);
         Move move = new Thunder(); // Special move with 110 power 
-        int lowSpDefenseDamage = Attack.calculateDamage(attacker, lowSpDefenseDefender, move);
-        int highSpDefenseDamage = Attack.calculateDamage(attacker, highSpDefenseDefender, move);
+        int lowSpDefenseDamage = Attack.calculateDamage(attacker, lowSpDefenseDefender, move, false);
+        int highSpDefenseDamage = Attack.calculateDamage(attacker, highSpDefenseDefender, move, false);
         assertTrue(lowSpDefenseDamage > highSpDefenseDamage, "Defender with higher special defense stat should take less damage than defender with lower special defense stat when attacked with a special move.");
     }
 
@@ -470,8 +470,8 @@ class AttackTest {
         highSpAttackAttacker.setCurrentAttack(150);
         defender.setCurrentDefense(100);
         Move move = new Tackle(); // Physical move with 40 power
-        int lowSpAttackDamage = Attack.calculateDamage(lowSpAttackAttacker, defender, move); // should be within 23-28
-        int highSpAttackDamage = Attack.calculateDamage(highSpAttackAttacker, defender, move); //should be within 23-28
+        int lowSpAttackDamage = Attack.calculateDamage(lowSpAttackAttacker, defender, move, false); // should be within 23-28
+        int highSpAttackDamage = Attack.calculateDamage(highSpAttackAttacker, defender, move, false); //should be within 23-28
         assertTrue(lowSpAttackDamage >= 23 && lowSpAttackDamage <= 28, "Damage should be within expected range for low special attack attacker.");
         assertTrue(highSpAttackDamage >= 23 && highSpAttackDamage <= 28, "Damage should be within expected range for high special attack attacker.");
     }
@@ -495,8 +495,8 @@ class AttackTest {
         highAttackAttacker.setCurrentSpecialAttack(150);
         defender.setCurrentSpecialDefense(100);
         Move move = new Thunder(); // Special move with 110 power 
-        int lowAttackDamage = Attack.calculateDamage(lowAttackAttacker, defender, move); // should be within 68-81
-        int highAttackDamage = Attack.calculateDamage(highAttackAttacker, defender, move); // should be within 68-81
+        int lowAttackDamage = Attack.calculateDamage(lowAttackAttacker, defender, move, false); // should be within 68-81
+        int highAttackDamage = Attack.calculateDamage(highAttackAttacker, defender, move, false); // should be within 68-81
         assertTrue(lowAttackDamage >= 68 && lowAttackDamage <= 81, "Damage should be within expected range for low attack attacker.");
         assertTrue(highAttackDamage >= 68 && highAttackDamage <= 81, "Damage should be within expected range for high attack attacker.");
     }
@@ -520,8 +520,8 @@ class AttackTest {
         highDefenseDefender.setCurrentDefense(150);
         highDefenseDefender.setCurrentSpecialDefense(100);
         Move move = new Thunder(); // Special move with 110 power 
-        int lowDefenseDamage = Attack.calculateDamage(attacker, lowDefenseDefender, move); // should be within 45-54
-        int highDefenseDamage = Attack.calculateDamage(attacker, highDefenseDefender, move); // should be within 45-54
+        int lowDefenseDamage = Attack.calculateDamage(attacker, lowDefenseDefender, move, false); // should be within 45-54
+        int highDefenseDamage = Attack.calculateDamage(attacker, highDefenseDefender, move, false); // should be within 45-54
         assertTrue(lowDefenseDamage >= 45 && lowDefenseDamage <= 54, "Damage should be within expected range for low defense defender.");
         assertTrue(highDefenseDamage >= 45 && highDefenseDamage <= 54, "Damage should be within expected range for high defense defender.");
     }
@@ -545,8 +545,8 @@ class AttackTest {
         highSpDefenseDefender.setCurrentDefense(100);
         highSpDefenseDefender.setCurrentSpecialDefense(150);
         Move move = new Tackle(); // Physical move with 40 power
-        int lowSpDefenseDamage = Attack.calculateDamage(attacker, lowSpDefenseDefender, move); // should be within 16-19
-        int highSpDefenseDamage = Attack.calculateDamage(attacker, highSpDefenseDefender, move); // should be within 16-19
+        int lowSpDefenseDamage = Attack.calculateDamage(attacker, lowSpDefenseDefender, move, false); // should be within 16-19
+        int highSpDefenseDamage = Attack.calculateDamage(attacker, highSpDefenseDefender, move, false); // should be within 16-19
         assertTrue(lowSpDefenseDamage >= 16 && lowSpDefenseDamage <= 19, "Damage should be within expected range for low special defense defender.");
         assertTrue(highSpDefenseDamage >= 16 && highSpDefenseDamage <= 19, "Damage should be within expected range for high special defense defender.");
     }

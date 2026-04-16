@@ -59,8 +59,7 @@ class EvSetterTest {
      */
     @Test
     void setEvHpStoresValue() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 100);
+        EvManager.setEv(pokemon, Stat.HP, 100);
         assertEquals(100, EvManager.getEv(pokemon, Stat.HP));
     }
 
@@ -71,8 +70,7 @@ class EvSetterTest {
      */
     @Test
     void setEvAttackStoresValue() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.ATTACK, 200);
+        EvManager.setEv(pokemon, Stat.ATTACK, 200);
         assertEquals(200, EvManager.getEv(pokemon, Stat.ATTACK));
     }
 
@@ -83,8 +81,7 @@ class EvSetterTest {
      */
     @Test
     void setEvDefenseStoresValue() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.DEFENSE, 150);
+        EvManager.setEv(pokemon, Stat.DEFENSE, 150);
         assertEquals(150, EvManager.getEv(pokemon, Stat.DEFENSE));
     }
 
@@ -95,8 +92,7 @@ class EvSetterTest {
      */
     @Test
     void setEvSpecialAttackStoresValue() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.SPECIAL_ATTACK, 252);
+        EvManager.setEv(pokemon, Stat.SPECIAL_ATTACK, 252);
         assertEquals(252, EvManager.getEv(pokemon, Stat.SPECIAL_ATTACK));
     }
 
@@ -107,8 +103,7 @@ class EvSetterTest {
      */
     @Test
     void setEvSpecialDefenseStoresValue() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.SPECIAL_DEFENSE, 80);
+        EvManager.setEv(pokemon, Stat.SPECIAL_DEFENSE, 80);
         assertEquals(80, EvManager.getEv(pokemon, Stat.SPECIAL_DEFENSE));
     }
 
@@ -119,8 +114,7 @@ class EvSetterTest {
      */
     @Test
     void setEvSpeedStoresValue() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.SPEED, 44);
+        EvManager.setEv(pokemon, Stat.SPEED, 44);
         assertEquals(44, EvManager.getEv(pokemon, Stat.SPEED));
     }
 
@@ -135,8 +129,7 @@ class EvSetterTest {
      */
     @Test
     void evTotalReflectsSingleSetter() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 100);
+        EvManager.setEv(pokemon, Stat.HP, 100);
         assertEquals(100, EvManager.getTotalEv(pokemon));
     }
 
@@ -147,10 +140,9 @@ class EvSetterTest {
      */
     @Test
     void evTotalReflectsMultipleSetters() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 100);
-        evManager.setEv(pokemon, Stat.ATTACK, 150);
-        evManager.setEv(pokemon, Stat.SPEED, 50);
+        EvManager.setEv(pokemon, Stat.HP, 100);
+        EvManager.setEv(pokemon, Stat.ATTACK, 150);
+        EvManager.setEv(pokemon, Stat.SPEED, 50);
         assertEquals(300, EvManager.getTotalEv(pokemon));
     }
 
@@ -162,10 +154,9 @@ class EvSetterTest {
      */
     @Test
     void evTotalSumsAllSixStats() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 252);
-        evManager.setEv(pokemon, Stat.ATTACK, 252);
-        evManager.setEv(pokemon, Stat.DEFENSE, 6);
+        EvManager.setEv(pokemon, Stat.HP, 252);
+        EvManager.setEv(pokemon, Stat.ATTACK, 252);
+        EvManager.setEv(pokemon, Stat.DEFENSE, 6);
         assertEquals(510, EvManager.getTotalEv(pokemon));
     }
 
@@ -180,8 +171,7 @@ class EvSetterTest {
      */
     @Test
     void setEvHpCapsAtPerStatMax() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 300);
+        EvManager.setEv(pokemon, Stat.HP, 300);
         assertEquals(252, EvManager.getEv(pokemon, Stat.HP));
     }
 
@@ -192,8 +182,7 @@ class EvSetterTest {
      */
     @Test
     void setEvAttackCapsAtPerStatMax() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.ATTACK, 999);
+        EvManager.setEv(pokemon, Stat.ATTACK, 999);
         assertEquals(252, EvManager.getEv(pokemon, Stat.ATTACK));
     }
 
@@ -204,8 +193,7 @@ class EvSetterTest {
      */
     @Test
     void exactPerStatMaxIsAccepted() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.SPEED, 252);
+        EvManager.setEv(pokemon, Stat.SPEED, 252);
         assertEquals(252, EvManager.getEv(pokemon, Stat.SPEED));
     }
 
@@ -222,11 +210,10 @@ class EvSetterTest {
      */
     @Test
     void totalCapReducesExcessiveStat() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 252);
-        evManager.setEv(pokemon, Stat.ATTACK, 252);
+        EvManager.setEv(pokemon, Stat.HP, 252);
+        EvManager.setEv(pokemon, Stat.ATTACK, 252);
         // Total is 504, only 6 room left
-        evManager.setEv(pokemon, Stat.DEFENSE, 100);
+        EvManager.setEv(pokemon, Stat.DEFENSE, 100);
         assertEquals(6, EvManager.getEv(pokemon, Stat.DEFENSE));
         assertEquals(510, EvManager.getTotalEv(pokemon));
     }
@@ -241,12 +228,11 @@ class EvSetterTest {
      */
     @Test
     void noRoomLeftMeansZero() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 252);
-        evManager.setEv(pokemon, Stat.ATTACK, 252);
-        evManager.setEv(pokemon, Stat.DEFENSE, 6);
+        EvManager.setEv(pokemon, Stat.HP, 252);
+        EvManager.setEv(pokemon, Stat.ATTACK, 252);
+        EvManager.setEv(pokemon, Stat.DEFENSE, 6);
         // Total is now 510
-        evManager.setEv(pokemon, Stat.SPEED, 100);
+        EvManager.setEv(pokemon, Stat.SPEED, 100);
         assertEquals(0, EvManager.getEv(pokemon, Stat.SPEED));
         assertEquals(510, EvManager.getTotalEv(pokemon));
     }
@@ -261,10 +247,9 @@ class EvSetterTest {
      */
     @Test
     void bothCapsAppliedSimultaneously() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 252);
-        evManager.setEv(pokemon, Stat.ATTACK, 252);
-        evManager.setEv(pokemon, Stat.DEFENSE, 300);
+        EvManager.setEv(pokemon, Stat.HP, 252);
+        EvManager.setEv(pokemon, Stat.ATTACK, 252);
+        EvManager.setEv(pokemon, Stat.DEFENSE, 300);
         assertEquals(6, EvManager.getEv(pokemon, Stat.DEFENSE));
         assertEquals(510, EvManager.getTotalEv(pokemon));
     }
@@ -281,9 +266,8 @@ class EvSetterTest {
      */
     @Test
     void setEvHpOverwritesDoesNotAdd() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 100);
-        evManager.setEv(pokemon, Stat.HP, 50);
+        EvManager.setEv(pokemon, Stat.HP, 100);
+        EvManager.setEv(pokemon, Stat.HP, 50);
         assertEquals(50, EvManager.getEv(pokemon, Stat.HP));
         assertEquals(50, EvManager.getTotalEv(pokemon));
     }
@@ -298,19 +282,18 @@ class EvSetterTest {
      */
     @Test
     void overwritingDownFreesRoom() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 252);
-        evManager.setEv(pokemon, Stat.ATTACK, 252);
-        evManager.setEv(pokemon, Stat.DEFENSE, 6);
+        EvManager.setEv(pokemon, Stat.HP, 252);
+        EvManager.setEv(pokemon, Stat.ATTACK, 252);
+        EvManager.setEv(pokemon, Stat.DEFENSE, 6);
         assertEquals(510, EvManager.getTotalEv(pokemon));
 
         // Overwrite HP to 0 — frees 252
-        evManager.setEv(pokemon, Stat.HP, 0);
+        EvManager.setEv(pokemon, Stat.HP, 0);
         assertEquals(0, EvManager.getEv(pokemon, Stat.HP));
         assertEquals(258, EvManager.getTotalEv(pokemon));
 
         // Now there's room for Speed
-        evManager.setEv(pokemon, Stat.SPEED, 200);
+        EvManager.setEv(pokemon, Stat.SPEED, 200);
         assertEquals(200, EvManager.getEv(pokemon, Stat.SPEED));
         assertEquals(458, EvManager.getTotalEv(pokemon));
     }
@@ -323,9 +306,8 @@ class EvSetterTest {
      */
     @Test
     void settingSameValueTwiceIsIdempotent() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 100);
-        evManager.setEv(pokemon, Stat.HP, 100);
+        EvManager.setEv(pokemon, Stat.HP, 100);
+        EvManager.setEv(pokemon, Stat.HP, 100);
         assertEquals(100, EvManager.getEv(pokemon, Stat.HP));
         assertEquals(100, EvManager.getTotalEv(pokemon));
     }
@@ -338,11 +320,10 @@ class EvSetterTest {
      */
     @Test
     void canOverwriteMaxStatToZero() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 252);
+        EvManager.setEv(pokemon, Stat.HP, 252);
         assertEquals(252, EvManager.getEv(pokemon, Stat.HP));
 
-        evManager.setEv(pokemon, Stat.HP, 0);
+        EvManager.setEv(pokemon, Stat.HP, 0);
         assertEquals(0, EvManager.getEv(pokemon, Stat.HP));
         assertEquals(0, EvManager.getTotalEv(pokemon));
     }
@@ -359,8 +340,7 @@ class EvSetterTest {
      */
     @Test
     void negativeEvIsTreatedAsZero() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, -50);
+        EvManager.setEv(pokemon, Stat.HP, -50);
         assertEquals(0, EvManager.getEv(pokemon, Stat.HP));
         assertEquals(0, EvManager.getTotalEv(pokemon));
     }
@@ -373,9 +353,8 @@ class EvSetterTest {
      */
     @Test
     void negativeEvDoesNotCorruptTotal() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 100);
-        evManager.setEv(pokemon, Stat.ATTACK, -10);
+        EvManager.setEv(pokemon, Stat.HP, 100);
+        EvManager.setEv(pokemon, Stat.ATTACK, -10);
         assertEquals(0, EvManager.getEv(pokemon, Stat.ATTACK));
         assertEquals(100, EvManager.getTotalEv(pokemon));
     }
@@ -393,18 +372,17 @@ class EvSetterTest {
      */
     @Test
     void evTotalAlwaysEqualsSumOfAllSixStats() {
-        EvManager evManager = new EvManager();
-        evManager.setEv(pokemon, Stat.HP, 100);
-        evManager.setEv(pokemon, Stat.ATTACK, 200);
-        evManager.setEv(pokemon, Stat.DEFENSE, 50);
-        evManager.setEv(pokemon, Stat.SPECIAL_ATTACK, 80);
-        evManager.setEv(pokemon, Stat.SPECIAL_DEFENSE, 30);
-        evManager.setEv(pokemon, Stat.SPEED, 40);
+        EvManager.setEv(pokemon, Stat.HP, 100);
+        EvManager.setEv(pokemon, Stat.ATTACK, 200);
+        EvManager.setEv(pokemon, Stat.DEFENSE, 50);
+        EvManager.setEv(pokemon, Stat.SPECIAL_ATTACK, 80);
+        EvManager.setEv(pokemon, Stat.SPECIAL_DEFENSE, 30);
+        EvManager.setEv(pokemon, Stat.SPEED, 40);
 
         // Overwrite some
-        evManager.setEv(pokemon, Stat.HP, 10);
-        evManager.setEv(pokemon, Stat.ATTACK, 252);
-        evManager.setEv(pokemon, Stat.SPECIAL_DEFENSE, 0);
+        EvManager.setEv(pokemon, Stat.HP, 10);
+        EvManager.setEv(pokemon, Stat.ATTACK, 252);
+        EvManager.setEv(pokemon, Stat.SPECIAL_DEFENSE, 0);
 
         int expectedTotal = EvManager.getEv(pokemon, Stat.HP)
                 + EvManager.getEv(pokemon, Stat.ATTACK)
@@ -427,17 +405,16 @@ class EvSetterTest {
      */
     @Test
     void complexSequenceNeverExceeds510() {
-        EvManager evManager = new EvManager();
         // Fill to 510
-        evManager.setEv(pokemon, Stat.HP, 252);
-        evManager.setEv(pokemon, Stat.ATTACK, 252);
-        evManager.setEv(pokemon, Stat.DEFENSE, 6);
+        EvManager.setEv(pokemon, Stat.HP, 252);
+        EvManager.setEv(pokemon, Stat.ATTACK, 252);
+        EvManager.setEv(pokemon, Stat.DEFENSE, 6);
         assertEquals(510, EvManager.getTotalEv(pokemon));
 
         // Free room by overwriting HP down
-        evManager.setEv(pokemon, Stat.HP, 100);
+        EvManager.setEv(pokemon, Stat.HP, 100);
         // Fill Speed into the freed room
-        evManager.setEv(pokemon, Stat.SPEED, 152);
+        EvManager.setEv(pokemon, Stat.SPEED, 152);
 
         assertTrue(EvManager.getTotalEv(pokemon) <= 510,
                 "Total should never exceed 510");

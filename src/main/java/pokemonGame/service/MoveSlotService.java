@@ -42,14 +42,16 @@ public class MoveSlotService {
         this.moveCRUD = moveCRUD;
     }
 
-    // TODO: SVC-4 — BUG: No check for isMovesetFull() before DB insert. slot_index=4 violates CHECK constraint.
     public void teachMove(Pokemon p, Move move) {
 
         if (!getEligibleMoves(p).stream().anyMatch(e -> e.getMove().getMoveName().equalsIgnoreCase(move.getMoveName()))) {
             return; // Move is not eligible to be learned, so we exit without making changes
         }
 
-        
+        if (p.getMoveSet().size() >= 4) {
+            LOGGER.warn("Cannot teach move {} to {} because its moveset is full.", move.getMoveName(), p.getNickname());
+            return; // Moveset is full, so we exit without making changes
+        }
 
         try{
             if (moveCRUD.insertMoveForPokemon(p.getPokemonDbId(), p.getMoveSet().size(), move.getMoveName(), move.getMaxPp()) == -1) {
@@ -66,9 +68,13 @@ public class MoveSlotService {
         
     }
 
-    // TODO: SVC-5 — PokeMove.fromString() throws IllegalArgumentException on invalid input. Catch and return null.
     public Move getMoveByName(String moveName) {
-        return PokeMove.fromString(moveName).createMove();
+        try {
+            return PokeMove.fromString(moveName).createMove();
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Invalid move name '{}': {}", moveName, e.getMessage());
+            return null; // Return null or consider throwing a custom exception to indicate invalid move name
+        }
     }
     
     public boolean use(Pokemon pokemon, MoveSlot slot) {
@@ -140,6 +146,11 @@ public class MoveSlotService {
             eligible.add(e);
         }
         return eligible;
+    }
+
+    public List<String[]> getCurrentDbMoves(int pokemonDbId) {
+        return moveCRUD.getMovesForPokemon(pokemonDbId);
+        
     }
 
 

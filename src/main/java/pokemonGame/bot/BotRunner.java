@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import pokemonGame.db.BattleCRUD;
 import pokemonGame.db.MoveCRUD;
+import pokemonGame.db.PokemonCRUD;
+import pokemonGame.db.TeamCRUD;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import pokemonGame.service.BattleService;
 import pokemonGame.service.MoveSlotService;
@@ -27,7 +29,8 @@ public class BotRunner {
         BattleService battleService = new BattleService(new BattleCRUD());
         MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
         TrainerService trainerService = new TrainerService();
-        TeamService teamService = new TeamService();
+        PokemonCRUD pokemonCRUD = new PokemonCRUD(moveSlotService);
+        TeamService teamService = new TeamService(new TeamCRUD(), pokemonCRUD, trainerService);
 
 
         JDA api = JDABuilder.createDefault(token)

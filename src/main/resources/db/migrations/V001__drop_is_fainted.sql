@@ -5,4 +5,4 @@
 -- that caused bugs (e.g. healToFull() forgetting to clear the flag).
 -- See Code-Review-Model-Package.md issues MDL-1 and MDL-2.
 
-ALTER TABLE pokemon_instances DROP COLUMN is_fainted;
+ALTER TABLE pokemon_instances DROP COLUMN IF EXISTS is_fainted;

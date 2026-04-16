@@ -22,13 +22,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pokemonGame.model.Pokemon;
-import pokemonGame.model.Team;
-import pokemonGame.model.Trainer;
-
 public class TeamCRUD {
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamCRUD.class);
-
 
     public int addPokemonToDBTeam(int trainerId, int pokemonId, int teamId) {
         try (Connection conn = DatabaseSetup.getConnection()) {
@@ -97,13 +92,6 @@ public class TeamCRUD {
     }
 
     public Boolean removePokemonFromDBTeam(int trainerDbId, int teamId, int slotIndex) {
-
-        // TODO: DB-5 — Remove this and have TeamService handle the logic of deleting the Pokémon instance after removing it from the team.
-        // TeamService can call PokemonCRUD.deleteDBPokemon() after successfully removing the Pokémon from the team in the database. 
-        // This keeps the responsibilities of each class clear and avoids unnecessary coupling between TeamCRUD and PokemonCRUD.
-        PokemonCRUD pokemonCRUD = new PokemonCRUD();
-        Pokemon pokemonToDelete = getPokemonInSlotForTrainer(trainerDbId, teamId, slotIndex);
-
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "DELETE FROM trainer_teams WHERE trainer_id = ? AND team_id = ? AND slot_index = ?";
 
@@ -115,8 +103,6 @@ public class TeamCRUD {
                 int affectedRows = pstmt.executeUpdate();
                 if (affectedRows > 0) {
                     LOGGER.info("Pokemon in slot {} removed from trainer ID {}'s team.", slotIndex, trainerDbId);
-
-                    pokemonCRUD.deleteDBPokemon(pokemonToDelete);
                     return true; // Return true to indicate successful removal
                 } else {
                     LOGGER.warn("No Pokemon in slot {} found in trainer ID {}'s team.", slotIndex, trainerDbId);
@@ -129,70 +115,27 @@ public class TeamCRUD {
         }
     }
 
-    public Team getDBTeamForTrainer(int trainerDbId, int teamId) {
-        List<Pokemon> team = new ArrayList<>();
+    public List<Integer> getPokemonIdsForTeam(int trainerDbId, int teamId) {
+        List<Integer> pokemonIds = new ArrayList<>();
         try (Connection conn = DatabaseSetup.getConnection()) {
-            String sql = "SELECT p.* FROM pokemon_instances p "
-                    + "JOIN trainer_teams tt ON p.instance_id = tt.instance_id "
-                    + "WHERE tt.trainer_id = ? AND tt.team_id = ? ORDER BY tt.slot_index";
+            String sql = "SELECT instance_id FROM trainer_teams WHERE trainer_id = ? AND team_id = ? ORDER BY slot_index";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, trainerDbId);
                 pstmt.setInt(2, teamId);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    // TODO: DB-5 — Remove the CRUD creation, have TrainerService handle this and pass in the Trainer object to this method. 
-                    // TeamCRUD should not be responsible for creating a TrainerCRUD or retrieving Trainer data.
-                    TrainerCRUD trainerCRUD = new TrainerCRUD();
-                    Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);
                     while (rs.next()) {
-                        LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
-                                trainerDbId, rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
-                        
-                        Pokemon pokemon = PokemonCRUD.mapResultSetToPokemon(rs, trainer);
-                        
-                        LOGGER.info("Mapped Pokemon for trainer ID {}: instance_id={}, species={}, level={}", 
-                                trainerDbId, pokemon.getPokemonDbId(), pokemon.getSpecies().getDisplayName(), pokemon.getLevel());
-                        LOGGER.info("Current HP is {} for Pokemon with instance_id {} in trainer ID {}'s team.", pokemon.getCurrentHP(), pokemon.getPokemonDbId(), trainerDbId);
-                        team.add(pokemon);
+                        int pokemonId = rs.getInt("instance_id");
+                        LOGGER.info("Found Pokemon instance_id {} for trainer ID {} and team ID {}.", pokemonId, trainerDbId, teamId);
+                        pokemonIds.add(pokemonId);
                     }
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Error retrieving team for trainer ID {}: {}", trainerDbId, e.getMessage(), e);
+            LOGGER.error("Error retrieving Pokemon IDs for trainer ID {} and team ID {}: {}", trainerDbId, teamId, e.getMessage(), e);
         }
-        Team resultTeam = new Team("Loaded Team");
-        resultTeam.setTeamAsList(team);
-        return resultTeam;
-    }
-
-    public Pokemon getPokemonInSlotForTrainer(int trainerDbId, int teamId, int slotIndex) {
-        try (Connection conn = DatabaseSetup.getConnection()) {
-            String sql = "SELECT p.* FROM pokemon_instances p "
-                    + "JOIN trainer_teams tt ON p.instance_id = tt.instance_id "
-                    + "WHERE tt.trainer_id = ? AND tt.team_id = ? AND tt.slot_index = ?";
-
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, trainerDbId);
-                pstmt.setInt(2, teamId);
-                pstmt.setInt(3, slotIndex);
-
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
-                                trainerDbId, rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
-                        // TODO: DB-5 — Remove the CRUD creation, have TrainerService handle this and pass in the Trainer object to this method.
-                        // TeamCRUD should not be responsible for creating a TrainerCRUD or retrieving Trainer data.
-                        TrainerCRUD trainerCRUD = new TrainerCRUD();
-                        Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);
-                        return PokemonCRUD.mapResultSetToPokemon(rs, trainer);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error retrieving Pokemon in slot {} for trainer ID {}: {}", slotIndex, trainerDbId, e.getMessage(), e);
-        }
-        return null; // Return null if retrieving Pokemon failed
+        return pokemonIds;
     }
 
     public int reorderTeamAfterRelease(int trainerId, int teamId) {
@@ -352,7 +295,7 @@ public class TeamCRUD {
         return teamNames; // Return the list of team names (empty if none found or an error occurred)
     }
 
-    public Team getTeamByNameForTrainer(int trainerId, String teamName) {
+    public int getTeamIdByNameForTrainer(int trainerId, String teamName) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT team_id FROM trainer_teams WHERE trainer_id = ? AND team_name = ? LIMIT 1";
 
@@ -364,16 +307,16 @@ public class TeamCRUD {
                     if (rs.next()) {
                         int teamId = rs.getInt("team_id");
                         LOGGER.info("Retrieved team ID {} for team name '{}' and trainer ID {}.", teamId, teamName, trainerId);
-                        return getDBTeamForTrainer(trainerId, teamId); // Return the Team object for the found team ID
+                        return teamId;
                     } else {
                         LOGGER.warn("No team found with name '{}' for trainer ID {}.", teamName, trainerId);
-                        return null; // Return null to indicate no team found
+                        return -1;
                     }
                 }
             }
         } catch (SQLException e) {
             LOGGER.error("Error retrieving team by name '{}' for trainer ID {}: {}", teamName, trainerId, e.getMessage(), e);
-            return null; // Return null to indicate an error occurred
+            return -1;
         }
     }
 }

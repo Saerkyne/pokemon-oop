@@ -22,6 +22,7 @@ import pokemonGame.model.Move;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Trainer;
 import pokemonGame.moves.PokeMove;
+import pokemonGame.service.MoveSlotService;
 import pokemonGame.species.PokeSpecies;
 import pokemonGame.species.PokemonFactory;
 
@@ -33,6 +34,11 @@ import org.slf4j.LoggerFactory;
 public class PokemonCRUD {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PokemonCRUD.class);
+    private final MoveSlotService moveSlotService;
+
+    public PokemonCRUD(MoveSlotService moveSlotService) {
+        this.moveSlotService = moveSlotService;
+    }
 
     public int createDBPokemon(Pokemon pokemon) {
         try (Connection conn = DatabaseSetup.getConnection()) {
@@ -165,10 +171,12 @@ public class PokemonCRUD {
         }
     }
 
-    public static Pokemon mapResultSetToPokemon(ResultSet rs, Trainer trainer) throws SQLException {
+    public Pokemon mapResultSetToPokemon(ResultSet rs, Trainer trainer) throws SQLException {
 
         
-        int foundPokemonId = rs.getInt("instance_id");
+        int foundPokemonId;
+        foundPokemonId = rs.getInt("instance_id");
+        
         PokeSpecies species;
         try {
             species = PokeSpecies.valueOf(rs.getString("species"));
@@ -223,12 +231,7 @@ public class PokemonCRUD {
         foundPokemon.setCurrentHP(currentHp); // Set the current HP after recalculating stats
 
         // Load moves from pokemon_movesets and populate the in-memory moveset
-        // TODO: DB-5 — Remove this CRUD creation and have MoveSlotService handle this logic.
-        // PokemonCRUD should only be responsible for CRUD operations on the Pokémon data, 
-        // not loading moves or other related data. This keeps the responsibilities of each class clear
-        //  and avoids unnecessary coupling between PokemonCRUD and MoveCRUD.
-        MoveCRUD moveCRUD = new MoveCRUD();
-        List<String[]> moveRows = moveCRUD.getMovesForPokemon(foundPokemonId);
+        List<String[]> moveRows = moveSlotService.getCurrentDbMoves(foundPokemonId);
         for (String[] row : moveRows) {
             String moveName = row[0];
             int pp = Integer.parseInt(row[1]);
@@ -245,7 +248,7 @@ public class PokemonCRUD {
         return foundPokemon; // Return the Pokémon object
     }
 
-    public static Pokemon getPokemonByNicknameAndTrainer(String nickname, Trainer trainer) {
+    public Pokemon getPokemonByNicknameAndTrainer(String nickname, Trainer trainer) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND nickname = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {

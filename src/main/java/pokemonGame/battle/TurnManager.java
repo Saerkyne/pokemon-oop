@@ -204,6 +204,11 @@ public class TurnManager {
         float combinedEffectiveness = effectivenessPrimary * effectivenessSecondary;
         
         if (damageDealt > 0) {
+            if (damageDealt > defender.getCurrentHP()) {
+                damageDealt = defender.getCurrentHP();
+            }
+            defender.setCurrentHP(defender.getCurrentHP() - damageDealt);
+
             // Handle fainting and other side effects of the move here (e.g., status conditions, recoil damage, etc.)
             if (!defender.getIsFainted()) {
                 LOGGER.info("{} took {} damage and has {} HP left.", defender.getNickname(), damageDealt, defender.getCurrentHP());
@@ -218,8 +223,7 @@ public class TurnManager {
 
             
         }
-        // TODO: BTL-7 — isHit=true with damage=0 is ambiguous. Distinguish between "hit but did 0 damage" (immunity)
-        // and status moves vs damage moves that rounded to 0. Consider separate flags or a DamageResult subtype.
+        
         return new DamageResult(0, combinedEffectiveness, false, true, false);
     }
 

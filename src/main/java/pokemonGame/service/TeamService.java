@@ -9,6 +9,7 @@ import pokemonGame.db.PokemonCRUD;
 import pokemonGame.db.TeamCRUD;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Team;
+import pokemonGame.model.Trainer;
 
 /**
  * Service layer for team-related operations. Sits between the bot/controller
@@ -52,11 +53,13 @@ public class TeamService {
 
     private final TeamCRUD teamCRUD;
     private final PokemonCRUD pokemonCRUD;
+    private final TrainerService trainerService;
 
     // TODO: SVC-3 — Add constructor injection (TeamService(TeamCRUD, PokemonCRUD)) for testability. Keep this as convenience default.
-    public TeamService() {
-        this.teamCRUD = new TeamCRUD();
-        this.pokemonCRUD = new PokemonCRUD();
+    public TeamService(TeamCRUD teamCRUD, PokemonCRUD pokemonCRUD, TrainerService trainerService) {
+        this.teamCRUD = teamCRUD;
+        this.pokemonCRUD = pokemonCRUD;
+        this.trainerService = trainerService;
     }
 
     /**
@@ -89,28 +92,40 @@ public class TeamService {
      * Loads a team and its Pokémon from the database, returning a fully
      * populated {@link Team} domain object.
      *
-     * <p>This replaces the direct {@code teamCRUD.getDBTeamForTrainer()} calls
-     * that were previously in {@code SlashExample} and {@code Team.loadDbTeamForTrainer()}.</p>
+     * <p>This method coordinates cross-DAO work in the service layer: TeamCRUD
+     * provides ordered Pokémon IDs, TrainerService loads the owning trainer,
+     * and PokemonCRUD hydrates each Pokémon domain object.</p>
      *
      * @param trainerId the trainer's database ID
      * @param teamId    the team's database ID
      * @return a {@link Team} with its {@code pokemonList} populated
      */
     public Team loadTeam(int trainerId, int teamId) {
-        Team team = teamCRUD.getDBTeamForTrainer(trainerId, teamId);
-        if (team != null) {
-            team.setTrainerDbId(trainerId);
-            team.setTeamDbId(teamId);
-            // Also load the team name from the DB if it wasn't set by getDBTeamForTrainer
-            if (team.getTeamName() == null || team.getTeamName().equals("Loaded Team")) {
-                String name = teamCRUD.getTeamName(trainerId, teamId);
-                if (name != null) {
-                    team.setTeamName(name);
-                }
-            }
-            LOGGER.info("Loaded team '{}' (ID {}) with {} Pokémon for trainer ID {}.",
-                    team.getTeamName(), teamId, team.getTeamSize(), trainerId);
+        String teamName = teamCRUD.getTeamName(trainerId, teamId);
+        if (teamName == null) {
+            LOGGER.warn("Team ID {} not found for trainer ID {}.", teamId, trainerId);
+            return null;
         }
+
+        Trainer trainer = trainerService.getTrainerByDbId(trainerId);
+        if (trainer == null) {
+            LOGGER.warn("Trainer ID {} not found while loading team ID {}.", trainerId, teamId);
+            return null;
+        }
+
+        Team team = new Team(teamName);
+        team.setTrainerDbId(trainerId);
+        team.setTeamDbId(teamId);
+
+        for (int pokemonId : teamCRUD.getPokemonIdsForTeam(trainerId, teamId)) {
+            Pokemon pokemon = pokemonCRUD.getSpecificDBPokemonForTrainer(trainer, pokemonId);
+            if (pokemon != null) {
+                team.add(pokemon);
+            }
+        }
+
+        LOGGER.info("Loaded team '{}' (ID {}) with {} Pokémon for trainer ID {}.",
+                team.getTeamName(), teamId, team.getTeamSize(), trainerId);
         return team;
     }
 
@@ -176,8 +191,7 @@ public class TeamService {
         }
 
         // Step 3: Update in-memory state
-        // TODO: SVC-1 — BUG: getTeamAsList() returns unmodifiable list → UnsupportedOperationException. Use team.add(pokemon).
-        team.getTeamAsList().add(pokemon);
+        team.add(pokemon);
         LOGGER.info("Added '{}' to team '{}' in slot {}.", pokemon.getNickname(), team.getTeamName(), slotIndex);
         return slotIndex;
     }
@@ -207,10 +221,15 @@ public class TeamService {
             return false;
         }
 
-        // Remove from DB (this also deletes the pokemon_instances row)
-        boolean removed = teamCRUD.removePokemonFromDBTeam(trainerId, teamId, slotIndex);
-        if (!removed) {
+        boolean removedFromTeam = teamCRUD.removePokemonFromDBTeam(trainerId, teamId, slotIndex);
+        if (!removedFromTeam) {
             LOGGER.error("Failed to remove Pokémon '{}' from team '{}'.", pokemon.getNickname(), team.getTeamName());
+            return false;
+        }
+
+        if (!pokemonCRUD.deleteDBPokemon(pokemon)) {
+            LOGGER.error("Removed Pokémon '{}' from team '{}' but failed to delete its database row.",
+                    pokemon.getNickname(), team.getTeamName());
             return false;
         }
 
@@ -218,8 +237,7 @@ public class TeamService {
         teamCRUD.reorderTeamAfterRelease(trainerId, teamId);
 
         // Update in-memory state
-        // TODO: SVC-2 — BUG: getTeamAsList() returns unmodifiable list → UnsupportedOperationException. Use team.remove(pokemon).
-        team.getTeamAsList().remove(pokemon);
+        team.remove(pokemon);
 
         LOGGER.info("Released '{}' from slot {} of team '{}'.", pokemon.getNickname(), slotIndex, team.getTeamName());
         return true;
@@ -239,7 +257,11 @@ public class TeamService {
     }
 
     public Team getTeamFromName(int trainerId, String teamName) {
-        return teamCRUD.getTeamByNameForTrainer(trainerId, teamName);
+        int teamId = teamCRUD.getTeamIdByNameForTrainer(trainerId, teamName);
+        if (teamId == -1) {
+            return null;
+        }
+        return loadTeam(trainerId, teamId);
     }
 
     /**

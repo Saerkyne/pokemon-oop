@@ -53,6 +53,7 @@ public class TeamService {
     private final TeamCRUD teamCRUD;
     private final PokemonCRUD pokemonCRUD;
 
+    // TODO: SVC-3 — Add constructor injection (TeamService(TeamCRUD, PokemonCRUD)) for testability. Keep this as convenience default.
     public TeamService() {
         this.teamCRUD = new TeamCRUD();
         this.pokemonCRUD = new PokemonCRUD();
@@ -175,6 +176,7 @@ public class TeamService {
         }
 
         // Step 3: Update in-memory state
+        // TODO: SVC-1 — BUG: getTeamAsList() returns unmodifiable list → UnsupportedOperationException. Use team.add(pokemon).
         team.getTeamAsList().add(pokemon);
         LOGGER.info("Added '{}' to team '{}' in slot {}.", pokemon.getNickname(), team.getTeamName(), slotIndex);
         return slotIndex;
@@ -216,6 +218,7 @@ public class TeamService {
         teamCRUD.reorderTeamAfterRelease(trainerId, teamId);
 
         // Update in-memory state
+        // TODO: SVC-2 — BUG: getTeamAsList() returns unmodifiable list → UnsupportedOperationException. Use team.remove(pokemon).
         team.getTeamAsList().remove(pokemon);
 
         LOGGER.info("Released '{}' from slot {} of team '{}'.", pokemon.getNickname(), slotIndex, team.getTeamName());

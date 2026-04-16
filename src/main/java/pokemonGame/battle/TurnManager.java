@@ -218,7 +218,9 @@ public class TurnManager {
 
             
         }
-        return new DamageResult(0, combinedEffectiveness, false, true, false); 
+        // TODO: BTL-7 — isHit=true with damage=0 is ambiguous. Distinguish between "hit but did 0 damage" (immunity)
+        // and status moves vs damage moves that rounded to 0. Consider separate flags or a DamageResult subtype.
+        return new DamageResult(0, combinedEffectiveness, false, true, false);
     }
 
     // We know this action is a switch, so we just need to swap the active Pokémon for the trainer performing the switch action.

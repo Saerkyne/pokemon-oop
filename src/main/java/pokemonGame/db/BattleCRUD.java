@@ -210,7 +210,7 @@ public class BattleCRUD {
                 pstmt.setInt(2, trainerId);
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     // Collect battles into a list and convert to an array
-                    // TODO: Replace with actual collection logic
+                    // TODO: DB-7 — Implement: iterate ResultSet, map rows to Battle objects, collect into List, return as array.
                 }
             }
         } catch (SQLException e) {
@@ -227,7 +227,7 @@ public class BattleCRUD {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     // Collect battles into a list and convert to an array
-                    // TODO: Replace with actual collection logic
+                    // TODO: DB-7 — Implement: iterate ResultSet, map rows to Battle objects, collect into List, return as array.
 
                 }
             }

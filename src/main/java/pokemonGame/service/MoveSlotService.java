@@ -42,6 +42,7 @@ public class MoveSlotService {
         this.moveCRUD = moveCRUD;
     }
 
+    // TODO: SVC-4 — BUG: No check for isMovesetFull() before DB insert. slot_index=4 violates CHECK constraint.
     public void teachMove(Pokemon p, Move move) {
 
         if (!getEligibleMoves(p).stream().anyMatch(e -> e.getMove().getMoveName().equalsIgnoreCase(move.getMoveName()))) {
@@ -65,6 +66,7 @@ public class MoveSlotService {
         
     }
 
+    // TODO: SVC-5 — PokeMove.fromString() throws IllegalArgumentException on invalid input. Catch and return null.
     public Move getMoveByName(String moveName) {
         return PokeMove.fromString(moveName).createMove();
     }

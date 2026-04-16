@@ -35,6 +35,7 @@ The `final` on `LEARNSET` prevents reassignment, but `ArrayList` is mutable. `ge
 **Why this matters (educational context):** This is the "mutable shared state" problem. `static final` means the reference can't change, but the **contents** of the collection can. It's like a `final` pointer to a whiteboard — you can't change which whiteboard it points to, but anyone can erase and rewrite what's on it.
 
 **Fix (in each species class):**
+
 ```java
 @Override
 public List<LearnsetEntry> getLearnset() {
@@ -43,6 +44,7 @@ public List<LearnsetEntry> getLearnset() {
 ```
 
 Or wrap once during static init:
+
 ```java
 private static final List<LearnsetEntry> LEARNSET;
 static {
@@ -69,6 +71,7 @@ If a species is added to the enum but `PokemonFactory`'s HashMap doesn't pick it
 **Why this matters:** Maintaining two registries for the same data violates DRY (Don't Repeat Yourself). Bugs can arise when one is updated and the other isn't.
 
 **Fix — option A (consolidate into `PokeSpecies`):**
+
 ```java
 // In PokeSpecies:
 public static Pokemon create(String speciesInput, String nickname) {
@@ -76,6 +79,7 @@ public static Pokemon create(String speciesInput, String nickname) {
     return species != null ? species.createPokemon(nickname) : null;
 }
 ```
+
 Then remove `PokemonFactory` or make it delegate to `PokeSpecies`.
 
 **Fix — option B (make `PokemonFactory` the single entry point):**
@@ -103,6 +107,7 @@ public static PokeSpecies getSpeciesByString(String input) {
 This iterates all 151 species and their aliases on every call. `PokemonFactory` already has an O(1) HashMap for the same purpose. If `getSpeciesByString()` is used in autocomplete handlers (called on every keystroke), this linear scan runs 151+ comparisons per keystroke.
 
 **Fix:** Build a static HashMap once at class init:
+
 ```java
 private static final Map<String, PokeSpecies> LOOKUP = new HashMap<>();
 static {

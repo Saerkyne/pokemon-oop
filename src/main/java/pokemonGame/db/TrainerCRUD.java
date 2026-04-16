@@ -73,6 +73,7 @@ public class TrainerCRUD {
                     if (rs.next()) {
                         Trainer trainer = new Trainer(rs.getString("name"));
                         trainer.setTrainerDbId(rs.getInt("trainer_id")); // Set the trainer's ID from the database
+                        // TODO: DB-8 — Remove redundant setTrainerName(). Name already set by Trainer(name) constructor above.
                         trainer.setTrainerName(rs.getString("name")); // Set the trainer's name from the database
                         trainer.setDiscordId(rs.getLong("discord_id")); // Set the trainer's Discord ID from the database
 

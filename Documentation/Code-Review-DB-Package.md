@@ -28,6 +28,7 @@ String sql = "INSERT INTO battle_pending_actions (battle_id, trainer_id, "
 If a player submits an action and then changes their mind (e.g., clicks a different move button), the second `INSERT` throws a duplicate key error instead of updating the existing row. The error is caught and logged, but the player's revised choice is silently lost.
 
 **Fix:** Use the SQL from the comment:
+
 ```java
 String sql = "INSERT INTO battle_pending_actions (...) VALUES (?, ?, ?, ?, ?, ?) "
     + "ON DUPLICATE KEY UPDATE action_type = VALUES(action_type), "
@@ -61,6 +62,7 @@ Two problems:
 **Why this matters (educational context):** While this isn't SQL injection (the column name is determined by a comparison, not user input), dynamically building column names in SQL strings is a pattern to avoid. It makes the code harder to read and creates non-obvious runtime failures.
 
 **Fix — use two separate prepared statements or pass a column flag:**
+
 ```java
 public void setActivePokemon(int battleId, boolean isTrainer1, int pokemonId) {
     String column = isTrainer1 ? "trainer1_active_pokemon_id" : "trainer2_active_pokemon_id";
@@ -84,6 +86,7 @@ logger.info("Attempting to get database connection with URL: {}", URL);
 Every single database operation starts by calling `getConnection()`, which logs at INFO level. With concurrent Discord users, this floods the log file. The URL never changes — it was already validated during static init.
 
 **Fix:** Change to `TRACE` or `DEBUG`:
+
 ```java
 logger.trace("Attempting to get database connection with URL: {}", URL);
 ```
@@ -111,6 +114,7 @@ logger.trace("Attempting to get database connection with URL: {}", URL);
 ### DB-5 · DESIGN · CRUD classes create other CRUD instances internally
 
 **Files:**
+
 - `TeamCRUD.removePokemonFromDBTeam()` — creates `new PokemonCRUD()` (line 100)
 - `TeamCRUD.getDBTeamForTrainer()` — creates `new TrainerCRUD()` (line 130)
 - `TeamCRUD.getPokemonInSlotForTrainer()` — creates `new TrainerCRUD()` (line 155)
@@ -144,6 +148,7 @@ try (Connection conn = DatabaseSetup.getConnection()) {
 The inner `catch` handles SQL errors from statement/result operations. The outer `catch` handles connection errors. Both log the same message. No other method in the CRUD layer uses this double-catch pattern.
 
 **Fix:** Remove the inner catch — let the outer try-with-resources handle all SQL exceptions:
+
 ```java
 try (Connection conn = DatabaseSetup.getConnection();
      PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -158,6 +163,7 @@ try (Connection conn = DatabaseSetup.getConnection();
 ### DB-7 · ROBUSTNESS · Stub methods return empty arrays
 
 **Files:**
+
 - `BattleCRUD.getBattleHistoryForTrainer()` — queries DB but doesn't collect results, returns `new Battle[0]`
 - `BattleCRUD.getAllActiveBattles()` — same pattern
 - `BattleTurnCRUD.getTurnHistory()` — same pattern
@@ -199,6 +205,7 @@ if (teamName == null) {
 If `getTeamName()` returns null, the team doesn't exist for that trainer/team combination. Silently substituting "Default Team Name" hides the root cause. The insert may succeed with a wrong team name in the database.
 
 **Fix:** Fail explicitly:
+
 ```java
 String teamName = getTeamName(trainerId, teamId);
 if (teamName == null) {
@@ -229,4 +236,4 @@ private static EvManager evManager = new EvManager();
 | DESIGN       |   3   |
 | ROBUSTNESS   |   3   |
 | NIT          |   2   |
-| **Total**    | **10** |
+| **Total**    | **10**|

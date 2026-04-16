@@ -206,10 +206,12 @@ public enum PokeMove {
         return type;
     }
 
+    // TODO: MOV-2 — Rename to getMove() or getMoveInstance(). "create" implies new instance; this returns shared singleton.
     public Move createMove() {
         return move;
     }
 
+    // TODO: MOV-3 — Replace O(n) linear scan with pre-built static Map<String, PokeMove> for O(1) lookup.
     public static PokeMove fromString(String moveName) {
         for (PokeMove move : PokeMove.values()) {
             if (move.displayName.equalsIgnoreCase(moveName)) {

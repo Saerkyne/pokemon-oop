@@ -161,7 +161,7 @@ public class Pokemon {
         Natures.assignRandom(this);
     }
 
-    // Set static randomizer
+    // TODO: MDL-9 — Replace with ThreadLocalRandom.current() for thread safety under concurrent Discord users.
     private static final Random random = new Random();
 
 
@@ -474,6 +474,7 @@ public class Pokemon {
         this.currentExp = currentExp;
     }   
 
+    // TODO: MDL-4 — Add range validation (0-31) to all IV setters. Corrupted DB row could create illegal IVs.
     public void setIvHp(int ivHp) {
         this.ivHp = ivHp;
     }
@@ -506,6 +507,7 @@ public class Pokemon {
     public int getEvSpeed() { return evSpeed; }
     public int getEvTotal() { return evTotal; }
 
+    // TODO: MDL-3 — Add range validation (0-252) to all EV setters. Direct setters bypass EvManager caps.
     public void setEvHp(int evHp) {
         this.evHp = evHp;
     }

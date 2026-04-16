@@ -31,6 +31,7 @@ The `Type` enum values are declared in the same order as the rows/columns of `TY
 **Why this matters (educational context):** Java enums have a built-in `ordinal()` method that returns their declaration order (0-based). When your data structure is already indexed to match that order, using `ordinal()` is both faster (array access vs. hash lookup) and less error-prone (impossible to map the wrong enum to the wrong index). The trade-off: if someone reorders the enum constants, the indices shift. A comment noting this dependency is sufficient protection.
 
 **Fix:**
+
 ```java
 public static float getEffectiveness(Type moveType, Type pokemonType) {
     if (pokemonType == Type.NONE || pokemonType == null) {
@@ -65,6 +66,7 @@ None of these methods use instance state — all operate on the `Pokemon` parame
 **Why this matters:** An inconsistent API surface confuses contributors. "Do I need `new EvManager()` or can I call `EvManager.getEv()` directly?" The answer depends on which method, and there's no obvious reason for the split.
 
 **Fix:** Make all methods static and add `private EvManager() {}` to prevent instantiation:
+
 ```java
 public final class EvManager {
     private EvManager() {}
@@ -94,6 +96,7 @@ For non-negative values (which all stat inputs are), `(int) Math.floor(x)` is eq
 **Why this matters (educational context):** `Math.floor()` converts its argument to a `double` and returns a `double`. Wrapping integer additions in `Math.floor()` does nothing but obscure the code. Understanding which operations actually need rounding helps write clearer formulas.
 
 **Fix — simplified version:**
+
 ```java
 public static int calcMaxHP(int hpBase, int level, int ivHp, int ev) {
     int evContrib = ev / 4;
@@ -133,6 +136,7 @@ if (pokemonType == Type.NONE || pokemonType == null) {
 The guard handles `NONE` and `null` for the *defending* type, but there's no guard for the *attacking* type. If a move somehow has `Type.NONE`, `moveType.ordinal()` returns 18 (the 19th enum constant), causing an `ArrayIndexOutOfBoundsException` on the 18-row matrix.
 
 **Fix:** Add the same guard for `moveType`:
+
 ```java
 if (moveType == null || moveType == Type.NONE) {
     return 1.0f;

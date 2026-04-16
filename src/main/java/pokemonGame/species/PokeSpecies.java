@@ -203,6 +203,7 @@ public enum PokeSpecies {
         return constructor.apply(nickname);
     }
 
+    // TODO: SPC-3 — Replace O(n) linear scan with pre-built static Map<String, PokeSpecies> for O(1) lookup.
     public static PokeSpecies getSpeciesByString(String input) {
         if (input == null) {
             LOGGER.warn("Input is null");

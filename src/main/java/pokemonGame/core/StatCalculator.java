@@ -29,6 +29,8 @@ public class StatCalculator {
         // The formula is: HP = ((((2 * baseHP) + IV + (EV / 4)) * Level) / 100) + Level + 10
         // We want an integer, so we are going to do the calculations in steps to ensure we don't lose 
         // precision until the end when we can round down to an integer.
+        // TODO: COR-3 — Simplify: (int) Math.floor(ev / 4.0) → ev / 4 (integer division truncates identically
+        // for non-negative values). Same for levelContrib / 100.0 → levelContrib / 100.
         int evContrib = (int) Math.floor(ev / 4.0);
         int baseIVContrib =(2 * hpBase) + ivHp + evContrib;
         int levelContrib = baseIVContrib * level;
@@ -43,6 +45,8 @@ public class StatCalculator {
         // Stat = (((((2 * baseStat) + IV + (EV/4)) * Level) / 100) + 5) * Nature
         // For now, we will ignore the Nature modifier and just calculate the stat without it.
         // A 1 will be used as a placeholder for the Nature modifier in the future when that is implemented.
+        // TODO: COR-3 — Same simplification as calcMaxHP: ev / 4 and levelContrib / 100 can use integer division.
+        // The (division + 5) * natureModifier floor is needed since natureModifier is a double.
         int evContrib = (int) Math.floor(ev / 4.0);
         int baseIVContrib = (2 * baseStat) + iv + evContrib;
         int levelContrib = baseIVContrib * level;

@@ -132,7 +132,9 @@ public final class Attack {
         int level = attacker.getLevel();
         int power = move.getMovePower();
         int attackStat = attacker.getAttackStatForMove(move);
-        int defenseStat = defender.getDefenseStatForMove(move); // can never be 0 due to formula - floor is 4, not 0
+        // TODO: BTL-5 — Guard against division by zero. Use Math.max(1, defenseStat) to prevent ArithmeticException.
+        // Comment claims floor is 4, but edge cases (level 1, 0 IVs, 0 EVs, lowering nature) may produce 0.
+        int defenseStat = defender.getDefenseStatForMove(move);
 
         LOGGER.info("Attacker level: {}", level);
         LOGGER.info("Move power: {}", power);

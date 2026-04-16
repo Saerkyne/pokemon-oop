@@ -29,6 +29,7 @@ When a Pokémon faints, `setCurrentHP()` sets `isFainted = true`. But `healToFul
 **Why this matters (educational context):** This is a classic "two sources of truth" problem. The faint state is derivable from HP (`currentHP <= 0`), but it's also stored redundantly in a boolean field. When one path updates HP without syncing the boolean, the two diverge. The fix is either (a) always go through `setCurrentHP()`, or (b) derive `isFainted` from HP instead of storing it.
 
 **Fix:**
+
 ```java
 public boolean healToFull() {
     this.currentHP = this.maxHP;
@@ -54,6 +55,7 @@ public boolean checkFainted() {
 **Why this matters:** Having two methods that answer the same question differently is a maintenance trap. Future contributors won't know which to call.
 
 **Fix (option A — derive from HP, remove the boolean):**
+
 ```java
 public boolean isFainted() {
     return currentHP <= 0;
@@ -74,6 +76,7 @@ The direct setters (`setEvHp()`, `setEvAttack()`, etc.) accept any `int` without
 **Why this matters:** If a future contributor uses `pokemon.setEvHp(999)` directly, no error is raised and the Pokémon ends up with illegal stats. The validation exists in `EvManager` but is easily bypassed.
 
 **Fix:** Make the EV setters package-private or add validation:
+
 ```java
 public void setEvHp(int evHp) {
     if (evHp < 0 || evHp > 252) {
@@ -92,6 +95,7 @@ public void setEvHp(int evHp) {
 IVs must be 0–31, but the setters (`setIvHp()`, `setIvAttack()`, etc.) accept any `int`. `generateRandomIVs()` always produces valid values, but `PokemonCRUD.mapResultSetToPokemon()` calls these setters with database values — a corrupted DB row could silently create a Pokémon with IV 999.
 
 **Fix:** Add range validation:
+
 ```java
 public void setIvHp(int ivHp) {
     if (ivHp < 0 || ivHp > 31) {
@@ -121,6 +125,7 @@ The Javadoc states "Move objects are immutable game-rule data", but the fields a
 **Why this matters (educational context):** The `final` keyword on fields serves as documentation and enforcement. Readers can see at a glance that the value never changes after construction. Without it, a reviewer must scan the entire class hierarchy to confirm immutability.
 
 **Fix:** Add `final` to all six fields:
+
 ```java
 private final String moveName;
 private final int movePower;
@@ -142,6 +147,7 @@ public void setTeamAsList(List<Pokemon> teamAsList) {
 The getter returns `Collections.unmodifiableList(teamAsList)`, but the setter stores a direct reference to the caller's list. If the caller later mutates their list, the Team's internal state changes silently. This is called a "reference leak."
 
 **Fix — defensive copy:**
+
 ```java
 public void setTeamAsList(List<Pokemon> teamAsList) {
     this.teamAsList = new ArrayList<>(teamAsList);
@@ -159,6 +165,7 @@ public void setTeamAsList(List<Pokemon> teamAsList) {
 **Why this matters:** If `TeamService` changes its package or class name, `Team.java` (a model class) would need to be recompiled. More importantly, it signals to readers that the model depends on the service layer, which isn't true at runtime.
 
 **Fix:** Remove the imports and `@see` annotations referencing service classes. If cross-referencing is wanted, use plain text in the Javadoc:
+
 ```java
 /** ... Coordinated by the TeamService class. */
 ```
@@ -182,6 +189,7 @@ public List<Pokemon> getAllRemainingPokemon(Trainer trainer, Team team) {
 Also uses `getIsFainted()` which can be stale (see MDL-1).
 
 **Fix:**
+
 ```java
 public List<Pokemon> getAllRemainingPokemon(Trainer trainer, Team team) {
     Team loadedTeam = trainer.getTeam(team.getTeamName());
@@ -208,6 +216,7 @@ private static final Random random = new Random();
 If multiple Discord users add Pokémon simultaneously (concurrent threads), the shared `Random` without synchronization can produce degraded randomness. Not a crash risk, but `ThreadLocalRandom.current()` is the idiomatic Java solution for concurrent random number generation.
 
 **Fix:**
+
 ```java
 // In generateRandomIVs():
 this.ivHp = ThreadLocalRandom.current().nextInt(32);
@@ -236,10 +245,10 @@ The schema supports multiple teams per trainer, but the domain model only holds 
 
 ## Stats
 
-| Severity     | Count |
-|:-------------|:-----:|
-| BUG          |   2   |
-| DESIGN       |   3   |
-| ROBUSTNESS   |   3   |
-| NIT          |   2   |
+| Severity     | Count  |
+|:-------------|:-----: |
+| BUG          |   2    |
+| DESIGN       |   3    |
+| ROBUSTNESS   |   3    |
+| NIT          |   2    |
 | **Total**    | **10** |

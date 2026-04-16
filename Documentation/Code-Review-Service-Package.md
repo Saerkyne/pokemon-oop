@@ -26,6 +26,7 @@ team.getTeamAsList().add(pokemon);
 **Why this matters (educational context):** `Collections.unmodifiableList()` returns a read-only **view** of the original list. It's designed to prevent exactly this kind of external mutation. The `Team` class exposes `add()` and `remove()` methods specifically for modifying the internal list safely.
 
 **Fix:**
+
 ```java
 team.add(pokemon);
 ```
@@ -43,6 +44,7 @@ team.getTeamAsList().remove(pokemon);
 Same issue as SVC-1. The DB operations succeed (remove from `trainer_teams`, delete from `pokemon_instances`, reorder slots), but the final in-memory update crashes.
 
 **Fix:**
+
 ```java
 team.remove(pokemon);
 ```
@@ -67,11 +69,13 @@ public TeamService() {
 ```
 
 `BattleService` and `MoveSlotService` correctly accept their DAO through the constructor (`new BattleService(BattleCRUD battleCrud)`). `TrainerService` and `TeamService` create their DAOs internally with `new`, which means:
+
 1. Unit tests cannot inject mock/stub DAOs
 2. The service is tightly coupled to the concrete DAO implementation
 3. It's inconsistent with the other two services
 
 **Fix — add constructor injection (keep default constructor for convenience):**
+
 ```java
 public TrainerService(TrainerCRUD trainerCRUD) {
     this.trainerCRUD = trainerCRUD;
@@ -97,6 +101,7 @@ If the Pokémon already has 4 moves, `p.getMoveSet().size()` returns 4. The DB i
 **Why this matters:** The `teachMove` method doesn't account for the "moveset full, player must choose which move to forget" flow. It only handles the "open slot" case.
 
 **Fix — guard at the top:**
+
 ```java
 public void teachMove(Pokemon p, Move move) {
     if (p.isMovesetFull()) {
@@ -123,6 +128,7 @@ public Move getMoveByName(String moveName) {
 `PokeMove.fromString()` throws `IllegalArgumentException` if the move name doesn't match any enum constant. The caller gets an unhandled exception. Since this may be called with user input from Discord (autocomplete typos, manual entry), it should handle invalid names gracefully.
 
 **Fix:**
+
 ```java
 public Move getMoveByName(String moveName) {
     try {
@@ -157,6 +163,7 @@ public static BattleAction createActionFromDbRow(...) {
 **File:** `BattleService.java`, lines 51–88
 
 Both methods:
+
 1. Check for an existing active battle between the two trainers
 2. Call `battleCrud.createBattle()` with status `"PENDING"`
 3. Return `true`/`false`

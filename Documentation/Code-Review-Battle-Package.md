@@ -32,6 +32,7 @@ for (Pokemon p : defendingTeam.getTeamAsList()) {
 This loop is supposed to check whether the defending team has any non-fainted Pokémon left. The intent is "if all are fainted, battle is over." But the logic is inverted: it sets `battleOver = true` for **every fainted Pokémon** encountered before a non-fainted one.
 
 **Example:** Team = [Fainted, Alive, Alive].
+
 - Iteration 1: `p[0]` is fainted → skip `break` → set `battleOver = true`
 - Iteration 2: `p[1]` is alive → `break`
 - Result: `battleOver = true` even though 2 Pokémon are alive.
@@ -39,6 +40,7 @@ This loop is supposed to check whether the defending team has any non-fainted Po
 The battle ends incorrectly whenever the defending team's first Pokémon has fainted, regardless of how many others survive.
 
 **Fix:**
+
 ```java
 boolean allFainted = defendingTeam.getTeamAsList().stream()
     .allMatch(Pokemon::checkFainted);
@@ -67,6 +69,7 @@ boolean isHit = Attack.checkAccuracy(action.activePokemon(), defender, action.ge
 **Why this matters:** The `DamageResult` record validates that `!isHit && damage != 0` is illegal (throws `IllegalArgumentException`). So if the move "misses" but dealt damage, constructing the `DamageResult` would crash. In practice, `damageDealt > 0` is checked first, so the crash path is: move deals damage → accuracy check says miss → `new DamageResult(damageDealt, ..., false, ...)` → exception.
 
 **Fix:** Check accuracy **before** dealing damage:
+
 ```java
 boolean isHit = Attack.checkAccuracy(action.activePokemon(), defender, action.getMove());
 if (!isHit) {
@@ -92,9 +95,11 @@ boolean isCritical = Attack.calculateCriticalHit(action.activePokemon(), defende
 **Why this matters:** The bot layer will display "Critical hit!" to the player based on `DamageResult.isCritical`, but the actual damage number could be different.
 
 **Fix:** `Attack.calculateDamage()` should return a result that includes whether a crit occurred, rather than having the caller roll separately. For example, return a record:
+
 ```java
 public record DamageCalcResult(int damage, boolean wasCritical) {}
 ```
+
 Or pass the crit flag in from outside so the same roll is used everywhere.
 
 ---
@@ -110,6 +115,7 @@ float effectiveness = Attack.calculateEffectiveness(defender.getTypePrimary(), a
 For dual-type Pokémon, the actual effectiveness used in damage calculation is `primary * secondary` (computed inside `Attack.calculateDamage()`). But only the primary effectiveness is stored in `DamageResult`. A Water move vs. Ground/Rock Pokémon deals 4× damage, but `DamageResult.effectiveness` would say `2.0f`.
 
 **Fix:** Either pass combined effectiveness from the damage calculator, or compute it here:
+
 ```java
 float effectivenessPrimary = Attack.calculateEffectiveness(defender.getTypePrimary(), action.getMove());
 float effectivenessSecondary = Attack.calculateEffectiveness(defender.getTypeSecondary(), action.getMove());
@@ -133,6 +139,7 @@ int baseDamage = (levelCalc * power * attackStat) / defenseStat;
 This is a known issue from the previous code review (item #1 in Code-Review-2026-04-08.md) but is included here for completeness.
 
 **Fix:**
+
 ```java
 int defenseStat = Math.max(1, defender.getDefenseStatForMove(move));
 ```
@@ -152,6 +159,7 @@ if (Math.random() < 0.5) {
 `Attack.java` uses a seedable `Random` via `setRng()` for test reproducibility. But the speed-tie coin flip in `TurnManager` uses `Math.random()`, which cannot be seeded. Tests involving speed ties will be non-deterministic.
 
 **Fix:** Use the same `rng` from `Attack`, or accept a `Random` parameter:
+
 ```java
 if (Attack.randomInt(0, 1) == 0) {
     return trainer1Action;
@@ -184,6 +192,7 @@ public TurnManager() {
 All methods in `TurnManager` are static. The empty public constructor allows instantiation (`new TurnManager()`) which serves no purpose. `Attack.java` correctly has `private Attack() {}` — `TurnManager` should follow the same pattern.
 
 **Fix:**
+
 ```java
 private TurnManager() {}
 ```

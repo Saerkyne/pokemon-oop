@@ -21,6 +21,7 @@ public class BattleService {
         this.battleCrud = battleCrud;
     }
 
+    // TODO: SVC-6 — Stub returning null. Implement to rehydrate MoveAction/SwitchAction from DB row. (WIP)
     public static BattleAction createActionFromDbRow(int trainerId, String actionType, int moveSlotIndex, int switchPokemonId) {
         // This method would query the database to get the necessary Trainer and Pokemon objects
         // based on the battleId and trainerId, then construct either a MoveAction or SwitchAction
@@ -64,6 +65,7 @@ public class BattleService {
         
     }
 
+    // TODO: SVC-7 — Near-duplicate of createBattle(). Consolidate into single method with optional team IDs.
     public boolean createChallenge(int challengerTrainerId, int opponentTrainerId) {
         // Implementation to create a new battle challenge in the database and return the battle ID
         // We need to check for an existing active battle for this trainer matchup

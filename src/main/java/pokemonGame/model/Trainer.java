@@ -1,5 +1,6 @@
 package pokemonGame.model;
 
+// TODO: MDL-7 — Remove this service-layer import. Model should not depend on service layer. Used only in @see Javadoc.
 import pokemonGame.service.TrainerService;
 
 /**

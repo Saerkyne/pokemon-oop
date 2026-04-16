@@ -223,7 +223,7 @@ public class PokemonCRUD {
         foundPokemon.setCurrentHP(currentHp); // Set the current HP after recalculating stats
 
         // Load moves from pokemon_movesets and populate the in-memory moveset
-        // TODO: Remove this CRUD creation and have MoveSlotService handle this logic. 
+        // TODO: DB-5 — Remove this CRUD creation and have MoveSlotService handle this logic.
         // PokemonCRUD should only be responsible for CRUD operations on the Pokémon data, 
         // not loading moves or other related data. This keeps the responsibilities of each class clear
         //  and avoids unnecessary coupling between PokemonCRUD and MoveCRUD.

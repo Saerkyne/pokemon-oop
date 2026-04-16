@@ -20,6 +20,7 @@ import java.util.Set;
  * @see PokeSpecies
  * @see Pokemon
  */
+// TODO: SPC-2 — This registry duplicates PokeSpecies lookup. Consolidate into one canonical lookup path.
 public class PokemonFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PokemonFactory.class);
@@ -36,7 +37,8 @@ public class PokemonFactory {
                 for (String alias : aliasKey) {
                     REGISTRY.put(alias.toLowerCase().trim(), name -> {
                         try {
-                            LOGGER.info("Created alias: {} for species: {}", alias, species.getDisplayName());
+                            // TODO: SPC-4 — Change to LOGGER.debug(). INFO on every creation floods logs in production.
+                    LOGGER.info("Created alias: {} for species: {}", alias, species.getDisplayName());
                             return species.createPokemon(name);
                         } catch (Exception e) {
                             LOGGER.error("Failed to create instance for alias: {} of species: {}", alias, species.getDisplayName(), e);
@@ -50,6 +52,7 @@ public class PokemonFactory {
             REGISTRY.put(key, name -> {
                 try {
                     
+                    // TODO: SPC-4 — Change to LOGGER.debug(). INFO on every creation floods logs in production.
                     LOGGER.info("Created species: {} with class: {}", species.getDisplayName(), species.getClassName());
                     return species.createPokemon(name);
                 } catch (Exception e) {

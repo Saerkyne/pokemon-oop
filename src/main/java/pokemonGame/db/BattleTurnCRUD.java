@@ -184,8 +184,7 @@ public class BattleTurnCRUD {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, battleId);
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    // TODO: Collect turn history into a list and convert to an array to return
-                    // Placeholder implementation, should be replaced with actual collection logic
+                    // TODO: DB-7 — Implement: iterate ResultSet, collect turn_number + summary into list, return as array.
                 }
             }
         } catch (SQLException e) {

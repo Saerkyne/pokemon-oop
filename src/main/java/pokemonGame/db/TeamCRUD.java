@@ -98,7 +98,7 @@ public class TeamCRUD {
 
     public Boolean removePokemonFromDBTeam(int trainerDbId, int teamId, int slotIndex) {
 
-        // TODO: Remove this and have TeamService handle the logic of deleting the Pokémon instance after removing it from the team. 
+        // TODO: DB-5 — Remove this and have TeamService handle the logic of deleting the Pokémon instance after removing it from the team.
         // TeamService can call PokemonCRUD.deleteDBPokemon() after successfully removing the Pokémon from the team in the database. 
         // This keeps the responsibilities of each class clear and avoids unnecessary coupling between TeamCRUD and PokemonCRUD.
         PokemonCRUD pokemonCRUD = new PokemonCRUD();
@@ -141,7 +141,7 @@ public class TeamCRUD {
                 pstmt.setInt(2, teamId);
 
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    // TODO: Remove the CRUD creation, have TrainerService handle this and pass in the Trainer object to this method. 
+                    // TODO: DB-5 — Remove the CRUD creation, have TrainerService handle this and pass in the Trainer object to this method. 
                     // TeamCRUD should not be responsible for creating a TrainerCRUD or retrieving Trainer data.
                     TrainerCRUD trainerCRUD = new TrainerCRUD();
                     Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);
@@ -181,7 +181,7 @@ public class TeamCRUD {
                     if (rs.next()) {
                         LOGGER.info("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}", 
                                 trainerDbId, rs.getInt("instance_id"), rs.getString("species"), rs.getInt("level"));
-                        // TODO: Remove the CRUD creation, have TrainerService handle this and pass in the Trainer object to this method. 
+                        // TODO: DB-5 — Remove the CRUD creation, have TrainerService handle this and pass in the Trainer object to this method.
                         // TeamCRUD should not be responsible for creating a TrainerCRUD or retrieving Trainer data.
                         TrainerCRUD trainerCRUD = new TrainerCRUD();
                         Trainer trainer = trainerCRUD.getTrainerByDbId(trainerDbId);

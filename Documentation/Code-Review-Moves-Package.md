@@ -45,6 +45,7 @@ public Move createMove() {
 The method name "create" implies a new instance is constructed. In reality, it returns the same `INSTANCE` singleton every time (e.g., `Tackle.INSTANCE`). This is correct behavior (moves are immutable game data), but the naming could mislead a contributor into thinking each call produces a fresh `Move`.
 
 **Fix:** Rename to `getMove()` or `getMoveInstance()`:
+
 ```java
 public Move getMove() {
     return move;
@@ -69,6 +70,7 @@ public static PokeMove fromString(String moveName) {
 ```
 
 This iterates all 165 moves on every call. `fromString()` is called by:
+
 - `PokemonCRUD.mapResultSetToPokemon()` — for every move of every Pokémon loaded from the DB
 - `MoveSlotService.getMoveByName()` — from bot layer commands
 
@@ -109,6 +111,7 @@ This is documented as work-in-progress and tracked in the project's known issues
 ### MOV-5 · NIT · Move subclasses are boilerplate-heavy for data-only classes
 
 Each of the 165 move files follows the exact same pattern:
+
 ```java
 public class Tackle extends Move {
     public static final Tackle INSTANCE = new Tackle();
@@ -119,6 +122,7 @@ public class Tackle extends Move {
 ```
 
 This is 165 files with 8–12 lines each, totaling ~1,500 lines for what is essentially tabular data. An alternative would be defining moves in the `PokeMove` enum directly (it already stores the `Move` instance) and having the enum create anonymous `Move` subclasses. However, the current approach has merit:
+
 - Each file is trivially simple and self-contained
 - Special effects (when implemented) can be overridden per subclass
 - The `INSTANCE` pattern is standard Java singleton

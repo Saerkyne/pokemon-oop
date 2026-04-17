@@ -41,7 +41,7 @@ team.add(pokemon);
 team.getTeamAsList().remove(pokemon);
 ```
 
-Same issue as SVC-1. The DB operations succeed (remove from `trainer_teams`, delete from `pokemon_instances`, reorder slots), but the final in-memory update crashes.
+Same issue as SVC-1. The DB operations succeed (remove from `team_members`, delete from `pokemon_instances`, reorder slots), but the final in-memory update crashes.
 
 **Fix:**
 

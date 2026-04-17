@@ -67,6 +67,7 @@ public class PokemonCRUD {
                 try (ResultSet pkmnSet = pstmt.getGeneratedKeys()) {
                     if (pkmnSet.next()) {
                         int pokemonId = pkmnSet.getInt(1);
+                        pokemon.setPokemonDbId(pokemonId);
                         LOGGER.info("New Pokemon ID: {}", pokemonId);
                         return pokemonId; // Return the generated Pokémon ID
                     }

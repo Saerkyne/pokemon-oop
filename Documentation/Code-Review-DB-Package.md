@@ -17,20 +17,23 @@ The persistence layer is 7 files, ~900+ lines total. It uses HikariCP for connec
 
 **File:** `BattleTurnCRUD.java`, lines 66–108
 
-The detailed comment block at the top of the class explains the rationale for using `ON DUPLICATE KEY UPDATE` — it lets a player change their mind before the opponent submits. The comment even provides the complete refactored SQL. But the actual implementation uses a plain `INSERT`:
+The design is correct: one pending row per `(battle_id, trainer_id)`, and a second submission from the same trainer should overwrite the first choice with `ON DUPLICATE KEY UPDATE`.
 
-```java
-String sql = "INSERT INTO battle_pending_actions (battle_id, trainer_id, "
-    + "action_type, move_slot_index, switch_pokemon_id, submitted_at) "
-    + "VALUES (?, ?, ?, ?, ?, ?)";
-```
-
-If a player submits an action and then changes their mind (e.g., clicks a different move button), the second `INSERT` throws a duplicate key error instead of updating the existing row. The error is caught and logged, but the player's revised choice is silently lost.
-
-**Fix:** Use the SQL from the comment:
+The bug is more specific than “missing duplicate-key handling.” The SQL still uses `(...)` as if SQL supported a placeholder for column names:
 
 ```java
 String sql = "INSERT INTO battle_pending_actions (...) VALUES (?, ?, ?, ?, ?, ?) "
+    + "ON DUPLICATE KEY UPDATE ...";
+```
+
+SQL does not expand `(...)` into real column names. MariaDB parses that text literally, rejects the statement, and never reaches the duplicate-key logic. So the failure happens earlier than the original review described.
+
+**Fix:** Keep `ON DUPLICATE KEY UPDATE`, but also restore the real column list:
+
+```java
+String sql = "INSERT INTO battle_pending_actions "
+    + "(battle_id, trainer_id, action_type, move_slot_index, switch_pokemon_id, submitted_at) "
+    + "VALUES (?, ?, ?, ?, ?, ?) "
     + "ON DUPLICATE KEY UPDATE action_type = VALUES(action_type), "
     + "move_slot_index = VALUES(move_slot_index), "
     + "switch_pokemon_id = VALUES(switch_pokemon_id), "
@@ -122,9 +125,9 @@ logger.trace("Attempting to get database connection with URL: {}", URL);
 
 Each internal instantiation is tight coupling. A `TeamCRUD` operation can't be tested without a real `TrainerCRUD` and `PokemonCRUD`. The DAO layer should be flat — each CRUD class handles its own table, and the **service layer** coordinates cross-table operations.
 
-**Why this matters:** `removePokemonFromDBTeam()` deletes from `trainer_teams` AND from `pokemon_instances` (via `pokemonCRUD.deleteDBPokemon()`). This is a multi-table operation that belongs in `TeamService`, not in `TeamCRUD`. If you later need to change the deletion order or add cascading logic, you'd have to modify the DAO instead of the service.
+**Why this matters:** `removePokemonFromDBTeam()` is part of a wider workflow that deletes from the team-membership table and from `pokemon_instances` (via `pokemonCRUD.deleteDBPokemon()`). This is a multi-table operation that belongs in `TeamService`, not in `TeamCRUD`. If you later need to change the deletion order or add cascading logic, you'd have to modify the DAO instead of the service.
 
-**Fix:** Move cross-table orchestration to the service layer. The CRUD method should only delete from `trainer_teams`; the caller (service) handles deleting the Pokémon instance.
+**Fix:** Move cross-table orchestration to the service layer. The CRUD method should only delete from `team_members`; the caller (service) handles deleting the Pokémon instance.
 
 ---
 

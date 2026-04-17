@@ -7,4 +7,5 @@
 #   - Double underscore separates version from description
 #   - Example: V001__drop_is_fainted.sql
 
-V001__drop_is_fainted.sql
+#V001__drop_is_fainted.sql
+V002__alter_team_tables.sql

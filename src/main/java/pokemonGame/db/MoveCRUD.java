@@ -27,7 +27,7 @@ public class MoveCRUD {
     public int insertMoveForPokemon(int pokemonId, int moveSlotIndex, String moveName, int currentPP) {
         String sql = "INSERT INTO pokemon_movesets (instance_id, slot_index, move_name, current_pp) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseSetup.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, pokemonId);
             pstmt.setInt(2, moveSlotIndex);
             pstmt.setString(3, moveName);
@@ -36,13 +36,7 @@ public class MoveCRUD {
             if (affectedRows == 0) {
                 throw new SQLException("Inserting move failed, no rows affected.");
             }
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1); // Return the generated ID for the new move slot
-                } else {
-                    throw new SQLException("Inserting move failed, no ID obtained.");
-                }
-            }
+            return affectedRows;
         } catch (SQLException e) {
             LOGGER.error("Error inserting move for Pokémon: {}", e.getMessage());
             return -1; // Indicate failure

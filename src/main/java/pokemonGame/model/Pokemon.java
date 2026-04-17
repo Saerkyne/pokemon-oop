@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pokemonGame.core.EvManager;
 import pokemonGame.core.Natures;
 import pokemonGame.core.Stat;
 import pokemonGame.core.StatCalculator;
@@ -37,6 +38,7 @@ import java.util.EnumSet;
 public class Pokemon {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pokemon.class);
+    private static final StackWalker EV_CALLER_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
     // Initialize attributes for all Pokemon
     private Trainer trainer; // This is the trainer that this Pokemon belongs to; it is set when the Pokemon is added to a trainer's team
@@ -524,53 +526,50 @@ public class Pokemon {
     public int getEvSpeed() { return evSpeed; }
     public int getEvTotal() { return evTotal; }
 
-    public void setEvHp(int evHp) {
-        if ((evHp < 0 || evHp > 252) && (this.evTotal - this.evHp + evHp > 510)) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
+    private static void requireEvManagerCaller() {
+        Class<?> caller = EV_CALLER_WALKER.walk(frames -> frames
+            .map(StackWalker.StackFrame::getDeclaringClass)
+            .filter(clazz -> clazz != Pokemon.class)
+            .findFirst()
+            .orElse(null));
+        if (!EvManager.class.equals(caller)) {
+            throw new IllegalCallerException("Use EvManager to mutate EV values.");
         }
+    }
+
+    public void setEvHp(int evHp) {
+        requireEvManagerCaller();
         this.evHp = evHp;
     }
 
     public void setEvAttack(int evAttack) {
-        if ((evAttack < 0 || evAttack > 252) && (this.evTotal - this.evAttack + evAttack > 510)) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
-        }
+        requireEvManagerCaller();
         this.evAttack = evAttack;
     }
 
     public void setEvDefense(int evDefense) {
-        if ((evDefense < 0 || evDefense > 252) && (this.evTotal - this.evDefense + evDefense > 510)) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
-        }
+        requireEvManagerCaller();
         this.evDefense = evDefense;
 
     }
 
     public void setEvSpecialAttack(int evSpecialAttack) {
-        if ((evSpecialAttack < 0 || evSpecialAttack > 252) && (this.evTotal - this.evSpecialAttack + evSpecialAttack > 510)) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
-        }
+        requireEvManagerCaller();
         this.evSpecialAttack = evSpecialAttack;
     }
 
     public void setEvSpecialDefense(int evSpecialDefense) {
-        if ((evSpecialDefense < 0 || evSpecialDefense > 252) && (this.evTotal - this.evSpecialDefense + evSpecialDefense > 510)) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
-        }
+        requireEvManagerCaller();
         this.evSpecialDefense = evSpecialDefense;
     }
 
     public void setEvSpeed(int evSpeed) {
-        if ((evSpeed < 0 || evSpeed > 252) && (this.evTotal - this.evSpeed + evSpeed > 510)) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
-        }
+        requireEvManagerCaller();
         this.evSpeed = evSpeed;
     }
 
     public void setEvTotal(int evTotal) {
-        if (evTotal < 0 || evTotal > 510) {
-            throw new IllegalArgumentException("Total EV value must be between 0 and 510");
-        }
+        requireEvManagerCaller();
         this.evTotal = evTotal;
     }
 

@@ -143,7 +143,7 @@ Since this project runs as a **Discord bot via JDA**, all user interaction flows
 - All persistent game state is stored in **MariaDB** via JDBC prepared statements.
 - Connection pooling is handled by **HikariCP** (configured in `DatabaseSetup.java`).
 - Database credentials come from environment variables: `DB_URL`, `DB_USER`, `DB_USER_PASSWORD`.
-- Tables: `trainers`, `trainer_teams`, `pokemon_instances`, `pokemon_movesets`, `battles`, `battle_pending_actions`, `battle_turn_history`.
+- Tables: `trainers`, `teams`, `team_members`, `pokemon_instances`, `pokemon_movesets`, `battles`, `battle_pending_actions`, `battle_turn_history`.
 - **Best practice:** Use `try-with-resources` for `Connection`, `PreparedStatement`, and `ResultSet`.
 - **Best practice:** Keep CRUD classes focused on SQL. Business logic belongs in the service layer.
 - Schema documentation: see `Documentation/Database-Documentation.md`.

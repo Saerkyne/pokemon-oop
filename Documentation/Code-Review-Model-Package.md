@@ -67,21 +67,26 @@ Ensure every path that changes HP (including `healToFull()`, `levelUp()`, any fu
 
 ---
 
-### MDL-3 · ROBUSTNESS · EV setters bypass `EvManager` caps
+### ~~MDL-3 · ROBUSTNESS · EV setters bypass `EvManager` caps~~ — FIX DIRECTION CHOSEN
 
 **File:** `Pokemon.java`, lines 441–467
 
-The direct setters (`setEvHp()`, `setEvAttack()`, etc.) accept any `int` without enforcing the per-stat cap of 252 or the total cap of 510. `EvManager.setEv()` and `addEv()` enforce these caps, but any code that calls the direct setters (e.g., `PokemonCRUD.mapResultSetToPokemon()` does go through `EvManager`, so it's safe today) can silently break the invariant.
+The right long-term fix here is not “copy all EV-cap logic into every setter.” The better design is to keep `EvManager` as the single authority for EV mutation and prevent outside callers from bypassing it.
 
-**Why this matters:** If a future contributor uses `pokemon.setEvHp(999)` directly, no error is raised and the Pokémon ends up with illegal stats. The validation exists in `EvManager` but is easily bypassed.
+**Why this matters:** Per-stat cap logic, total-cap logic, and EV recalculation rules already live in `EvManager`. Duplicating those rules in `Pokemon` setters creates two places that must stay perfectly in sync. One authority is easier to reason about and harder to misuse.
 
-**Fix:** Make the EV setters package-private or add validation:
+**Fix:** keep mutation logic in `EvManager`, and make `Pokemon` reject direct external calls to `setEv*()` so only `EvManager` can reach those setters.
 
 ```java
-public void setEvHp(int evHp) {
-    if (evHp < 0 || evHp > 252) {
-        throw new IllegalArgumentException("EV must be 0-252, got: " + evHp);
+private static void requireEvManagerCaller() {
+    Class<?> caller = ...;
+    if (caller != EvManager.class) {
+        throw new IllegalCallerException("Use EvManager to mutate EV values.");
     }
+}
+
+public void setEvHp(int evHp) {
+    requireEvManagerCaller();
     this.evHp = evHp;
 }
 ```
@@ -224,7 +229,7 @@ this.ivHp = ThreadLocalRandom.current().nextInt(32);
 
 ---
 
-### MDL-10 · NIT · `Trainer.getTeam()` only matches a single in-memory team
+### MDL-10 · DESIGN · Single in-memory team is fine if trainer objects are request-scoped
 
 **File:** `Trainer.java`, lines 55–60
 
@@ -237,9 +242,15 @@ public Team getTeam(String teamName) {
 }
 ```
 
-The schema supports multiple teams per trainer, but the domain model only holds one `Team` reference. If a trainer has teams "Alpha" and "Beta" but only "Alpha" is loaded in memory, `getTeam("Beta")` returns `null`. This is documented but creates a gap between the DB capabilities and the in-memory model.
+Holding one in-memory `Team` on `Trainer` is a valid design if trainers are rehydrated per Discord command and the active team for that request is loaded from the database on demand. In that model, `Trainer` is not a cache of every team the player owns; it is a lightweight domain object carrying the one team relevant to the current action.
 
-**Not an immediate fix needed** — just something to be aware of as multi-team features develop.
+The real constraint to document is narrower:
+
+- `Trainer.getTeam(teamName)` only works for the team currently loaded onto that trainer object.
+- Service-layer code must load the requested team from the database before calling model methods that rely on `trainer.getTeam(...)`.
+- This becomes a bug only if callers treat `Trainer` as a universal in-memory team repository instead of a request-scoped aggregate.
+
+So single-team rehydration is fine. The important rule is: load correct team first, then operate on that hydrated model.
 
 ---
 

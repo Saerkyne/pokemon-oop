@@ -183,13 +183,11 @@ These log messages fire on every `createPokemonFromRegistry()` call (every `/add
 
 ---
 
-### SPC-5 · NIT · Redundant `displayName` and `className` fields in `PokeSpecies`
+### ~~SPC-5 · NIT · Redundant `displayName` and `className` fields in `PokeSpecies`~~ — FIXED
 
 **File:** `PokeSpecies.java`
 
-For 147 of 151 species, `displayName` and `className` are identical (e.g., `"Abra"` and `"Abra"`). Only Farfetch'd, Mr. Mime, NidoranF, and NidoranM differ. The `className` field exists to provide a Java-safe identifier, but it's only used in a log message in `PokemonFactory`. The constructor reference (`Abra::new`) already handles creation — `className` isn't needed for instantiation.
-
-**Low priority** — the duplication is minimal and doesn't cause bugs.
+**Status:** ✅ `className` has been removed. `PokeSpecies` now keeps only the data it actually uses for runtime behavior: display name, aliases, and constructor reference.
 
 ---
 

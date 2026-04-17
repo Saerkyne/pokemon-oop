@@ -9,9 +9,9 @@ import java.util.Collections;
 
 /**
  * Domain object representing a named team belonging to a {@link Trainer}.
- * Maps to a group of rows in the {@code trainer_teams} table sharing the
- * same {@code team_id}. A trainer may have multiple teams; each team holds
- * up to 6 Pokémon.
+ * Maps to one row in the {@code teams} table plus up to six related rows in
+ * the {@code team_members} table. A trainer may have multiple teams; each
+ * team holds up to 6 Pokémon.
  *
  * @see Trainer
  * @see TeamService

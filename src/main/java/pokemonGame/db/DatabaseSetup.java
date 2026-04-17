@@ -32,6 +32,8 @@ public class DatabaseSetup {
     // so only known application tables are ever placed into the SQL string.
     private static final Set<String> ALLOWED_TABLES = Set.of(
         "trainer_teams",
+        "team_members",
+        "teams",
         "pokemon_movesets",
         "pokemon_instances",
         "trainers",

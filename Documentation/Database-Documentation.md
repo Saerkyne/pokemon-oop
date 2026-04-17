@@ -115,7 +115,7 @@ CREATE TABLE pokemon_instances (
     ev_speed      SMALLINT NOT NULL DEFAULT 0,
     current_hp    INT NOT NULL,
     current_exp   INT NOT NULL DEFAULT 0,
-    FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id)
+    FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id) ON DELETE CASCADE
 );
 ```
 
@@ -137,7 +137,7 @@ CREATE TABLE pokemon_movesets (
     move_name    VARCHAR(50) NOT NULL,
     current_pp   SMALLINT NOT NULL,
     PRIMARY KEY (instance_id, slot_index),
-    FOREIGN KEY (instance_id) REFERENCES pokemon_instances(instance_id),
+    FOREIGN KEY (instance_id) REFERENCES pokemon_instances(instance_id) ON DELETE CASCADE,
     CHECK (slot_index BETWEEN 0 AND 3)
 );
 ```
@@ -152,30 +152,50 @@ instance_id | slot_index | move_name  | current_pp
 1           | 1          | Growl      | 40
 1           | 2          | Vine Whip  | 22
 
-### `trainer_teams` — Which Pokémon Are in the Active Party (and in What Order)
+### `teams` — Team Headers and Names
 
 ```sql
-CREATE TABLE trainer_teams (
+CREATE TABLE teams (
     team_id      INT AUTO_INCREMENT PRIMARY KEY,
     trainer_id   INT NOT NULL,
     team_name    VARCHAR(50) NOT NULL,
+    UNIQUE KEY uq_teams_trainer_name (trainer_id, team_name),
+    FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id) ON DELETE CASCADE
+);
+```
+
+One row per named team. This table stores team identity only, so empty teams are valid.
+
+Example data:
+
+team_id | trainer_id | team_name
+--------+------------+----------
+1       | 1          | Red Main
+2       | 1          | Red Boxed
+
+### `team_members` — Which Pokémon Are in Each Team (and in What Order)
+
+```sql
+CREATE TABLE team_members (
+    team_id      INT NOT NULL,
     slot_index   SMALLINT NOT NULL,
     instance_id  INT NOT NULL,
-    UNIQUE (trainer_id, team_name, slot_index),
-    FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id),
-    FOREIGN KEY (instance_id) REFERENCES pokemon_instances(instance_id),
+    PRIMARY KEY (team_id, slot_index),
+    UNIQUE KEY uq_team_members_instance (instance_id),
+    FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
+    FOREIGN KEY (instance_id) REFERENCES pokemon_instances(instance_id) ON DELETE CASCADE,
     CHECK (slot_index BETWEEN 0 AND 5)
 );
 ```
 
-NOTE: This table should only have UP TO 6 records (pokemon instances) per trainer at a time.
+Each team should have at most 6 member rows.
 
 Example data:
 
-trainer_id | slot_index | instance_id
------------+------------+------------
-1          | 0          | 1
-1          | 1          | 2
+team_id | slot_index | instance_id
+--------+------------+------------
+1       | 0          | 1
+1       | 1          | 2
 
 ---
 
@@ -400,7 +420,7 @@ CREATE TABLE IF NOT EXISTS pokemon_instances (
     ev_speed      SMALLINT NOT NULL DEFAULT 0,
     current_hp    INT NOT NULL,
     current_exp   INT NOT NULL DEFAULT 0,
-    FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id)
+    FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS pokemon_movesets (
@@ -409,17 +429,26 @@ CREATE TABLE IF NOT EXISTS pokemon_movesets (
     move_name    VARCHAR(50) NOT NULL,
     current_pp   SMALLINT NOT NULL,
     PRIMARY KEY (instance_id, slot_index),
-    FOREIGN KEY (instance_id) REFERENCES pokemon_instances(instance_id),
+    FOREIGN KEY (instance_id) REFERENCES pokemon_instances(instance_id) ON DELETE CASCADE,
     CHECK (slot_index BETWEEN 0 AND 3)
 );
 
-CREATE TABLE IF NOT EXISTS trainer_teams (
+CREATE TABLE IF NOT EXISTS teams (
+    team_id      INT AUTO_INCREMENT PRIMARY KEY,
     trainer_id   INT NOT NULL,
+    team_name    VARCHAR(50) NOT NULL,
+    UNIQUE KEY uq_teams_trainer_name (trainer_id, team_name),
+    FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS team_members (
+    team_id      INT NOT NULL,
     slot_index   SMALLINT NOT NULL,
     instance_id  INT NOT NULL,
-    PRIMARY KEY (trainer_id, slot_index),
-    FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id),
-    FOREIGN KEY (instance_id) REFERENCES pokemon_instances(instance_id),
+    PRIMARY KEY (team_id, slot_index),
+    UNIQUE KEY uq_team_members_instance (instance_id),
+    FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
+    FOREIGN KEY (instance_id) REFERENCES pokemon_instances(instance_id) ON DELETE CASCADE,
     CHECK (slot_index BETWEEN 0 AND 5)
 );
 
@@ -724,7 +753,7 @@ public class TransactionExample {
 
     /**
      * Trade a Pokémon from one trainer to another.
-     * Updates both pokemon_instances (ownership) and trainer_teams (active party).
+        * Updates both pokemon_instances (ownership) and team_members (team assignment).
      */
     public static boolean tradePokemon(Connection conn, int instanceId,
             int fromTrainerId, int toTrainerId) throws SQLException {
@@ -749,9 +778,10 @@ public class TransactionExample {
                 }
             }
 
-            // Step 2: Remove from source trainer's active team (if present)
-            String removeTeamSql = "DELETE FROM trainer_teams "
-                    + "WHERE trainer_id = ? AND instance_id = ?";
+                // Step 2: Remove from source trainer's saved teams (if present)
+                String removeTeamSql = "DELETE tm FROM team_members tm "
+                    + "JOIN teams t ON t.team_id = tm.team_id "
+                    + "WHERE t.trainer_id = ? AND tm.instance_id = ?";
             try (PreparedStatement removeStmt = conn.prepareStatement(removeTeamSql)) {
                 removeStmt.setInt(1, fromTrainerId);
                 removeStmt.setInt(2, instanceId);
@@ -1036,23 +1066,32 @@ public class MovesetExample {
     public static void printFullTeam(Connection conn, int trainerId) throws SQLException {
         String sql = """
             SELECT t.name AS trainer_name,
+                   te.team_name,
                    pi.nickname, pi.species, pi.level, pi.nature,
-                   tt.slot_index AS team_slot,
+                   tm.slot_index AS team_slot,
                    pm.move_name, pm.current_pp, pm.slot_index AS move_slot
             FROM trainers t
-            JOIN trainer_teams tt ON t.trainer_id = tt.trainer_id
-            JOIN pokemon_instances pi ON tt.instance_id = pi.instance_id
+            JOIN teams te ON t.trainer_id = te.trainer_id
+            JOIN team_members tm ON te.team_id = tm.team_id
+            JOIN pokemon_instances pi ON tm.instance_id = pi.instance_id
             LEFT JOIN pokemon_movesets pm ON pi.instance_id = pm.instance_id
             WHERE t.trainer_id = ?
-            ORDER BY tt.slot_index, pm.slot_index
+            ORDER BY te.team_name, tm.slot_index, pm.slot_index
             """;
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, trainerId);
 
             try (ResultSet rs = pstmt.executeQuery()) {
+                String currentTeamName = null;
                 int currentTeamSlot = -1;
                 while (rs.next()) {
+                    String teamName = rs.getString("team_name");
+                    if (!teamName.equals(currentTeamName)) {
+                        System.out.printf("%nTeam: %s%n", teamName);
+                        currentTeamName = teamName;
+                        currentTeamSlot = -1;
+                    }
                     int teamSlot = rs.getInt("team_slot");
                     if (teamSlot != currentTeamSlot) {
                         System.out.printf("%n  [Slot %d] Lv.%d %s (%s) — %s%n",
@@ -1081,16 +1120,26 @@ public class MovesetExample {
             // Assume Bulby is instance_id = 1, trainer Red is trainer_id = 1
             int bulbyId = 1;
             int redId = 1;
+            int redMainTeamId = 1;
 
             // Teach Bulby its moves (PP values from the Java Move classes)
             teachMove(conn, bulbyId, "Tackle", 35, 0);
             teachMove(conn, bulbyId, "Growl", 40, 1);
             teachMove(conn, bulbyId, "Vine Whip", 25, 2);
 
-            // Add Bulby to Red's active team
+            // Create Red's team header
             try (PreparedStatement pstmt = conn.prepareStatement(
-                    "INSERT INTO trainer_teams (trainer_id, slot_index, instance_id) VALUES (?, ?, ?)")) {
-                pstmt.setInt(1, redId);
+                    "INSERT INTO teams (team_id, trainer_id, team_name) VALUES (?, ?, ?)")) {
+                pstmt.setInt(1, redMainTeamId);
+                pstmt.setInt(2, redId);
+                pstmt.setString(3, "Red Main");
+                pstmt.executeUpdate();
+            }
+
+            // Add Bulby to Red's team_members rows
+            try (PreparedStatement pstmt = conn.prepareStatement(
+                    "INSERT INTO team_members (team_id, slot_index, instance_id) VALUES (?, ?, ?)")) {
+                pstmt.setInt(1, redMainTeamId);
                 pstmt.setInt(2, 0);  // First team slot
                 pstmt.setInt(3, bulbyId);
                 pstmt.executeUpdate();
@@ -1113,7 +1162,7 @@ public class MovesetExample {
 **What this teaches:**
 
 - **Foreign keys** — `pokemon_movesets.instance_id` references `pokemon_instances.instance_id`, enforcing that moves can only be assigned to existing Pokémon
-- **Multi-table JOINs** — combining data from `trainers`, `trainer_teams`, `pokemon_instances`, and `pokemon_movesets` in a single query
+- **Multi-table JOINs** — combining data from `trainers`, `teams`, `team_members`, `pokemon_instances`, and `pokemon_movesets` in a single query
 - **LEFT JOIN** — includes Pokémon even if they have no moves yet (unlike INNER JOIN which would skip them)
 - **String-keyed lookups** — `move_name` in the database maps back to Java `Move` subclasses at load time. The move's power, type, and accuracy come from the Java class, not the database.
 - **Object-relational mapping concept** — these queries reconstruct the same data structures our Java objects hold in memory (`Trainer.team` → `Pokemon.moveset` → `MoveSlot`)

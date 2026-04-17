@@ -24,8 +24,16 @@ public class BattleCRUD {
                 pstmt.setInt(2, trainer2Id);
                 pstmt.setNull(3, Types.INTEGER); // Active Pokémon will be set later
                 pstmt.setNull(4, Types.INTEGER); // Active Pokémon will be set later
-                pstmt.setInt(5, trainer1TeamId);
-                pstmt.setInt(6, trainer2TeamId);
+                if (trainer1TeamId > 0) {
+                    pstmt.setInt(5, trainer1TeamId);
+                } else {
+                    pstmt.setNull(5, Types.INTEGER);
+                }
+                if (trainer2TeamId > 0) {
+                    pstmt.setInt(6, trainer2TeamId);
+                } else {
+                    pstmt.setNull(6, Types.INTEGER);
+                }
                 pstmt.setString(7, status);
                 Timestamp now = new Timestamp(System.currentTimeMillis());
                 pstmt.setTimestamp(8, now);
@@ -64,6 +72,9 @@ public class BattleCRUD {
                         battle.setTrainer2Id(battleSet.getInt("trainer2_id"));
                         battle.setTrainer1ActivePokemonId(battleSet.getInt("trainer1_active_pokemon_id"));
                         battle.setTrainer2ActivePokemonId(battleSet.getInt("trainer2_active_pokemon_id"));
+                        battle.setTeam1Id(battleSet.getInt("trainer1_team_id"));
+                        battle.setTeam2Id(battleSet.getInt("trainer2_team_id"));
+                        battle.setWinningTrainerId(battleSet.getInt("winner_id"));
                         battle.setStatus(Battle.Status.valueOf(battleSet.getString("status")));
                         battle.setStartTime(battleSet.getObject("created_at", LocalDateTime.class));
                         battle.setUpdateTime(battleSet.getObject("updated_at", LocalDateTime.class));
@@ -96,6 +107,9 @@ public class BattleCRUD {
                         battle.setTrainer2Id(battleSet.getInt("trainer2_id"));
                         battle.setTrainer1ActivePokemonId(battleSet.getInt("trainer1_active_pokemon_id"));
                         battle.setTrainer2ActivePokemonId(battleSet.getInt("trainer2_active_pokemon_id"));
+                        battle.setTeam1Id(battleSet.getInt("trainer1_team_id"));
+                        battle.setTeam2Id(battleSet.getInt("trainer2_team_id"));
+                        battle.setWinningTrainerId(battleSet.getInt("winner_id"));
                         battle.setStatus(Battle.Status.valueOf(battleSet.getString("status")));
                         battle.setStartTime(battleSet.getObject("created_at", LocalDateTime.class));
                         battle.setUpdateTime(battleSet.getObject("updated_at", LocalDateTime.class));
@@ -130,6 +144,9 @@ public class BattleCRUD {
                         battle.setTrainer2Id(battleSet.getInt("trainer2_id"));
                         battle.setTrainer1ActivePokemonId(battleSet.getInt("trainer1_active_pokemon_id"));
                         battle.setTrainer2ActivePokemonId(battleSet.getInt("trainer2_active_pokemon_id"));
+                        battle.setTeam1Id(battleSet.getInt("trainer1_team_id"));
+                        battle.setTeam2Id(battleSet.getInt("trainer2_team_id"));
+                        battle.setWinningTrainerId(battleSet.getInt("winner_id"));
                         battle.setStatus(Battle.Status.valueOf(battleSet.getString("status")));
                         battle.setStartTime(battleSet.getObject("created_at", LocalDateTime.class));
                         battle.setUpdateTime(battleSet.getObject("updated_at", LocalDateTime.class));

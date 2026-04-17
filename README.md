@@ -59,7 +59,7 @@ src/main/java/pokemonGame/
 │   ├── DatabaseSetup.java # Connection pool config, deleteAllData() with table whitelist
 │   ├── TrainerCRUD.java   # CRUD for trainers table
 │   ├── PokemonCRUD.java   # CRUD for pokemon_instances table
-│   ├── TeamCRUD.java      # CRUD for trainer_teams join table
+│   ├── TeamCRUD.java      # CRUD for teams and team_members tables
 │   ├── BattleCRUD.java    # CRUD for battles table
 │   └── BattleTurnCRUD.java# Pending actions + turn history persistence
 ├── model/                 # Domain model (pure game logic, no I/O)
@@ -181,7 +181,8 @@ HP uses a variant formula (see `StatCalculator.calcMaxHP`).
 MariaDB stores persistent game data across these tables:
 
 - `trainers` — trainer profiles with Discord IDs
-- `trainer_teams` — join table linking trainers to team slots
+- `teams` — named team headers for each trainer
+- `team_members` — slot assignments linking teams to Pokémon instances
 - `pokemon_instances` — individual Pokémon with stats, IVs, EVs, nicknames
 - `pokemon_movesets` — movesets for each Pokémon instance
 - `battles` — active and historical battle records

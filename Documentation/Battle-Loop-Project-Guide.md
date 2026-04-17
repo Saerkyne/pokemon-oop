@@ -469,7 +469,7 @@ Create migration scripts following the project's existing pattern (numbered `.sq
 
 Both classes follow the existing project patterns: try-with-resources, prepared statements, `DatabaseSetup.getConnection()` (HikariCP), SLF4J logging.
 
-**Why this order:** In the original plan, persistence was an afterthought. But because battles are asynchronous (a turn might span hours) and must survive bot restarts, the database tables and DAOs need to exist before `BattleService` can be built. You can't meaningfully test `BattleService` if it has no way to store pending actions. Building persistence early aligns with the project's existing pattern — the `trainers`, `pokemon_instances`, and `trainer_teams` tables were all built before the bot commands that use them.
+**Why this order:** In the original plan, persistence was an afterthought. But because battles are asynchronous (a turn might span hours) and must survive bot restarts, the database tables and DAOs need to exist before `BattleService` can be built. You can't meaningfully test `BattleService` if it has no way to store pending actions. Building persistence early aligns with the project's existing pattern — the `trainers`, `pokemon_instances`, `teams`, and `team_members` tables need to exist before the bot commands that use them.
 
 **Definition of done:** Migration scripts run successfully against MariaDB. DAO methods can create a battle, store pending actions, retrieve them, and clear them. Integration tests confirm round-trip persistence (write a battle, read it back, verify all fields match).
 

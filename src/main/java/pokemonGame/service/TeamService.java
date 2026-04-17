@@ -158,9 +158,9 @@ public class TeamService {
      * <p>Steps performed:</p>
      * <ol>
      *   <li>Check if the team is full (6 Pokémon max)</li>
-     *   <li>Persist the Pokémon via {@link PokemonCRUD#createDBPokemon(Pokemon)}</li>
-     *   <li>Link it to the team via {@link TeamCRUD#addPokemonToDBTeam(int, int, int)}</li>
-     *   <li>Add it to the in-memory {@link Team#getPokemonList()}</li>
+    *   <li>Persist the Pokémon via {@link PokemonCRUD#createDBPokemon(Pokemon)}</li>
+    *   <li>Link it to the team via {@link TeamCRUD#addPokemonToDBTeam(int, int, int)}</li>
+    *   <li>Add it to the in-memory {@link Team#getTeamAsList()}</li>
      * </ol>
      *
      * @param team    the team to add to (must have trainerId and teamDbId set)
@@ -181,7 +181,7 @@ public class TeamService {
             return -1;
         }
 
-        // Step 2: Link it to the team in trainer_teams
+        // Step 2: Link it to the team via team_members
         int slotIndex = teamCRUD.addPokemonToDBTeam(team.getTrainerDbId(), pokemonId, team.getTeamDbId());
         if (slotIndex < 0) {
             LOGGER.error("Failed to add Pokémon ID {} to team '{}' for trainer ID {}.",
@@ -191,6 +191,7 @@ public class TeamService {
 
         // Step 3: Update in-memory state
         team.add(pokemon);
+        
         LOGGER.info("Added '{}' to team '{}' in slot {}.", pokemon.getNickname(), team.getTeamName(), slotIndex);
         return slotIndex;
     }

@@ -5,7 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import pokemonGame.model.Pokemon;
 
+import java.util.Arrays;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.Map;
+import java.util.HashMap;
 
 
 
@@ -187,6 +193,17 @@ public enum PokeSpecies {
         this(displayName, className, constructor, new String[0]);
     }
 
+    // Static Map to allow for autocomplete lookups without iterating the enum values every time. Built once at class init.
+    private static final Map<String, PokeSpecies> LOOKUP = new HashMap<>();
+    static {
+        for (PokeSpecies species : values()) {
+            LOOKUP.put(species.getDisplayName().toLowerCase(), species);
+            for (String alias : species.getAliases()) {
+                LOOKUP.put(alias.toLowerCase(), species);
+            }
+        }
+    }
+
     public String getDisplayName() {
         return displayName;
     }
@@ -203,29 +220,26 @@ public enum PokeSpecies {
         return constructor.apply(nickname);
     }
 
-    // TODO: SPC-3 — Replace O(n) linear scan with pre-built static Map<String, PokeSpecies> for O(1) lookup.
     public static PokeSpecies getSpeciesByString(String input) {
-        if (input == null) {
-            LOGGER.warn("Input is null");
+        if (input == null || input.isBlank()) {
+            LOGGER.warn("Input string is null or blank. Cannot find matching Pokemon species.");
             return null;
         }
-        LOGGER.info("Looking up species for input: '{}'", input);   
-        String norm = input.trim().toLowerCase();
-        for (PokeSpecies species : PokeSpecies.values()) {
-            if (species.getDisplayName().toLowerCase().equals(norm)) {
-                LOGGER.info("Matched input '{}' to species display name '{}'", input, species.getDisplayName());
-                return species;
-            }
-            for (String alias : species.getAliases()) {
-                if (alias.toLowerCase().equals(norm)) {
-                    LOGGER.info("Matched input '{}' to species alias '{}'", input, alias);
-
-                    return species;
-                }
-            }
+        PokeSpecies species = LOOKUP.get(input.toLowerCase().trim());
+        if (species == null) {
+            LOGGER.warn("No matching Pokemon species found for input: '{}'", input);
         }
-        LOGGER.warn("No match found for input '{}'", input);
-        return null; // No match found
+        return species;
+    }
+
+    // Getter for all registered species names (for autocomplete)
+    public static Set<String> getSpeciesNames() {
+        return Arrays.stream(PokeSpecies.values())
+            .flatMap(species -> Stream.concat(
+                Stream.of(species.getDisplayName().toLowerCase().trim()),
+                Arrays.stream(species.getAliases()).map(alias -> alias.toLowerCase().trim())
+            ))
+            .collect(Collectors.toUnmodifiableSet());
     }
     
 }

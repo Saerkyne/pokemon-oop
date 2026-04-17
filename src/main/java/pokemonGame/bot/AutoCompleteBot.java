@@ -14,8 +14,8 @@ import pokemonGame.model.Move;
 import pokemonGame.service.MoveSlotService;
 import pokemonGame.service.TrainerService;
 import pokemonGame.service.TeamService;
-import pokemonGame.species.PokemonFactory;
 import pokemonGame.model.Pokemon;
+import pokemonGame.species.PokeSpecies;
 
 
 import java.util.Collections;
@@ -75,6 +75,14 @@ public class AutoCompleteBot extends ListenerAdapter {
                     LOGGER.error("Error handling autocomplete for teachmoveset command", e);
                 }
                 break;
+            case "startbattle":
+                try {
+                    handleStartBattleAutoComplete(event);
+                } catch (Exception e) {
+                    event.replyChoices(Collections.emptyList()).queue(); // In case of any exceptions, return empty choices
+                    LOGGER.error("Error handling autocomplete for startbattle command", e);
+                }
+                break;
             default:
                 // No autocomplete for other commands
                 break;
@@ -83,20 +91,35 @@ public class AutoCompleteBot extends ListenerAdapter {
 
 
     private void handleAddPokemonAutoComplete(CommandAutoCompleteInteractionEvent event) {
-        String focusedAddPokemon = event.getFocusedOption().getName();
-        if (focusedAddPokemon == null) {
-            return; // No focused option, can't handle autocomplete
-        }
-        if (focusedAddPokemon.equals("species")) {
+        String focusedAddPokemonTeam = event.getFocusedOption().getName();
+        if (focusedAddPokemonTeam != null && focusedAddPokemonTeam.equals("team")) {
+            String teamName = event.getFocusedOption().getValue().toLowerCase();
+            Long discordId = event.getUser().getIdLong();
+            Trainer trainer = trainerService.getTrainerByDiscordId(discordId);
+            if (trainer == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
+                return;
+            }
+            List<Command.Choice> teamOptions = teamService.getTeamNames(trainer.getTrainerDbId()).stream()
+                .filter(name -> name.toLowerCase().startsWith(teamName))
+                .sorted()
+                .map(name -> new Command.Choice(name, name))
+                .collect(Collectors.toList());
+            event.replyChoices(teamOptions).queue();
+            return;
+        } else if (focusedAddPokemonTeam.equals("species")) {
+            // If the user is trying to autocomplete the "species" option but hasn't selected a team yet,
+            // we can still provide autocomplete options based on all available species.
             String userInput = event.getFocusedOption().getValue().toLowerCase();
         
-            List<Command.Choice> options = PokemonFactory.getSpeciesNames().stream()
+            List<Command.Choice> options = PokeSpecies.getSpeciesNames().stream()
                     .filter(name -> name.toLowerCase().startsWith(userInput))
                     .sorted() // Alphabetical order
                     .limit(25) // Discord allows a maximum of 25 autocomplete options
                     .map(name -> new Command.Choice(name, name)) // Use the species name as both the display and value
                     .collect(Collectors.toList());
             event.replyChoices(options).queue();
+            return;
         }
     }
 
@@ -116,6 +139,7 @@ public class AutoCompleteBot extends ListenerAdapter {
             
             List<Command.Choice> options = teamService.getTeamNames(trainer.getTrainerDbId()).stream()
                 .filter(teamName -> teamName.toLowerCase().startsWith(userInput))
+                .sorted()
                 .map(teamName -> new Command.Choice(teamName, teamName))
                 .collect(Collectors.toList());
             event.replyChoices(options).queue();
@@ -218,6 +242,28 @@ public class AutoCompleteBot extends ListenerAdapter {
                 .sorted() // Alphabetical order
                 .limit(25) // Discord allows a maximum of 25 autocomplete options
                 .map(moveName -> new Command.Choice(moveName, moveName)) // Use the move name as both the display and value
+                .collect(Collectors.toList());
+            event.replyChoices(options).queue();
+        }
+    }
+
+    private void handleStartBattleAutoComplete(CommandAutoCompleteInteractionEvent event) {
+        // TODO: Add option to autocomplete opponent trainer usernames from database once battle functionality is implemented
+        String focusedOptionName = event.getFocusedOption().getName();
+        if (focusedOptionName == null) {
+            return; // No focused option, can't handle autocomplete
+        }
+        if (focusedOptionName.equals("team")) {
+            String userInput = event.getFocusedOption().getValue().toLowerCase();
+            Trainer trainer = trainerService.getTrainerByDiscordId(event.getUser().getIdLong());
+            if (trainer == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
+                return;
+            }
+            List<Command.Choice> options = teamService.getTeamNames(trainer.getTrainerDbId()).stream()
+                .filter(teamName -> teamName.toLowerCase().startsWith(userInput))
+                .sorted()
+                .map(teamName -> new Command.Choice(teamName, teamName))
                 .collect(Collectors.toList());
             event.replyChoices(options).queue();
         }

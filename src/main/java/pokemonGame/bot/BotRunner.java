@@ -50,18 +50,16 @@ public class BotRunner {
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL))
                 
-                    // TODO: NEED A HANDLER FOR THIS COMMAND
                 .addCommands(Commands.slash("createtrainer", "Creates a new trainer")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.STRING, "name", "The name of the trainer", true, true))
+                    .addOption(OptionType.STRING, "name", "The name of the trainer", true, false))
                 
                 .addCommands(Commands.slash("checkteam", "Checks the trainer's team makeup")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
                     .addOption(OptionType.STRING, "team", "Required, specify team name", true, true))
             
-                // TODO: NEED AUTOCOMPLETE FOR TEAM
                 .addCommands(Commands.slash("addpokemon", "Adds a Pokémon to your team")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
@@ -81,7 +79,6 @@ public class BotRunner {
                     .setDefaultPermissions(DefaultMemberPermissions.DISABLED)
                     .addOption(OptionType.STRING, "confirm", "Type 'CONFIRM' to clear the database", true))
 
-                    // TODO: NEED AUTOCOMPLETE FOR TEAM
                 .addCommands(Commands.slash("startbattle", "Starts a battle with another trainer (not implemented yet)")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
@@ -98,11 +95,10 @@ public class BotRunner {
                     .addOption(OptionType.STRING, "move three", "The name of the move to teach", false, true)
                     .addOption(OptionType.STRING, "move four", "The name of the move to teach", false, true))
                 
-                    // TODO: NEED HANDLER FOR THIS COMMAND
                 .addCommands(Commands.slash("createteam", "Creates a new team for your trainer")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.STRING, "teamname", "The name of the team to create", true, true))
+                    .addOption(OptionType.STRING, "teamname", "The name of the team to create", true, false))
                 .queue();
 
     }

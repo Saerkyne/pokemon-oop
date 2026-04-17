@@ -70,20 +70,39 @@ If a species is added to the enum but `PokemonFactory`'s HashMap doesn't pick it
 
 **Why this matters:** Maintaining two registries for the same data violates DRY (Don't Repeat Yourself). Bugs can arise when one is updated and the other isn't.
 
-**Fix — option A (consolidate into `PokeSpecies`):**
+**Recommended direction:** keep responsibilities split cleanly.
+
+- `PokeSpecies` handles enum concerns: normalized input, aliases, and resolution from text to enum.
+- `PokemonFactory` handles construction concerns: given a resolved species, build the `Pokemon` instance.
+
+That means SPC-2 should **not** be solved by moving construction into `PokeSpecies`. Instead, remove the duplicated lookup responsibility from `PokemonFactory` and let it accept a resolved enum.
+
+**Recommended fix:**
 
 ```java
-// In PokeSpecies:
-public static Pokemon create(String speciesInput, String nickname) {
-    PokeSpecies species = getSpeciesByString(speciesInput);
-    return species != null ? species.createPokemon(nickname) : null;
+// In PokemonFactory:
+public static Pokemon createPokemon(PokeSpecies species, String nickname) {
+    if (species == null) {
+        LOGGER.warn("Species not recognized. Please choose a valid Pokemon species.");
+        return null;
+    }
+    try {
+        return species.createPokemon(nickname);
+    } catch (Exception e) {
+        LOGGER.error("Failed to create instance for species: {}", species.getDisplayName(), e);
+        return null;
+    }
 }
 ```
 
-Then remove `PokemonFactory` or make it delegate to `PokeSpecies`.
+Then callers use a two-step flow:
 
-**Fix — option B (make `PokemonFactory` the single entry point):**
-Remove `PokeSpecies.getSpeciesByString()` and route everything through `PokemonFactory`.
+```java
+PokeSpecies species = PokeSpecies.getSpeciesByString(userInput);
+Pokemon pokemon = PokemonFactory.createPokemon(species, nickname);
+```
+
+This gives one canonical lookup path (`PokeSpecies`) and one canonical construction path (`PokemonFactory`).
 
 ---
 
@@ -104,7 +123,7 @@ public static PokeSpecies getSpeciesByString(String input) {
 }
 ```
 
-This iterates all 151 species and their aliases on every call. `PokemonFactory` already has an O(1) HashMap for the same purpose. If `getSpeciesByString()` is used in autocomplete handlers (called on every keystroke), this linear scan runs 151+ comparisons per keystroke.
+This iterates all 151 species and their aliases on every call. If `getSpeciesByString()` is used in autocomplete handlers (called on every keystroke), this linear scan runs 151+ comparisons per keystroke.
 
 **Fix:** Build a static HashMap once at class init:
 
@@ -124,7 +143,29 @@ public static PokeSpecies getSpeciesByString(String input) {
 }
 ```
 
-This also ties into SPC-2 — if one lookup path is optimized, it should be the canonical one.
+Under the chosen split, this optimized lookup becomes the canonical enum-resolution path, while `PokemonFactory` remains the canonical construction path.
+
+---
+
+## Refactor Direction for SPC-2 and SPC-3
+
+The clean architectural split is:
+
+- `PokeSpecies` answers: "Which species does this input mean?"
+- `PokemonFactory` answers: "How do I construct that species?"
+
+SPC-3 is the enum-side refactor. Replace the repeated scan in `PokeSpecies.getSpeciesByString()` with one pre-built static lookup map of normalized display names and aliases to enum constants. That keeps alias handling, normalization, and enum resolution in one place and makes lookups $O(1)$ instead of $O(n)$.
+
+SPC-2 is the factory-side cleanup. Once `PokeSpecies` owns string-to-enum resolution, `PokemonFactory` no longer needs its own parallel name registry. The factory should accept a `PokeSpecies` value and construct from that single resolved enum. This removes the second source of truth and prevents lookup drift between the enum and the factory.
+
+Minimal migration order:
+
+1. Add the static lookup map in `PokeSpecies`.
+2. Update callers to resolve text through `PokeSpecies.getSpeciesByString(...)`.
+3. Simplify `PokemonFactory` so public construction methods take `PokeSpecies` instead of raw text.
+4. Delete the redundant name/alias registry from `PokemonFactory` once all callers use the new flow.
+
+That sequence keeps behavior stable during refactor. Lookup logic changes first, construction API changes second, dead duplication removed last.
 
 ---
 

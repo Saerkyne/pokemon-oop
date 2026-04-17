@@ -3,8 +3,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pokemonGame.battle.TurnManager;
-// TODO: MDL-7 — Remove this service-layer import. Model should not depend on service layer. Used only in @see Javadoc.
-import pokemonGame.service.BattleService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -148,9 +146,12 @@ public class Battle {
         return winningTrainerId;
     }
 
-    // TODO: MDL-8 — trainer.getTeam() can return null → NPE. Add null check before chaining.
     public List<Pokemon> getAllRemainingPokemon(Trainer trainer, Team team) {
         LOGGER.info("Getting all remaining Pokemon for trainer: {}", trainer.getTrainerName());
+        if (trainer.getTeam(team.getTeamName()) == null) {
+            LOGGER.warn("Trainer '{}' has no team named '{}'", trainer.getTrainerName(), team.getTeamName());
+            return List.of();
+        }
         return trainer.getTeam(team.getTeamName()).getTeamAsList().stream()
             .filter(p -> !p.getIsFainted())
             .toList();

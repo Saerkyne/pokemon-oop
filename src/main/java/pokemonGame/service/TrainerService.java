@@ -43,9 +43,8 @@ public class TrainerService {
 
     private final TrainerCRUD trainerCRUD;
 
-    // TODO: SVC-3 — Add constructor injection (TrainerService(TrainerCRUD)) for testability. Keep this as convenience default.
-    public TrainerService() {
-        this.trainerCRUD = new TrainerCRUD();
+    public TrainerService(TrainerCRUD trainerCRUD) {
+        this.trainerCRUD = trainerCRUD;
     }
 
     /**

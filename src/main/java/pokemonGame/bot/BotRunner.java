@@ -10,6 +10,7 @@ import pokemonGame.db.BattleCRUD;
 import pokemonGame.db.MoveCRUD;
 import pokemonGame.db.PokemonCRUD;
 import pokemonGame.db.TeamCRUD;
+import pokemonGame.db.TrainerCRUD;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import pokemonGame.service.BattleService;
 import pokemonGame.service.MoveSlotService;
@@ -28,7 +29,7 @@ public class BotRunner {
         }
         BattleService battleService = new BattleService(new BattleCRUD());
         MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
-        TrainerService trainerService = new TrainerService();
+        TrainerService trainerService = new TrainerService(new TrainerCRUD());
         PokemonCRUD pokemonCRUD = new PokemonCRUD(moveSlotService);
         TeamService teamService = new TeamService(new TeamCRUD(), pokemonCRUD, trainerService);
 

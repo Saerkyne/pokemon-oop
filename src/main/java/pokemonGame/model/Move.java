@@ -15,13 +15,13 @@ import pokemonGame.core.TypeChart.Type;
  * @see Attack
  */
 public abstract class Move {
-    // TODO: MDL-5 / MOV-1 — Make all fields final to enforce immutability. Moves are singletons; accidental mutation affects all users.
-    private String moveName;
-    private int movePower;
-    private Type moveType;
-    private Category moveCategory;
-    private int accuracy;
-    private int maxPp;
+    
+    private final String moveName;
+    private final int movePower;
+    private final Type moveType;
+    private final Category moveCategory;
+    private final int accuracy;
+    private final int maxPp;
 
     protected Move(String moveName, int movePower, Type moveType, Category moveCategory, int accuracy, int maxPp) {
         this.moveName = moveName;

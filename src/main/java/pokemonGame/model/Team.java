@@ -3,9 +3,6 @@ package pokemonGame.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: MDL-7 — Remove this service-layer import. Model should not depend on service layer. Used only in @see Javadoc.
-import pokemonGame.service.TeamService;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,9 +60,8 @@ public class Team {
         return Collections.unmodifiableList(teamAsList); // Return an unmodifiable view to prevent external modification
     }
 
-    // TODO: MDL-6 — Store defensive copy: this.teamAsList = new ArrayList<>(teamAsList). Caller can mutate list after passing it in.
     public void setTeamAsList(List<Pokemon> teamAsList) {
-        this.teamAsList = teamAsList;
+        this.teamAsList = new ArrayList<>(teamAsList); // Store a defensive copy to prevent external modification   
     }
 
     public int getTeamSize() {

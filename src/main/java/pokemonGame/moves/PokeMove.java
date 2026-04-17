@@ -3,6 +3,8 @@ package pokemonGame.moves;
 import pokemonGame.model.Move;
 import pokemonGame.model.MoveSlot;
 import pokemonGame.core.TypeChart.Type;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Enum of all moves in the game, with associated data. Each enum constant represents a unique move,
@@ -206,17 +208,21 @@ public enum PokeMove {
         return type;
     }
 
-    // TODO: MOV-2 — Rename to getMove() or getMoveInstance(). "create" implies new instance; this returns shared singleton.
-    public Move createMove() {
+    public Move getMoveInstance() {
         return move;
     }
 
-    // TODO: MOV-3 — Replace O(n) linear scan with pre-built static Map<String, PokeMove> for O(1) lookup.
-    public static PokeMove fromString(String moveName) {
+    private static final Map<String, PokeMove> MOVE_MAP = new HashMap<>();
+    static {
         for (PokeMove move : PokeMove.values()) {
-            if (move.displayName.equalsIgnoreCase(moveName)) {
-                return move;
-            }
+            MOVE_MAP.put(move.displayName.toLowerCase(), move);
+        }
+    }
+
+    public static PokeMove fromString(String moveName) {
+        PokeMove move = MOVE_MAP.get(moveName.toLowerCase());
+        if (move != null) {
+            return move;
         }
         throw new IllegalArgumentException("No move found with name: " + moveName);
     }

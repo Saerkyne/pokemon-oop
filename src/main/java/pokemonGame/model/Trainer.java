@@ -1,8 +1,5 @@
 package pokemonGame.model;
 
-// TODO: MDL-7 — Remove this service-layer import. Model should not depend on service layer. Used only in @see Javadoc.
-import pokemonGame.service.TrainerService;
-
 /**
  * Represents a trainer (player) with a name, Discord identity, database ID,
  * and an in-memory team of up to 6 {@link Pokemon}. Maps to the

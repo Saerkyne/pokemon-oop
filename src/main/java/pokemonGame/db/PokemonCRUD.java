@@ -236,7 +236,7 @@ public class PokemonCRUD {
             String moveName = row[0];
             int pp = Integer.parseInt(row[1]);
             try {
-                Move move = PokeMove.fromString(moveName).createMove();
+                Move move = PokeMove.fromString(moveName).getMoveInstance();
                 foundPokemon.addMove(move);
                 // Set the persisted PP (may differ from max if the move was partially used)
                 foundPokemon.getMoveSet().get(foundPokemon.getMoveSet().size() - 1).setCurrentPP(pp);

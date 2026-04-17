@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,8 +162,7 @@ public class Pokemon {
         Natures.assignRandom(this);
     }
 
-    // TODO: MDL-9 — Replace with ThreadLocalRandom.current() for thread safety under concurrent Discord users.
-    private static final Random random = new Random();
+    private static final Random random = ThreadLocalRandom.current();
 
 
     // ========================
@@ -474,28 +474,45 @@ public class Pokemon {
         this.currentExp = currentExp;
     }   
 
-    // TODO: MDL-4 — Add range validation (0-31) to all IV setters. Corrupted DB row could create illegal IVs.
     public void setIvHp(int ivHp) {
+        if (ivHp < 0 || ivHp > 31) {
+            throw new IllegalArgumentException("IV value must be between 0 and 31");
+        }
         this.ivHp = ivHp;
     }
 
     public void setIvAttack(int ivAttack) {
+        if (ivAttack < 0 || ivAttack > 31) {
+            throw new IllegalArgumentException("IV value must be between 0 and 31");
+        }
         this.ivAttack = ivAttack;
     }
 
     public void setIvDefense(int ivDefense) {
+        if (ivDefense < 0 || ivDefense > 31) {
+            throw new IllegalArgumentException("IV value must be between 0 and 31");
+        }
         this.ivDefense = ivDefense;
     }
 
     public void setIvSpecialAttack(int ivSpecialAttack) {
+        if (ivSpecialAttack < 0 || ivSpecialAttack > 31) {
+            throw new IllegalArgumentException("IV value must be between 0 and 31");
+        }
         this.ivSpecialAttack = ivSpecialAttack;
     }
 
     public void setIvSpecialDefense(int ivSpecialDefense) {
+        if (ivSpecialDefense < 0 || ivSpecialDefense > 31) {
+            throw new IllegalArgumentException("IV value must be between 0 and 31");
+        }
         this.ivSpecialDefense = ivSpecialDefense;
     }
 
     public void setIvSpeed(int ivSpeed) {
+        if (ivSpeed < 0 || ivSpeed > 31) {
+            throw new IllegalArgumentException("IV value must be between 0 and 31");
+        }
         this.ivSpeed = ivSpeed;
     }
 
@@ -507,32 +524,53 @@ public class Pokemon {
     public int getEvSpeed() { return evSpeed; }
     public int getEvTotal() { return evTotal; }
 
-    // TODO: MDL-3 — Add range validation (0-252) to all EV setters. Direct setters bypass EvManager caps.
     public void setEvHp(int evHp) {
+        if (evHp < 0 || evHp > 252) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        }
         this.evHp = evHp;
     }
 
     public void setEvAttack(int evAttack) {
+        if (evAttack < 0 || evAttack > 252) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        }
         this.evAttack = evAttack;
     }
 
     public void setEvDefense(int evDefense) {
+        if (evDefense < 0 || evDefense > 252) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        }
         this.evDefense = evDefense;
+
     }
 
     public void setEvSpecialAttack(int evSpecialAttack) {
+        if (evSpecialAttack < 0 || evSpecialAttack > 252) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        }
         this.evSpecialAttack = evSpecialAttack;
     }
 
     public void setEvSpecialDefense(int evSpecialDefense) {
+        if (evSpecialDefense < 0 || evSpecialDefense > 252) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        }
         this.evSpecialDefense = evSpecialDefense;
     }
 
     public void setEvSpeed(int evSpeed) {
+        if (evSpeed < 0 || evSpeed > 252) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        }
         this.evSpeed = evSpeed;
     }
 
     public void setEvTotal(int evTotal) {
+        if (evTotal < 0 || evTotal > 510) {
+            throw new IllegalArgumentException("Total EV value must be between 0 and 510");
+        }
         this.evTotal = evTotal;
     }
 

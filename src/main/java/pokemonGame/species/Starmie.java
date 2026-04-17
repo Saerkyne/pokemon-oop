@@ -8,6 +8,7 @@ import pokemonGame.model.LearnsetEntry;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.LearnsetEntry.Source;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Starmie extends Pokemon {
@@ -284,6 +285,6 @@ public class Starmie extends Pokemon {
 
     @Override
     public List<LearnsetEntry> getLearnset() {
-        return LEARNSET;
+        return Collections.unmodifiableList(LEARNSET);
     }
 }

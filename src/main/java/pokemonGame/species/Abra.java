@@ -8,6 +8,7 @@ import pokemonGame.model.LearnsetEntry;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.LearnsetEntry.Source;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Abra extends Pokemon {
@@ -218,10 +219,8 @@ public class Abra extends Pokemon {
         StatCalculator.calculateAllStats(this);
     }
 
-    // TODO: SPC-1 — Return Collections.unmodifiableList(LEARNSET) to prevent callers from corrupting shared game data.
-    // This applies to ALL 151 species classes, not just Abra.
     @Override
     public List<LearnsetEntry> getLearnset() {
-        return LEARNSET;
+        return Collections.unmodifiableList(LEARNSET);
     }
 }

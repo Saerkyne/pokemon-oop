@@ -55,7 +55,6 @@ public class TeamService {
     private final PokemonCRUD pokemonCRUD;
     private final TrainerService trainerService;
 
-    // TODO: SVC-3 — Add constructor injection (TeamService(TeamCRUD, PokemonCRUD)) for testability. Keep this as convenience default.
     public TeamService(TeamCRUD teamCRUD, PokemonCRUD pokemonCRUD, TrainerService trainerService) {
         this.teamCRUD = teamCRUD;
         this.pokemonCRUD = pokemonCRUD;

@@ -8,6 +8,7 @@ import pokemonGame.model.LearnsetEntry;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.LearnsetEntry.Source;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Cubone extends Pokemon {
@@ -267,6 +268,6 @@ public class Cubone extends Pokemon {
 
     @Override
     public List<LearnsetEntry> getLearnset() {
-        return LEARNSET;
+        return Collections.unmodifiableList(LEARNSET);
     }
 }

@@ -380,7 +380,7 @@ public class SlashExample extends ListenerAdapter{
          }
         // We won't check the defending trainer's team here, since they might want to set it up after the battle is initiated.
 
-        if (battleService.createChallenge(attackingTrainer.getTrainerDbId(), defendingTrainer.getTrainerDbId())) {
+        if (battleService.createBattle(attackingTrainer.getTrainerDbId(), defendingTrainer.getTrainerDbId(), Optional.ofNullable(challengerTeam.getTeamDbId()), Optional.empty())) {
             event.reply("Challenge issued successfully!").queue();
 
             // Notify the opponent trainer of the challenge (e.g., via Discord DM or in-app notification)

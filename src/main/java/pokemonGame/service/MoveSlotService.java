@@ -70,7 +70,7 @@ public class MoveSlotService {
 
     public Move getMoveByName(String moveName) {
         try {
-            return PokeMove.fromString(moveName).createMove();
+            return PokeMove.fromString(moveName).getMoveInstance();
         } catch (IllegalArgumentException e) {
             LOGGER.error("Invalid move name '{}': {}", moveName, e.getMessage());
             return null; // Return null or consider throwing a custom exception to indicate invalid move name

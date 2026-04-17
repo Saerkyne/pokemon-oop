@@ -177,14 +177,12 @@ public enum PokeSpecies {
 
     private final String displayName;
     private final String[] aliases;
-    private final String className;
     private final Function<String, Pokemon> constructor;
     private static final Logger LOGGER = LoggerFactory.getLogger(PokeSpecies.class);
         
     PokeSpecies(String displayName, String className, Function<String, Pokemon> constructor, String[] aliases) {
         this.displayName = displayName;
         this.aliases = aliases;
-        this.className = className;
         this.constructor = constructor;
     }
 
@@ -210,10 +208,6 @@ public enum PokeSpecies {
 
     public String[] getAliases() {
         return aliases.clone();
-    }
-    
-    public String getClassName() {
-        return className;
     }
 
     public Pokemon createPokemon(String nickname) {

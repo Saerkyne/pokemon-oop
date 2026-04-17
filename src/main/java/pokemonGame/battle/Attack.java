@@ -1,5 +1,7 @@
 package pokemonGame.battle;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,7 @@ public final class Attack {
     private Attack() {}
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Attack.class);
-    private static Random rng = new Random();
+    private static Random rng = ThreadLocalRandom.current();
     private static final int BASE_CRIT_CHANCE = 400; // Base crit chance of 4.00% (400/10000)
     private static final int MAX_CRIT_CHANCE = 2000; // Maximum crit chance of 20% (2000/10000)
     private static final int SPEED_CRIT_MULTIPLIER = 8; // Crit chance increases by 0.08% for each point of speed difference (8/10000)

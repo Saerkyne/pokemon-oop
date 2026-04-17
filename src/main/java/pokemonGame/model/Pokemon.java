@@ -525,44 +525,44 @@ public class Pokemon {
     public int getEvTotal() { return evTotal; }
 
     public void setEvHp(int evHp) {
-        if (evHp < 0 || evHp > 252) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        if ((evHp < 0 || evHp > 252) && (this.evTotal - this.evHp + evHp > 510)) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
         }
         this.evHp = evHp;
     }
 
     public void setEvAttack(int evAttack) {
-        if (evAttack < 0 || evAttack > 252) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        if ((evAttack < 0 || evAttack > 252) && (this.evTotal - this.evAttack + evAttack > 510)) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
         }
         this.evAttack = evAttack;
     }
 
     public void setEvDefense(int evDefense) {
-        if (evDefense < 0 || evDefense > 252) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        if ((evDefense < 0 || evDefense > 252) && (this.evTotal - this.evDefense + evDefense > 510)) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
         }
         this.evDefense = evDefense;
 
     }
 
     public void setEvSpecialAttack(int evSpecialAttack) {
-        if (evSpecialAttack < 0 || evSpecialAttack > 252) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        if ((evSpecialAttack < 0 || evSpecialAttack > 252) && (this.evTotal - this.evSpecialAttack + evSpecialAttack > 510)) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
         }
         this.evSpecialAttack = evSpecialAttack;
     }
 
     public void setEvSpecialDefense(int evSpecialDefense) {
-        if (evSpecialDefense < 0 || evSpecialDefense > 252) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        if ((evSpecialDefense < 0 || evSpecialDefense > 252) && (this.evTotal - this.evSpecialDefense + evSpecialDefense > 510)) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
         }
         this.evSpecialDefense = evSpecialDefense;
     }
 
     public void setEvSpeed(int evSpeed) {
-        if (evSpeed < 0 || evSpeed > 252) {
-            throw new IllegalArgumentException("EV value must be between 0 and 252");
+        if ((evSpeed < 0 || evSpeed > 252) && (this.evTotal - this.evSpeed + evSpeed > 510)) {
+            throw new IllegalArgumentException("EV value must be between 0 and 252 and total EVs cannot exceed 510");
         }
         this.evSpeed = evSpeed;
     }

@@ -1,12 +1,19 @@
 package pokemonGame.db;
 
 import java.sql.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class provides CRUD operations for managing Pokémon teams in the database.
+ * The only caller should be {@link TeamService} to manage in-memory building or 
+ * dehydration of team information. All team information passed is just IDs, 
+ * no actual object construction happens here. 
+ */
 public class TeamCRUD {
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamCRUD.class);
     private static final int MAX_TEAM_SIZE = 6;

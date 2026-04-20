@@ -6,8 +6,16 @@ import org.slf4j.LoggerFactory;
 
 import pokemonGame.model.Trainer;
 
+/**
+ * This class provides CRUD operations for managing trainer objects in the database.
+ * The only caller should be {@link TrainerService} to manage in-memory building or 
+ * dehydration of trainer information. All trainer information passed is just IDs, 
+ * no actual object construction happens here.
+ */
+
 public class TrainerCRUD {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerCRUD.class);
+    
     public int createDBTrainer(long discordID, String discordUsername, String name) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "INSERT INTO trainers (discord_id, discord_username, name) VALUES (?, ?, ?)";
@@ -35,6 +43,7 @@ public class TrainerCRUD {
         return -1; // Return -1 if trainer creation failed
     }
 
+    // TODO: Refactor this to provide the DbId, we don't want rehydration here.
     public Trainer getTrainerByDiscordId(long discordID) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM trainers WHERE discord_id = ?";
@@ -62,6 +71,7 @@ public class TrainerCRUD {
         }
     }
 
+    // TODO: Refactor this to return Discord ID
     public Trainer getTrainerByDbId(int trainerDbId) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM trainers WHERE trainer_id = ?";
@@ -174,4 +184,9 @@ public class TrainerCRUD {
             return -1; // Return -1 to indicate an error occurred
         }
     }
+
+    // TODO: Method for returning trainer Discord Username via Discord ID
+    // TODO: Method for returning trainer Discord Username via Database ID
+    // TODO: Method for returning trainer name via Discord ID
+    // TODO: Method for returning trainer name via Database ID 
 }

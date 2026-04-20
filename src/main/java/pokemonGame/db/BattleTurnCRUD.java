@@ -65,10 +65,11 @@ public class BattleTurnCRUD {
         }
     }
 
-
+    // TODO: Refactor this to return an array of BattleAction IDs. 
+    // TODO: Remove call to BattleService and only return IDs,
     public BattleAction[] getPendingActions(int battleId) {
-        // Implementation to retrieve pending actions for a battle turn
-        BattleAction[] actions = new BattleAction[2]; // Assuming 2 trainers per battle
+        // Implementation to retrieve pending action IDs for a battle turn
+        BattleAction[] actionIds = new BattleAction[2]; // Assuming 2 trainers per battle
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT trainer_id, action_type, move_slot_index, switch_pokemon_id, submitted_at " 
             + "FROM battle_pending_actions WHERE battle_id = ?";
@@ -85,13 +86,14 @@ public class BattleTurnCRUD {
                         // call BattleService.createActionFromDbRow(trainerId, actionType, moveSlotIndex, switchPokemonId)
                         // BattleService will parse actionType into MoveAction or SwitchAction, 
                         // load Trainer and Pokemon from DB, then return the correct BattleAction record.
+                        // TODO: Check if this is the right direction. Theoretically DAO shouldn't call Service
                         BattleAction action = BattleService.createActionFromDbRow(trainerId, actionType, moveSlotIndex, switchPokemonId);
                         // Collect actions into a list/array to return
                         if (action != null) {
-                            if (actions[0] == null) {
-                                actions[0] = action;
+                            if (actionIds[0] == null) {
+                                actionIds[0] = action;
                             } else {
-                                actions[1] = action;
+                                actionIds[1] = action;
                             }
                         }
                     }
@@ -100,7 +102,7 @@ public class BattleTurnCRUD {
         } catch (SQLException e) {
             LOGGER.error("Error retrieving pending actions for battleId: {}", battleId, e);
         }
-        return actions;
+        return actionIds;
     }
 
     public void clearPendingActions(int battleId) {

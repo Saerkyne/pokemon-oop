@@ -80,6 +80,8 @@ public class PokemonCRUD {
         return -1; // Return -1 if Pokemon creation failed
     }
 
+    // TODO: Refactor this to not return a rehydrated pokemon. Get the information, 
+    // Pass it on to PokemonService for rehydration
     public Pokemon getSpecificDBPokemonForTrainer(Trainer trainer, int pokemonId) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND instance_id = ?";
@@ -172,6 +174,7 @@ public class PokemonCRUD {
         }
     }
 
+    // TODO: This method might need to be moved to PokemonService and not use SQL
     public Pokemon mapResultSetToPokemon(ResultSet rs, Trainer trainer) throws SQLException {
 
         
@@ -249,6 +252,7 @@ public class PokemonCRUD {
         return foundPokemon; // Return the Pokémon object
     }
 
+    // TODO: Refactor this to not return a rehydrated pokemon
     public Pokemon getPokemonByNicknameAndTrainer(String nickname, Trainer trainer) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND nickname = ?";
@@ -271,5 +275,13 @@ public class PokemonCRUD {
             return null; // Return null to indicate an error occurred
         }
     }
+
+    // TODO: Method to return pokemon based on trainer DB ID and nickname
+    // TODO: method to return pokemon based on trainer Discord ID and nickname
+    /**
+     * Either need a method that returns a multi-objecttype array, or multiple
+     * methods that each return specific information. Could likely get by with
+     * having two methods, one returning String information and one returning ints.
+     */
 }
 

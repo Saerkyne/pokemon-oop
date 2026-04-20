@@ -202,8 +202,7 @@ public class AutoCompleteBot extends ListenerAdapter {
     }
 
     private void handleTeachMovesetAutoComplete(CommandAutoCompleteInteractionEvent event) {
-        // TODO: Fix this autocomplete, loading options fails for Moves
-        String focusedOptionName = event.getFocusedOption().getName();
+       String focusedOptionName = event.getFocusedOption().getName();
         if (focusedOptionName == null) {
             return; // No focused option, can't handle autocomplete
         }

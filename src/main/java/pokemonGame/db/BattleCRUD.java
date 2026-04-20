@@ -55,6 +55,9 @@ public class BattleCRUD {
         return -1; // Indicate failure if we reach here
     }
 
+    // TODO: Refactor this to return an array of battle statistics. Perhaps all the IDS in an array
+    // TODO: Perhaps also new method to return the status
+    // TODO: new method to return an array of the timestamps. 
     public Battle getBattleById(int battleId) {
         // Implementation to retrieve a battle from the database by its ID
         LOGGER.info("Retrieving battle with ID {}", battleId);
@@ -90,7 +93,8 @@ public class BattleCRUD {
         return null; // Placeholder return value
     }
 
-    public Battle getActiveBattleForTrainer(int trainerId) {
+    // TODO: Refactor this to return an array of active battle IDs. Rehydration done using above method in the Service layer
+    public Battle getActiveBattlesForTrainer(int trainerId) {
         // Implementation to retrieve the active battle for a given trainer
         LOGGER.info("Retrieving active battle for trainer {}", trainerId);
 
@@ -126,6 +130,7 @@ public class BattleCRUD {
         return null; // Placeholder return value
     }
 
+    // TODO: Refactor this to return the battle ID of this battle. 
     public Battle getActiveBattleForTrainerMatchup(int trainer1Id, int trainer2Id) {
         // Implementation to retrieve the active battle for a given trainer matchup
         LOGGER.info("Retrieving active battle for trainer matchup: {} vs {}", trainer1Id, trainer2Id);
@@ -219,6 +224,7 @@ public class BattleCRUD {
         }
     }
 
+    // TODO: Refactor this to get the IDs of each battle in the history for this trainer.
     public Battle[] getBattleHistoryForTrainer(int trainerId) {
         // Implementation to retrieve the battle history for a given trainer
         LOGGER.info("Retrieving battle history for trainer {}", trainerId);
@@ -241,7 +247,8 @@ public class BattleCRUD {
         return new Battle[0]; // Placeholder return value
     }
 
-    public Battle[] getAllActiveBattles() {
+    // TODO: Refactor this to return only an array of active battle IDs
+    public int[] getAllActiveBattles() {
         // Implementation to retrieve all active battles from the database
         LOGGER.info("Retrieving all active battles");
         try (Connection conn = DatabaseSetup.getConnection()) {
@@ -259,7 +266,7 @@ public class BattleCRUD {
             LOGGER.error("Error retrieving all active battles", e);
         }
 
-        return new Battle[0]; // Placeholder return value
+        return new int[0]; // Placeholder return value
     }
 
 }

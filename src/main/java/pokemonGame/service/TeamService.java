@@ -54,11 +54,13 @@ public class TeamService {
     private final TeamCRUD teamCRUD;
     private final PokemonCRUD pokemonCRUD;
     private final TrainerService trainerService;
+    private final PokemonService pokemonService;
 
-    public TeamService(TeamCRUD teamCRUD, PokemonCRUD pokemonCRUD, TrainerService trainerService) {
+    public TeamService(TeamCRUD teamCRUD, PokemonCRUD pokemonCRUD, TrainerService trainerService, PokemonService pokemonService) {
         this.teamCRUD = teamCRUD;
         this.pokemonCRUD = pokemonCRUD;
         this.trainerService = trainerService;
+        this.pokemonService = pokemonService;
     }
 
     /**
@@ -117,7 +119,7 @@ public class TeamService {
         team.setTeamDbId(teamId);
 
         for (int pokemonId : teamCRUD.getPokemonIdsForTeam(trainerId, teamId)) {
-            Pokemon pokemon = pokemonCRUD.getSpecificDBPokemonForTrainer(trainer, pokemonId);
+            Pokemon pokemon = pokemonService.mapDbPokemonToObject(pokemonCRUD.getPokemonAsArray(pokemonId), trainer);
             if (pokemon != null) {
                 team.add(pokemon);
             }

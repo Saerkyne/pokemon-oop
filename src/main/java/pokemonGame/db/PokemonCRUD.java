@@ -15,29 +15,21 @@
 
 package pokemonGame.db;
 import pokemonGame.core.EvManager;
-import pokemonGame.core.Natures;
 import pokemonGame.core.Stat;
-import pokemonGame.core.StatCalculator;
-import pokemonGame.model.Move;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Trainer;
-import pokemonGame.moves.PokeMove;
-import pokemonGame.service.MoveSlotService;
-import pokemonGame.species.PokeSpecies;
-import pokemonGame.species.PokemonFactory;
 
 import java.sql.*;
 import java.util.List;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PokemonCRUD {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PokemonCRUD.class);
-    private final MoveSlotService moveSlotService;
 
-    public PokemonCRUD(MoveSlotService moveSlotService) {
-        this.moveSlotService = moveSlotService;
+    public PokemonCRUD() {
     }
 
     public int createDBPokemon(Pokemon pokemon) {
@@ -78,32 +70,6 @@ public class PokemonCRUD {
             return -1; // Return -1 to indicate an error occurred
         }
         return -1; // Return -1 if Pokemon creation failed
-    }
-
-    // TODO: Refactor this to not return a rehydrated pokemon. Get the information, 
-    // Pass it on to PokemonService for rehydration
-    public Pokemon getSpecificDBPokemonForTrainer(Trainer trainer, int pokemonId) {
-        try (Connection conn = DatabaseSetup.getConnection()) {
-            String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND instance_id = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, trainer.getTrainerDbId());
-                pstmt.setInt(2, pokemonId);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    
-                    if (rs.next()) {
-                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
-                        LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies().name(), trainer.getTrainerDbId());
-                        return foundPokemon; // Return the retrieved Pokémon
-                    } else {
-                        LOGGER.warn("No Pokemon found with ID: {} for trainer ID: {}", pokemonId, trainer.getTrainerDbId());
-                        return null; // Return null if no Pokémon is found
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error retrieving Pokemon: {}", e.getMessage(), e);
-            return null; // Return null to indicate an error occurred
-        }
     }
     
     public boolean updateDBPokemon(Pokemon pokemon) {
@@ -174,86 +140,7 @@ public class PokemonCRUD {
         }
     }
 
-    // TODO: This method might need to be moved to PokemonService and not use SQL
-    public Pokemon mapResultSetToPokemon(ResultSet rs, Trainer trainer) throws SQLException {
-
-        
-        int foundPokemonId;
-        foundPokemonId = rs.getInt("instance_id");
-        
-        PokeSpecies species;
-        try {
-            species = PokeSpecies.valueOf(rs.getString("species"));
-        } catch (IllegalArgumentException e) {
-            LOGGER.error("Invalid species value in database: {}", rs.getString("species"), e);
-            throw new SQLException("Invalid species value in database: " + rs.getString("species"), e);
-        }
-        String name = rs.getString("nickname");
-        int level = rs.getInt("level");
-        Natures nature;
-        try {
-            nature = Natures.valueOf(rs.getString("nature"));
-        } catch (IllegalArgumentException e) {
-            LOGGER.error("Invalid nature value in database: {}", rs.getString("nature"), e);
-            throw new SQLException("Invalid nature value in database: " + rs.getString("nature"), e);
-        }
-        int ivHp = rs.getInt("iv_hp");
-        int ivAttack = rs.getInt("iv_attack");
-        int ivDefense = rs.getInt("iv_defense");
-        int ivSpAttack = rs.getInt("iv_sp_attack");
-        int ivSpDefense = rs.getInt("iv_sp_defense");
-        int ivSpeed = rs.getInt("iv_speed");
-        int currentHp = rs.getInt("current_hp");
-        int evHp = rs.getInt("ev_hp");
-        int evAttack = rs.getInt("ev_attack");
-        int evDefense = rs.getInt("ev_defense");
-        int evSpAttack = rs.getInt("ev_sp_attack");
-        int evSpDefense = rs.getInt("ev_sp_defense");
-        int evSpeed = rs.getInt("ev_speed");
-        int currentExp = rs.getInt("current_exp");
-
-        // Create a new Pokemon object and populate its fields from the ResultSet
-        Pokemon foundPokemon = PokemonFactory.createPokemonFromRegistry(species, name);
-        foundPokemon.setTrainer(trainer); // Set the trainer using the Trainer object
-        foundPokemon.setPokemonDbId(foundPokemonId);
-        foundPokemon.setLevel(level);
-        foundPokemon.setNature(nature);
-        foundPokemon.setIvHp(ivHp);
-        foundPokemon.setIvAttack(ivAttack);
-        foundPokemon.setIvDefense(ivDefense);
-        foundPokemon.setIvSpecialAttack(ivSpAttack);
-        foundPokemon.setIvSpecialDefense(ivSpDefense);
-        foundPokemon.setIvSpeed(ivSpeed);
-        EvManager.setEv(foundPokemon, Stat.HP, evHp);
-        EvManager.setEv(foundPokemon, Stat.ATTACK, evAttack);
-        EvManager.setEv(foundPokemon, Stat.DEFENSE, evDefense);
-        EvManager.setEv(foundPokemon, Stat.SPECIAL_ATTACK, evSpAttack);
-        EvManager.setEv(foundPokemon, Stat.SPECIAL_DEFENSE, evSpDefense);
-        EvManager.setEv(foundPokemon, Stat.SPEED, evSpeed);
-        foundPokemon.setCurrentExp(currentExp);
-        StatCalculator.calculateAllStats(foundPokemon); // Recalculate stats based on IVs, EVs, and level
-        foundPokemon.setCurrentHP(currentHp); // Set the current HP after recalculating stats
-
-        // Load moves from pokemon_movesets and populate the in-memory moveset
-        List<String[]> moveRows = moveSlotService.getCurrentDbMoves(foundPokemonId);
-        for (String[] row : moveRows) {
-            String moveName = row[0];
-            int pp = Integer.parseInt(row[1]);
-            try {
-                Move move = PokeMove.fromString(moveName).getMoveInstance();
-                foundPokemon.addMove(move);
-                // Set the persisted PP (may differ from max if the move was partially used)
-                foundPokemon.getMoveSet().get(foundPokemon.getMoveSet().size() - 1).setCurrentPP(pp);
-            } catch (IllegalArgumentException e) {
-                LOGGER.error("Unknown move '{}' in DB for Pokémon instance {}; skipping.", moveName, foundPokemonId);
-            }
-        }
-
-        return foundPokemon; // Return the Pokémon object
-    }
-
-    // TODO: Refactor this to not return a rehydrated pokemon
-    public Pokemon getPokemonByNicknameAndTrainer(String nickname, Trainer trainer) {
+    public int getPokemonDbIdByNicknameAndTrainer(String nickname, Trainer trainer) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM pokemon_instances WHERE trainer_id = ? AND nickname = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -261,18 +148,18 @@ public class PokemonCRUD {
                 pstmt.setString(2, nickname);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
-                        Pokemon foundPokemon = mapResultSetToPokemon(rs, trainer);
-                        LOGGER.info("Pokemon '{}' ({}) retrieved successfully for trainer ID {}.", foundPokemon.getNickname(), foundPokemon.getSpecies().name(), trainer.getTrainerDbId());
-                        return foundPokemon; // Return the retrieved Pokémon
+                        int pokemonDbId = rs.getInt("instance_id");
+                        LOGGER.info("Pokemon with ID '{}' retrieved successfully for trainer ID {}.", pokemonDbId, trainer.getTrainerDbId());
+                        return pokemonDbId;
                     } else {
                         LOGGER.warn("No Pokemon found with nickname: '{}' for trainer ID: {}", nickname, trainer.getTrainerDbId());
-                        return null; // Return null if no Pokémon is found
+                        return -1; // Return -1 if no Pokémon is found
                     }
                 }
             }
         } catch (SQLException e) {
             LOGGER.error("Error retrieving Pokemon by nickname: {}", e.getMessage(), e);
-            return null; // Return null to indicate an error occurred
+            return -1; // Return -1 to indicate an error occurred
         }
     }
 
@@ -283,5 +170,45 @@ public class PokemonCRUD {
      * methods that each return specific information. Could likely get by with
      * having two methods, one returning String information and one returning ints.
      */
+    public List<Object> getPokemonAsArray(int instanceId) {
+        List<Object> pokemonData = new ArrayList<>();
+
+        LOGGER.debug("Retrieving Pokémon data as array for instance ID: {}", instanceId);
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT * FROM pokemon_instances WHERE instance_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, instanceId);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        // Populate the pokemonData list with the retrieved data
+                        pokemonData.add(rs.getInt("instance_id"));
+                        pokemonData.add(rs.getInt("trainer_id"));
+                        pokemonData.add(rs.getString("species"));
+                        pokemonData.add(rs.getString("nickname"));
+                        pokemonData.add(rs.getInt("level"));
+                        pokemonData.add(rs.getString("nature"));
+                        pokemonData.add(rs.getInt("iv_hp"));
+                        pokemonData.add(rs.getInt("iv_attack"));
+                        pokemonData.add(rs.getInt("iv_defense"));
+                        pokemonData.add(rs.getInt("iv_special_attack"));
+                        pokemonData.add(rs.getInt("iv_special_defense"));
+                        pokemonData.add(rs.getInt("iv_speed"));
+                        pokemonData.add(rs.getInt("ev_hp"));
+                        pokemonData.add(rs.getInt("ev_attack"));
+                        pokemonData.add(rs.getInt("ev_defense"));
+                        pokemonData.add(rs.getInt("ev_special_attack"));
+                        pokemonData.add(rs.getInt("ev_special_defense"));
+                        pokemonData.add(rs.getInt("ev_speed"));
+                        pokemonData.add(rs.getInt("current_exp"));
+                        pokemonData.add(rs.getInt("current_hp"));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving Pokémon data as array for instance ID: {}", instanceId, e);
+
+        }
+        return pokemonData;
+    }
 }
 

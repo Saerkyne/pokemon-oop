@@ -15,21 +15,6 @@ public class BattleTurnCRUD {
 
     /*
      * One trainer should have one pending-action row per battle.
-     *
-     * First submission inserts that row. If the player changes their choice before
-     * the opponent submits, we want to overwrite the existing row instead of failing
-     * with a duplicate-key error. That is why the SQL uses ON DUPLICATE KEY UPDATE.
-     *
-     * Important detail: SQL does not treat (...) as a placeholder for column names.
-     * The INSERT still needs the real column list:
-     *   (battle_id, trainer_id, action_type, move_slot_index, switch_pokemon_id, submitted_at)
-     *
-     * If we leave (...) in the SQL string, MariaDB parses it literally and rejects
-     * the statement before the duplicate-key logic ever runs.
-     *
-     * Action mapping stays simple:
-     * - MoveAction writes move_slot_index and stores NULL for switch_pokemon_id.
-     * - SwitchAction writes switch_pokemon_id and stores NULL for move_slot_index.
      */
     public void submitPendingAction(int battleId, int trainerId, BattleAction action) {
         // Implementation to submit a pending action for a battle turn

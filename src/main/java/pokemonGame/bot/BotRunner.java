@@ -14,6 +14,7 @@ import pokemonGame.db.TrainerCRUD;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import pokemonGame.service.BattleService;
 import pokemonGame.service.MoveSlotService;
+import pokemonGame.service.PokemonService;
 import pokemonGame.service.TeamService;
 import pokemonGame.service.TrainerService;
 
@@ -30,8 +31,9 @@ public class BotRunner {
         BattleService battleService = new BattleService(new BattleCRUD());
         MoveSlotService moveSlotService = new MoveSlotService(new MoveCRUD());
         TrainerService trainerService = new TrainerService(new TrainerCRUD());
-        PokemonCRUD pokemonCRUD = new PokemonCRUD(moveSlotService);
-        TeamService teamService = new TeamService(new TeamCRUD(), pokemonCRUD, trainerService);
+        PokemonCRUD pokemonCRUD = new PokemonCRUD();
+        PokemonService pokemonService = new PokemonService(pokemonCRUD, moveSlotService);
+        TeamService teamService = new TeamService(new TeamCRUD(), pokemonCRUD, trainerService, pokemonService);
 
 
         JDA api = JDABuilder.createDefault(token)

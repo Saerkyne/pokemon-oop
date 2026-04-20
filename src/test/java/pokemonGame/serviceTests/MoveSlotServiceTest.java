@@ -15,6 +15,7 @@ import pokemonGame.db.TeamCRUD;
 import pokemonGame.db.TrainerCRUD;
 import pokemonGame.moves.Psychic;
 import pokemonGame.service.MoveSlotService;
+import pokemonGame.service.PokemonService;
 import pokemonGame.service.TeamService;
 import pokemonGame.service.TrainerService;
 import pokemonGame.model.Trainer;
@@ -28,9 +29,10 @@ class MoveSlotServiceTest {
     private TrainerCRUD trainerCRUD = new TrainerCRUD();
     private TeamCRUD teamCRUD = new TeamCRUD();
     private MoveSlotService moveSlotService = new MoveSlotService(moveCRUD);
-    private PokemonCRUD pokemonCRUD = new PokemonCRUD(moveSlotService);
+    private PokemonCRUD pokemonCRUD = new PokemonCRUD();
     private TrainerService trainerService = new TrainerService(trainerCRUD);
-    private TeamService teamService = new TeamService(teamCRUD, pokemonCRUD, trainerService);
+    private PokemonService pokemonService = new PokemonService(pokemonCRUD, moveSlotService);
+    private TeamService teamService = new TeamService(teamCRUD, pokemonCRUD, trainerService, pokemonService);
     
     @BeforeEach
     void setUp() {

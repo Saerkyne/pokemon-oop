@@ -76,7 +76,7 @@ public class TeamCRUD {
         }
     }
 
-    public Boolean removePokemonFromDBTeam(int trainerDbId, int teamId, int slotIndex) {
+    public boolean removePokemonFromDBTeam(int trainerDbId, int teamId, int slotIndex) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String teamName = getTeamName(conn, trainerDbId, teamId);
             if (teamName == null) {

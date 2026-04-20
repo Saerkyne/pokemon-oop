@@ -181,14 +181,14 @@ public class PokemonCRUD {
                         pokemonData.add(rs.getInt("iv_hp"));
                         pokemonData.add(rs.getInt("iv_attack"));
                         pokemonData.add(rs.getInt("iv_defense"));
-                        pokemonData.add(rs.getInt("iv_special_attack"));
-                        pokemonData.add(rs.getInt("iv_special_defense"));
+                        pokemonData.add(rs.getInt("iv_sp_attack"));
+                        pokemonData.add(rs.getInt("iv_sp_defense"));
                         pokemonData.add(rs.getInt("iv_speed"));
                         pokemonData.add(rs.getInt("ev_hp"));
                         pokemonData.add(rs.getInt("ev_attack"));
                         pokemonData.add(rs.getInt("ev_defense"));
-                        pokemonData.add(rs.getInt("ev_special_attack"));
-                        pokemonData.add(rs.getInt("ev_special_defense"));
+                        pokemonData.add(rs.getInt("ev_sp_attack"));
+                        pokemonData.add(rs.getInt("ev_sp_defense"));
                         pokemonData.add(rs.getInt("ev_speed"));
                         pokemonData.add(rs.getInt("current_exp"));
                         pokemonData.add(rs.getInt("current_hp"));

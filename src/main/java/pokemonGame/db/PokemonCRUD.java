@@ -29,9 +29,6 @@ public class PokemonCRUD {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PokemonCRUD.class);
 
-    public PokemonCRUD() {
-    }
-
     public int createDBPokemon(Pokemon pokemon) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "INSERT INTO pokemon_instances "
@@ -163,13 +160,7 @@ public class PokemonCRUD {
         }
     }
 
-    // TODO: Method to return pokemon based on trainer DB ID and nickname
-    // TODO: method to return pokemon based on trainer Discord ID and nickname
-    /**
-     * Either need a method that returns a multi-objecttype array, or multiple
-     * methods that each return specific information. Could likely get by with
-     * having two methods, one returning String information and one returning ints.
-     */
+    // TODO: Test for NPEs
     public List<Object> getPokemonAsArray(int instanceId) {
         List<Object> pokemonData = new ArrayList<>();
 

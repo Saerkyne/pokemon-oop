@@ -63,9 +63,9 @@ public class TrainerService {
      */
     public Trainer createTrainer(String trainerName, long discordId, String discordUsername) {
         // Check for existing trainer first
-        Trainer existing = trainerCRUD.getTrainerByDiscordId(discordId);
+        String existing = trainerCRUD.getTrainerNameByDiscordId(discordId);
         if (existing != null) {
-            LOGGER.info("Trainer already exists for Discord ID {}: '{}'.", discordId, existing.getTrainerName());
+            LOGGER.info("Trainer already exists for Discord ID {}: '{}'.", discordId, existing);
             return null; // Caller interprets null as "already exists"
         }
 
@@ -95,7 +95,14 @@ public class TrainerService {
      * @return the {@link Trainer} if found, or {@code null}
      */
     public Trainer getTrainerByDiscordId(long discordId) {
-        return trainerCRUD.getTrainerByDiscordId(discordId);
+        String trainerName = trainerCRUD.getTrainerNameByDiscordId(discordId);
+        if (trainerName == null) {
+            return null;
+        }
+        Trainer trainer = new Trainer(trainerName);
+        trainer.setDiscordId(discordId);
+        trainer.setTrainerDbId(trainerCRUD.getTrainerDbIdByDiscordId(discordId));
+        return trainer;
     }
 
     /**
@@ -105,7 +112,14 @@ public class TrainerService {
      * @return the {@link Trainer} if found, or {@code null}
      */
     public Trainer getTrainerByDbId(int dbId) {
-        return trainerCRUD.getTrainerByDbId(dbId);
+        String trainerName = trainerCRUD.getTrainerNameByDbId(dbId);
+        if (trainerName == null) {
+            return null;
+        }
+        Trainer trainer = new Trainer(trainerName);
+        trainer.setTrainerDbId(dbId);
+        trainer.setDiscordId(trainerCRUD.getTrainerDiscordIdByDbId(dbId));
+        return trainer;
     }
 
     /**

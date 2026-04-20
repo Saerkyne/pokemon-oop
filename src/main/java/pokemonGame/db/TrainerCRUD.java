@@ -4,8 +4,6 @@ import java.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pokemonGame.model.Trainer;
-
 /**
  * This class provides CRUD operations for managing trainer objects in the database.
  * The only caller should be {@link TrainerService} to manage in-memory building or 
@@ -43,8 +41,8 @@ public class TrainerCRUD {
         return -1; // Return -1 if trainer creation failed
     }
 
-    // TODO: Refactor this to provide the DbId, we don't want rehydration here.
-    public Trainer getTrainerByDiscordId(long discordID) {
+    
+    public String getTrainerNameByDiscordId(long discordID) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM trainers WHERE discord_id = ?";
 
@@ -53,12 +51,10 @@ public class TrainerCRUD {
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
-                        Trainer trainer = new Trainer(rs.getString("name"));
-                        trainer.setTrainerDbId(rs.getInt("trainer_id")); // Set the trainer's ID from the database
-                        trainer.setDiscordId(rs.getLong("discord_id")); // Set the trainer's Discord ID from the database
+                        String trainerName = rs.getString("name");
 
-                        LOGGER.info("Trainer '{}' retrieved successfully.", trainer.getTrainerName());
-                        return trainer; // Return the retrieved trainer
+                        LOGGER.info("Trainer '{}' retrieved successfully.", trainerName);
+                        return trainerName; // Return the retrieved trainer name
                     } else {
                         LOGGER.warn("No trainer found with Discord ID: {}", discordID);
                         return null; // Return null if no trainer is found
@@ -71,8 +67,31 @@ public class TrainerCRUD {
         }
     }
 
-    // TODO: Refactor this to return Discord ID
-    public Trainer getTrainerByDbId(int trainerDbId) {
+    public int getTrainerDbIdByDiscordId(long discordID) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT * FROM trainers WHERE discord_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setLong(1, discordID);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        int trainerDbId = rs.getInt("trainer_id");
+                        LOGGER.info("Trainer DB ID '{}' retrieved successfully for Discord ID {}.", trainerDbId, discordID);
+                        return trainerDbId; // Return the retrieved trainer DB ID
+                    } else {
+                        LOGGER.warn("No trainer found with Discord ID: {}", discordID);
+                        return -1; // Return -1 if no trainer is found
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving trainer DB ID: {}", e.getMessage(), e);
+            return -1; // Return -1 to indicate an error occurred
+        }
+    }
+
+    public long getTrainerDiscordIdByDbId(int trainerDbId) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String sql = "SELECT * FROM trainers WHERE trainer_id = ?";
 
@@ -81,12 +100,34 @@ public class TrainerCRUD {
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
-                        Trainer trainer = new Trainer(rs.getString("name"));
-                        trainer.setTrainerDbId(rs.getInt("trainer_id")); // Set the trainer's ID from the database
-                        trainer.setDiscordId(rs.getLong("discord_id")); // Set the trainer's Discord ID from the database
+                        long discordId = rs.getLong("discord_id");
+                        LOGGER.info("Trainer Discord ID '{}' retrieved successfully for DB ID {}.", discordId, trainerDbId);
+                        return discordId; // Return the retrieved Discord ID
+                    } else {
+                        LOGGER.warn("No trainer found with DB ID: {}", trainerDbId);
+                        return -1; // Return -1 if no trainer is found
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving trainer Discord ID: {}", e.getMessage(), e);
+            return -1; // Return -1 to indicate an error occurred
 
-                        LOGGER.info("Trainer '{}' retrieved successfully by DB ID.", trainer.getTrainerName());
-                        return trainer; // Return the retrieved trainer
+        }
+    }
+
+    public String getTrainerNameByDbId(int trainerDbId) {
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT * FROM trainers WHERE trainer_id = ?";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainerDbId);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        String trainerName = rs.getString("name");
+                        LOGGER.info("Trainer '{}' retrieved successfully by DB ID {}.", trainerName, trainerDbId);
+                        return trainerName; // Return the retrieved trainer name
                     } else {
                         LOGGER.warn("No trainer found with DB ID: {}", trainerDbId);
                         return null; // Return null if no trainer is found
@@ -185,8 +226,5 @@ public class TrainerCRUD {
         }
     }
 
-    // TODO: Method for returning trainer Discord Username via Discord ID
-    // TODO: Method for returning trainer Discord Username via Database ID
-    // TODO: Method for returning trainer name via Discord ID
-    // TODO: Method for returning trainer name via Database ID 
+
 }

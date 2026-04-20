@@ -5,9 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import pokemonGame.db.TrainerCRUD;
+import pokemonGame.service.TrainerService;
 import pokemonGame.db.DatabaseSetup;
 import pokemonGame.model.Trainer;
-
+// TODO: Update tests to use trainerService instead of trainerCRUD
 /**
  * Unit tests for {@link TrainerCRUD} database operations.
  *
@@ -28,6 +29,7 @@ import pokemonGame.model.Trainer;
 class TrainerCRUDTest {
 
     private TrainerCRUD trainerCRUD = new TrainerCRUD();
+    private TrainerService trainerService = new TrainerService(trainerCRUD);
 
     @BeforeEach
     void setUp() {
@@ -103,7 +105,7 @@ class TrainerCRUDTest {
         int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
         assertTrue(trainerId > 0, "Trainer ID should be greater than 0");
 
-        Trainer retrievedTrainer = trainerCRUD.getTrainerByDiscordId(trainer.getDiscordId());
+        Trainer retrievedTrainer = trainerService.getTrainerByDbId(trainerId);
         assertNotNull(retrievedTrainer, "Retrieved trainer should not be null");
         assertEquals(trainer.getTrainerName(), retrievedTrainer.getTrainerName(), "Trainer names should match");
         assertEquals(trainer.getDiscordId(), retrievedTrainer.getDiscordId(), "Discord IDs should match");
@@ -120,7 +122,7 @@ class TrainerCRUDTest {
      */
     @Test
     void testGetTrainerByDiscordIdNotFound() {
-        Trainer retrievedTrainer = trainerCRUD.getTrainerByDiscordId(999999999L);
+        Trainer retrievedTrainer = trainerService.getTrainerByDiscordId(999999999L);
         assertNull(retrievedTrainer, "Retrieved trainer should be null for non-existent Discord ID");
     }
 
@@ -138,7 +140,7 @@ class TrainerCRUDTest {
         int trainerId = trainerCRUD.createDBTrainer(trainer.getDiscordId(), "AshDiscord", trainer.getTrainerName());
         assertTrue(trainerId > 0, "Trainer ID should be greater than 0");   
 
-        Trainer retrievedTrainer = trainerCRUD.getTrainerByDbId(trainerId);
+        Trainer retrievedTrainer = trainerService.getTrainerByDbId(trainerId);
         assertNotNull(retrievedTrainer, "Retrieved trainer should not be null");
         assertEquals(trainer.getTrainerName(), retrievedTrainer.getTrainerName(), "Trainer names should match");
         assertEquals(trainer.getDiscordId(), retrievedTrainer.getDiscordId(), "Discord IDs should match");
@@ -155,7 +157,7 @@ class TrainerCRUDTest {
      */
     @Test
     void testGetTrainerByDbIdNotFound() {
-        Trainer retrievedTrainer = trainerCRUD.getTrainerByDbId(9999);
+        Trainer retrievedTrainer = trainerService.getTrainerByDbId(9999);
         assertNull(retrievedTrainer, "Retrieved trainer should be null for non-existent DB ID");
     }
 
@@ -181,7 +183,7 @@ class TrainerCRUDTest {
         int rowsUpdated = trainerCRUD.updateTrainerNameByDiscordId(trainer.getDiscordId(), newName);
         assertEquals(1, rowsUpdated, "One row should be updated");
 
-        Trainer retrievedTrainer = trainerCRUD.getTrainerByDiscordId(trainer.getDiscordId());
+        Trainer retrievedTrainer = trainerService.getTrainerByDiscordId(trainer.getDiscordId());
         assertNotNull(retrievedTrainer, "Retrieved trainer should not be null");
         assertEquals(newName, retrievedTrainer.getTrainerName(), "Trainer name should be updated");
     }
@@ -204,7 +206,7 @@ class TrainerCRUDTest {
         int rowsUpdated = trainerCRUD.updateTrainerNameByDbId(trainerId, newName);
         assertEquals(1, rowsUpdated, "One row should be updated");
 
-        Trainer retrievedTrainer = trainerCRUD.getTrainerByDbId(trainerId);
+        Trainer retrievedTrainer = trainerService.getTrainerByDbId(trainerId);
         assertNotNull(retrievedTrainer, "Retrieved trainer should not be null");
         assertEquals(newName, retrievedTrainer.getTrainerName(), "Trainer name should be updated");
     }
@@ -228,7 +230,7 @@ class TrainerCRUDTest {
         assertTrue(trainerId > 0, "Trainer ID should be greater than 0");
         int rowsDeleted = trainerCRUD.deleteTrainerByDiscordId(trainer.getDiscordId());
         assertEquals(1, rowsDeleted, "One row should be deleted");
-        Trainer retrievedTrainer = trainerCRUD.getTrainerByDiscordId(trainer.getDiscordId());
+        Trainer retrievedTrainer = trainerService.getTrainerByDiscordId(trainer.getDiscordId());
         assertNull(retrievedTrainer, "Retrieved trainer should be null after deletion");
     }
 
@@ -247,7 +249,7 @@ class TrainerCRUDTest {
         assertTrue(trainerId > 0, "Trainer ID should be greater than 0");
         int rowsDeleted = trainerCRUD.deleteTrainerByDiscordId(trainer.getDiscordId());
         assertEquals(1, rowsDeleted, "One row should be deleted");
-        Trainer retrievedTrainer = trainerCRUD.getTrainerByDbId(trainerId);
+        Trainer retrievedTrainer = trainerService.getTrainerByDbId(trainerId);
         assertNull(retrievedTrainer, "Retrieved trainer should be null after deletion");
     }
 }

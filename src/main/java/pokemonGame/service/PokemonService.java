@@ -27,6 +27,7 @@ public class PokemonService {
         this.moveSlotService = moveSlotService;
     }
 
+    // TODO: Test for NPEs
     public Pokemon mapDbPokemonToObject(List<Object> pokemonData, Trainer trainer) {
         LOGGER.debug("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}",
                 trainer.getTrainerDbId(), pokemonData.get(0), pokemonData.get(2), pokemonData.get(4));

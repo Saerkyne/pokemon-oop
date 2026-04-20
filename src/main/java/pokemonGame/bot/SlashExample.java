@@ -79,7 +79,6 @@ public class SlashExample extends ListenerAdapter{
                 handleCheckTeam(event, user, userId);
                 return;
             }
-                
 
             case "addpokemon" -> {
                 handleAddPokemon(event, user, userId);
@@ -99,6 +98,18 @@ public class SlashExample extends ListenerAdapter{
                 handleClearDatabase(event, user, userId);
                 return;
             }
+
+            // TODO: Need a checkmoveset command
+            // Will need to take team and pokemon arguments
+
+            // TODO: Need a turnaction command for switch or move use
+            // Will need to take battle and move argument. Needs to 
+            // set the pending action for this user. 
+
+            // TODO: Decide when actual battle logic will take place. 
+            // Once both users have sent a pending action, is the turn done immediately
+            // or only on another command entry? I'm thinking immediately upon receiving the second
+            // action.
             
             default -> {
                 event.reply("I can't handle that command right now :(")
@@ -225,6 +236,7 @@ public class SlashExample extends ListenerAdapter{
             newPokemon.setTrainer(currentTrainer);
             newPokemon.setLevel(50); // Set the Pokémon's level to 50 for testing purposes
             StatCalculator.calculateAllStats(newPokemon); // Recalculate stats based on level 50 for testing purposes
+            newPokemon.healToFull();
             
 
             
@@ -435,7 +447,7 @@ public class SlashExample extends ListenerAdapter{
 
         
         List<String> moveNames = Stream.of(
-            "move one", "move two", "move three", "move four")
+            "moveone", "movetwo", "movethree", "movefour")
             .map(name -> event.getOption(name))
             .filter(Objects::nonNull)
             .map(option -> option.getAsString())

@@ -66,6 +66,7 @@ public class BattleCRUD {
                 pstmt.setInt(1, battleId);
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     if (battleSet.next()) {
+                        // TODO: Use BattleService for the rehydration, not directly calling a Battle object
                         Battle battle = new Battle();
                         battle.setBattleId(battleSet.getInt("battle_id"));
                         battle.setTrainer1Id(battleSet.getInt("trainer1_id"));
@@ -101,6 +102,7 @@ public class BattleCRUD {
                 pstmt.setInt(2, trainerId);
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     if (battleSet.next()) {
+                        // TODO: Use BattleService for the rehydration, not directly calling a Battle object
                         Battle battle = new Battle();
                         battle.setBattleId(battleSet.getInt("battle_id"));
                         battle.setTrainer1Id(battleSet.getInt("trainer1_id"));
@@ -138,6 +140,7 @@ public class BattleCRUD {
                 pstmt.setInt(4, trainer1Id);
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     if (battleSet.next()) {
+                        // TODO: Use BattleService for the rehydration, not directly calling a Battle object
                         Battle battle = new Battle();
                         battle.setBattleId(battleSet.getInt("battle_id"));
                         battle.setTrainer1Id(battleSet.getInt("trainer1_id"));
@@ -227,6 +230,8 @@ public class BattleCRUD {
                 pstmt.setInt(2, trainerId);
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     // Collect battles into a list and convert to an array
+                    // This shouldn't return an array of battles, that should be done by BattleService.
+                    // This should call BattleService for the rehydration.
                     // TODO: DB-7 — Implement: iterate ResultSet, map rows to Battle objects, collect into List, return as array.
                 }
             }
@@ -244,6 +249,8 @@ public class BattleCRUD {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     // Collect battles into a list and convert to an array
+                    // This shouldn't return an array of battles, that should be done by BattleService.
+                    // This should call BattleService for the rehydration.
                     // TODO: DB-7 — Implement: iterate ResultSet, map rows to Battle objects, collect into List, return as array.
 
                 }

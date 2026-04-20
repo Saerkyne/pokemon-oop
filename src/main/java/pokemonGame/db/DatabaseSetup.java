@@ -83,6 +83,7 @@ public class DatabaseSetup {
         // Run pending database migrations on startup.
         // This applies to whichever database DB_URL points at — prod or test —
         // so both environments stay in sync without manual SSH work.
+        logger.info("Running pending database migrations.");
         DatabaseMigrator.migrate();
     }
 

@@ -202,37 +202,103 @@ public class AutoCompleteBot extends ListenerAdapter {
     }
 
     private void handleTeachMovesetAutoComplete(CommandAutoCompleteInteractionEvent event) {
+        // TODO: Fix this autocomplete, loading options fails for Moves
         String focusedOptionName = event.getFocusedOption().getName();
         if (focusedOptionName == null) {
             return; // No focused option, can't handle autocomplete
         }
-        String teamName = Optional.ofNullable(event.getOption("team"))
-                .map(option -> option.getAsString())
-                .orElse(null);
-        String pokemonName = Optional.ofNullable(event.getOption("pokemon"))
-                .map(option -> option.getAsString())
-                .orElse(null);
-        if (teamName == null || pokemonName == null) {
-            return; // Missing required options, can't handle autocomplete
-        }
+        
+        if (focusedOptionName.equals("team")) {
+            String focusedTeamCheck = event.getFocusedOption().getName();
+            if (focusedTeamCheck == null) {
+                return; // No focused option, can't handle autocomplete
+            }
 
-        if (focusedOptionName.equals("move one") || focusedOptionName.equals("move two") || focusedOptionName.equals("move three") || focusedOptionName.equals("move four")) {
+            if (focusedTeamCheck.equals("team")) {
+                String userInput = event.getFocusedOption().getValue().toLowerCase();
+                Long discordId = event.getUser().getIdLong();
+                Trainer trainer = trainerService.getTrainerByDiscordId(discordId);
+                if (trainer == null) {
+                    event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
+                    return;
+                }
+                
+                List<Command.Choice> options = teamService.getTeamNames(trainer.getTrainerDbId()).stream()
+                    .filter(teamName -> teamName.toLowerCase().startsWith(userInput))
+                    .map(teamName -> new Command.Choice(teamName, teamName))
+                    .collect(Collectors.toList());
+                event.replyChoices(options).queue();
+            }
+        } else if (focusedOptionName.equals("pokemon")) {
+            if (event.getOption("team") == null) {
+                // If the user is trying to autocomplete the "pokemon" option but hasn't selected a team yet,
+                // we can't provide any valid options, so we return an empty list.
+                event.replyChoices(Collections.emptyList()).queue();
+                LOGGER.info("No team selected for Pokémon autocomplete");
+                return; 
+            }
+            String teamName = Optional.ofNullable(event.getOption("team"))
+                .map(option -> option.getAsString())
+                .orElse(null);
+            Long discordId = event.getUser().getIdLong();
+            Trainer trainer = trainerService.getTrainerByDiscordId(discordId);
+            if (trainer == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
+                LOGGER.info("No trainer found for Pokémon autocomplete");
+                return;
+            }
+            
+            Team trainerTeam = teamService.loadTeam(trainer.getTrainerDbId(), teamService.getTeamFromName(trainer.getTrainerDbId(), teamName).getTeamDbId());
+            if (trainerTeam == null) {
+                event.replyChoices(Collections.emptyList()).queue(); // No team found, return empty choices
+                LOGGER.info("No DB team found for Pokémon autocomplete");
+                return;
+            }
+            
+            List<Command.Choice> options = trainerTeam.getTeamAsList().stream()
+                .map(choice -> new Command.Choice(choice.getNickname(), choice.getNickname()))
+                .collect(Collectors.toList());
+            event.replyChoices(options).queue();
+
+        } else if (focusedOptionName.contains("move")) {
+            LOGGER.info("Providing move autocomplete options");
+            if (event.getOption("pokemon") == null) {
+                // If the user is trying to autocomplete a move option but hasn't selected a Pokémon yet,
+                // we can't provide any valid options, so we return an empty list.
+                event.replyChoices(Collections.emptyList()).queue();
+                LOGGER.info("No Pokémon selected for move autocomplete");
+                return;
+            }
+            if (event.getOption("team") == null) {
+                // If the user is trying to autocomplete a move option but hasn't selected a team yet,
+                // we can't provide any valid options, so we return an empty list.
+                event.replyChoices(Collections.emptyList()).queue();
+                LOGGER.info("No team selected for move autocomplete");
+                return;
+            }
+            
             String userInput = event.getFocusedOption().getValue().toLowerCase();
+            String pokemonName = event.getOption("pokemon").getAsString().toLowerCase();
             Trainer trainer = trainerService.getTrainerByDiscordId(event.getUser().getIdLong());
             if (trainer == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No trainer found, return empty choices
+                LOGGER.info("No trainer found for move autocomplete");
+
                 return;
             }
             int trainerDbId = trainer.getTrainerDbId();
 
-            Team selectedTeam = teamService.getTeamFromName(trainerDbId, teamName);
+            Team selectedTeam = teamService.loadTeam(trainerDbId, teamService.getTeamFromName(trainerDbId, event.getOption("team").getAsString()).getTeamDbId());
             if (selectedTeam == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No team found, return empty choices
+                LOGGER.info("No DB team found for move autocomplete");
                 return;
             }
+            
             Pokemon selectedPokemon = teamService.getPokemonByNickname(trainerDbId, selectedTeam.getTeamDbId(), pokemonName);
             if (selectedPokemon == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No Pokémon found, return empty choices
+                LOGGER.info("No DB Pokémon found for move autocomplete");
                 return;
             }
             List<Command.Choice> options = moveSlotService.getEligibleMoves(selectedPokemon).stream()
@@ -240,9 +306,12 @@ public class AutoCompleteBot extends ListenerAdapter {
                 .map(Move::getMoveName)
                 .filter(moveName -> moveName.toLowerCase().startsWith(userInput))
                 .sorted() // Alphabetical order
+                .distinct()
                 .limit(25) // Discord allows a maximum of 25 autocomplete options
                 .map(moveName -> new Command.Choice(moveName, moveName)) // Use the move name as both the display and value
                 .collect(Collectors.toList());
+            LOGGER.info("Providing move autocomplete options for Pokémon: {}", selectedPokemon.getNickname());
+            LOGGER.info("Learnable moves: {}", options.stream().map(Command.Choice::getName).collect(Collectors.joining(", ")));
             event.replyChoices(options).queue();
         }
     }

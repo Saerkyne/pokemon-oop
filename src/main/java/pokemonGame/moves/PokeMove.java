@@ -190,6 +190,8 @@ public enum PokeMove {
 
     private final String displayName;
     private final Type type;
+    // TODO(review 2026-04-20): If enum singletons stay canonical here, make concrete move constructors private or package-private.
+    // Public constructors let callers bypass these shared immutable instances and allocate duplicate Move objects for no gameplay benefit.
     private final Move move; // Function to create a Move instance from this enum constant
 
 

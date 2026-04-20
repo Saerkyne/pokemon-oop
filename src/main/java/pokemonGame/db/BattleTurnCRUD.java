@@ -39,6 +39,8 @@ public class BattleTurnCRUD {
                     case SwitchAction sa -> {
                         pstmt.setString(3, "SWITCH");
                         pstmt.setNull(4, Types.INTEGER);  // no move slot
+                        // TODO(review 2026-04-20): Align persisted value with column meaning before battle resume logic ships.
+                        // switch_pokemon_id currently stores teamSlotIndex(), so later rehydration cannot tell whether this is a slot number or a Pokemon instance ID.
                         pstmt.setInt(5, sa.teamSlotIndex());
                     }
                 }
@@ -67,6 +69,8 @@ public class BattleTurnCRUD {
                         int moveSlotIndex = rs.getInt("move_slot_index");
                         int switchPokemonId = rs.getInt("switch_pokemon_id");
 
+                        // TODO(review 2026-04-20): Return raw pending-action data here and hydrate BattleAction in BattleService.
+                        // DAO -> Service calls invert layer direction and make battle resume logic depend on partially rehydrated domain state.
                         // pass to BattleService to rehydrate into BattleAction records
                         // call BattleService.createActionFromDbRow(trainerId, actionType, moveSlotIndex, switchPokemonId)
                         // BattleService will parse actionType into MoveAction or SwitchAction, 

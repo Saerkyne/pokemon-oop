@@ -69,6 +69,8 @@ public class StatCalculator {
             // Otherwise, we might add logic here to adjust current HP proportionally, but for now we will just leave current HP as is when max HP changes.
             // This means that if you change EVs or IVs in a way that changes max HP, your current HP will not automatically adjust to the new max HP. This is something that could
             // be changed in the future if desired, but for now we will just keep it simple and not implement that logic.
+            // TODO(review 2026-04-20): Clamp current HP to new max HP after recalculation.
+            // Level/EV/IV changes can lower max HP and leave impossible in-memory state where currentHP exceeds maxHP.
 
             LOGGER.info("Max HP changed from {} to {}. Current HP remains at {}.", oldMaxHP, pokemon.getMaxHP(), pokemon.getCurrentHP());
         }

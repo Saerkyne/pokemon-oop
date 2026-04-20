@@ -37,6 +37,8 @@ public class Battle {
     private int battleId;
     private int trainer1Id;
     private int trainer2Id;
+    // TODO(review 2026-04-20): Model SQL-nullable IDs with Integer or another explicit unset representation.
+    // trainer*_active_pokemon_id and winner_id begin life as NULL in DB, but primitive ints force them to 0 and hide whether state was never set.
     private int trainer1ActivePokemonId;
     private int trainer2ActivePokemonId;
     private int team1Id;

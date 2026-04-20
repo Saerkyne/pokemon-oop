@@ -23,6 +23,8 @@ public record SwitchAction(Trainer trainer, Pokemon pokemon, Team team, int team
         Objects.requireNonNull(trainer, "Trainer cannot be null.");
         Objects.requireNonNull(pokemon, "Pokemon cannot be null.");
         Objects.requireNonNull(team, "Team cannot be null.");
+        // TODO(review 2026-04-20): Enforce battle-rule validation here, not only index bounds.
+        // Same-slot, empty-slot, and fainted-target switches currently pass record construction and fail late or behave oddly during turn resolution.
 
     }
 

@@ -246,7 +246,9 @@ public class AutoCompleteBot extends ListenerAdapter {
                 LOGGER.info("No trainer found for Pokémon autocomplete");
                 return;
             }
-            
+
+            // TODO(review 2026-04-20): Null-check getTeamFromName(...) before dereferencing getTeamDbId().
+            // Missing team names currently throw NullPointerException and get swallowed by broad catch blocks above.
             Team trainerTeam = teamService.loadTeam(trainer.getTrainerDbId(), teamService.getTeamFromName(trainer.getTrainerDbId(), teamName).getTeamDbId());
             if (trainerTeam == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No team found, return empty choices
@@ -287,6 +289,8 @@ public class AutoCompleteBot extends ListenerAdapter {
             }
             int trainerDbId = trainer.getTrainerDbId();
 
+            // TODO(review 2026-04-20): Reuse a null-checked team lookup before loading DB team.
+            // This chained dereference can still explode when autocomplete input references a deleted or renamed team.
             Team selectedTeam = teamService.loadTeam(trainerDbId, teamService.getTeamFromName(trainerDbId, event.getOption("team").getAsString()).getTeamDbId());
             if (selectedTeam == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No team found, return empty choices

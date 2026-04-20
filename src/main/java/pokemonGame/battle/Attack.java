@@ -98,6 +98,8 @@ public final class Attack {
         // Placeholder for damage calculation logic
         int damage = 0;
         if (move.getMoveCategory() == Category.STATUS) {
+            // TODO(review 2026-04-20): Route STATUS moves through an effect pipeline instead of returning 0 damage only.
+            // Right now sleep/paralysis/burn-style moves resolve as no-ops, which means many Gen 1 battle-control moves never affect battle state.
             LOGGER.info("Move '{}' is a status move and does not deal damage.", move.getMoveName());
             return damage; // Status moves do not deal damage
         }
@@ -147,6 +149,8 @@ public final class Attack {
         // Crit damage modifiers
         // RBY has a bad crit formula, that negates stat stages. This is going to "fix" that issue, preventing a crit from ignoring stat changes but still giving a 2x damage bonus.
         if (crit) {
+            // TODO(review 2026-04-20): Replace doubled-level shortcut with a post-formula crit multiplier.
+            // Doubling level changes nonlinear parts of damage formula, so current crits are not a true 2x bonus and drift from stated design intent.
             level = level * 2; // Bonus multiplier for critical hits
         } 
 

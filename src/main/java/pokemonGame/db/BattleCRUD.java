@@ -69,6 +69,8 @@ public class BattleCRUD {
                 pstmt.setInt(1, battleId);
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     if (battleSet.next()) {
+                        // TODO(review 2026-04-20): Extract battle row mapping into one mapper and read nullable IDs with getObject(..., Integer.class).
+                        // getInt() collapses SQL NULL to 0 for active-pokemon/team/winner columns, which loses "unset" state and duplicates fragile hydration code across methods.
                         // TODO: Use BattleService for the rehydration, not directly calling a Battle object
                         Battle battle = new Battle();
                         battle.setBattleId(battleSet.getInt("battle_id"));

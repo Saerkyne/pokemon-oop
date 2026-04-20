@@ -35,6 +35,8 @@ public class PokemonFactory {
         try {
             return species.createPokemon(nickname);
         } catch (Exception e) {
+            // TODO(review 2026-04-20): Catch narrower construction failures or let them surface in startup/tests.
+            // Swallowing every exception here turns broken species registry wiring into a generic null return that is harder to diagnose.
             LOGGER.error("Failed to create Pokemon instance for species: {}", species.getDisplayName(), e);
             return null;
         }

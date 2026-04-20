@@ -12,6 +12,8 @@ package pokemonGame.model;
  */
 public class Trainer {
     private String trainerName;
+    // TODO(review 2026-04-20): Replace single-team field with collection-backed teams or rename API to activeTeam.
+    // Project supports multiple teams, but Trainer currently remembers only one in-memory team and getTeam(name) can return null for valid DB teams.
     private Team team;// In-memory team of up to 6 Pokémon. The first Pokémon in the list is the active Pokémon.
     private int trainerDbId; // this is unused until the database creates it; we have set/get for it
     private long discordId; // this is unused until we add the discord bot; we have set/get for it

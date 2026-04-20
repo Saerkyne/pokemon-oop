@@ -46,6 +46,8 @@ public class SlashExample extends ListenerAdapter{
         User user = event.getUser();
         long userId = user.getIdLong();
         String eventName = event.getName();
+        // TODO(review 2026-04-20): Split command routing into per-command handlers plus shared lookup/context helpers.
+        // This listener still owns dispatch plus repeated trainer/team/Pokemon validation, which makes new commands and unit tests expensive.
         LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", eventName, user, userId  );
 
 
@@ -141,6 +143,8 @@ public class SlashExample extends ListenerAdapter{
 
             
 
+            // TODO(review 2026-04-20): Route destructive admin operations through a service boundary.
+            // Bot layer should authorize and format replies; delete-all policy belongs in service/admin code so tests and safeguards live in one place.
             DatabaseSetup.deleteAllData();
             
             event.reply("Database cleared successfully!").queue();
@@ -234,6 +238,8 @@ public class SlashExample extends ListenerAdapter{
             return;
         } else {
             newPokemon.setTrainer(currentTrainer);
+            // TODO(review 2026-04-20): Remove hardcoded level override or guard it behind explicit debug config.
+            // Production addpokemon should not silently turn every new capture into level 50 test data.
             newPokemon.setLevel(50); // Set the Pokémon's level to 50 for testing purposes
             StatCalculator.calculateAllStats(newPokemon); // Recalculate stats based on level 50 for testing purposes
             newPokemon.healToFull();

@@ -27,7 +27,8 @@ public class PokemonService {
         this.moveSlotService = moveSlotService;
     }
 
-    // TODO: Test for NPEs
+    // TODO(review 2026-04-20): Validate pokemonData size/nulls before positional reads.
+    // Empty or partially populated DAO rows currently become IndexOutOfBoundsException/NullPointerException deep inside rehydration.
     public Pokemon mapDbPokemonToObject(List<Object> pokemonData, Trainer trainer) {
         LOGGER.debug("Mapping Pokemon from database for trainer ID {}: instance_id={}, species={}, level={}",
                 trainer.getTrainerDbId(), pokemonData.get(0), pokemonData.get(2), pokemonData.get(4));

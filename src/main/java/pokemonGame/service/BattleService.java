@@ -23,7 +23,8 @@ public class BattleService {
         this.battleCrud = battleCrud;
     }
 
-    // TODO: SVC-6 — Stub returning null. Implement to rehydrate MoveAction/SwitchAction from DB row. (WIP)
+    // TODO(review 2026-04-20): Replace null stub with a small raw-action-row -> BattleAction mapper.
+    // This method needs a clear contract for whether the switch column stores slot index or Pokemon instance ID before battle resume can work reliably.
     public static BattleAction createActionFromDbRow(int trainerId, String actionType, int moveSlotIndex, int switchPokemonId) {
         // This method would query the database to get the necessary Trainer and Pokemon objects
         // based on the battleId and trainerId, then construct either a MoveAction or SwitchAction

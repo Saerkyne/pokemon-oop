@@ -111,9 +111,7 @@ public final class Attack {
     }
 
     public static int calculateDamage(Pokemon attacker, Pokemon defender, Move move, boolean crit) {
-        // Placeholder for damage calculation logic
         int damage = 0;
-        // TODO [📚 LEARNING | review 2026-04-20]: if-chain on `move.getMoveCategory()` is a prime Java 21 enhanced-switch candidate. Why: pattern/arrow switch over the Category enum is exhaustive — the compiler flags missing cases, which an if-chain cannot. Fix: `return switch (move.getMoveCategory()) { case STATUS -> 0; case PHYSICAL, SPECIAL -> computeDamage(...); };`.
         if (move.getMoveCategory() == Category.STATUS) {
             // TODO(review 2026-04-20): Route STATUS moves through an effect pipeline instead of returning 0 damage only.
             // Right now sleep/paralysis/burn-style moves resolve as no-ops, which means many Gen 1 battle-control moves never affect battle state.

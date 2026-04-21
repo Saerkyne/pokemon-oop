@@ -48,8 +48,9 @@ class AttackTest {
 
     @AfterEach
     void tearDown() {
-        // Restore default (non-seeded) RNG after each test so tests don't leak state.
-        Attack.setRng(new Random());
+        // Clear the test override after each test so later tests fall back to
+        // Attack's normal ThreadLocalRandom path instead of inheriting this seed.
+        Attack.setRng(null);
     }
 
     // =========================================================================

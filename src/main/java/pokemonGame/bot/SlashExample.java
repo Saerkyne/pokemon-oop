@@ -182,8 +182,8 @@ public class SlashExample extends ListenerAdapter{
             event.reply("No Pokémon with that nickname found on your team! Make sure you entered the correct nickname.").setEphemeral(true).queue();
             return;
         }
-        
-        
+        // TODO(review 2026-04-21): Capture removed slot before releasePokemon(), or return that slot from TeamService.
+        // currentTeamSlotIndex may change once Team removal stops piggybacking on dense List order.
         boolean releaseSuccess = teamService.releasePokemon(releaseTeam, pokemonToRelease);
         if (releaseSuccess) {
             event.reply("Successfully released " + pokemonToRelease.getNickname() + " from slot " + (pokemonToRelease.getCurrentTeamSlotIndex() + 1) + " of your team!").queue();
@@ -289,6 +289,7 @@ public class SlashExample extends ListenerAdapter{
             return;
         } else {
             StringBuilder teamMessage = new StringBuilder("Your current team:\n");
+            // TODO(review 2026-04-21): If Team keeps empty middle slots, iterate real slot indexes instead of numbering filtered getTeamAsList() output 1..n.
             int slotNumber =  1;
             for (Pokemon p : teamInfo) {
                 teamMessage.append("Slot ").append(slotNumber).append(":\n");

@@ -98,6 +98,7 @@ class TrainerTest {
 
     @Test
     void testGetPokemonFromTeam() {
+        // TODO(review 2026-04-21): Expand this to cover fixed-slot semantics instead of dense add/getTeamAsList only.
         trainer.createTeam("Pallet Town Team");
         Team team = trainer.getTeam("Pallet Town Team");
         Pokemon abra = new Abra("Test Abra");

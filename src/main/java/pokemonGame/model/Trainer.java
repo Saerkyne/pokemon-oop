@@ -12,9 +12,7 @@ package pokemonGame.model;
  */
 public class Trainer {
     private String trainerName;
-    // TODO(review 2026-04-20): Replace single-team field with collection-backed teams or rename API to activeTeam.
-    // Project supports multiple teams, but Trainer currently remembers only one in-memory team and getTeam(name) can return null for valid DB teams.
-    private Team team;// In-memory team of up to 6 Pokémon. The first Pokémon in the list is the active Pokémon.
+    private Team activeTeam;// In-memory team of up to 6 Pokémon. The first Pokémon in the list is the active Pokémon.
     private int trainerDbId; // this is unused until the database creates it; we have set/get for it
     private long discordId; // this is unused until we add the discord bot; we have set/get for it
 
@@ -43,7 +41,7 @@ public class Trainer {
     }
 
     public void createTeam(String teamName) {
-        this.team = new Team(teamName);
+        this.activeTeam = new Team(teamName);
     }
 
     public void setTrainerName(String trainerName) {
@@ -51,8 +49,8 @@ public class Trainer {
     }
 
     public Team getTeam(String teamName) {
-        if (team != null && team.getTeamName().equals(teamName)) {
-            return team;
+        if (activeTeam != null && activeTeam.getTeamName().equals(teamName)) {
+            return activeTeam;
         } else {
             return null; // or throw an exception if you prefer
         }
@@ -60,7 +58,7 @@ public class Trainer {
     }
 
     public void setTeam(Team team) {
-        this.team = team;
+        this.activeTeam = team;
     }
 
 }

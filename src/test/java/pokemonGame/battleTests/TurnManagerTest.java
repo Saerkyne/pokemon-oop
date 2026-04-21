@@ -47,6 +47,9 @@ class TurnManagerTest {
 
     @AfterEach
     void afterEach() {
+        // Clear any seeded Attack RNG after each turn test so one deterministic
+        // scenario does not silently affect later tests in this class or others.
+        Attack.setRng(null);
         LOGGER.info("Test completed.");
     }
 

@@ -118,6 +118,8 @@ public class TeamService {
         team.setTrainerDbId(trainerId);
         team.setTeamDbId(teamId);
 
+        // TODO(review 2026-04-21): Hydrate exact slot_index values from TeamCRUD and call setTeamSlot(slotIndex, pokemon).
+        // Dense iteration plus team.add(...) drops holes once Team storage becomes fixed-slot.
         for (int pokemonId : teamCRUD.getPokemonIdsForTeam(trainerId, teamId)) {
             Pokemon pokemon = pokemonService.mapDbPokemonToObject(pokemonCRUD.getPokemonAsArray(pokemonId), trainer);
             if (pokemon != null) {
@@ -191,6 +193,7 @@ public class TeamService {
             return slotIndex;
         }
 
+        // TODO(review 2026-04-21): Apply returned DB slotIndex with team.setTeamSlot(slotIndex, pokemon).
         // Step 3: Update in-memory state
         team.add(pokemon);
         
@@ -235,6 +238,8 @@ public class TeamService {
             return false;
         }
 
+        // TODO(review 2026-04-21): Decide sparse-vs-compact release contract.
+        // DB reordering plus team.remove(...) assumes dense list storage and will drift from fixed slots.
         // Reorder remaining slots to fill the gap
         teamCRUD.reorderTeamAfterRelease(trainerId, teamId);
 

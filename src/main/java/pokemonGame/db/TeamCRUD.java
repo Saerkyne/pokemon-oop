@@ -26,6 +26,7 @@ public class TeamCRUD {
                 return -1;
             }
 
+            // TODO(review 2026-04-21): Choose first free slot_index here, not member count, if Team preserves empty middle slots.
             int slotIndex = countMembers(conn, teamId);
 
             if (slotIndex == -1) {
@@ -105,6 +106,7 @@ public class TeamCRUD {
         }
     }
 
+    // TODO(review 2026-04-21): Return slot_index with instance_id so TeamService can hydrate exact teamSlots instead of dense order only.
     public List<Integer> getPokemonIdsForTeam(int trainerDbId, int teamId) {
         List<Integer> pokemonIds = new ArrayList<>();
         try (Connection conn = DatabaseSetup.getConnection()) {
@@ -133,6 +135,7 @@ public class TeamCRUD {
         return pokemonIds;
     }
 
+    // TODO(review 2026-04-21): Delete this compaction path if sparse slots remain legal, or force TeamService to rebuild compacted in-memory slots after it runs.
     public int reorderTeamAfterRelease(int trainerId, int teamId) {
         try (Connection conn = DatabaseSetup.getConnection()) {
             String teamName = getTeamName(conn, trainerId, teamId);
@@ -325,6 +328,7 @@ public class TeamCRUD {
         }
     }
 
+    // TODO(review 2026-04-21): Keep countMembers for fullness checks only; it cannot safely choose next slot once holes exist.
     private int countMembers(Connection conn, int teamId) throws SQLException {
         String sql = "SELECT COUNT(*) AS slot_count FROM team_members WHERE team_id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {

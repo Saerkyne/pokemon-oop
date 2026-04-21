@@ -1,8 +1,10 @@
 package pokemonGame.model;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Objects;
 import java.util.Set;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.slf4j.Logger;
@@ -16,8 +18,6 @@ import pokemonGame.core.TypeChart.StatusCondition;
 import pokemonGame.core.TypeChart.Type;
 import pokemonGame.species.PokeSpecies;
 
-import java.util.Collections;
-import java.util.EnumSet;
 
 /**
  * Represents a single Pokémon instance with species data, individual stats
@@ -34,7 +34,11 @@ import java.util.EnumSet;
  * @see StatCalculator
  * @see Natures
  */
-// TODO [🟡 IMPORTANT | review 2026-04-20]: God class (~700 lines) mixes persistence IDs, runtime battle state, moveset mgmt, and EV mutation gating. Why: one file touches every layer (model/db/battle); tight coupling blocks unit tests and makes changes ripple. Fix: extract `Stats` record (HP/Atk/Def/SpA/SpD/Spd), `IVs` record, `EVs` record, and `Moveset` wrapper; leave Pokemon as thin aggregate.
+// TODO [🟡 IMPORTANT | review 2026-04-20]: God class (~700 lines) mixes persistence IDs, 
+// runtime battle state, moveset mgmt, and EV mutation gating. Why: one file touches every layer 
+// (model/db/battle); tight coupling blocks unit tests and makes changes ripple. 
+// Fix: extract `Stats` record (HP/Atk/Def/SpA/SpD/Spd), `IVs` record, `EVs` record, and `Moveset` wrapper; 
+// leave Pokemon as thin aggregate.
 public class Pokemon {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pokemon.class);
@@ -163,9 +167,6 @@ public class Pokemon {
         // random nature for custom‑stat constructor as well
         Natures.assignRandom(this);
     }
-
-    // TODO [🔴 BLOCKING | review 2026-04-20]: ThreadLocalRandom.current() cached at class-load captures the *loading* thread's instance. Why: when generateRandomIVs() runs on another thread, it shares RNG state across threads, defeating the thread-local guarantee. Fix: drop the cached field and call `ThreadLocalRandom.current().nextInt(32)` at each use site.
-    private static final Random random = ThreadLocalRandom.current();
 
 
     // ========================
@@ -575,18 +576,21 @@ public class Pokemon {
 
     // Sets a single stat's EV yield by index (0=HP, 1=Atk, 2=Def, 3=SpAtk, 4=SpDef, 5=Spd).
     // This lets subclasses override only the non-zero yields without rebuilding the whole array,
-    // since the superclass constructor already initializes evYield to all zeros.
-    // TODO [🟡 IMPORTANT | review 2026-04-20]: No null-check on `stat` or bounds-check on `value`. 
-    // Why: null Stat throws NPE deep in ordinal(); negative value corrupts evYield array; no upper 
-    // bound defends against typos like 255. Fix: `Objects.requireNonNull(stat); if (value < 0 || value > 3) 
-    // throw new IllegalArgumentException("EV yield per stat is 0..3");`.
+    // since the superclass constructor already initializes evYield to all zeros..
     public void setEvYield(Stat stat, int value) {
+        Objects.requireNonNull(stat);
+        if (value < 0 || value > 3) {
+            throw new IllegalArgumentException("EV yield per stat is 0..3");
+        }
+
         this.evYield[stat.ordinal()] = value;
     }
 
     
-    // TODO [🟡 IMPORTANT | review 2026-04-20]: Accepts negative exp silently. Why: negative XP is never valid — reinforces DB data drift if a bug feeds negatives. Fix: `if (exp < 0) throw new IllegalArgumentException("exp must be non-negative");`.
     public void addExp(int exp) {
+        if (exp < 0) {
+            throw new IllegalArgumentException("exp must be non-negative");
+        }
         this.currentExp += exp;
         // Placeholder for level up logic when currentExp exceeds the threshold for the next level
     }
@@ -683,12 +687,12 @@ public class Pokemon {
     // Method for generating a random IV value between 0 and 31 for each stat
     public void generateRandomIVs() {
 
-        this.ivHp = random.nextInt(32);
-        this.ivAttack = random.nextInt(32);
-        this.ivDefense = random.nextInt(32);
-        this.ivSpecialAttack = random.nextInt(32);
-        this.ivSpecialDefense = random.nextInt(32);
-        this.ivSpeed = random.nextInt(32);
+        this.ivHp = ThreadLocalRandom.current().nextInt(32);
+        this.ivAttack = ThreadLocalRandom.current().nextInt(32);
+        this.ivDefense = ThreadLocalRandom.current().nextInt(32);
+        this.ivSpecialAttack = ThreadLocalRandom.current().nextInt(32);
+        this.ivSpecialDefense = ThreadLocalRandom.current().nextInt(32);
+        this.ivSpeed = ThreadLocalRandom.current().nextInt(32);
     }
 
 

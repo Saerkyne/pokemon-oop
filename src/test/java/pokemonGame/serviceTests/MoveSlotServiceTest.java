@@ -36,6 +36,8 @@ class MoveSlotServiceTest {
     
     @BeforeEach
     void setUp() {
+        // Clean the Database
+        DatabaseSetup.deleteAllData();
         // Create a test Trainer
         Trainer testTrainer = trainerService.createTrainer("Test Trainer", 123456789L, "TestTrainer#1234");
         int trainerDbId = testTrainer.getTrainerDbId();

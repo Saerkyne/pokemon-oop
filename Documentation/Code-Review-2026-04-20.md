@@ -292,6 +292,37 @@ private final Map<String, Team> teams = new HashMap<>();
 
 ---
 
+### 🟡 [Important] Team Encodes Fixed Slots as a Growable List
+
+**File:** [Team.java](../src/main/java/pokemonGame/model/Team.java#L25)
+
+**What's wrong:**  
+`Team` exposes a roster as a `List`, but `setTeamSlot()` behaves like a sparse slot table and pads missing indexes with `null`.
+
+**Why this matters:**  
+That mixes two contracts. Battle and persistence code want stable slot indexes `0-5`, while callers that iterate `getTeamAsList()` expect only real Pokemon. Padding with `null` leaks holes into public iteration, creates `NullPointerException` risk in streams/for-each loops, and changes `contains()` / `remove()` semantics once `null` becomes a valid element.
+
+**Recommended fix:**  
+Use one canonical internal structure: `Pokemon[MAX_TEAM_SIZE]`. Let `null` mean "empty slot" only inside that array, and build a filtered list view when callers want roster iteration.
+
+```java
+private final Pokemon[] teamSlots = new Pokemon[MAX_TEAM_SIZE];
+
+public List<Pokemon> getTeamAsList() {
+    List<Pokemon> members = new ArrayList<>(MAX_TEAM_SIZE);
+    for (Pokemon pokemon : teamSlots) {
+        if (pokemon != null) {
+            members.add(pokemon);
+        }
+    }
+    return Collections.unmodifiableList(members);
+}
+```
+
+With that shape, `setTeamSlot()` becomes direct assignment, `add()` inserts into first `null` slot, `remove()` clears matching slot, and `getTeamSize()` counts non-null members. One source of truth keeps slot-based logic stable without exposing sparse holes.
+
+---
+
 ### 🟡 [Important] Battle Uses Primitive Ints for SQL-Nullable State
 
 **File:** [Battle.java](../src/main/java/pokemonGame/model/Battle.java#L40)

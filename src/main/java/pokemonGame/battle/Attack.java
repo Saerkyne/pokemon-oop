@@ -16,17 +16,18 @@ import pokemonGame.model.Pokemon;
  * type effectiveness (via {@link TypeChart}), STAB, and the random damage
  * factor. All methods are static — there is no instance state.
  *
- * <p>The critical-hit formula is custom: base 4.17% chance, scaling up by
- * 0.83% per point of speed advantage, capped at 15%.</p>
+ * <p>The critical-hit formula is custom: base 4.00% chance, scaling up by
+ * 0.08% per point of speed advantage, capped at 20%.</p>
  */
-// TODO [🔴 BLOCKING | review 2026-04-20]: Javadoc claims 4.17% base / 0.83% per speed point / 15% cap, but constants below encode 4.00% / 0.08% / 20%. Why: doc drift misleads readers and invalidates design discussion — either the code or the doc is wrong. Fix: update Javadoc to match constants (or revert constants to match doc, whichever is the intended design).
 public final class Attack {
+
+    // Production calls stay thread-local. Tests can install a deterministic override
+    // without caching ThreadLocalRandom from class-load thread.
+    private static Random testRng;
 
     private Attack() {}
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Attack.class);
-    // TODO [🟡 IMPORTANT | review 2026-04-20]: `ThreadLocalRandom.current()` is cached into a static field at class-load time. Why: the returned instance is bound to the loading thread; every other thread sharing this `rng` violates its per-thread contract. Fix: replace usages with `ThreadLocalRandom.current().nextInt(...)` inline; keep a separate `Random testRng` overridable via `setRng` for deterministic tests.
-    private static Random rng = ThreadLocalRandom.current();
     private static final int BASE_CRIT_CHANCE = 400; // Base crit chance of 4.00% (400/10000)
     private static final int MAX_CRIT_CHANCE = 2000; // Maximum crit chance of 20% (2000/10000)
     private static final int SPEED_CRIT_MULTIPLIER = 8; // Crit chance increases by 0.08% for each point of speed difference (8/10000)
@@ -39,10 +40,21 @@ public final class Attack {
      *
      * <p>Example: {@code Attack.setRng(new Random(42));}</p>
      *
-     * @param random the Random instance to use (pass {@code new Random()} to restore default behavior)
+     * @param random the Random instance to use, or {@code null} to restore default thread-local behavior
      */
     public static void setRng(Random random) {
-        rng = random;
+        // Store only test override here. Real runtime randomness still comes from
+        // ThreadLocalRandom.current() at point of use so each thread gets its own source.
+        testRng = random;
+    }
+
+    // Centralize random access so tests can override one path and production code
+    // still uses the current thread's ThreadLocalRandom instance.
+    private static int nextIntInclusive(int min, int max) {
+        if (testRng != null) {
+            return testRng.nextInt((max - min) + 1) + min;
+        }
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     public static boolean checkAccuracy(Pokemon attacker, Pokemon defender, Move move) {
@@ -51,7 +63,8 @@ public final class Attack {
             LOGGER.info("Move '{}' has perfect accuracy and will always hit.", move.getMoveName());
             return true; // Moves with 100% or higher accuracy always hit
         }
-        int randomValue = rng.nextInt(100) + 1; // Random value between 1 and 100
+        // Route accuracy through shared helper so seeded tests control hit/miss rolls too.
+        int randomValue = nextIntInclusive(1, 100); // Random value between 1 and 100
         boolean isHit = randomValue <= accuracy; // Move hits if random value is less than or equal to accuracy
         LOGGER.info("Accuracy check for move '{}': accuracy={}, randomValue={}, isHit={}", move.getMoveName(), accuracy, randomValue, isHit);
         return isHit;
@@ -72,12 +85,13 @@ public final class Attack {
     }
 
     public static int randomInt(int min, int max) {
-        return rng.nextInt((max - min) + 1) + min;
+        // Reuse same helper so damage rolls, crit rolls, and tests all read one RNG path.
+        return nextIntInclusive(min, max);
     }
 
     // Non RBY crit formula, using attacker speed and opponent speed to determine crit chance,
-    //  with a base 4.17% crit chance at 0 speed difference, 
-    // increasing up to a maximum of 15% crit chance at a speed difference of 100 or more.
+    //  with a base 4.00% crit chance at 0 speed difference, 
+    // increasing up to a maximum of 20% crit chance at a speed difference of 100 or more.
     // Another possible formula is critChance = (sqrt(attackerSpeed) / 1.2) + 4), 
     // which gives diminishing returns on crit chance as speed increases, but 
     // the linear formula is simpler and easier to understand and doesn't factor in

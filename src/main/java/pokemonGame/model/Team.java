@@ -76,6 +76,7 @@ public class Team {
         return teamAsList.get(teamSlotIndex);
     }
 
+    // TODO [🟡 IMPORTANT | review 2026-04-20]: setTeamSlot pads teamAsList with nulls to reach the target index. Why: downstream callers iterate getTeamAsList() and hit NPE on null entries; `teamAsList.contains(null)` changes remove() semantics. Fix: switch internal storage to a fixed `Pokemon[MAX_TEAM_SIZE]` array with nullable slots, OR document the sparse-slot contract and have getTeamAsList() filter nulls before exposing.
     public void setTeamSlot(int teamSlotIndex, Pokemon pokemon) {
         if (teamSlotIndex < 0 || teamSlotIndex >= MAX_TEAM_SIZE) {
             LOGGER.warn("Invalid team slot index: {}. Valid range is 0-{}.", teamSlotIndex, MAX_TEAM_SIZE - 1);
@@ -94,6 +95,7 @@ public class Team {
         }
     }   
 
+    // TODO [🟡 IMPORTANT | review 2026-04-20]: add()/remove() fail silently with only a log warning. Why: callers cannot detect failure — bot layer then reports "added!" to Discord even when nothing happened. Fix: return boolean (true=success, false=no-op) OR throw IllegalStateException with context.
     public void add(Pokemon pokemon) {
         if (teamAsList != null && teamAsList.size() < MAX_TEAM_SIZE) {
             teamAsList.add(pokemon);

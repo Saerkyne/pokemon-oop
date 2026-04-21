@@ -10,6 +10,7 @@ package pokemonGame.model;
  * @see Move
  * @see Pokemon
  */
+// TODO [📚 LEARNING | review 2026-04-20]: Textbook record candidate. Why: all fields final, pure value type, no behavior beyond accessors. Records exist precisely for this (Java 16+) and eliminate ~25 lines of boilerplate. Fix: `public record LearnsetEntry(Move move, Source source, int parameter) { public enum Source { LEVEL, TM, EGG, TUTOR, HM, PRE_EVOLUTION } }` — 152 files can keep using getMove()/getSource()/getParameter() via record accessors (same names).
 public class LearnsetEntry {
     // Egg and Tutor moves don't exist in Gen 1, but we can still use the same
     //  class to represent them for future generations if added.

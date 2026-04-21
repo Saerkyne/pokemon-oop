@@ -23,6 +23,7 @@ public class PokemonService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PokemonService.class);
     private final MoveSlotService moveSlotService;
 
+    // TODO [🔴 BLOCKING | review 2026-04-20]: `pokemonCRUD` parameter is accepted but never assigned or used. Why: dead parameter hides incomplete wiring — a future caller that expects DAO access will fail. Fix: either store it (`private final PokemonCRUD pokemonCRUD`) and use it, or remove the parameter entirely.
     public PokemonService(PokemonCRUD pokemonCRUD, MoveSlotService moveSlotService) {
         this.moveSlotService = moveSlotService;
     }
@@ -37,6 +38,7 @@ public class PokemonService {
         Pokemon dbMon = PokemonFactory.createPokemonFromRegistry(species, nickname);
 
 
+        // TODO [🔴 BLOCKING | review 2026-04-20]: Silently returns a half-built Pokémon when row has < 21 columns. Why: downstream callers receive a ghost object with default stats/IVs/EVs — data loss masquerading as success. Fix: `if (pokemonData.size() < 21) throw new IllegalArgumentException("Malformed Pokemon row: expected 21 cols, got " + pokemonData.size());` — fail loudly.
         if (pokemonData.size() >= 21) {
             dbMon.setPokemonDbId((int) pokemonData.get(0));
             dbMon.setTrainer(trainer);

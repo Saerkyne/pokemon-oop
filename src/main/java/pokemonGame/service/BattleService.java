@@ -43,7 +43,8 @@ public class BattleService {
         //
         // This is just a placeholder to illustrate the concept.
 
-        
+
+        // TODO [🔴 BLOCKING | review 2026-04-20]: Stub returns null. Why: any caller depending on this method will silently receive null and NPE later, far from the cause. Fix: until implemented, `throw new UnsupportedOperationException("createActionFromDbRow not yet implemented");` so misuse is loud.
         return null;
     }
 
@@ -59,6 +60,9 @@ public class BattleService {
             return false;
         }
 
+        // TODO [🔴 BLOCKING | review 2026-04-20]: Ignoring battleCrud.createBattle return value. Why: DAO failure returns without signal — method returns true even when insert failed. Caller has no battleId either. Fix: capture the returned ID, verify > 0, return int (battleId) or Optional<Integer>; propagate failure.
+        // TODO [🟡 IMPORTANT | review 2026-04-20]: Duplicate check tests only (t1, t2) — matchup (t2, t1) is not prevented. Fix: also check `getActiveBattleForTrainerMatchup(trainer2Id, trainer1Id)` OR have DAO normalize (min,max) ordering.
+        // TODO [🟢 SUGGESTION | review 2026-04-20]: Magic string "PENDING". Fix: use `Battle.Status.PENDING.name()` from the existing enum.
         // Create a new battle and set its status to "Pending" until both trainers have submitted their teams and are ready to start
         battleCrud.createBattle(trainer1Id, trainer2Id, "PENDING", trainer1TeamId.orElse(-1), trainer2TeamId.orElse(-1));
         return true;

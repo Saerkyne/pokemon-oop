@@ -42,6 +42,8 @@ public class MoveSlotService {
         this.moveCRUD = moveCRUD;
     }
 
+    // TODO [🔴 BLOCKING | review 2026-04-20]: void return + silent swallow on ineligibility. Why: callers (bot layer) tell the user "Move learned!" without knowing the move was rejected. Fix: return boolean or sealed TeachResult { Ok, NotEligible, MovesetFull, DbFailed }; bot can then show an accurate message.
+    // TODO [🔴 BLOCKING | review 2026-04-20]: Broad `catch (Exception e)` wraps into RuntimeException *without* setting cause — stacktrace of the real SQLException is lost at line 66. Fix: `throw new RuntimeException("Failed to teach move", e);` or narrow to `catch (SQLException)`.
     public void teachMove(Pokemon p, Move move) {
 
         if (!getEligibleMoves(p).stream().anyMatch(e -> e.getMove().getMoveName().equalsIgnoreCase(move.getMoveName()))) {

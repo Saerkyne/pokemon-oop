@@ -23,6 +23,7 @@ public abstract class Move {
     private final int accuracy;
     private final int maxPp;
 
+    // TODO [🟡 IMPORTANT | review 2026-04-20]: No validation on constructor args. Why: subclasses pass raw numeric literals; typo like `new Move("X", -50, ..., 200, 0)` creates a corrupt move with negative power, over-100% accuracy, and zero PP. Fix: validate movePower >= 0, accuracy in 0..100, maxPp > 0, non-null types/category/name. Optional<Accuracy> for "never misses" moves like Swift.
     protected Move(String moveName, int movePower, Type moveType, Category moveCategory, int accuracy, int maxPp) {
         this.moveName = moveName;
         this.movePower = movePower;

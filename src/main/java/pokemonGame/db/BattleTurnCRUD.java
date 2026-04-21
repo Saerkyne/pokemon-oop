@@ -76,6 +76,9 @@ public class BattleTurnCRUD {
                         // BattleService will parse actionType into MoveAction or SwitchAction, 
                         // load Trainer and Pokemon from DB, then return the correct BattleAction record.
                         // TODO: Check if this is the right direction. Theoretically DAO shouldn't call Service
+                        // TODO [🔴 BLOCKING | review 2026-04-20]: DAO calls Service — layer cycle (db → service → db). Why: breaks dependency direction; DAO now untestable without Service; can cause ClassLoader init loops. Fix: define `record PendingActionRow(int trainerId, String actionType, int moveSlotIndex, Integer switchPokemonId)`; return `List<PendingActionRow>` from this method; move BattleAction rehydration into BattleService.
+                        // TODO [🟡 IMPORTANT | review 2026-04-20]: `rs.getInt("switch_pokemon_id")` collapses SQL NULL to 0 silently. Fix: `rs.getObject("switch_pokemon_id", Integer.class)` so "no switch" stays as null.
+                        // TODO [🟡 IMPORTANT | review 2026-04-20]: Hard-coded 2-slot array (`new BattleAction[2]`) silently drops a 3rd row if one ever appears. Fix: use `List<BattleAction>` and return `list.toArray(new BattleAction[0])`.
                         BattleAction action = BattleService.createActionFromDbRow(trainerId, actionType, moveSlotIndex, switchPokemonId);
                         // Collect actions into a list/array to return
                         if (action != null) {

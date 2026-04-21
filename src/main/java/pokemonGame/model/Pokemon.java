@@ -12,7 +12,6 @@ import pokemonGame.core.EvManager;
 import pokemonGame.core.Natures;
 import pokemonGame.core.Stat;
 import pokemonGame.core.StatCalculator;
-import pokemonGame.core.TypeChart.Category;
 import pokemonGame.core.TypeChart.StatusCondition;
 import pokemonGame.core.TypeChart.Type;
 import pokemonGame.species.PokeSpecies;
@@ -343,30 +342,20 @@ public class Pokemon {
 
     // Special Methods to get the appropriate attack or defense stat based on the move's category (Physical, Special, or Status)
     
-    // TODO [📚 LEARNING | review 2026-04-20]: if/else-if on Category enum is a textbook case for Java 21 switch expressions. Why: enhanced switch over an enum is exhaustive — compiler warns when a new Category is added. Fix: `return switch (move.getMoveCategory()) { case PHYSICAL -> getCurrentAttack(); case SPECIAL -> getCurrentSpecialAttack(); case STATUS -> 0; };`
     public int getAttackStatForMove(Move move) {
-        if (Category.PHYSICAL.equals(move.getMoveCategory())) {
-            int physAttack = getCurrentAttack();
-            return physAttack;
-        } else if (Category.SPECIAL.equals(move.getMoveCategory())) {
-            int specAttack = getCurrentSpecialAttack();
-            return specAttack;
-        } else {
-            return 0; // Status moves don't use attack stats
-        }
+        return switch (move.getMoveCategory()) {
+            case PHYSICAL -> getCurrentAttack();
+            case SPECIAL -> getCurrentSpecialAttack();
+            case STATUS -> 0;
+        };
     }
 
-    // TODO [📚 LEARNING | review 2026-04-20]: Same pattern as getAttackStatForMove — convert to switch expression over Category for exhaustiveness.
     public int getDefenseStatForMove(Move move) {
-        if (Category.PHYSICAL.equals(move.getMoveCategory())) {
-            int physDefense = getCurrentDefense();
-            return physDefense;
-        } else if (Category.SPECIAL.equals(move.getMoveCategory())) {
-            int specDefense = getCurrentSpecialDefense();
-            return specDefense;
-        } else {
-            return 0; // Status moves don't use defense stats
-        }
+        return switch (move.getMoveCategory()) {
+            case PHYSICAL -> getCurrentDefense();
+            case SPECIAL -> getCurrentSpecialDefense();
+            case STATUS -> 0;
+        };
     }
 
     /**
@@ -386,8 +375,11 @@ public class Pokemon {
     // ========================
 
     // Direct Setters for attributes
-    // TODO [🟡 IMPORTANT | review 2026-04-20]: No validation on level. Why: negative or absurd values corrupt stat math in StatCalculator (formula scales linearly with level). Fix: `if (level < 1 || level > 100) throw new IllegalArgumentException("Level must be 1..100, got " + level);`.
     public void setLevel(int level) {
+        if (level < 1 || level > 100) {
+            throw new IllegalArgumentException("Level must be 1..100, got " + level);
+        }
+
         this.level = level;
     }
 
@@ -415,9 +407,8 @@ public class Pokemon {
         this.nature = nature;
     }
 
-    // TODO [🟡 IMPORTANT | review 2026-04-20]: Stores caller's EnumSet reference directly. Why: caller can mutate the set post-set, breaking encapsulation. Fix: `this.statusConditions = (conditions == null) ? EnumSet.noneOf(StatusCondition.class) : EnumSet.copyOf(conditions);`.
     public void setStatusConditions(EnumSet<StatusCondition> conditions) {
-        this.statusConditions = conditions;
+        this.statusConditions = (conditions == null) ? EnumSet.noneOf(StatusCondition.class) : EnumSet.copyOf(conditions);
     }
     
     public void setHpBase(int hp) {
@@ -444,8 +435,10 @@ public class Pokemon {
         this.speedBase = speed;
     }
 
-    // TODO [🟡 IMPORTANT | review 2026-04-20]: No guard on maxHP >= 1. Why: maxHP = 0 breaks setCurrentHP clamp and causes division-by-zero in any percentage-HP logic. Fix: validate `maxHP >= 1` and throw IllegalArgumentException.
     public void setMaxHP(int maxHP) {
+        if (maxHP < 1) {
+            throw new IllegalArgumentException("maxHP must be >= 1, got " + maxHP);
+        }
         this.maxHP = maxHP;
     }
 
@@ -583,7 +576,10 @@ public class Pokemon {
     // Sets a single stat's EV yield by index (0=HP, 1=Atk, 2=Def, 3=SpAtk, 4=SpDef, 5=Spd).
     // This lets subclasses override only the non-zero yields without rebuilding the whole array,
     // since the superclass constructor already initializes evYield to all zeros.
-    // TODO [🟡 IMPORTANT | review 2026-04-20]: No null-check on `stat` or bounds-check on `value`. Why: null Stat throws NPE deep in ordinal(); negative value corrupts evYield array; no upper bound defends against typos like 255. Fix: `Objects.requireNonNull(stat); if (value < 0 || value > 3) throw new IllegalArgumentException("EV yield per stat is 0..3");`.
+    // TODO [🟡 IMPORTANT | review 2026-04-20]: No null-check on `stat` or bounds-check on `value`. 
+    // Why: null Stat throws NPE deep in ordinal(); negative value corrupts evYield array; no upper 
+    // bound defends against typos like 255. Fix: `Objects.requireNonNull(stat); if (value < 0 || value > 3) 
+    // throw new IllegalArgumentException("EV yield per stat is 0..3");`.
     public void setEvYield(Stat stat, int value) {
         this.evYield[stat.ordinal()] = value;
     }

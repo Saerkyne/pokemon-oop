@@ -19,11 +19,13 @@ import pokemonGame.model.Pokemon;
  * <p>The critical-hit formula is custom: base 4.17% chance, scaling up by
  * 0.83% per point of speed advantage, capped at 15%.</p>
  */
+// TODO [🔴 BLOCKING | review 2026-04-20]: Javadoc claims 4.17% base / 0.83% per speed point / 15% cap, but constants below encode 4.00% / 0.08% / 20%. Why: doc drift misleads readers and invalidates design discussion — either the code or the doc is wrong. Fix: update Javadoc to match constants (or revert constants to match doc, whichever is the intended design).
 public final class Attack {
 
     private Attack() {}
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Attack.class);
+    // TODO [🟡 IMPORTANT | review 2026-04-20]: `ThreadLocalRandom.current()` is cached into a static field at class-load time. Why: the returned instance is bound to the loading thread; every other thread sharing this `rng` violates its per-thread contract. Fix: replace usages with `ThreadLocalRandom.current().nextInt(...)` inline; keep a separate `Random testRng` overridable via `setRng` for deterministic tests.
     private static Random rng = ThreadLocalRandom.current();
     private static final int BASE_CRIT_CHANCE = 400; // Base crit chance of 4.00% (400/10000)
     private static final int MAX_CRIT_CHANCE = 2000; // Maximum crit chance of 20% (2000/10000)
@@ -97,6 +99,7 @@ public final class Attack {
     public static int calculateDamage(Pokemon attacker, Pokemon defender, Move move, boolean crit) {
         // Placeholder for damage calculation logic
         int damage = 0;
+        // TODO [📚 LEARNING | review 2026-04-20]: if-chain on `move.getMoveCategory()` is a prime Java 21 enhanced-switch candidate. Why: pattern/arrow switch over the Category enum is exhaustive — the compiler flags missing cases, which an if-chain cannot. Fix: `return switch (move.getMoveCategory()) { case STATUS -> 0; case PHYSICAL, SPECIAL -> computeDamage(...); };`.
         if (move.getMoveCategory() == Category.STATUS) {
             // TODO(review 2026-04-20): Route STATUS moves through an effect pipeline instead of returning 0 damage only.
             // Right now sleep/paralysis/burn-style moves resolve as no-ops, which means many Gen 1 battle-control moves never affect battle state.
@@ -147,12 +150,10 @@ public final class Attack {
         // Damage calculation, step by step
 
         // Crit damage modifiers
-        // RBY has a bad crit formula, that negates stat stages. This is going to "fix" that issue, preventing a crit from ignoring stat changes but still giving a 2x damage bonus.
+        // RBY has a bad crit formula, that negates stat stages. This is going to "fix" that issue, preventing a crit from ignoring stat changes but still giving a damage bonus.
         if (crit) {
-            // TODO(review 2026-04-20): Replace doubled-level shortcut with a post-formula crit multiplier.
-            // Doubling level changes nonlinear parts of damage formula, so current crits are not a true 2x bonus and drift from stated design intent.
             level = level * 2; // Bonus multiplier for critical hits
-        } 
+        }
 
         
         // Level factor calculation

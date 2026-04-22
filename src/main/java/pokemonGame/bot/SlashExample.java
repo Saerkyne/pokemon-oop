@@ -41,6 +41,30 @@ public class SlashExample extends ListenerAdapter{
         this.trainerService = trainerService;
         this.teamService = teamService;
     }
+
+    /*
+     * Next split after private handler methods:
+     * 1. Keep this listener as router only.
+     * 2. Move each command into its own handler object.
+     * 3. Pull repeated trainer/team/Pokemon lookup into shared support helpers.
+     *
+     * Example shape:
+     *
+     * interface SlashCommandHandler {
+     *     void handle(CommandContext context);
+     * }
+     *
+     * record CommandContext(SlashCommandInteractionEvent event, User user, long userId) {}
+     *
+     * private final Map<String, SlashCommandHandler> handlers = Map.of(
+     *     "createtrainer", new CreateTrainerCommand(trainerService),
+     *     "addpokemon", new AddPokemonCommand(teamService, trainerService),
+     *     "teachmoveset", new TeachMovesetCommand(moveSlotService, teamService, trainerService)
+     * );
+     *
+     * Then shared helper methods like requireTrainer(), requireTeam(), and requirePokemon()
+     * can live in one support class instead of being copied across commands.
+     */
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         User user = event.getUser();

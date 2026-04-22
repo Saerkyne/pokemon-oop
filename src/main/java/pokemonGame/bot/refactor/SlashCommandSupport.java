@@ -14,6 +14,15 @@ import pokemonGame.service.TrainerService;
  */
 public abstract class SlashCommandSupport {
 
+    protected void reply(SlashCommandContext context, String message) {
+        if (context.event().isAcknowledged()) {
+            context.event().getHook().sendMessage(message).queue();
+            return;
+        }
+
+        context.event().reply(message).queue();
+    }
+
     protected Optional<String> requireStringOption(SlashCommandContext context, String optionName, String missingMessage) {
         OptionMapping option = context.event().getOption(optionName);
         if (option == null) {
@@ -106,6 +115,11 @@ public abstract class SlashCommandSupport {
     }
 
     protected void replyEphemeral(SlashCommandContext context, String message) {
+        if (context.event().isAcknowledged()) {
+            context.event().getHook().sendMessage(message).setEphemeral(true).queue();
+            return;
+        }
+
         context.event().reply(message).setEphemeral(true).queue();
     }
 }

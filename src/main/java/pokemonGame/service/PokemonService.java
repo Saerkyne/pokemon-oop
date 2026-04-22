@@ -78,4 +78,16 @@ public class PokemonService {
 
         return dbMon;
     }
+
+    public Pokemon createPokemon(PokeSpecies species, String nickname, Trainer trainer) {
+        Pokemon newPokemon = PokemonFactory.createPokemonFromRegistry(species, nickname);
+        newPokemon.setTrainer(trainer);
+        // Set to level 50, re-calc stats, set current HP to max. 
+        newPokemon.setLevel(50);
+        StatCalculator.calculateAllStats(newPokemon);
+        newPokemon.healToFull();
+        return newPokemon;
+    }
+
+
 }

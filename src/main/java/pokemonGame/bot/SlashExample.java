@@ -21,6 +21,7 @@ import pokemonGame.model.LearnsetEntry;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -29,6 +30,11 @@ import org.slf4j.LoggerFactory;
 public class SlashExample extends ListenerAdapter{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SlashExample.class);
+    private static final Set<String> ROUTER_OWNED_COMMANDS = Set.of(
+        "createtrainer",
+        "createteam",
+        "addpokemon",
+        "teachmoveset");
 
     private final BattleService battleService;
     private final MoveSlotService moveSlotService;
@@ -74,6 +80,10 @@ public class SlashExample extends ListenerAdapter{
         // This listener still owns dispatch plus repeated trainer/team/Pokemon validation, which makes new commands and unit tests expensive.
         LOGGER.info("Received slash command; '{}' from user: {} (ID: {})", eventName, user, userId  );
 
+        if (ROUTER_OWNED_COMMANDS.contains(eventName)) {
+            return;
+        }
+
 
 
         switch (eventName) {
@@ -91,30 +101,38 @@ public class SlashExample extends ListenerAdapter{
             }
                 
             
+            /*
+            REFACTORED
             case "createtrainer" -> {
                 handleCreateTrainer(event, user, userId);
                 return;
             }
-            
+            */
+            /*
+            REFACTORED
             case "createteam" -> {
                 handleCreateTeam(event, user, userId);
                 return;
             }
+            */
             
             case "checkteam" -> {
                 handleCheckTeam(event, user, userId);
                 return;
             }
 
-            case "addpokemon" -> {
+            /* case "addpokemon" -> {
                 handleAddPokemon(event, user, userId);
                 return;
-            }
-             
+            } */
+            
+            /*
+            REFACTORED - NEED TO TRIPLE CHECK
             case "teachmoveset" -> {
                 handleTeachMoveset(event, user, userId);
                 return;
             }
+            */
 
             case "releasepokemon" -> {
                 handleReleasePokemon(event, user, userId);
@@ -218,7 +236,7 @@ public class SlashExample extends ListenerAdapter{
         }
     }
 
-    private void handleAddPokemon(SlashCommandInteractionEvent event, User user, long userId) {
+    /* private void handleAddPokemon(SlashCommandInteractionEvent event, User user, long userId) {
         // Needs to create a pokemon and add it to the trainers team in the database, then reply with success or failure message
         String eventName = event.getName();
         String inputSpecies = Optional.ofNullable(event.getOption("species"))
@@ -282,7 +300,7 @@ public class SlashExample extends ListenerAdapter{
                 return;
             }
         }
-    }
+    } */
 
     private void handleCheckTeam(SlashCommandInteractionEvent event, User user, long userId) {
         String eventName = event.getName();
@@ -334,6 +352,8 @@ public class SlashExample extends ListenerAdapter{
         return;
     }
 
+    /*
+    REFACTORED
     private void handleCreateTeam(SlashCommandInteractionEvent event, User user, long userId) {
         String teamName = Optional.ofNullable(event.getOption("teamname"))
             .map(option -> option.getAsString())
@@ -358,7 +378,10 @@ public class SlashExample extends ListenerAdapter{
             return;
         }
     }
+    */
 
+    /*
+    REFACTORED
     private void handleCreateTrainer(SlashCommandInteractionEvent event, User user, long userId) {
         String trainerName = Optional.ofNullable(event.getOption("name"))
             .map(option -> option.getAsString())
@@ -379,6 +402,7 @@ public class SlashExample extends ListenerAdapter{
             return;
         }
     }
+        */
 
     private void handleStartBattle(SlashCommandInteractionEvent event, User user, long userId) {
         String opponentName = Optional.ofNullable(event.getOption("opponent"))
@@ -437,6 +461,8 @@ public class SlashExample extends ListenerAdapter{
         return;
     }
 
+    /*
+    REFACTORED - NEED TO TRIPLE CHECK
     private void handleTeachMoveset(SlashCommandInteractionEvent event, User user, long userId) {
 
         // Checking for a full moveset and allowing for swapping of moves is a good goal, but we will not do that
@@ -512,7 +538,8 @@ public class SlashExample extends ListenerAdapter{
         }
         event.reply("Successfully taught " + moveNames.size() + " moves to " + selectedPokemon.getNickname() + "!").queue();
     }
+    */
         
         
-    }
+}
 

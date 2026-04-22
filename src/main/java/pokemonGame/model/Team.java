@@ -92,12 +92,7 @@ public class Team {
             return;
         }
 
-        // Sync teamSlots: pad with nulls if the array hasn't grown to this index yet,
-        // then set the element. Array assignment requires the index to already exist;
-        // By padding first, we ensure assignment works.
-        while (getTeamSize() <= teamSlotIndex) {
-            teamSlots[getTeamSize()] = null;
-        }
+        // Fixed-size array already has every slot allocated; direct assignment is enough.
         teamSlots[teamSlotIndex] = pokemon;
         if (pokemon != null) {
             pokemon.setCurrentTeamSlotIndex(teamSlotIndex);

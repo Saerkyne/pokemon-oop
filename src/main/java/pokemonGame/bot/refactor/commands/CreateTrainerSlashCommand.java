@@ -34,7 +34,7 @@ public final class CreateTrainerSlashCommand extends SlashCommandSupport impleme
     public void handle(SlashCommandContext context) {
         Optional<String> trainerName = requireStringOption(
             context,
-            "name",
+            "trainername",
             "Please specify a trainer name to create!");
         if (trainerName.isEmpty()) {
             return;

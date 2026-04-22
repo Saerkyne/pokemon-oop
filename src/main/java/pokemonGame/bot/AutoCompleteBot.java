@@ -92,7 +92,7 @@ public class AutoCompleteBot extends ListenerAdapter {
 
     private void handleAddPokemonAutoComplete(CommandAutoCompleteInteractionEvent event) {
         String focusedAddPokemonTeam = event.getFocusedOption().getName();
-        if (focusedAddPokemonTeam != null && focusedAddPokemonTeam.equals("team")) {
+        if (focusedAddPokemonTeam != null && focusedAddPokemonTeam.equals("teamname")) {
             String teamName = event.getFocusedOption().getValue().toLowerCase();
             Long discordId = event.getUser().getIdLong();
             Trainer trainer = trainerService.getTrainerByDiscordId(discordId);
@@ -128,7 +128,7 @@ public class AutoCompleteBot extends ListenerAdapter {
         if (focusedReleasePokemon == null) {
             return; // No focused option, can't handle autocomplete
         }
-        if (focusedReleasePokemon.equals("team")) {
+        if (focusedReleasePokemon.equals("teamname")) {
             String userInput = event.getFocusedOption().getValue().toLowerCase();
             Long discordId = event.getUser().getIdLong();
             Trainer trainer = trainerService.getTrainerByDiscordId(discordId);
@@ -144,14 +144,14 @@ public class AutoCompleteBot extends ListenerAdapter {
                 .collect(Collectors.toList());
             event.replyChoices(options).queue();
         } else if (focusedReleasePokemon.equals("pokemon")) {
-            if (event.getOption("team") == null) {
+            if (event.getOption("teamname") == null) {
             // If the user is trying to autocomplete the "pokemon" option but hasn't selected a team yet,
             // we can't provide any valid options, so we return an empty list.
             event.replyChoices(Collections.emptyList()).queue();
             return;
             }
         
-            String teamName = Optional.ofNullable(event.getOption("team"))
+            String teamName = Optional.ofNullable(event.getOption("teamname"))
                 .map(option -> option.getAsString())
                 .orElse(null);
             Long discordId = event.getUser().getIdLong();
@@ -184,7 +184,7 @@ public class AutoCompleteBot extends ListenerAdapter {
             return; // No focused option, can't handle autocomplete
         }
 
-        if (focusedTeamCheck.equals("team")) {
+        if (focusedTeamCheck.equals("teamname")) {
             String userInput = event.getFocusedOption().getValue().toLowerCase();
             Long discordId = event.getUser().getIdLong();
             Trainer trainer = trainerService.getTrainerByDiscordId(discordId);
@@ -207,13 +207,13 @@ public class AutoCompleteBot extends ListenerAdapter {
             return; // No focused option, can't handle autocomplete
         }
         
-        if (focusedOptionName.equals("team")) {
+        if (focusedOptionName.equals("teamname")) {
             String focusedTeamCheck = event.getFocusedOption().getName();
             if (focusedTeamCheck == null) {
                 return; // No focused option, can't handle autocomplete
             }
 
-            if (focusedTeamCheck.equals("team")) {
+            if (focusedTeamCheck.equals("teamname")) {
                 String userInput = event.getFocusedOption().getValue().toLowerCase();
                 Long discordId = event.getUser().getIdLong();
                 Trainer trainer = trainerService.getTrainerByDiscordId(discordId);
@@ -229,14 +229,14 @@ public class AutoCompleteBot extends ListenerAdapter {
                 event.replyChoices(options).queue();
             }
         } else if (focusedOptionName.equals("pokemon")) {
-            if (event.getOption("team") == null) {
+            if (event.getOption("teamname") == null) {
                 // If the user is trying to autocomplete the "pokemon" option but hasn't selected a team yet,
                 // we can't provide any valid options, so we return an empty list.
                 event.replyChoices(Collections.emptyList()).queue();
                 LOGGER.info("No team selected for Pokémon autocomplete");
                 return; 
             }
-            String teamName = Optional.ofNullable(event.getOption("team"))
+            String teamName = Optional.ofNullable(event.getOption("teamname"))
                 .map(option -> option.getAsString())
                 .orElse(null);
             Long discordId = event.getUser().getIdLong();
@@ -274,7 +274,7 @@ public class AutoCompleteBot extends ListenerAdapter {
                 LOGGER.info("No Pokémon selected for move autocomplete");
                 return;
             }
-            if (event.getOption("team") == null) {
+            if (event.getOption("teamname") == null) {
                 // If the user is trying to autocomplete a move option but hasn't selected a team yet,
                 // we can't provide any valid options, so we return an empty list.
                 event.replyChoices(Collections.emptyList()).queue();
@@ -293,7 +293,7 @@ public class AutoCompleteBot extends ListenerAdapter {
             }
             int trainerDbId = trainer.getTrainerDbId();
 
-            Team teamDb = teamService.getTeamFromName(trainerDbId, event.getOption("team").getAsString());
+            Team teamDb = teamService.getTeamFromName(trainerDbId, event.getOption("teamname").getAsString());
             if (teamDb == null) {
                 event.replyChoices(Collections.emptyList()).queue(); // No team found, return empty choices
                 LOGGER.info("No DB team found for move autocomplete");
@@ -333,7 +333,7 @@ public class AutoCompleteBot extends ListenerAdapter {
         if (focusedOptionName == null) {
             return; // No focused option, can't handle autocomplete
         }
-        if (focusedOptionName.equals("team")) {
+        if (focusedOptionName.equals("teamname")) {
             String userInput = event.getFocusedOption().getValue().toLowerCase();
             Trainer trainer = trainerService.getTrainerByDiscordId(event.getUser().getIdLong());
             if (trainer == null) {

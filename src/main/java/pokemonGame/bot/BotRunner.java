@@ -17,6 +17,7 @@ import pokemonGame.service.MoveSlotService;
 import pokemonGame.service.PokemonService;
 import pokemonGame.service.TeamService;
 import pokemonGame.service.TrainerService;
+import pokemonGame.bot.refactor.CommandRouter;
 
 // mvn compile exec:java -Dexec.mainClass="pokemonGame.bot.BotRunner"
 
@@ -39,6 +40,7 @@ public class BotRunner {
         JDA api = JDABuilder.createDefault(token)
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(new SlashExample(battleService, moveSlotService, trainerService, teamService))
+                .addEventListeners(new CommandRouter(battleService, moveSlotService, trainerService, teamService, pokemonService))
                 .addEventListeners(new AutoCompleteBot(trainerService, teamService, moveSlotService))
                 .build();
 
@@ -55,24 +57,24 @@ public class BotRunner {
                 .addCommands(Commands.slash("createtrainer", "Creates a new trainer")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.STRING, "name", "The name of the trainer", true, false))
+                    .addOption(OptionType.STRING, "trainername", "The name of the trainer", true, false))
                 
                 .addCommands(Commands.slash("checkteam", "Checks the trainer's team makeup")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.STRING, "team", "Required, specify team name", true, true))
+                    .addOption(OptionType.STRING, "teamname", "Required, specify team name", true, true))
             
                 .addCommands(Commands.slash("addpokemon", "Adds a Pokémon to your team")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.STRING, "team", "The team to add the Pokémon to", true, true)
+                    .addOption(OptionType.STRING, "teamname", "The team to add the Pokémon to", true, true)
                     .addOption(OptionType.STRING, "species", "The name of the Pokémon to add (Gen 1 only currently)", true, true)
                     .addOption(OptionType.STRING, "nickname", "The nickname for the Pokémon (optional)", false))
         
                 .addCommands(Commands.slash("releasepokemon", "Releases a Pokémon from your team")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.STRING, "team", "The team the Pokémon belongs to", true, true)
+                    .addOption(OptionType.STRING, "teamname", "The team the Pokémon belongs to", true, true)
                     .addOption(OptionType.STRING, "pokemon", "The nickname (or species, if not nicknamed) of the Pokémon to release", true, true))
     
                 .addCommands(Commands.slash("cleardatabase", "Clears all data from the database (trainers, teams, and Pokémon)")
@@ -84,13 +86,13 @@ public class BotRunner {
                 .addCommands(Commands.slash("startbattle", "Starts a battle with another trainer (not implemented yet)")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.STRING, "team", "The team you want to battle with", true, true)
+                    .addOption(OptionType.STRING, "teamname", "The team you want to battle with", true, true)
                     .addOption(OptionType.USER, "opponent", "The trainer you want to battle", true))
 
                 .addCommands(Commands.slash("teachmoveset", "Teaches a moveset to a Pokemon on a team. Overwrites existing set.")
                     .setContexts(InteractionContextType.ALL)
                     .setIntegrationTypes(IntegrationType.ALL)
-                    .addOption(OptionType.STRING, "team", "The team the Pokémon belongs to", true, true)
+                    .addOption(OptionType.STRING, "teamname", "The team the Pokémon belongs to", true, true)
                     .addOption(OptionType.STRING, "pokemon", "The nickname (or species, if not nicknamed) of the Pokémon to teach the move to", true, true)
                     .addOption(OptionType.STRING, "moveone", "The name of the move to teach", true, true)
                     .addOption(OptionType.STRING, "movetwo", "The name of the move to teach", false, true)

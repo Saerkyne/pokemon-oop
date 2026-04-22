@@ -10,12 +10,14 @@ import org.slf4j.LoggerFactory;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import pokemonGame.bot.refactor.commands.CreateTrainerSlashCommand;
+import pokemonGame.bot.refactor.commands.AddPokemonSlashCommand;
 import pokemonGame.bot.refactor.commands.CreateTeamSlashCommand;
 import pokemonGame.bot.refactor.commands.TeachMovesetSlashCommand;
 import pokemonGame.service.BattleService;
 import pokemonGame.service.MoveSlotService;
 import pokemonGame.service.TeamService;
 import pokemonGame.service.TrainerService;
+import pokemonGame.service.PokemonService;
 
 /**
  * Parallel listener that shows router-based command setup beside SlashExample.
@@ -31,16 +33,19 @@ public class CommandRouter extends ListenerAdapter {
         BattleService battleService,
         MoveSlotService moveSlotService,
         TrainerService trainerService,
-        TeamService teamService) {
+        TeamService teamService,
+        PokemonService pokemonService) {
         Objects.requireNonNull(battleService);
         Objects.requireNonNull(moveSlotService);
         Objects.requireNonNull(trainerService);
         Objects.requireNonNull(teamService);
+        Objects.requireNonNull(pokemonService);
 
         Map<String, SlashCommandHandler> handlerMap = new LinkedHashMap<>();
         register(handlerMap, new CreateTrainerSlashCommand(trainerService));
         register(handlerMap, new TeachMovesetSlashCommand(moveSlotService, teamService, trainerService));
         register(handlerMap, new CreateTeamSlashCommand(teamService, trainerService));
+        register(handlerMap, new AddPokemonSlashCommand(teamService, trainerService, pokemonService));
         // Next migrations live here, one command per class.
         // register(handlerMap, new AddPokemonSlashCommand(trainerService, teamService));
         // register(handlerMap, new StartBattleSlashCommand(trainerService, teamService, battleService));
@@ -54,9 +59,6 @@ public class CommandRouter extends ListenerAdapter {
         SlashCommandHandler handler = handlers.get(context.commandName());
 
         if (handler == null) {
-            event.reply("I can't handle that command right now :(")
-                .setEphemeral(true)
-                .queue();
             return;
         }
 

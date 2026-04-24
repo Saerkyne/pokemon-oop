@@ -17,7 +17,7 @@ The goal is to build a **turn-based battle loop** that lets two trainers (or a t
 - `MoveSlot` — wraps a `Move` with mutable PP tracking and a `use()` method
 - `Pokemon` — complete stat model, HP management, moveset (max 4 `MoveSlot`s), faint flag
 - `Trainer` — team of up to 6 Pokémon
-- `SlashExample` — has a `battlestate` command that currently returns a hardcoded reply
+- `CommandRouter` + slash command handlers — current bot entrypoint for slash commands; `battlestate` is still a placeholder reply
 
 **Key Assumptions:**
 
@@ -79,7 +79,7 @@ The battle loop adds a **service layer** between the existing domain model and t
 ```mermaid
 graph TD
     subgraph Bot Layer
-        CMD[SlashExample — /battle command]
+        CMD[CommandRouter + slash handlers — /battle command]
         BTN[ButtonListener — move & switch selection]
     end
 
@@ -153,7 +153,7 @@ Before the battle loop starts, both trainers go through a multi-step handshake t
 sequenceDiagram
     participant U1 as Trainer 1 (Discord)
     participant U2 as Trainer 2 (Discord)
-    participant Bot as SlashExample / ButtonListener
+    participant Bot as CommandRouter / ButtonListener
     participant BS as BattleService
     participant DB as BattleCRUD / TrainerCRUD / TeamCRUD
 
@@ -291,7 +291,7 @@ sequenceDiagram
     participant TM as TurnManager
     participant BS as BattleService
     participant DB as BattleCRUD / PokemonCRUD
-    participant Bot as SlashExample / ButtonListener
+    participant Bot as CommandRouter / ButtonListener
     participant U1 as Winner (Discord)
     participant U2 as Loser (Discord)
 
@@ -354,7 +354,7 @@ Either player can check the current state of their battle at any time.
 ```mermaid
 sequenceDiagram
     participant U1 as Trainer (Discord)
-    participant Bot as SlashExample
+    participant Bot as CommandRouter
     participant BS as BattleService
     participant DB as BattleCRUD / BattleTurnCRUD
 

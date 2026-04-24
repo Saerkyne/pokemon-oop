@@ -1,4 +1,4 @@
-package pokemonGame.bot.refactor;
+package pokemonGame.bot;
 
 /**
  * Handles one slash command in router-based bot setup.

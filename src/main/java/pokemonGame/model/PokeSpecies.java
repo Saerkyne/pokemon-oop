@@ -1,9 +1,10 @@
-package pokemonGame.species;
+package pokemonGame.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pokemonGame.model.Pokemon;
+import pokemonGame.service.PokemonFactory;
+import pokemonGame.species.*;
 
 import java.util.Arrays;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package pokemonGame.bot.refactor;
+package pokemonGame.bot;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -9,17 +9,17 @@ import org.slf4j.LoggerFactory;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import pokemonGame.bot.refactor.commands.CreateTrainerSlashCommand;
-import pokemonGame.bot.refactor.commands.AddPokemonSlashCommand;
-import pokemonGame.bot.refactor.commands.BattleStateSlashCommand;
-import pokemonGame.bot.refactor.commands.BattleComponentDemoSlashCommand;
-import pokemonGame.bot.refactor.commands.CheckTeamSlashCommand;
-import pokemonGame.bot.refactor.commands.ClearDatabaseSlashCommand;
-import pokemonGame.bot.refactor.commands.CreateTeamSlashCommand;
-import pokemonGame.bot.refactor.commands.PingSlashCommand;
-import pokemonGame.bot.refactor.commands.ReleasePokemonSlashCommand;
-import pokemonGame.bot.refactor.commands.TeachMovesetSlashCommand;
-import pokemonGame.bot.refactor.commands.StartBattleSlashCommand;
+import pokemonGame.bot.commands.CreateTrainerSlashCommand;
+import pokemonGame.bot.commands.AddPokemonSlashCommand;
+import pokemonGame.bot.commands.BattleStateSlashCommand;
+import pokemonGame.bot.commands.BattleComponentDemoSlashCommand;
+import pokemonGame.bot.commands.CheckTeamSlashCommand;
+import pokemonGame.bot.commands.ClearDatabaseSlashCommand;
+import pokemonGame.bot.commands.CreateTeamSlashCommand;
+import pokemonGame.bot.commands.PingSlashCommand;
+import pokemonGame.bot.commands.ReleasePokemonSlashCommand;
+import pokemonGame.bot.commands.TeachMovesetSlashCommand;
+import pokemonGame.bot.commands.StartBattleSlashCommand;
 import pokemonGame.service.BattleService;
 import pokemonGame.service.MoveSlotService;
 import pokemonGame.service.TeamService;

@@ -1,8 +1,9 @@
-package pokemonGame.species;
+package pokemonGame.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pokemonGame.model.PokeSpecies;
 import pokemonGame.model.Pokemon;
 
 /**

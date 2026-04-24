@@ -47,8 +47,11 @@ src/main/java/pokemonGame/
 │   └── DamageResult.java  # Record: outcome of a single attack
 ├── bot/                   # Discord bot (JDA event listeners)
 │   ├── BotRunner.java     # Entry point: builds JDA, registers slash commands
-│   ├── SlashExample.java  # Slash command handler (createtrainer, addpokemon, etc.)
-│   └── AutoCompleteBot.java # Autocomplete suggestions for species/pokemon/teams
+│   ├── CommandRouter.java # Slash command router: command name -> handler
+│   ├── SlashCommandSupport.java # Shared slash-command helper methods
+│   ├── BattleComponentListenerExample.java # Example button/select-menu listener
+│   ├── AutoCompleteBot.java # Autocomplete suggestions for species/pokemon/teams
+│   └── commands/          # One handler class per slash command
 ├── core/                  # Shared utilities and game constants
 │   ├── EvManager.java     # EV add/set/cap enforcement (252 per stat, 510 total)
 │   ├── Natures.java       # 25 natures enum with stat modifiers
@@ -144,7 +147,7 @@ The project follows a **layered architecture** with strict separation of concern
 
 - **Model classes** (`Pokemon`, `Move`, `TypeChart`, `Attack`) are pure logic — no I/O, no Discord, no database imports.
 - **Service layer** (`TrainerService`, `TeamService`, `BattleService`) coordinates multi-step operations and enforces business rules.
-- **Bot layer** (`SlashExample`, `AutoCompleteBot`) handles Discord I/O and delegates to services.
+- **Bot layer** (`CommandRouter`, slash command handlers, `AutoCompleteBot`) handles Discord I/O and delegates to services.
 - **DB layer** (`TrainerCRUD`, `PokemonCRUD`, `TeamCRUD`, `BattleCRUD`) handles SQL via prepared statements.
 
 ### Battle System

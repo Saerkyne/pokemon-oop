@@ -1,8 +1,8 @@
-package pokemonGame.moves;
+package pokemonGame.model;
 
-import pokemonGame.model.Move;
-import pokemonGame.model.MoveSlot;
 import pokemonGame.core.TypeChart.Type;
+import pokemonGame.moves.*;
+
 import java.util.Map;
 import java.util.HashMap;
 

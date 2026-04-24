@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import pokemonGame.model.LearnsetEntry;
 import pokemonGame.model.Move;
 import pokemonGame.model.MoveSlot;
+import pokemonGame.model.PokeMove;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.LearnsetEntry.Source;
-import pokemonGame.moves.PokeMove;
 import pokemonGame.db.MoveCRUD;
 
 public class MoveSlotService {

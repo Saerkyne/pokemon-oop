@@ -1,4 +1,4 @@
-package pokemonGame.bot.refactor.commands;
+package pokemonGame.bot.commands;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import pokemonGame.model.Trainer;
 import pokemonGame.model.Team;
-import pokemonGame.bot.refactor.SlashCommandContext;
-import pokemonGame.bot.refactor.SlashCommandHandler;
-import pokemonGame.bot.refactor.SlashCommandSupport;
+import pokemonGame.bot.SlashCommandContext;
+import pokemonGame.bot.SlashCommandHandler;
+import pokemonGame.bot.SlashCommandSupport;
 
 import net.dv8tion.jda.api.entities.User;
 

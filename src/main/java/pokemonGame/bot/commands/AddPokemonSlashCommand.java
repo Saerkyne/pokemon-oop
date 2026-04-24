@@ -1,21 +1,21 @@
-package pokemonGame.bot.refactor.commands;
+package pokemonGame.bot.commands;
 
-import pokemonGame.bot.refactor.SlashCommandHandler;
-import pokemonGame.bot.refactor.SlashCommandSupport;
+import pokemonGame.bot.SlashCommandHandler;
+import pokemonGame.bot.SlashCommandSupport;
 import pokemonGame.model.Trainer;
 import pokemonGame.model.Team;
 import pokemonGame.model.Pokemon;
 import pokemonGame.service.TrainerService;
 import pokemonGame.service.TeamService;
 import pokemonGame.service.PokemonService;
-import pokemonGame.species.PokeSpecies;
+import pokemonGame.model.PokeSpecies;
 
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pokemonGame.bot.refactor.SlashCommandContext;
+import pokemonGame.bot.SlashCommandContext;
 
 public final class AddPokemonSlashCommand extends SlashCommandSupport implements SlashCommandHandler{
     

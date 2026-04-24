@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-21  
 **Audience:** Junior Java developer  
-**Scope:** Compare old listener in [SlashExample.java](../src/main/java/pokemonGame/bot/SlashExample.java) with parallel router setup in [CommandRouter.java](../src/main/java/pokemonGame/bot/refactor/CommandRouter.java)
+**Scope:** Explain completed migration from legacy `SlashExample` design to current router setup in [CommandRouter.java](../src/main/java/pokemonGame/bot/CommandRouter.java)
 
 ---
 
@@ -12,8 +12,8 @@ Both setups do same job: take a Discord slash command, decide which game logic s
 
 Main difference is **where that work lives**.
 
-- Old setup keeps routing and command logic in one class: [SlashExample.java](../src/main/java/pokemonGame/bot/SlashExample.java)
-- New setup splits responsibilities across small classes in [src/main/java/pokemonGame/bot/refactor](../src/main/java/pokemonGame/bot/refactor)
+- Old setup kept routing and command logic in one `SlashExample` listener.
+- Current setup splits responsibilities across small classes in [src/main/java/pokemonGame/bot](../src/main/java/pokemonGame/bot) and [src/main/java/pokemonGame/bot/commands](../src/main/java/pokemonGame/bot/commands)
 - Old and new setups both still use JDA events and same service classes, such as [TrainerService.java](../src/main/java/pokemonGame/service/TrainerService.java)
 
 Plain English version:
@@ -29,22 +29,22 @@ That may sound like a small change, but it changes how easy code is to read, tes
 
 ### Old Setup
 
-- [SlashExample.java](../src/main/java/pokemonGame/bot/SlashExample.java): one JDA listener with a `switch` on command name and many private handler methods
+- Legacy `SlashExample`: one JDA listener with a `switch` on command name and many private handler methods
 
-### New Parallel Setup
+### Current Setup
 
-- [CommandRouter.java](../src/main/java/pokemonGame/bot/refactor/CommandRouter.java): thin router listener
-- [SlashCommandHandler.java](../src/main/java/pokemonGame/bot/refactor/SlashCommandHandler.java): contract for one command handler
-- [SlashCommandContext.java](../src/main/java/pokemonGame/bot/refactor/SlashCommandContext.java): shared event data object
-- [SlashCommandSupport.java](../src/main/java/pokemonGame/bot/refactor/SlashCommandSupport.java): shared helper methods for handlers
-- [CreateTrainerSlashCommand.java](../src/main/java/pokemonGame/bot/refactor/commands/CreateTrainerSlashCommand.java): migrated `createtrainer` command
-- [TeachMovesetSlashCommand.java](../src/main/java/pokemonGame/bot/refactor/commands/TeachMovesetSlashCommand.java): migrated complex command using shared trainer/team/Pokemon helpers
+- [CommandRouter.java](../src/main/java/pokemonGame/bot/CommandRouter.java): thin router listener
+- [SlashCommandHandler.java](../src/main/java/pokemonGame/bot/SlashCommandHandler.java): contract for one command handler
+- [SlashCommandContext.java](../src/main/java/pokemonGame/bot/SlashCommandContext.java): shared event data object
+- [SlashCommandSupport.java](../src/main/java/pokemonGame/bot/SlashCommandSupport.java): shared helper methods for handlers
+- [CreateTrainerSlashCommand.java](../src/main/java/pokemonGame/bot/commands/CreateTrainerSlashCommand.java): routed `createtrainer` command
+- [TeachMovesetSlashCommand.java](../src/main/java/pokemonGame/bot/commands/TeachMovesetSlashCommand.java): complex command using shared trainer/team/Pokemon helpers
 
 ### Responsibility Comparison
 
 | Concern | Old Setup | New Setup | Why Junior Dev Should Care |
 | --- | --- | --- | --- |
-| Find command by name | `switch` in `SlashExample` | `Map<String, SlashCommandHandler>` in `CommandRouter` | Easier to add commands without growing one big method |
+| Find command by name | `switch` in legacy `SlashExample` | `Map<String, SlashCommandHandler>` in `CommandRouter` | Easier to add commands without growing one big method |
 | Hold per-command logic | Private methods in same class | One class per command | Smaller files are easier to understand |
 | Share repeated event data | Rebuilt in listener methods | `SlashCommandContext` record | Less repeated boilerplate |
 | Share helper logic | Repeated null/option/reply code | `SlashCommandSupport` | Common rules stay in one place |
@@ -83,7 +83,7 @@ flowchart TD
 
 ### Plain English Walkthrough: New Path
 
-Think of [SlashExample.java](../src/main/java/pokemonGame/bot/SlashExample.java) as a front desk worker who also tries to do every other job in the building.
+Think of the legacy `SlashExample` listener as a front desk worker who also tries to do every other job in the building.
 
 - It answers the door by receiving the JDA event.
 - It checks which command came in.
@@ -127,13 +127,13 @@ flowchart TD
 
 ### Plain English Walkthrough: Visual Comparison
 
-Now think of [CommandRouter.java](../src/main/java/pokemonGame/bot/refactor/CommandRouter.java) as a receptionist instead of a do-everything worker.
+Now think of [CommandRouter.java](../src/main/java/pokemonGame/bot/CommandRouter.java) as a receptionist instead of a do-everything worker.
 
 - It receives the event.
 - It asks, "Which command is this?"
 - It hands the work to the correct handler.
 
-The actual `createtrainer` behavior lives in [CreateTrainerSlashCommand.java](../src/main/java/pokemonGame/bot/refactor/commands/CreateTrainerSlashCommand.java). That file only cares about one command. This makes the code path narrower:
+The actual `createtrainer` behavior lives in [CreateTrainerSlashCommand.java](../src/main/java/pokemonGame/bot/commands/CreateTrainerSlashCommand.java). That file only cares about one command. This makes the code path narrower:
 
 - router decides **who handles the work**
 - handler decides **how this command works**
@@ -151,8 +151,8 @@ Job: receive JDA slash events and route them.
 
 It does **not** contain the detailed logic for every command. It mostly does two things:
 
-1. turn the raw event into a [SlashCommandContext.java](../src/main/java/pokemonGame/bot/refactor/SlashCommandContext.java)
-2. find the correct [SlashCommandHandler.java](../src/main/java/pokemonGame/bot/refactor/SlashCommandHandler.java) and call it
+1. turn the raw event into a [SlashCommandContext.java](../src/main/java/pokemonGame/bot/SlashCommandContext.java)
+2. find the correct [SlashCommandHandler.java](../src/main/java/pokemonGame/bot/SlashCommandHandler.java) and call it
 
 Why this helps:
 
@@ -321,8 +321,8 @@ Those checks can move into support helpers instead of being re-written inside ea
 
 The bigger win appears in commands like:
 
-- [SlashExample.java](../src/main/java/pokemonGame/bot/SlashExample.java) `handleAddPokemon(...)`
-- [SlashExample.java](../src/main/java/pokemonGame/bot/SlashExample.java) `handleTeachMoveset(...)`
+- [AddPokemonSlashCommand.java](../src/main/java/pokemonGame/bot/commands/AddPokemonSlashCommand.java)
+- [TeachMovesetSlashCommand.java](../src/main/java/pokemonGame/bot/commands/TeachMovesetSlashCommand.java)
 
 Those commands do more than one job. They do command-specific work, but they also repeat the same lookup chain:
 
@@ -364,7 +364,7 @@ When both live in same method, command-specific logic gets buried under defensiv
 
 ### Actual Helper-Based Shape In Parallel Setup
 
-This is no longer only a plan. The parallel router now has a real example in [TeachMovesetSlashCommand.java](../src/main/java/pokemonGame/bot/refactor/commands/TeachMovesetSlashCommand.java).
+This is no longer only a plan. The current router now has a real example in [TeachMovesetSlashCommand.java](../src/main/java/pokemonGame/bot/commands/TeachMovesetSlashCommand.java).
 
 Current helper flow:
 
@@ -421,14 +421,9 @@ Shared helpers move the repeated scaffolding out of the way so that story is eas
 
 ### Important Note
 
-This helper-based complex-command shape is now implemented once, but migration is still partial. The helper methods live in [src/main/java/pokemonGame/bot/refactor/SlashCommandSupport.java](../src/main/java/pokemonGame/bot/refactor/SlashCommandSupport.java), and the real example lives in [src/main/java/pokemonGame/bot/refactor/commands/TeachMovesetSlashCommand.java](../src/main/java/pokemonGame/bot/refactor/commands/TeachMovesetSlashCommand.java).
+This helper-based complex-command shape is now the active design. The helper methods live in [src/main/java/pokemonGame/bot/SlashCommandSupport.java](../src/main/java/pokemonGame/bot/SlashCommandSupport.java), and the real example lives in [src/main/java/pokemonGame/bot/commands/TeachMovesetSlashCommand.java](../src/main/java/pokemonGame/bot/commands/TeachMovesetSlashCommand.java).
 
-Right now `SlashCommandSupport` only contains:
-
-- `requireStringOption(...)`
-- `replyEphemeral(...)`
-
-That is enough for `createtrainer`, but not enough to show full payoff for commands with deeper lookup chains.
+`SlashCommandSupport` now contains shared option, trainer, team, Pokémon, and reply helpers, so routed handlers can focus on command-specific behavior instead of repeated event plumbing.
 
 ---
 

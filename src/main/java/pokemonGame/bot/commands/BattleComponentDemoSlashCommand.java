@@ -1,4 +1,4 @@
-package pokemonGame.bot.refactor.commands;
+package pokemonGame.bot.commands;
 
 import java.util.List;
 import java.util.Objects;
@@ -7,10 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
-import pokemonGame.bot.refactor.BattleComponentListenerExample;
-import pokemonGame.bot.refactor.SlashCommandContext;
-import pokemonGame.bot.refactor.SlashCommandHandler;
-import pokemonGame.bot.refactor.SlashCommandSupport;
+import pokemonGame.bot.BattleComponentListenerExample;
+import pokemonGame.bot.SlashCommandContext;
+import pokemonGame.bot.SlashCommandHandler;
+import pokemonGame.bot.SlashCommandSupport;
 
 /**
  * Temporary slash command that posts sample battle components.

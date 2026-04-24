@@ -11,6 +11,7 @@ import pokemonGame.core.StatCalculator;
 import pokemonGame.core.TypeChart.Category;
 import pokemonGame.core.TypeChart.Type;
 import pokemonGame.model.Move;
+import pokemonGame.model.PokeSpecies;
 import pokemonGame.model.Pokemon;
 import pokemonGame.moves.Psychic;
 import pokemonGame.moves.Teleport;
@@ -19,7 +20,6 @@ import pokemonGame.moves.MegaKick;
 import pokemonGame.moves.Toxic;
 import pokemonGame.species.Abra;
 import pokemonGame.species.Bulbasaur;
-import pokemonGame.species.PokeSpecies;
 
 /**
  * Unit tests for the {@link Pokemon} model class.

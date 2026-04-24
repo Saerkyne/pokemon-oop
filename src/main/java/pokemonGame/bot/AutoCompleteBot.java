@@ -11,12 +11,11 @@ import pokemonGame.model.Team;
 import pokemonGame.model.Trainer;
 import pokemonGame.model.LearnsetEntry;
 import pokemonGame.model.Move;
+import pokemonGame.model.PokeSpecies;
 import pokemonGame.service.MoveSlotService;
 import pokemonGame.service.TrainerService;
 import pokemonGame.service.TeamService;
 import pokemonGame.model.Pokemon;
-import pokemonGame.species.PokeSpecies;
-
 
 import java.util.Collections;
 

@@ -180,7 +180,7 @@ Why this order:
 
 ## 10. Example File
 
-See [src/main/java/pokemonGame/bot/refactor/BattleComponentListenerExample.java](src/main/java/pokemonGame/bot/refactor/BattleComponentListenerExample.java) for:
+See [src/main/java/pokemonGame/bot/BattleComponentListenerExample.java](src/main/java/pokemonGame/bot/BattleComponentListenerExample.java) for:
 
 - accept/decline buttons
 - move buttons

@@ -1,4 +1,4 @@
-package pokemonGame.bot.refactor;
+package pokemonGame.bot;
 
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

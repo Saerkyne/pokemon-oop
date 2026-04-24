@@ -4,11 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pokemonGame.model.Move;
+import pokemonGame.model.PokeMove;
+import pokemonGame.model.PokeSpecies;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Trainer;
-import pokemonGame.moves.PokeMove;
-import pokemonGame.species.PokeSpecies;
-import pokemonGame.species.PokemonFactory;
 
 import java.util.List;
 

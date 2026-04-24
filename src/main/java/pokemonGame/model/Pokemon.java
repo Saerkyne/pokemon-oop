@@ -16,7 +16,6 @@ import pokemonGame.core.Stat;
 import pokemonGame.core.StatCalculator;
 import pokemonGame.core.TypeChart.StatusCondition;
 import pokemonGame.core.TypeChart.Type;
-import pokemonGame.species.PokeSpecies;
 
 
 /**

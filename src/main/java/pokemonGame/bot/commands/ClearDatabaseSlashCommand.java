@@ -1,13 +1,13 @@
-package pokemonGame.bot.refactor.commands;
+package pokemonGame.bot.commands;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import pokemonGame.bot.refactor.SlashCommandContext;
-import pokemonGame.bot.refactor.SlashCommandHandler;
-import pokemonGame.bot.refactor.SlashCommandSupport;
+import pokemonGame.bot.SlashCommandContext;
+import pokemonGame.bot.SlashCommandHandler;
+import pokemonGame.bot.SlashCommandSupport;
 import pokemonGame.db.DatabaseSetup;
 
 public final class ClearDatabaseSlashCommand extends SlashCommandSupport implements SlashCommandHandler {

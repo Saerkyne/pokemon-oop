@@ -47,5 +47,5 @@
          *public static Trainer getTrainerByDiscordId(long discordID) { ... }
          *   Then you can call TrainerCRUD.getTrainerByDiscordId(discordId) directly.
          *
-         * We use Option A here to match how SlashExample.java already uses these classes.
+         * We use Option A here to match how current slash command handlers already use these classes.
          */

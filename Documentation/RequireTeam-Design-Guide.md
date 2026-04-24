@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-22  
 **Audience:** Junior Java developer  
-**Scope:** Explain why `requireTeam(...)` in [SlashCommandSupport.java](../src/main/java/pokemonGame/bot/refactor/SlashCommandSupport.java) is shaped the way it is, and whether splitting it is the right fix for the current `AddPokemonSlashCommand` issue.
+**Scope:** Explain why `requireTeam(...)` in [SlashCommandSupport.java](../src/main/java/pokemonGame/bot/SlashCommandSupport.java) is shaped the way it is, and whether splitting it is the right fix for the current `AddPokemonSlashCommand` issue.
 
 ---
 
@@ -48,7 +48,7 @@ That is why helper returns `Optional<Team>` instead of throwing.
 
 ## 3. Why Method Takes an Option Key
 
-Current method in [SlashCommandSupport.java](../src/main/java/pokemonGame/bot/refactor/SlashCommandSupport.java) takes this parameter:
+Current method in [SlashCommandSupport.java](../src/main/java/pokemonGame/bot/SlashCommandSupport.java) takes this parameter:
 
 - `String teamOptionName`
 
@@ -100,7 +100,7 @@ That is why combined helper can feel nice in controllers: one call, one result, 
 
 ## 5. Why AddPokemon Broke
 
-The confusion happened in [AddPokemonSlashCommand.java](../src/main/java/pokemonGame/bot/refactor/commands/AddPokemonSlashCommand.java).
+The confusion happened in [AddPokemonSlashCommand.java](../src/main/java/pokemonGame/bot/commands/AddPokemonSlashCommand.java).
 
 The handler did this pattern:
 

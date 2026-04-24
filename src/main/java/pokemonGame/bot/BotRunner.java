@@ -17,9 +17,6 @@ import pokemonGame.service.MoveSlotService;
 import pokemonGame.service.PokemonService;
 import pokemonGame.service.TeamService;
 import pokemonGame.service.TrainerService;
-import pokemonGame.bot.refactor.BattleComponentListenerExample;
-import pokemonGame.bot.refactor.CommandRouter;
-
 // mvn compile exec:java -Dexec.mainClass="pokemonGame.bot.BotRunner"
 
 

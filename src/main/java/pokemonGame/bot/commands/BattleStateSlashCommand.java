@@ -1,11 +1,11 @@
-package pokemonGame.bot.refactor.commands;
+package pokemonGame.bot.commands;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pokemonGame.bot.refactor.SlashCommandContext;
-import pokemonGame.bot.refactor.SlashCommandHandler;
-import pokemonGame.bot.refactor.SlashCommandSupport;
+import pokemonGame.bot.SlashCommandContext;
+import pokemonGame.bot.SlashCommandHandler;
+import pokemonGame.bot.SlashCommandSupport;
 
 public final class BattleStateSlashCommand extends SlashCommandSupport implements SlashCommandHandler {
 

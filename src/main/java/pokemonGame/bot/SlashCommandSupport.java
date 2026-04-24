@@ -1,4 +1,4 @@
-package pokemonGame.bot.refactor;
+package pokemonGame.bot;
 
 import java.util.Optional;
 

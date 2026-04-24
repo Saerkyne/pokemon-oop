@@ -5,6 +5,7 @@ import pokemonGame.core.Stat;
 import pokemonGame.core.StatCalculator;
 import pokemonGame.core.TypeChart.Type;
 import pokemonGame.model.LearnsetEntry;
+import pokemonGame.model.PokeSpecies;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.LearnsetEntry.Source;
 

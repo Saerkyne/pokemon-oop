@@ -10,7 +10,7 @@ The solution is to **make the handlers thin** so the testable logic lives elsewh
 
 ## The Problem: Thick Handlers
 
-Currently, `SlashExample.onSlashCommandInteraction()` does everything:
+Historically, the legacy `SlashExample.onSlashCommandInteraction()` did everything in one file:
 
 1. Reads Discord input from the event
 2. Calls service/CRUD methods
@@ -47,11 +47,16 @@ public CreateTrainerResult handleCreateTrainer(String name, long discordId, Stri
 The handler only parses Discord input, delegates to the service, and sends the reply:
 
 ```java
-case "createtrainer":
-    var result = trainerService.handleCreateTrainer(
-        event.getOption("name").getAsString(), userId, user);
-    event.reply(result.message()).setEphemeral(!result.success()).queue();
-    return;
+public final class CreateTrainerSlashCommand extends SlashCommandSupport implements SlashCommandHandler {
+    @Override
+    public void handle(SlashCommandContext context) {
+        var result = trainerService.handleCreateTrainer(
+            context.event().getOption("trainername").getAsString(),
+            context.userId(),
+            context.user().getName());
+        reply(context, result.message());
+    }
+}
 ```
 
 ### Step 3 — Test the Service Method Without JDA
@@ -93,7 +98,7 @@ Mockito lets you create fake objects that simulate JDA classes without a real Di
 
 | Step | Action | Benefit |
 | ------ | -------- | --------- |
-| 1 | Extract business logic from `SlashExample` into service methods with plain return types | Service methods become testable without JDA |
+| 1 | Extract business logic from slash command handlers into service methods with plain return types | Service methods become testable without JDA |
 | 2 | Write tests for the service methods | High-value tests covering real business logic |
 | 3 | Keep slash command handlers as thin adapters (3–5 lines each) | Minimal untested code remaining |
 | 4 | (Optional) Add Mockito for handler wiring tests | Full coverage if desired |

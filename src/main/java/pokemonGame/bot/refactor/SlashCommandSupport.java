@@ -3,6 +3,7 @@ package pokemonGame.bot.refactor;
 import java.util.Optional;
 
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.entities.User;
 import pokemonGame.model.Pokemon;
 import pokemonGame.model.Team;
 import pokemonGame.model.Trainer;
@@ -112,6 +113,22 @@ public abstract class SlashCommandSupport {
         }
 
         return Optional.of(pokemon);
+    }
+
+    protected Optional<User> requireUserOption(SlashCommandContext context, String optionName, String missingMessage) {
+        OptionMapping option = context.event().getOption(optionName);
+        if (option == null) {
+            replyEphemeral(context, missingMessage);
+            return Optional.empty();
+        }
+
+        User user = option.getAsUser();
+        if (user == null) {
+            replyEphemeral(context, missingMessage);
+            return Optional.empty();
+        }
+
+        return Optional.of(user);
     }
 
     protected void replyEphemeral(SlashCommandContext context, String message) {

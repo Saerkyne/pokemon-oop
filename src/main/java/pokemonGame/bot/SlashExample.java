@@ -95,10 +95,10 @@ public class SlashExample extends ListenerAdapter{
                 return;
             }
 
-            case "startbattle" -> {
+            /* case "startbattle" -> {
                 handleStartBattle(event, user, userId);
                 return;
-            }
+            } */
                 
             
             /*
@@ -161,12 +161,6 @@ public class SlashExample extends ListenerAdapter{
                     .queue(); 
             }
         }
-    }
-
-    private void sendMessage(User user, String message) {
-        user.openPrivateChannel().queue((channel) -> {
-            channel.sendMessage(message).queue();
-        });
     }
 
     private void handleClearDatabase(SlashCommandInteractionEvent event, User user, long userId) {
@@ -404,7 +398,7 @@ public class SlashExample extends ListenerAdapter{
     }
         */
 
-    private void handleStartBattle(SlashCommandInteractionEvent event, User user, long userId) {
+    /* private void handleStartBattle(SlashCommandInteractionEvent event, User user, long userId) {
         String opponentName = Optional.ofNullable(event.getOption("opponent"))
             .map(option -> option.getAsUser().getName())
             .orElse(null);
@@ -459,7 +453,7 @@ public class SlashExample extends ListenerAdapter{
         }
 
         return;
-    }
+    } */
 
     /*
     REFACTORED - NEED TO TRIPLE CHECK

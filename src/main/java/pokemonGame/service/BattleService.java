@@ -5,7 +5,6 @@ import pokemonGame.battle.TurnManager;
 import pokemonGame.db.BattleCRUD;
 import pokemonGame.model.Battle;
 
-import java.util.Optional;
 
 /**
  * Orchestrates battle lifecycle: creating challenges, validating participants,
@@ -48,28 +47,37 @@ public class BattleService {
         return null;
     }
 
-      
+    public int createBattle(int trainer1Id, int trainer2Id, int trainer1TeamId) {
 
-    public boolean createBattle(int trainer1Id, int trainer2Id, Optional<Integer> trainer1TeamId, Optional<Integer> trainer2TeamId) {
-        // Implementation to create a new battle in the database and return the battle ID
-        // We need to check for an existing active battle for this trainer matchup
-
-        
-        if (battleCrud.getActiveBattleForTrainerMatchup(trainer1Id, trainer2Id) != null) {
-            // There is already an active battle for this trainer matchup
-            return false;
+        // Check for existing active or pending battle between these two trainers to prevent duplicates
+        int pendingBattleId = battleCrud.getPendingBattleForTrainerMatchup(trainer1Id, trainer2Id);
+        int activeBattleId = battleCrud.getActiveBattleForTrainerMatchup(trainer1Id, trainer2Id);
+        if (pendingBattleId != -1 || activeBattleId != -1) {
+            return -1;
         }
 
-        // TODO [🔴 BLOCKING | review 2026-04-20]: Ignoring battleCrud.createBattle return value. Why: DAO failure returns without signal — method returns true even when insert failed. Caller has no battleId either. Fix: capture the returned ID, verify > 0, return int (battleId) or Optional<Integer>; propagate failure.
-        // TODO [🟡 IMPORTANT | review 2026-04-20]: Duplicate check tests only (t1, t2) — matchup (t2, t1) is not prevented. Fix: also check `getActiveBattleForTrainerMatchup(trainer2Id, trainer1Id)` OR have DAO normalize (min,max) ordering.
-        // TODO [🟢 SUGGESTION | review 2026-04-20]: Magic string "PENDING". Fix: use `Battle.Status.PENDING.name()` from the existing enum.
-        // Create a new battle and set its status to "Pending" until both trainers have submitted their teams and are ready to start
-        battleCrud.createBattle(trainer1Id, trainer2Id, "PENDING", trainer1TeamId.orElse(-1), trainer2TeamId.orElse(-1));
-        return true;
+        // Create a new battle with status "Pending" until the opponent accepts and submits their team
+        int createdBattleId = battleCrud.createBattle(trainer1Id, trainer2Id, Battle.Status.PENDING.name(), trainer1TeamId, -1);
+        return createdBattleId;
+    }
+
+    // Overloaded method to handle challenge acceptance with both teams ready
+    public int createBattle(int trainer1Id, int trainer2Id, int trainer1TeamId, int trainer2TeamId) {
+
+        // Check for existing active battle for this matchup to prevent duplicates
+        int activeBattleId = battleCrud.getActiveBattleForTrainerMatchup(trainer1Id, trainer2Id);
+        if (activeBattleId != -1) {
+            // There is already an active battle for this trainer matchup
+            return -1;
+        }
+
+        // Create a new battle with status "Active" since both teams are ready
+        int createdBattleId = battleCrud.createBattle(trainer1Id, trainer2Id, Battle.Status.ACTIVE.name(), trainer1TeamId, trainer2TeamId);
+        
 
         // Issue a challenge to the opponent trainer (e.g., via Discord DM or in-app notification)
 
-        
+        return createdBattleId; // Return the battle ID if a valid battle was created, or -1 if creation failed
     }
 
     

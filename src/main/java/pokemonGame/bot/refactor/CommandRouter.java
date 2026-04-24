@@ -13,6 +13,7 @@ import pokemonGame.bot.refactor.commands.CreateTrainerSlashCommand;
 import pokemonGame.bot.refactor.commands.AddPokemonSlashCommand;
 import pokemonGame.bot.refactor.commands.CreateTeamSlashCommand;
 import pokemonGame.bot.refactor.commands.TeachMovesetSlashCommand;
+import pokemonGame.bot.refactor.commands.StartBattleSlashCommand;
 import pokemonGame.service.BattleService;
 import pokemonGame.service.MoveSlotService;
 import pokemonGame.service.TeamService;
@@ -46,9 +47,25 @@ public class CommandRouter extends ListenerAdapter {
         register(handlerMap, new TeachMovesetSlashCommand(moveSlotService, teamService, trainerService));
         register(handlerMap, new CreateTeamSlashCommand(teamService, trainerService));
         register(handlerMap, new AddPokemonSlashCommand(teamService, trainerService, pokemonService));
-        // Next migrations live here, one command per class.
-        // register(handlerMap, new AddPokemonSlashCommand(trainerService, teamService));
-        // register(handlerMap, new StartBattleSlashCommand(trainerService, teamService, battleService));
+        register(handlerMap, new StartBattleSlashCommand(trainerService, teamService, battleService));
+
+        /*
+         * Battle-command roadmap:
+         * - Challenge handshake: AcceptChallenge/DeclineChallenge complete PENDING -> TEAM_SETUP.
+         * - Battle visibility: CheckBattleStatus should expose opponent, leads, turn number, and pending-action state.
+         * - Turn loop: TurnAction submits MoveAction/SwitchAction, but move and lead selection likely fit buttons/select menus better than slash input.
+         * - Exit path: ForfeitBattle gives clean FINISHED transition when player leaves.
+         * - Prep helpers below support battle setup, but they are not battle-lifecycle handlers.
+         */
+        // register(handlerMap, new RemovePokemonSlashCommand());
+        // register(handlerMap, new CheckTeamSlashCommand());
+        // register(handlerMap, new ClearDatabaseSlashCommand());
+        // register(handlerMap, new AcceptChallengeSlashCommand());
+        // register(handlerMap, new DeclineChallengeSlashCommand());
+        // register(handlerMap, new CheckMovesetSlashCommand());
+        // register(handlerMap, new ForfeitBattleSlashCommand());
+        // register(handlerMap, new CheckBattleStatusSlashCommand());
+        // register(handlerMap, new TurnActionSlashCommand());
 
         this.handlers = Map.copyOf(handlerMap);
     }

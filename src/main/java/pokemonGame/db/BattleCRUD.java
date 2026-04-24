@@ -95,8 +95,7 @@ public class BattleCRUD {
         return null; // Placeholder return value
     }
 
-    // TODO: Refactor this to return an array of active battle IDs. Rehydration done using above method in the Service layer
-    public Battle getActiveBattlesForTrainer(int trainerId) {
+    public int getActiveBattlesForTrainer(int trainerId) {
         // Implementation to retrieve the active battle for a given trainer
         LOGGER.info("Retrieving active battle for trainer {}", trainerId);
 
@@ -108,20 +107,7 @@ public class BattleCRUD {
                 pstmt.setInt(2, trainerId);
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     if (battleSet.next()) {
-                        // TODO: Use BattleService for the rehydration, not directly calling a Battle object
-                        Battle battle = new Battle();
-                        battle.setBattleId(battleSet.getInt("battle_id"));
-                        battle.setTrainer1Id(battleSet.getInt("trainer1_id"));
-                        battle.setTrainer2Id(battleSet.getInt("trainer2_id"));
-                        battle.setTrainer1ActivePokemonId(battleSet.getInt("trainer1_active_pokemon_id"));
-                        battle.setTrainer2ActivePokemonId(battleSet.getInt("trainer2_active_pokemon_id"));
-                        battle.setTeam1Id(battleSet.getInt("trainer1_team_id"));
-                        battle.setTeam2Id(battleSet.getInt("trainer2_team_id"));
-                        battle.setWinningTrainerId(battleSet.getInt("winner_id"));
-                        battle.setStatus(Battle.Status.valueOf(battleSet.getString("status")));
-                        battle.setStartTime(battleSet.getObject("created_at", LocalDateTime.class));
-                        battle.setUpdateTime(battleSet.getObject("updated_at", LocalDateTime.class));
-                        return battle;
+                        return battleSet.getInt("battle_id");
                     }
                 }
             }
@@ -129,16 +115,15 @@ public class BattleCRUD {
             LOGGER.error("Error retrieving active battle for trainer {}", trainerId, e);
         }
 
-        return null; // Placeholder return value
+        return -1; // Indicate no active battle found
     }
 
-    // TODO: Refactor this to return the battle ID of this battle. 
-    public Battle getActiveBattleForTrainerMatchup(int trainer1Id, int trainer2Id) {
+    public int getActiveBattleForTrainerMatchup(int trainer1Id, int trainer2Id) {
         // Implementation to retrieve the active battle for a given trainer matchup
         LOGGER.info("Retrieving active battle for trainer matchup: {} vs {}", trainer1Id, trainer2Id);
 
         try (Connection conn = DatabaseSetup.getConnection()) {
-            String sql = "SELECT * FROM battles WHERE ((trainer1_id = ? AND trainer2_id = ?) OR (trainer1_id = ? AND trainer2_id = ?)) AND (status = 'ACTIVE' OR status = 'PENDING')";
+            String sql = "SELECT * FROM battles WHERE ((trainer1_id = ? AND trainer2_id = ?) OR (trainer1_id = ? AND trainer2_id = ?)) AND (status = 'ACTIVE')";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, trainer1Id);
@@ -147,20 +132,7 @@ public class BattleCRUD {
                 pstmt.setInt(4, trainer1Id);
                 try (ResultSet battleSet = pstmt.executeQuery()) {
                     if (battleSet.next()) {
-                        // TODO: Use BattleService for the rehydration, not directly calling a Battle object
-                        Battle battle = new Battle();
-                        battle.setBattleId(battleSet.getInt("battle_id"));
-                        battle.setTrainer1Id(battleSet.getInt("trainer1_id"));
-                        battle.setTrainer2Id(battleSet.getInt("trainer2_id"));
-                        battle.setTrainer1ActivePokemonId(battleSet.getInt("trainer1_active_pokemon_id"));
-                        battle.setTrainer2ActivePokemonId(battleSet.getInt("trainer2_active_pokemon_id"));
-                        battle.setTeam1Id(battleSet.getInt("trainer1_team_id"));
-                        battle.setTeam2Id(battleSet.getInt("trainer2_team_id"));
-                        battle.setWinningTrainerId(battleSet.getInt("winner_id"));
-                        battle.setStatus(Battle.Status.valueOf(battleSet.getString("status")));
-                        battle.setStartTime(battleSet.getObject("created_at", LocalDateTime.class));
-                        battle.setUpdateTime(battleSet.getObject("updated_at", LocalDateTime.class));
-                        return battle;
+                        return battleSet.getInt("battle_id");
                     }
                 }
              }
@@ -168,7 +140,32 @@ public class BattleCRUD {
             LOGGER.error("Error retrieving active battle for trainer matchup: {} vs {}", trainer1Id, trainer2Id, e);
         }
 
-        return null; // Placeholder return value
+        return -1; // Indicate no active battle found
+    }
+
+    public int getPendingBattleForTrainerMatchup(int trainer1Id, int trainer2Id) {
+        // Implementation to retrieve the pending battle for a given trainer matchup
+        LOGGER.info("Retrieving pending battle for trainer matchup: {} vs {}", trainer1Id, trainer2Id);
+
+        try (Connection conn = DatabaseSetup.getConnection()) {
+            String sql = "SELECT * FROM battles WHERE ((trainer1_id = ? AND trainer2_id = ?) OR (trainer1_id = ? AND trainer2_id = ?)) AND (status = 'PENDING')";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, trainer1Id);
+                pstmt.setInt(2, trainer2Id);
+                pstmt.setInt(3, trainer2Id);
+                pstmt.setInt(4, trainer1Id);
+                try (ResultSet battleSet = pstmt.executeQuery()) {
+                    if (battleSet.next()) {
+                        return battleSet.getInt("battle_id");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving pending battle for trainer matchup: {} vs {}", trainer1Id, trainer2Id, e);
+        }
+
+        return -1; // Indicate no pending battle found
     }
 
     public void updateBattleStatus(Battle battle) {

@@ -17,11 +17,28 @@ public abstract class SlashCommandSupport {
 
     protected void reply(SlashCommandContext context, String message) {
         if (context.event().isAcknowledged()) {
+            context.event().getHook().sendMessage(message).setEphemeral(true).queue();
+            return;
+        }
+
+        context.event().reply(message).setEphemeral(true).queue();
+    }
+
+    protected void replyPublic(SlashCommandContext context, String message) {
+        if (context.event().isAcknowledged()) {
             context.event().getHook().sendMessage(message).queue();
             return;
         }
 
         context.event().reply(message).queue();
+    }
+
+    protected void deferReplyEphemeral(SlashCommandContext context) {
+        if (context.event().isAcknowledged()) {
+            return;
+        }
+
+        context.event().deferReply(true).queue();
     }
 
     protected Optional<String> requireStringOption(SlashCommandContext context, String optionName, String missingMessage) {
@@ -132,11 +149,6 @@ public abstract class SlashCommandSupport {
     }
 
     protected void replyEphemeral(SlashCommandContext context, String message) {
-        if (context.event().isAcknowledged()) {
-            context.event().getHook().sendMessage(message).setEphemeral(true).queue();
-            return;
-        }
-
-        context.event().reply(message).setEphemeral(true).queue();
+        reply(context, message);
     }
 }

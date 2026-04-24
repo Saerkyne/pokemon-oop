@@ -38,7 +38,7 @@ public final class AddPokemonSlashCommand extends SlashCommandSupport implements
 
     @Override
     public void handle(SlashCommandContext context) {
-        context.event().deferReply().queue();
+        deferReplyEphemeral(context);
 
         Optional<Trainer> trainer = requireTrainer(context, trainerService, "No existing trainer found. Create one with /createtrainer!");
         if (trainer.isEmpty()) {
@@ -103,7 +103,6 @@ public final class AddPokemonSlashCommand extends SlashCommandSupport implements
         }
         reply(context, "Successfully added " + createAttempt.getNickname()
             + " to your team in slot " + (slotIndex + 1) + "!");
-        return;
     }
 
 }

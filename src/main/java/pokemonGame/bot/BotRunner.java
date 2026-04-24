@@ -17,6 +17,7 @@ import pokemonGame.service.MoveSlotService;
 import pokemonGame.service.PokemonService;
 import pokemonGame.service.TeamService;
 import pokemonGame.service.TrainerService;
+import pokemonGame.bot.refactor.BattleComponentListenerExample;
 import pokemonGame.bot.refactor.CommandRouter;
 
 // mvn compile exec:java -Dexec.mainClass="pokemonGame.bot.BotRunner"
@@ -35,12 +36,19 @@ public class BotRunner {
         PokemonCRUD pokemonCRUD = new PokemonCRUD();
         PokemonService pokemonService = new PokemonService(pokemonCRUD, moveSlotService);
         TeamService teamService = new TeamService(new TeamCRUD(), pokemonCRUD, trainerService, pokemonService);
+        BattleComponentListenerExample battleComponentListenerExample = new BattleComponentListenerExample();
 
 
         JDA api = JDABuilder.createDefault(token)
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
-                .addEventListeners(new SlashExample(battleService, moveSlotService, trainerService, teamService))
                 .addEventListeners(new CommandRouter(battleService, moveSlotService, trainerService, teamService, pokemonService))
+            /*
+             * Temporary component-demo wiring.
+             * - Slash command sends sample battle buttons/select menu.
+             * - BattleComponentListenerExample receives click events.
+             * - This lets you test JDA component flow before real BattleService calls exist.
+             */
+            .addEventListeners(battleComponentListenerExample)
                 .addEventListeners(new AutoCompleteBot(trainerService, teamService, moveSlotService))
                 .build();
 
@@ -88,6 +96,16 @@ public class BotRunner {
                     .setIntegrationTypes(IntegrationType.ALL)
                     .addOption(OptionType.STRING, "teamname", "The team you want to battle with", true, true)
                     .addOption(OptionType.USER, "opponent", "The trainer you want to battle", true))
+
+                /*
+                 * Test harness for component listener.
+                 * Run /battlecomponentdemo to post sample Accept/Decline buttons,
+                 * move buttons, and switch select menu. Clicks should hit
+                 * BattleComponentListenerExample and reply with placeholder text.
+                 */
+                .addCommands(Commands.slash("battlecomponentdemo", "Posts sample battle buttons and select menus for JDA component testing")
+                    .setContexts(InteractionContextType.ALL)
+                    .setIntegrationTypes(IntegrationType.ALL))
 
                 .addCommands(Commands.slash("teachmoveset", "Teaches a moveset to a Pokemon on a team. Overwrites existing set.")
                     .setContexts(InteractionContextType.ALL)

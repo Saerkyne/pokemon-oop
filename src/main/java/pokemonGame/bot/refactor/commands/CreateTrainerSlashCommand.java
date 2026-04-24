@@ -57,8 +57,6 @@ public final class CreateTrainerSlashCommand extends SlashCommandSupport impleme
             return;
         }
 
-        context.event().reply(
-            "Trainer created successfully! You can now create teams with /createteam.")
-            .queue();
+        reply(context, "Trainer created successfully! You can now create teams with /createteam.");
     }
 }

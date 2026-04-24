@@ -34,7 +34,9 @@ public class SlashExample extends ListenerAdapter{
         "createtrainer",
         "createteam",
         "addpokemon",
-        "teachmoveset");
+        "teachmoveset",
+        "startbattle",
+        "battlecomponentdemo");
 
     private final BattleService battleService;
     private final MoveSlotService moveSlotService;

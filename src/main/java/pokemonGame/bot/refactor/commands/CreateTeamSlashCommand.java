@@ -62,8 +62,6 @@ public final class CreateTeamSlashCommand extends SlashCommandSupport implements
             return;
         }
 
-        context.event().reply(
-            "Team created successfully! Use /checkteam to see your current teams and /addpokemon to add Pokemon to them!")
-            .queue();
+        reply(context, "Team created successfully! Use /checkteam to see your current teams and /addpokemon to add Pokemon to them!");
     }
 }

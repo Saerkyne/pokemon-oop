@@ -88,9 +88,7 @@ public class StartBattleSlashCommand extends SlashCommandSupport implements Slas
             return;
         }
 
-        context.event().reply(
-            "Battle created successfully! Waiting for an opponent to join...")
-            .queue();
+        reply(context, "Battle created successfully! Waiting for an opponent to join...");
     }
 
 }

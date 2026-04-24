@@ -11,7 +11,13 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import pokemonGame.bot.refactor.commands.CreateTrainerSlashCommand;
 import pokemonGame.bot.refactor.commands.AddPokemonSlashCommand;
+import pokemonGame.bot.refactor.commands.BattleStateSlashCommand;
+import pokemonGame.bot.refactor.commands.BattleComponentDemoSlashCommand;
+import pokemonGame.bot.refactor.commands.CheckTeamSlashCommand;
+import pokemonGame.bot.refactor.commands.ClearDatabaseSlashCommand;
 import pokemonGame.bot.refactor.commands.CreateTeamSlashCommand;
+import pokemonGame.bot.refactor.commands.PingSlashCommand;
+import pokemonGame.bot.refactor.commands.ReleasePokemonSlashCommand;
 import pokemonGame.bot.refactor.commands.TeachMovesetSlashCommand;
 import pokemonGame.bot.refactor.commands.StartBattleSlashCommand;
 import pokemonGame.service.BattleService;
@@ -21,8 +27,8 @@ import pokemonGame.service.TrainerService;
 import pokemonGame.service.PokemonService;
 
 /**
- * Parallel listener that shows router-based command setup beside SlashExample.
- * Leave unregistered until more commands migrate and comparison is done.
+ * Primary slash-command router.
+ * One listener owns slash command dispatch so each interaction is replied to once.
  */
 public class CommandRouter extends ListenerAdapter {
 
@@ -43,11 +49,17 @@ public class CommandRouter extends ListenerAdapter {
         Objects.requireNonNull(pokemonService);
 
         Map<String, SlashCommandHandler> handlerMap = new LinkedHashMap<>();
+        register(handlerMap, new PingSlashCommand());
+        register(handlerMap, new BattleStateSlashCommand());
         register(handlerMap, new CreateTrainerSlashCommand(trainerService));
         register(handlerMap, new TeachMovesetSlashCommand(moveSlotService, teamService, trainerService));
         register(handlerMap, new CreateTeamSlashCommand(teamService, trainerService));
+        register(handlerMap, new CheckTeamSlashCommand(teamService, trainerService));
         register(handlerMap, new AddPokemonSlashCommand(teamService, trainerService, pokemonService));
+        register(handlerMap, new ReleasePokemonSlashCommand(teamService, trainerService));
+        register(handlerMap, new ClearDatabaseSlashCommand());
         register(handlerMap, new StartBattleSlashCommand(trainerService, teamService, battleService));
+        register(handlerMap, new BattleComponentDemoSlashCommand(new BattleComponentListenerExample()));
 
         /*
          * Battle-command roadmap:
@@ -58,8 +70,6 @@ public class CommandRouter extends ListenerAdapter {
          * - Prep helpers below support battle setup, but they are not battle-lifecycle handlers.
          */
         // register(handlerMap, new RemovePokemonSlashCommand());
-        // register(handlerMap, new CheckTeamSlashCommand());
-        // register(handlerMap, new ClearDatabaseSlashCommand());
         // register(handlerMap, new AcceptChallengeSlashCommand());
         // register(handlerMap, new DeclineChallengeSlashCommand());
         // register(handlerMap, new CheckMovesetSlashCommand());

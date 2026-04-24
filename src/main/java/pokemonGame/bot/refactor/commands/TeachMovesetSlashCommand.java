@@ -68,7 +68,7 @@ public final class TeachMovesetSlashCommand extends SlashCommandSupport implemen
             context,
             teamService,
             trainer.get(),
-            "team",
+            "teamname",
             MISSING_TEAM_OR_POKEMON_MESSAGE,
             "Team not found! Please specify a valid team name.");
         if (team.isEmpty()) {
@@ -120,9 +120,7 @@ public final class TeachMovesetSlashCommand extends SlashCommandSupport implemen
             moveSlotService.teachMove(selectedPokemon.get(), moveToTeach);
         }
 
-        context.event().reply(
-            "Successfully taught " + moveNames.size() + " moves to " + selectedPokemon.get().getNickname() + "!")
-            .queue();
+        reply(context, "Successfully taught " + moveNames.size() + " moves to " + selectedPokemon.get().getNickname() + "!");
     }
 
     private boolean isEligibleMove(Pokemon pokemon, String moveName) {
